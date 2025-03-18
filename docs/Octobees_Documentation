@@ -1,0 +1,1432 @@
+{
+	"info": {
+		"_postman_id": "b450c5f7-8b62-4592-afd4-3c7b442f29a0",
+		"name": "Octobees Documentation",
+		"description": "> Reference Documentation is a catalog of all your predefined API components—requests, documentation, authorization, variables, and examples—into an organized asset library for faster onboarding of new team members. \n  \n\n### **Table of contents:**\n\n> 🪐 Get Started  \n📢 Recent Updates  \n🔐 Authorization  \n⏱ Rate and usage limits  \n✍️ Example Responses  \n🤔 Need Help? \n  \n\n## 🪐 **Get Started**\n\nSteps to get started with the Intergalactic Bank API:\n\n1. **Authorization**: Use a valid API Key to send requests to the API endpoints. For this API, everyone will use a temporary API key (prefilled as a collection variable).\n    \n2. **Access**: If you need elevated access to perform actions like creating new accounts, contact the Intergalactic Bank API product owner.\n    \n\n> Some endpoints are for Admin Users only. These are noted in the request's documentation. \n  \n\nFor more details, check out the additional sections below, and click `View Complete Documentation` for the complete documentation. If you have questions about the folder or request, look for the documentation icon for documentation-in-context.\n\n## 📢 Recent Updates\n\n<u>February 2024</u>\n\n- Added optional `createdAt` parameter to `List Transactions` endpoint to filter for transactions created on or after a given date.\n    \n\n<u>January 2024</u>\n\n- We're live! 🎉 The Intergalactic Bank API is now out of beta and available for our internal users. \"Watch\" this collection by clicking the 👁️ icon to be alerted to new updates.\n    \n\n## 🔐 Authorization\n\n- The Intergalactic Bank API uses an API Key for authorization.\n    \n- You must include an API key in each request to the Postman API with the `x-api-key` request header.\n    \n- The API key has been pre-filled as a [collection variable](https://learning.postman.com/docs/sending-requests/variables/). The authorization has been set up at the collection level, so all requests in this collection will automatically inherit the needed header.\n    \n\n> ⚠ Don’t leak your secrets! Initial values are saved, and can be shared with others in team workspaces. Current values are local values that are not saved, and won't be persisted in the original shared collection, environment, or globals. [Learn more about variables in Postman](https://learning.postman.com/docs/sending-requests/variables/#initial-and-current-values) \n  \n\n<img src=\"https://content.pstmn.io/bba75cfc-45c4-409e-9b1d-d604cbdf51a2/UmVmZXJlbmNlIHZhcmlhYmxlcy5naWY=\" width=\"486\" height=\"297\">\n\n## Rate and usage limits\n\nAPI access rate limits apply at a per-API key basis in unit time. The limit is 300 requests per minute.\n\nIf you exceed either limit, your request will return an HTTP `429 Too Many Requests` status code. If your team is consistently hitting these limits, contact the Intergalactic API Product Owner, and we will work to accommodate you.\n\nEach API response returns the following set of headers to help you identify your use status:\n\n| Header | Description |\n| --- | --- |\n| `X-RateLimit-Limit` | The maximum number of requests that the consumer is permitted to make per minute. |\n| `X-RateLimit-Remaining` | The number of requests remaining in the current rate limit window. |\n| `X-RateLimit-Reset` | The time at which the current rate limit window resets in UTC epoch seconds. |\n\n## ✍️ Example Responses\n\nWe have documented many of the possible responses you might encounter using [Examples](https://learning.postman.com/docs/sending-requests/examples/) under each request.\n\n### 🤔 **Need Help?**\n\nThe Bank Services team wants to ensure that your team has everything they need to successfully integrate our services into your applications and services. Don't hesitate to reach out to us on our internal Slack by tagging `@bank-services`.\n\n> Is your team utilizing this API in a use case not represented here? We want to know about it! Add a comment with your suggestions and feedback! \n  \n\nFor ideas on how to use these different requests to accomplish common banking tasks, check out the [Workflows Documentation](https://www.postman.com/templates/53736124-ad4d-4cc9-a57a-f7e83402fbe7/Workflow-Documentation) collection. To design your own custom integration, check out the [Blueprint Documentation](https://www.postman.com/templates/75394e82-fb5d-4421-94cf-8799b1bb4af3/Blueprint-Documentation) collection.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "43074922"
+	},
+	"item": [
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/blog?page=1&limit=10&status=Active&orderBy=title:asc&search=kelas&favorite=false&categoryId=09a120f0-b471-4b8b-bc9d-6ff83687bb27",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blog"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "Active"
+								},
+								{
+									"key": "orderBy",
+									"value": "title:asc"
+								},
+								{
+									"key": "search",
+									"value": "kelas"
+								},
+								{
+									"key": "favorite",
+									"value": "false"
+								},
+								{
+									"key": "categoryId",
+									"value": "09a120f0-b471-4b8b-bc9d-6ff83687bb27"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/blog/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "categoryId",
+									"value": "09a120f0-b471-4b8b-bc9d-6ff83687bb27",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "<p>dfghdfgh fdhgfdghfdhfdhfdgh</p>",
+									"type": "text"
+								},
+								{
+									"key": "favorite",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "Draft",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f0008d4-43a1-4010-b20c-88139dd0d64c"
+								},
+								{
+									"key": "roleId",
+									"value": "e4a5297d-4670-4b4c-9cae-f2030268d911",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Blog Terbaik",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/blog",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Post data Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "categoryId",
+									"value": "09a120f0-b471-4b8b-bc9d-6ff83687bb27",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "<p>dfghdfgh fdhgfdghfdhfdhfdgh</p>",
+									"type": "text"
+								},
+								{
+									"key": "favorite",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "Draft",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1f0008d4-43a1-4010-b20c-88139dd0d64c"
+								},
+								{
+									"key": "roleId",
+									"value": "e4a5297d-4670-4b4c-9cae-f2030268d911",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Blog Terbaik",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/blog/{{id}}",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/blog/{{id}}",
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			],
+			"description": "<img src=\"https://content.pstmn.io/2f912e6a-6eb0-410f-b74e-788c5bac6735/Q29pbi5wbmc=\" alt=\"Cosmic%20Coin\" width=\"112\" height=\"130\">\n\nA _**transaction**_ records money moving in or out of an account. Transactions at the Intergalactic Bank follow a blockchain-like approach. Once created, they cannot be updated or deleted.\n\nUse the **transaction** endpoints contained in this folder to...\n\n- <u>List transactions </u> \\- get all transactions from an account, with options to filter by date, or the account they were delivered to.\n- <u>Get a single transaction</u> - If you are looking to retrieve information about a specific transaction, provide a transaction `id` and receive information about the transaction.\n    \n- <u>Create a new transaction</u> - create a new transfer or deposit transaction for a given account.\n    \n\nTransactions do not contain any information about the account balance. To inquire about account balances and other account-related details, please refer to the requests in the **Accounts** folder."
+		},
+		{
+			"name": "Blog Category",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/blog-category",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"blog-category"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "Draft",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "name:desc",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Draft",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/blog-category/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Slug",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/blog-category/{{slug}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Blog Baru nih\",\n    \"status\" : \"Draft\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/blog-category",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Blog Keren nih\",\n    \"status\" : \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/blog-category/{{id}}",
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/blog-category/{{id}}",
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"kusuma@gmail.com\",\r\n    \"password\" : \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{auth_url}}/login",
+							"host": [
+								"{{auth_url}}"
+							],
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Draft",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "Draft",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "email:asc",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"ryankusuma\",\n  \"email\" : \"ryankusuma@gmail.com\",\n  \"password\" : \"123\",\n  \"status\" : \"Active\",      \n  \"role\" : \"Admin\",        \n  \"features\" : [\"role\", \"services\", \"blog\", \"meta\"]    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/logout",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/service-category",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"service-category"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "ads",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/service-category/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ads Campaign\",\n    \"heading\": \"Ads Campaign Will Help You\",\n    \"description\": \"asnfkjasjf asfasfasf asfoaihjsf aihiahf ajhdkjfaksd asdkjfaskdfbas asdfaskdjfbas asdkfjbasdfksd fasdjfbadlkfbas asdfkajshbdfjhasd\",\n    \"status\": \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/service-category",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Ads Campaign\",\n    \"heading\": \"Ads Campaign Will Help You\",\n    \"description\": \"asnfkjasjf asfasfasf asfoaihjsf aihiahf ajhdkjfaksd asdkjfaskdfbas asdfaskdjfbas asdkfjbasdfksd fasdjfbadlkfbas asdfkajshbdfjhasd\",\n    \"status\": \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/service-category/{{id}}",
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/service-category/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"service-category",
+								"{{id}}"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Meta Tag",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/meta",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"meta"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "ryan",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "value:desc",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/meta/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"name\",\n    \"value\": \"description\",\n    \"content\": \"Octobees | Ads Campaign\",\n    \"page\": \"ads-campaign\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/meta",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"key\": \"name\",\n    \"value\": \"title\",\n    \"content\": \"Octobees | Ads Campaign Keren\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/meta/{{id}}",
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/meta/{{id}}",
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/order",
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/order",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Package",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/service-category?orderBy=name:asc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"service-category"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Active",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "asdfaskdjfbas",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "name:asc"
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/plan/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"KEREN BANGET KAMU BANG\",\n    \"type\": \"Premium\",\n    \"showPrice\": true,\n    \"benefits\": [\n        { \"value\": \"rtyrtyyr\" },\n        { \"value\": \"rtyrtyyr\" },\n        { \"value\": \"rtyrtyyr\" }\n    ],\n    \"categoryId\": \"7205090d-0179-4576-864e-926dc3633ce2\",\n    \"descriptions\": \"fgh4rhrthrth\",\n    \"options\": \"3 Months\",\n    \"prices\": [\n        { \"curr\": \"SGR\", \"amount\": 45464567, \"discount\": 456 },\n        { \"curr\": \"MYR\", \"amount\": 45654, \"discount\": 4565 },\n        { \"curr\": \"IDR\", \"amount\": 456, \"discount\": 456 }\n    ],\n    \"status\": \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/plan",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"KEREN\",\n    \"type\": \"Premium\",\n    \"showPrice\": true,\n    \"benefits\": [\n        { \"value\": \"rtyrtyyr\" },\n        { \"value\": \"rtyrtyyr\" },\n        { \"value\": \"rtyrtyyr\" }\n    ],\n    \"categoryId\": \"7205090d-0179-4576-864e-926dc3633ce2\",\n    \"descriptions\": \"fgh4rhrthrth\",\n    \"options\": \"3 Months\",\n    \"prices\": [\n        { \"curr\": \"SGR\", \"amount\": 45464567, \"discount\": 456 },\n        { \"curr\": \"MYR\", \"amount\": 45654, \"discount\": 4565 },\n        { \"curr\": \"IDR\", \"amount\": 456, \"discount\": 456 }\n    ],\n    \"status\": \"Active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/plan/{{id}}",
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/plan/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"plan",
+								"{{id}}"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pages",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/page",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"page"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "2",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/role",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"role"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Draft",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "Draft",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "email:asc",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Data By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/role/{{id}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"ryankusuma\",\n  \"email\" : \"ryankusuma@gmail.com\",\n  \"password\" : \"123\",\n  \"status\" : \"Active\",      \n  \"role\" : \"Admin\",        \n  \"features\" : [\"role\", \"services\", \"blog\", \"meta\"]    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/role",
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ryankusuma\",\n    \"email\": \"ryankusuma@gmail.com\",\n    \"password\": \"1234\",\n    \"status\": \"Draft\",\n    \"role\": \"Admin\",\n    \"refreshToken\" : \"werwerww982345\",\n    \"features\": [\n        \"role\",\n        \"services\",\n        \"blog\",\n        \"meta\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/role/{{id}}",
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/info?id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"info"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": {
+			"value": "{{apiKey}}",
+			"key": "api-key"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://template.postman-echo.com",
+			"type": "string"
+		},
+		{
+			"key": "apiKey",
+			"value": "yFlMjSup.IbHOCjyRiTb8QOO9Ltsbr",
+			"type": "string"
+		}
+	]
+}

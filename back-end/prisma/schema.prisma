@@ -1,0 +1,152 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+    output = "../generated/prisma_client"
+}
+
+datasource db {
+  provider = "mysql" // Sesuaikan dengan database yang Anda gunakan
+  url      = env("DATABASE_URL")
+}
+
+enum PlanStatus {
+  Draft
+  Active
+  NonActive
+}
+
+enum BlogStatus {
+  Published
+  Takedown
+  Draft
+}
+
+enum PlanType {
+  Standard
+  Premium
+}
+
+enum Currency {
+  IDR
+  SGR
+  MYR
+}
+
+model PlanService {
+  id           String          @id @default(uuid())
+  name         String
+  type         PlanType
+  showPrice    Boolean         @default(true)
+  prices       Price[]
+  status       PlanStatus
+  options      String
+  descriptions String
+  benefits     Benefit[]
+  category     CategoryService @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   String
+  orders       Order[]
+}
+
+model CategoryService {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  heading     String
+  description String
+  status      PlanStatus
+  slug        String        @unique
+  plans       PlanService[]
+  orders      Order[]
+  pages       Pages?
+}
+
+model Price {
+  id       String      @id @default(uuid())
+  curr     Currency
+  amount   Float
+  discount Float
+  plan     PlanService @relation(fields: [idPlan], references: [id], onDelete: Cascade)
+  idPlan   String
+}
+
+model Benefit {
+  id     String      @id @default(uuid())
+  value  String
+  plan   PlanService @relation(fields: [idPlan], references: [id], onDelete: Cascade)
+  idPlan String
+}
+
+model Role {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  password     String
+  status       PlanStatus
+  refreshToken String?    @db.Text
+  role         String
+  features     Json
+  blogs        Blog[]
+}
+
+model Blog {
+  id         String       @id @default(uuid())
+  title      String
+  image      String
+  content    String       @db.Text
+  status     BlogStatus
+  favorite   Boolean
+  category   BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  role      Role?     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String?
+}
+
+model BlogCategory {
+  id     String     @id @default(uuid())
+  name   String     @unique
+  slug   String     @unique
+  status PlanStatus
+  blogs  Blog[]
+}
+
+model Pages {
+  id                String           @id @default(uuid())
+  page              String
+  slug              String           @unique
+  meta              MetaTag[]
+  categoryService   CategoryService? @relation(fields: [categoryServiceId], references: [id], onDelete: Cascade)
+  categoryServiceId String?          @unique
+}
+
+model MetaTag {
+  id      String @id @default(uuid())
+  key     String
+  value   String
+  content String
+  pages   Pages  @relation(fields: [slug], references: [slug], onDelete: Cascade)
+  slug    String
+
+  @@unique([slug, value])
+}
+
+model Order {
+  id          String          @id @default(uuid())
+  amount      Float
+  bussiness   String
+  category    CategoryService @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  date        String
+  email       String
+  message     String
+  name        String
+  phoneNumber String
+  plan        PlanService     @relation(fields: [idPlan], references: [id], onDelete: Cascade)
+  idPlan      String
+  time        String
+}

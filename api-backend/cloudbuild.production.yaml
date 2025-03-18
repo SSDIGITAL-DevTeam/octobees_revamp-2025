@@ -1,0 +1,15 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    env:
+      - DATABASE_URL=$_DATABASE_URL
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/octobees-v1-api'
+      - '--build-arg'
+      - 'DATABASE_URL=${_DATABASE_URL}'
+      - '.'
+images:
+  - 'gcr.io/$PROJECT_ID/octobees-v1-api'
+substitutions:
+  _DATABASE_URL: "mysql://octobees:rahasia90@34.101.50.42:3306/octobees?socket=/cloudsql/sigma-lane-451310-u3:asia-southeast2:octobees"

@@ -1,0 +1,4 @@
+User-agent: *
+allow: /
+Disallow: /cgi-bin/
+Sitemap: https://octobees.com/sitemap.xml
