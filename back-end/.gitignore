@@ -7,3 +7,6 @@ query.text
 node_modules
 node_modules/
 
+service-production.yaml
+
+cloudbuild-production.yaml
