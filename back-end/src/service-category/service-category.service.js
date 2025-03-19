@@ -85,6 +85,7 @@ export const createServiceCat = async (payload) => {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
     const data = await insertServiceCat({ ...payload, slug });
+   
     await insertPage(payload.name, slug, data.id );
     return data;
   } catch (error) {

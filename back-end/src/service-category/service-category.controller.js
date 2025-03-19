@@ -6,6 +6,7 @@ import {
   deleteServiceCatById,
   updateServiceCat,
 } from "./service-category.service.js";
+import { insertPage } from "../meta/meta.repository.js";
 import { z } from "zod";
 const router = express.Router();
 

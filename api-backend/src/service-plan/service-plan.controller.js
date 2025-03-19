@@ -1,18 +1,19 @@
 import express from "express";
 import {
-  getAllServiceCat,
+  getAllServicePlan,
   getServiceCatById,
   createServiceCat,
   deleteServiceCatById,
   updateServiceCat,
-} from "./service-category.service.js";
+} from "./service-plan.service.js";
 import { z } from "zod";
 const router = express.Router();
 
 //Ambil semua data
 router.get("/", async (req, res) => {
   try {
-    let { page = 1, limit = 10, status, orderBy, search } = req.query;
+    let { page = 1, limit = 10, search, orderBy, status } = req.query;
+
     page = Math.max(parseInt(page) || 1, 1);
     limit = Math.max(parseInt(limit) || 10, 1);
 
@@ -24,8 +25,8 @@ router.get("/", async (req, res) => {
       });
     }
 
-    const filters = { page, limit, status, orderBy: orderByParams, search };
-    const data = await getAllServiceCat(filters);
+    const filters = { page, limit, orderBy : orderByParams, search, status };
+    const data = await getAllServicePlan(filters);
 
     res.status(200).json(data);
   } catch (error) {
@@ -37,9 +38,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const { status } = req.query;
-    const filters = { status };
-    const data = await getServiceCatById(id, filters);
+    const data = await getServiceCatById(id);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -50,12 +49,29 @@ router.get("/:id", async (req, res) => {
 //Tambah data
 router.post("/", async (req, res) => {
   try {
-    const { name, heading, description, status } = req.body;
-    if (!name || !heading || !description || !status) {
+    const {
+      name,
+      type,
+      prices,
+      options,
+      descriptions,
+      benefits,
+      categoryId,
+      status,
+    } = req.body;
+    if (
+      !name ||
+      !type ||
+      prices.length === 0 ||
+      !options ||
+      !descriptions ||
+      !categoryId ||
+      !status
+    ) {
       throw new Error("Data tidak lengkap");
     }
     await createServiceCat(req.body);
-    res.status(200).json({ message: "Berhasil Menambahkan Service Category" });
+    res.status(200).json({ message: "Berhasil Menambahkan Service Plan" });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
@@ -72,7 +88,7 @@ router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     await deleteServiceCatById(id);
-    res.status(200).json({ message: "Berhasil Menghapus Service Category" });
+    res.status(200).json({ message: "Berhasil Menghapus Service Plan" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -82,12 +98,32 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, heading, description, status } = req.body;
-    if (!name || !heading || !description || !status) {
+    const {
+      name,
+      type,
+      showPrice,
+      prices,
+      options,
+      descriptions,
+      benefits,
+      categoryId,
+      status,
+    } = req.body;
+    if (
+      !name ||
+      !type ||
+      !showPrice ||
+      !prices ||
+      !options ||
+      !descriptions ||
+      !benefits ||
+      !categoryId ||
+      !status
+    ) {
       throw new Error("Data tidak lengkap");
     }
     await updateServiceCat(id, req.body);
-    res.status(200).json({ message: "Berhasil Mengubah Service Category" });
+    res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
@@ -103,12 +139,11 @@ router.put("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     const id = req.params.id;
- 
     if (!req.body || Object.keys(req.body).length === 0) {
       throw new Error("Tidak Ada data yang akan diubah");
     }
     await updateServiceCat(id, req.body);
-    res.status(200).json({ message: "Berhasil Mengubah Service Category" });
+    res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({

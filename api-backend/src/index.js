@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 //new
 import ServiceCatController from "./service-category/service-category.controller.js";
 // import RoleController from "./role/role.controller.js";
-// import ServicePlanController from "./service-plan/service-plan.controller.js";
+import ServicePlanController from "./service-plan/service-plan.controller.js";
 // import MetaController from "./meta/meta.controller.js";
 // import PageController from "./pages/pages.controller.js";
 // import OrderController from "./order/order.controller.js";
@@ -85,7 +85,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // app.use("/api/auth/logout", logoutController);
 app.use("/api/v1/service-category", ServiceCatController);
 // app.use("/api/v1/role", RoleController);
-// app.use("/api/v1/plan", ServicePlanController);
+app.use("/api/v1/plan", ServicePlanController);
 // app.use("/api/v1/meta", MetaController);
 // app.use("/api/v1/page", PageController);
 // app.use("/api/v1/order", OrderController);

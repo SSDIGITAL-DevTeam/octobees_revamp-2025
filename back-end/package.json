@@ -8,8 +8,7 @@
     "db:deploy": "npx prisma migrate deploy && npx prisma generate",
     "start-old": "node .",
     "start": "node .",
-    "server": "nodemon .",
-    "postinstall": "prisma generate"
+    "dev": "nodemon ."
   },
   "keywords": [],
   "author": "",
