@@ -7,34 +7,32 @@ export const findAllServiceCats = async (skip, limit, where = undefined, orderBy
   
     try {
         
-        // const datas = await db.query.categoryService.findMany({
-        //     // where,
-        //     offset: skip,
-        //     limit,
-        //     orderBy: Object.entries(orderBy).map(([key, value]) =>
-        //         value === 'asc' ? asc(CategoryService[key]) : desc(CategoryService[key])
-        //     )
-        // });
-        const query = db
-            .select()
-            .from(categoryService)
-            .where(where ? where : undefined) // optional
-            .limit(limit) // optional
-            .offset(skip) // optional
-            // .orderBy(
-            //     ...Object.entries(orderBy).map(([key, value]) =>
-            //     value === 'asc' ? asc(categoryService[key]) : desc(categoryService[key])
-            //     )
-            // );
-            // if (where) {
-            //     query = query.where(where);
-            //   }
-        const datas = await query;
+
+        // const query = db
+        //     .select()
+        //     .from(categoryService)
+        //     .where(where ? where : undefined) // optional
+        //     .limit(limit) // optional
+        //     .offset(skip) // optional
+        //     // .orderBy(
+        //     //     ...Object.entries(orderBy).map(([key, value]) =>
+        //     //     value === 'asc' ? asc(categoryService[key]) : desc(categoryService[key])
+        //     //     )
+        //     // );
+        // const datas = await query;
+            console.log("==skip",skip)
+            const datas = await db.query.categoryService.findMany({
+                offset: skip,
+                limit: limit,
+                // orderBy: orderBy,
+                where: where
+              });
+        
 
         const [{ count: total }] = await db
             .select({ count: sql`COUNT(*)` })
             .from(categoryService)
-            // .where(where);
+            .where(where ? where : undefined) // optional
 
         return { datas, total: Number(total) };
     } catch (error) {

@@ -1,0 +1,9 @@
+# Ignore node_modules & Git folder
+node_modules
+.git
+
+# Ignore semua env file...
+.env*
+
+# ...TAPI jangan abaikan yang ini:
+!*.env.production

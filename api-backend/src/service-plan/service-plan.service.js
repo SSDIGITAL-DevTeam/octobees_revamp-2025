@@ -6,7 +6,7 @@ import {
   deleteServiceCat,
   editServiceCat,
 } from "./service-plan.repository.js";
-
+import { and, eq ,or,like} from "drizzle-orm";
 export const getAllServicePlan = async (filters) => {
   try {
     const { page, limit, status, orderBy, search } = filters;
@@ -71,8 +71,10 @@ export const getServiceCatByName = async (name) => {
 };
 
 export const getServiceCatById = async (id) => {
+
   try {
     let data = await findServiceCatById(id);
+    
     if (!data) {
       throw new Error("Service Plan tersebut tidak ditemukan");
     }
@@ -83,8 +85,10 @@ export const getServiceCatById = async (id) => {
 };
 
 export const createServiceCat = async (payload) => {
+
   try {
     const checkName = await getServiceCatByName(payload.name);
+   
     if (checkName) {
       throw new Error("Service Plan dengan nama tersebut sudah ada");
     }
@@ -105,11 +109,15 @@ export const deleteServiceCatById = async (id) => {
 };
 
 export const updateServiceCat = async (id, payload) => {
+
   try {
+ 
     const data = await findServiceCatById(id);
+      
     if (!data) {
       throw new Error("Service Plan dengan Id tersebut tidak ditemukan");
     }
+
     await editServiceCat(id, payload);
   } catch (error) {
     throw new Error(error.message);

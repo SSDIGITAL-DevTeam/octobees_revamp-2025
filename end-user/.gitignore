@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+#.env*.production
 ./.env
 /.env
 .env
@@ -37,3 +38,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+service-production.yaml
+cloudbuild-production.yaml

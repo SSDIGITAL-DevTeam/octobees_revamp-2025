@@ -65,6 +65,7 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
   )}
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -99,7 +100,11 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
           </TableRow>
         ))}
       </TableBody>
+
+      
     </Table>
+   
+    </>
   );
 };
 

@@ -41,13 +41,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <Sidebarcomponents />
-          <div className="bg-slate-50 w-full px-2 md:px-12">
-            {children}
-          </div>
-          <Toaster />
-        </SidebarProvider>
+        {children}
+       
       </body>
     </html>
   );

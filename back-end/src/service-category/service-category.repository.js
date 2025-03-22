@@ -8,6 +8,7 @@ export const findAllServiceCats = async (skip, limit, where, orderBy) => {
             orderBy,
             where
         });
+        
         const total = await prisma.categoryService.count({ where });
         return { datas, total };
     } catch (error) {

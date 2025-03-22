@@ -34,4 +34,6 @@ const handleLogout = ()=>{
   )
 }
 
-export default withAuth(Header)
+export default Header
+
+//export default withAuth(Header)

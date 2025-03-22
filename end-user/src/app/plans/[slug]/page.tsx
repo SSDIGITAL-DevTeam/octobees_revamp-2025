@@ -36,6 +36,7 @@ export default function Page(): JSX.Element {
       />
 
       {/* Section 2 */}
+    
       <section className="flex flex-col overflow-x-auto py-[10px] xl:py-[20px]">
         <div className="container">
           {data ? <PlanComponents data={data?.plans} /> : <p>...</p>}

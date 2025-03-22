@@ -1,0 +1,30 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: octobees-back-office
+  annotations:
+        run.googleapis.com/allow-unauthenticated: "true"  # Allows public access
+spec:
+  template:
+    metadata:
+      name: octobees-back-office-revision-1
+    spec:
+      containers:
+      - image: gcr.io/sigma-lane-451310-u3/octobees-back-office
+        ports:
+          - containerPort: 3000
+     env:
+      - name: NEXT_PUBLIC_API_URL
+        value: "https://octobees-api-444322768526.asia-southeast2.run.app/api/v1"
+      - name: API_URL
+        value: "https://octobees-api-444322768526.asia-southeast2.run.app/api/v1"
+      - name: NEXT_PUBLIC_AUTH_API_URL
+        value: "https://octobees-api-444322768526.asia-southeast2.run.app/api/auth"
+      - name: NEXT_PUBLIC_BASE_URL
+        value: "https://www.octobees.com"
+      - name: NEXT_PUBLIC_DOMAIN_URL
+        value: "https://www.octobees.com"
+      - name: NEXT_PUBLIC_SPREADSHEET_API
+        value: "https://script.google.com/macros/s/AKfycbzGtDvI9LVxbNdq_ijSjXjALQnpgZtMD6e7gj1bJXS7nFg0HdgR2_dtS0afJeglMqw/exec"
+# gcloud builds submit --tag gcr.io/sigma-lane-451310-u3/octobees--back-office --project sigma-lane-451310-u3
+#gcloud run services replace service-production.yaml

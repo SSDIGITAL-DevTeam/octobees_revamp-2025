@@ -7,6 +7,7 @@ const nextConfig = {
   //   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   //   NEXT_PUBLIC_API_URL_IMAGE: process.env.NEXT_PUBLIC_API_URL_IMAGE,
   // },
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -17,6 +18,7 @@ const nextConfig = {
       },
     ],
     domains: ['lightyellow-mandrill-246257.hostingersite.com', 'localhost'],
+
   },
 };
 

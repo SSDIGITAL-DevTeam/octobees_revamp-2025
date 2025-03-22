@@ -40,3 +40,5 @@ next-env.d.ts
 #google cloud
 service-production.yaml
 cloudbuild-production.yaml
+
+.env*.production
