@@ -22,6 +22,16 @@ spec:
               value: "*"
             - name: DATABASE_URL
               value: "mysql://username:password@Host/database_name"
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_NAME
+              value: "octobees"
+            - name: DB_USER
+              value: "username"
+            - name: DB_PASSWORD
+              value: "password"
+            - name: DB_SOCKET
+              value: "/cloudsql/sigma-lane-451310-u3:asia-southeast2:octobees"
           # resources:
           #   limits:
           #     cpu: "1"
