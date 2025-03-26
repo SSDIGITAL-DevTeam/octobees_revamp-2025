@@ -20,7 +20,7 @@ export const findAllServiceCats = async (skip, limit, where = undefined, orderBy
         //     //     )
         //     // );
         // const datas = await query;
-            console.log("==skip",skip)
+    
             const datas = await db.query.categoryService.findMany({
                 offset: skip,
                 limit: limit,
