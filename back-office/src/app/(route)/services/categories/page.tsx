@@ -64,7 +64,7 @@ export default function DataPage() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/service-category", {
-          params: { limit: 4, page: 1 },
+          params: { limit: 4, page},
         });
         setPackages(response.data);
       } catch (error: any) {
