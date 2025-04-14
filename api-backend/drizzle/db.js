@@ -8,7 +8,7 @@ dotenv.config();
 // const poolConnection = mysql.createPool(process.env.DATABASE_URL || 'mysql://root@localhost:3306/octobees');
 
 const poolConnection = mysql.createPool({
-    host: process.env.DB_HOST ,
+    host: process.env.DB_HOST ? parseInt(process.env.DB_HOST) : undefined,
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

@@ -14,10 +14,12 @@ import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { statusList } from "./FormComponents";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
-
+import { Textarea } from "@/components/ui/textarea";
 const dataSchema = z.object({
   name: z.string().nonempty(),
   status: z.string(),
+  heading: z.string(),
+  description: z.string(),
 });
 
 type DataSchema = z.infer<typeof dataSchema>;
@@ -28,6 +30,8 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
     defaultValues: {
       name: "",
       status: "",
+      heading:"",
+      description:""
     },
   });
   const { handleSubmit, control, reset, watch } = form;
@@ -42,7 +46,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
 
   const handleInput = handleSubmit(async (value) => {
     try {
-      const url = defaultValue ? `/blog-category/${defaultValue.id}` : `/blog-category`;
+      const url = defaultValue ? `/service-category/${defaultValue.id}` : `/service-category`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast("Success", response.data.message);
@@ -62,6 +66,12 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Category Name" name="name" />
+          <InputField control={control} label="Heading" name="heading" />
+          <Textarea
+              id="description"
+              placeholder="Enter description here..."
+  
+            />
           <RadioGroupField
             control={control}
             label="Category Status"

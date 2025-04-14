@@ -168,7 +168,7 @@ export const editServiceCat = async (id, data) => {
 
     await db.delete(price).where(eq(price.idPlan, id));
     await db.delete(benefit).where(eq(benefit.idPlan, id));
-   
+    await db.update(planService).set(planData).where(eq(planService.id, id));
     if (prices && prices.length) {
       await db.insert(price).values(
         prices.map((p) => ({
