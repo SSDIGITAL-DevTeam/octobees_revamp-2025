@@ -1,3 +1,4 @@
+import express from "express";
 import {
   getAllServicePlan,
   getServiceCatById,
@@ -6,8 +7,10 @@ import {
   updateServiceCat,
 } from "./service-plan.service.js";
 import { z } from "zod";
+const router = express.Router();
 
-export const getAllServicePlans = async (req, res) => {
+//Ambil semua data
+router.get("/", async (req, res) => {
   try {
     let { page = 1, limit = 10, search, orderBy, status } = req.query;
 
@@ -22,16 +25,17 @@ export const getAllServicePlans = async (req, res) => {
       });
     }
 
-    const filters = { page, limit, orderBy: orderByParams, search, status };
+    const filters = { page, limit, orderBy : orderByParams, search, status };
     const data = await getAllServicePlan(filters);
 
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
-export const getServicePlanById = async (req, res) => {
+//Cari data berdasarkan ID/Slug
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const data = await getServiceCatById(id);
@@ -39,9 +43,11 @@ export const getServicePlanById = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
+// polyclinicName, descriptions
 
-export const createServicePlan = async (req, res) => {
+//Tambah data
+router.post("/", async (req, res) => {
   try {
     const {
       name,
@@ -53,10 +59,10 @@ export const createServicePlan = async (req, res) => {
       categoryId,
       status,
     } = req.body;
-
     if (
       !name ||
       !type ||
+      // prices.length === 0 ||
       !options ||
       !descriptions ||
       !categoryId ||
@@ -64,7 +70,6 @@ export const createServicePlan = async (req, res) => {
     ) {
       throw new Error("Data tidak lengkap");
     }
-
     await createServiceCat(req.body);
     res.status(200).json({ message: "Berhasil Menambahkan Service Plan" });
   } catch (error) {
@@ -76,9 +81,10 @@ export const createServicePlan = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
 
-export const deleteServicePlan = async (req, res) => {
+//Hapus data
+router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     await deleteServiceCatById(id);
@@ -86,9 +92,10 @@ export const deleteServicePlan = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
-export const updateServicePlan = async (req, res) => {
+//Ubah data - semua kolom harus terisi
+router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const {
@@ -102,7 +109,6 @@ export const updateServicePlan = async (req, res) => {
       categoryId,
       status,
     } = req.body;
-
     if (
       !name ||
       !type ||
@@ -116,7 +122,6 @@ export const updateServicePlan = async (req, res) => {
     ) {
       throw new Error("Data tidak lengkap");
     }
-
     await updateServiceCat(id, req.body);
     res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
   } catch (error) {
@@ -128,15 +133,15 @@ export const updateServicePlan = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
 
-export const patchServicePlan = async (req, res) => {
+//Ubah data - hanya kolom yang diisi
+router.patch("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
       throw new Error("Tidak Ada data yang akan diubah");
     }
-
     await updateServiceCat(id, req.body);
     res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
   } catch (error) {
@@ -148,4 +153,6 @@ export const patchServicePlan = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
+
+export default router;

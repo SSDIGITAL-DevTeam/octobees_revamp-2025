@@ -6,7 +6,7 @@ import express from "express";
 import ServiceCatRoutes from "./service-category/service-category.route.js";
 
 import ServiceCatBackOfficeRoutes from  "./service-category/service-category-back-office.route.js"
-import ServicePlanController from "./service-plan/service-plan.controller.js";
+import ServicePlanController from "./service-plan/service-plan.route.js";
 import OrderController from "./order/order.controller.js";
 // import RoleController from "../role/role.controller.js";
 // import MetaController from "../meta/meta.controller.js";
@@ -41,7 +41,7 @@ router.use("/v1/back-office", (req, res, next) => {
     
    // backOfficeRouter.use("/service-category", ServiceCatRoutes);
     backOfficeRouter.use("/plan", ServicePlanController);
-    backOfficeRouter.use("/order", OrderController);
+    //backOfficeRouter.use("/order", OrderController);
   
     backOfficeRouter(req, res, next);
   });

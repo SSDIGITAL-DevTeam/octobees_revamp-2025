@@ -1,4 +1,3 @@
-import express from "express";
 import {
   getAllServicePlan,
   getServiceCatById,
@@ -7,10 +6,9 @@ import {
   updateServiceCat,
 } from "./service-plan.service.js";
 import { z } from "zod";
-const router = express.Router();
 
-//Ambil semua data
-router.get("/", async (req, res) => {
+// Controller for fetching all service plans
+export const getAllServicePlanController = async (req, res) => {
   try {
     let { page = 1, limit = 10, search, orderBy, status } = req.query;
 
@@ -25,17 +23,17 @@ router.get("/", async (req, res) => {
       });
     }
 
-    const filters = { page, limit, orderBy : orderByParams, search, status };
+    const filters = { page, limit, orderBy: orderByParams, search, status };
     const data = await getAllServicePlan(filters);
 
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
-//Cari data berdasarkan ID/Slug
-router.get("/:id", async (req, res) => {
+// Controller for fetching service plan by ID
+export const getServiceCatByIdController = async (req, res) => {
   try {
     const id = req.params.id;
     const data = await getServiceCatById(id);
@@ -43,11 +41,10 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
-// polyclinicName, descriptions
+};
 
-//Tambah data
-router.post("/", async (req, res) => {
+// Controller for creating a new service plan
+export const createServiceCatController = async (req, res) => {
   try {
     const {
       name,
@@ -81,10 +78,10 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-});
+};
 
-//Hapus data
-router.delete("/:id", async (req, res) => {
+// Controller for deleting a service plan by ID
+export const deleteServiceCatByIdController = async (req, res) => {
   try {
     const id = req.params.id;
     await deleteServiceCatById(id);
@@ -92,10 +89,10 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
-//Ubah data - semua kolom harus terisi
-router.put("/:id", async (req, res) => {
+// Controller for updating a service plan by ID
+export const updateServiceCatController = async (req, res) => {
   try {
     const id = req.params.id;
     const {
@@ -133,10 +130,10 @@ router.put("/:id", async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-});
+};
 
-//Ubah data - hanya kolom yang diisi
-router.patch("/:id", async (req, res) => {
+// Controller for partially updating a service plan by ID
+export const patchServiceCatController = async (req, res) => {
   try {
     const id = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
@@ -153,6 +150,4 @@ router.patch("/:id", async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-});
-
-export default router;
+};

@@ -11,8 +11,8 @@ import routes from "./routes.js";
 //new
 // import ServiceCatController from "./service-category/service-category.controller.js";
 // import RoleController from "./role/role.controller.js";
-import ServicePlanController from "./service-plan/service-plan.controller.js";
-import OrderController from "./order/order.controller.js";
+// import ServicePlanController from "./service-plan/service-plan.route.js";
+// import OrderController from "./order/order.controller.js";
 // import MetaController from "./meta/meta.controller.js";
 // import PageController from "./pages/pages.controller.js";
 // import OrderController from "./order/order.controller.js";
