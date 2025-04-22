@@ -149,9 +149,11 @@ export const insertServiceCat = async (data) => {
 
 // Hapus plan service berdasarkan ID
 export const deleteServiceCat = async (id) => {
+
   try {
-    await db.delete(price).where(eq(price.planServiceId, id));
-    await db.delete(benefit).where(eq(benefit.planServiceId, id));
+    await db.delete(price).where(eq(price.idPlan, id));
+  
+    await db.delete(benefit).where(eq(benefit.idPlan, id));
     await db.delete(planService).where(eq(planService.id, id));
   } catch (error) {
     console.log(error);

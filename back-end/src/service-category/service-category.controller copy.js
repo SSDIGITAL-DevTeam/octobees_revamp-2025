@@ -1,3 +1,4 @@
+import express from "express";
 import {
   getAllServiceCat,
   getServiceCatById,
@@ -5,9 +6,12 @@ import {
   deleteServiceCatById,
   updateServiceCat,
 } from "./service-category.service.js";
+import { insertPage } from "../meta/meta.repository.js";
 import { z } from "zod";
+const router = express.Router();
 
-export const getAll = async (req, res) => {
+//Ambil semua data
+router.get("/", async (req, res) => {
   try {
     let { page = 1, limit = 10, status, orderBy, search } = req.query;
     page = Math.max(parseInt(page) || 1, 1);
@@ -23,13 +27,15 @@ export const getAll = async (req, res) => {
 
     const filters = { page, limit, status, orderBy: orderByParams, search };
     const data = await getAllServiceCat(filters);
+
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
-export const getById = async (req, res) => {
+//Cari data berdasarkan ID/Slug
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const { status } = req.query;
@@ -39,9 +45,11 @@ export const getById = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
+// polyclinicName, descriptions
 
-export const create = async (req, res) => {
+//Tambah data
+router.post("/", async (req, res) => {
   try {
     const { name, heading, description, status } = req.body;
     if (!name || !heading || !description || !status) {
@@ -58,9 +66,10 @@ export const create = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
 
-export const remove = async (req, res) => {
+//Hapus data
+router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     await deleteServiceCatById(id);
@@ -68,9 +77,10 @@ export const remove = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
-export const updateAll = async (req, res) => {
+//Ubah data - semua kolom harus terisi
+router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const { name, heading, description, status } = req.body;
@@ -88,9 +98,10 @@ export const updateAll = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
 
-export const updatePartial = async (req, res) => {
+//Ubah data - hanya kolom yang diisi
+router.patch("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
@@ -107,4 +118,6 @@ export const updatePartial = async (req, res) => {
       res.status(400).json({ error: error.message });
     }
   }
-};
+});
+
+export default router;

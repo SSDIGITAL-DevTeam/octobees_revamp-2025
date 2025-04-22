@@ -4,11 +4,12 @@ import cors from "cors";
 import path from "path";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import routes from "./routes.js";
 // import http from 'http'
 // import rateLimit from 'express-rate-limit'
 
 //new
-import ServiceCatController from "./service-category/service-category.controller.js";
+// import ServiceCatController from "./service-category/service-category.controller.js";
 // import RoleController from "./role/role.controller.js";
 import ServicePlanController from "./service-plan/service-plan.controller.js";
 import OrderController from "./order/order.controller.js";
@@ -79,15 +80,16 @@ app.use((req, res, next) => {
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// app.use("/uploads", express.static(__dirname + "/../upload"));
-
+app.use("/uploads", express.static(__dirname + "/../upload"));
+app.use("/api", routes);
 // app.use("/api/auth/refresh-token", refreshToken);
 // app.use("/api/auth/login", loginController);
 // app.use("/api/auth/logout", logoutController);
-app.use("/api/v1/service-category", ServiceCatController);
+// app.use("/api/v1/service-category", ServiceCatController);
+// app.use("/api/v1/plan", ServicePlanController);
+// app.use("/api/v1/order", OrderController);
 // app.use("/api/v1/role", RoleController);
-app.use("/api/v1/plan", ServicePlanController);
-app.use("/api/v1/order", OrderController);
+
 // app.use("/api/v1/meta", MetaController);
 // app.use("/api/v1/page", PageController);
 // app.use("/api/v1/order", OrderController);

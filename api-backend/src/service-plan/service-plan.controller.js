@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
     if (
       !name ||
       !type ||
-      prices.length === 0 ||
+      // prices.length === 0 ||
       !options ||
       !descriptions ||
       !categoryId ||

@@ -44,7 +44,7 @@ const dataSchema = z.object({
   options: z.enum([...optionsType]), // Tambah varian jika perlu
   descriptions: z.string(),
   categoryId: z.string().uuid(),
-  prices: z.array(PriceSchema),
+  prices: z.array(PriceSchema).nullable(), // <-- Bisa null sekarang
   benefits: z.array(BenefitSchema),
 });
 
@@ -89,7 +89,16 @@ const FormComponents = ({
 
   const checkShowPrice = watch("showPrice");
 
-  const handleInput = handleSubmit(async (value) => {
+  const handleInput = handleSubmit(async (newValue) => {
+   
+    let value = { ...newValue };
+
+    if (value.showPrice === false) {
+      const { prices, ...filterPrices } = value;
+      value.prices = null;
+    }
+   
+   
     try {
       const url = defaultValue ? `/plan/${defaultValue.id}` : "/plan";
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;

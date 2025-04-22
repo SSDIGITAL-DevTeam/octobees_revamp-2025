@@ -21,7 +21,7 @@ const dataSchema = z.object({
   heading: z.string(),
   description: z.string(),
 });
-
+import { Controller } from "react-hook-form";
 type DataSchema = z.infer<typeof dataSchema>;
 
 const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
@@ -46,11 +46,12 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
 
   const handleInput = handleSubmit(async (value) => {
     try {
+     
       const url = defaultValue ? `/service-category/${defaultValue.id}` : `/service-category`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast("Success", response.data.message);
-      router.push("/blog/blog-category");
+     // router.push("/blog/blog-category");
     } catch (error: any) {
       failedToast("Error",
         (error.response?.data?.error
@@ -67,10 +68,22 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Category Name" name="name" />
           <InputField control={control} label="Heading" name="heading" />
-          <Textarea
-              id="description"
-              placeholder="Enter description here..."
-  
+          <Controller
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <div className="flex flex-col space-y-2">
+                  <label htmlFor="description" className="font-medium">
+                    Description
+                  </label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter description here..."
+                    {...field}
+                    className="min-h-[120px]"
+                  />
+                </div>
+              )}
             />
           <RadioGroupField
             control={control}
