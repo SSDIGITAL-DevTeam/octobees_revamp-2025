@@ -1,6 +1,4 @@
-// routes/index.js
 import express from "express";
-
 // Controllers
 //import ServiceCatController from "./service-category/service-category.controller.js";
 import ServiceCatRoutes from "./service-category/service-category.route.js";
@@ -35,10 +33,8 @@ router.use("/v1/plan", ServicePlanController);
 router.use("/v1/order", OrderController);
 router.use("/v1/back-office", (req, res, next) => {
     const backOfficeRouter = express.Router();
-  
     // BACK-OFFICE ROUTES (same controllers, can be extended with auth middleware)
     backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
-    
    // backOfficeRouter.use("/service-category", ServiceCatRoutes);
     backOfficeRouter.use("/plan", ServicePlanController);
     //backOfficeRouter.use("/order", OrderController);
