@@ -1,0 +1,1 @@
+ALTER TABLE `user` RENAME COLUMN `status` TO `status_plan`;

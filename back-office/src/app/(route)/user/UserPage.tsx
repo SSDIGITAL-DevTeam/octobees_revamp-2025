@@ -121,7 +121,6 @@ export default function DataPage() {
             <h1 className="text-4xl font-semibold text-black">All Users</h1>
             <p>showing all users</p>
           </div>
-          {process.env.NEXT_PUBLIC_API_URL}
 
           <div className="flex items-center">
             <div className="flex gap-3">

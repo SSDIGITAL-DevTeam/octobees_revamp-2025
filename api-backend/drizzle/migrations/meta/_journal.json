@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1745393453621,
+      "tag": "0000_jittery_lake",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1745393560720,
+      "tag": "0001_spooky_psynapse",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1745393593633,
+      "tag": "0002_true_nuke",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1745396586872,
+      "tag": "0003_chemical_tag",
+      "breakpoints": true
+    }
+  ]
+}

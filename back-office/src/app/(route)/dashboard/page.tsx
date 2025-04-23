@@ -124,9 +124,7 @@ export default function Page(): JSX.Element {
   return (
     <main className="w-full flex flex-col gap-12">
       <Header title="Overview" label="Overview" />
-      <div>
-        NEXT_PUBLIC_API_URL:{process.env.NEXT_PUBLIC_API_URL}
-      </div>
+      
   
       <section className="flex flex-col gap-8 w-full min-h-[50vh] items-center pb-20">
         {/* User Section */}

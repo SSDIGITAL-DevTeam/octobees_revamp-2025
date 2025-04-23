@@ -1,8 +1,28 @@
 import { relations, sql } from 'drizzle-orm'
-import { boolean, datetime, double, json, mysqlEnum, mysqlTable, varchar } from 'drizzle-orm/mysql-core'
+import { boolean, datetime, double, json, mysqlEnum, mysqlTable, varchar,text ,timestamp} from 'drizzle-orm/mysql-core'
+import { v4 as uuidv7 } from 'uuid';
+// Enums
+export const planStatusEnum = mysqlEnum('status', ['Draft', 'Active', 'NonActive']);
+export const blogStatusEnum = mysqlEnum('blog_status', ['Published', 'Archived', 'Draft']);
 
+
+export const user = mysqlTable('user', {
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
+	name: varchar('name', { length: 255 }).notNull(),
+	email: varchar('email', { length: 255 }).notNull().unique(),
+	password: varchar('password', { length: 255 }).notNull(),
+	status: planStatusEnum.notNull(),
+	refreshToken: text('refresh_token'),
+	role: varchar('role', { length: 50 }).notNull(),
+	features: json('features'),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  });
+
+  
 export const planService = mysqlTable('planservice', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	//id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	name: varchar('name', { length: 191 }).notNull(),
 	type: mysqlEnum('type', ['Standard', 'Premium']).notNull(),
 	showPrice: boolean('showPrice').notNull().default(true),
@@ -13,7 +33,7 @@ export const planService = mysqlTable('planservice', {
 });
 
 export const categoryService = mysqlTable('categoryservice', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	name: varchar('name', { length: 191 }).notNull().unique(),
 	heading: varchar('heading', { length: 191 }).notNull(),
 	description: varchar('description', { length: 191 }).notNull(),
@@ -22,7 +42,7 @@ export const categoryService = mysqlTable('categoryservice', {
 });
 
 export const price = mysqlTable('price', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	curr: mysqlEnum('curr', ['IDR', 'SGR', 'MYR']).notNull(),
 	amount: double('amount').notNull(),
 	discount: double('discount').notNull(),
@@ -30,13 +50,13 @@ export const price = mysqlTable('price', {
 });
 
 export const benefit = mysqlTable('benefit', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	value: varchar('value', { length: 191 }).notNull(),
 	idPlan: varchar('idPlan', { length: 191 }).notNull()
 });
 
 export const role = mysqlTable('role', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	name: varchar('name', { length: 191 }).notNull(),
 	email: varchar('email', { length: 191 }).notNull().unique(),
 	password: varchar('password', { length: 191 }).notNull(),
@@ -46,35 +66,43 @@ export const role = mysqlTable('role', {
 	features: json('features').notNull()
 });
 
-export const blog = mysqlTable('blog', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
-	title: varchar('title', { length: 191 }).notNull(),
-	image: varchar('image', { length: 191 }).notNull(),
-	content: varchar('content', { length: 191 }).notNull(),
-	status: mysqlEnum('status', ['Published', 'Takedown', 'Draft']).notNull(),
+export const blogCategory = mysqlTable('blog_category', {
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
+	name: varchar('name', { length: 255 }).notNull().unique(),
+	slug: varchar('slug', { length: 255 }).notNull().unique(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+	status: boolean('status').notNull(),
+  });
+  
+  export const blog = mysqlTable('blog', {
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
+	title: varchar('title', { length: 255 }).notNull(),
+	image: text('image').notNull(),
+	content: text('content').notNull(),
+	slug: varchar('slug', { length: 255 }).notNull().unique(),
+	status: blogStatusEnum.notNull(),
 	favorite: boolean('favorite').notNull(),
-	categoryId: varchar('categoryId', { length: 191 }).notNull(),
-	createdAt: datetime('createdAt', { fsp: 3 }).default(sql`CURRENT_TIMESTAMP`),
-	updatedAt: datetime('updatedAt', { fsp: 3 }),
-	roleId: varchar('roleId', { length: 191 })
-});
-
-export const blogCategory = mysqlTable('blogcategory', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
-	name: varchar('name', { length: 191 }).notNull().unique(),
-	slug: varchar('slug', { length: 191 }).notNull().unique(),
-	status: mysqlEnum('status', ['Draft', 'Active', 'NonActive']).notNull()
-});
+	categoryId: varchar('category_id', { length: 36 })
+	  .notNull()
+	  .references(() => blogCategory.id, { onDelete: 'cascade' }),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+	userId: varchar('user_id', { length: 36 })
+	  .notNull()
+	  .references(() => user.id, { onDelete: 'cascade' }),
+  });
+  
 
 export const pages = mysqlTable('pages', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	page: varchar('page', { length: 191 }).notNull(),
 	slug: varchar('slug', { length: 191 }).notNull().unique(),
 	categoryServiceId: varchar('categoryServiceId', { length: 191 }).unique()
 });
 
 export const metaTag = mysqlTable('metatag', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	key: varchar('key', { length: 191 }).notNull(),
 	value: varchar('value', { length: 191 }).notNull(),
 	content: varchar('content', { length: 191 }).notNull(),
@@ -82,7 +110,7 @@ export const metaTag = mysqlTable('metatag', {
 });
 
 export const order = mysqlTable('order', {
-	id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
 	amount: double('amount').notNull(),
 	bussiness: varchar('bussiness', { length: 191 }).notNull(),
 	categoryId: varchar('categoryId', { length: 191 }).notNull(),
@@ -134,22 +162,22 @@ export const roleRelations = relations(role, ({ many }) => ({
 	blogs: many(blog, { relationName: 'BlogToRole' })
 }));
 
-export const blogRelations = relations(blog, ({ one }) => ({
-	category: one(blogCategory, {
-		relationName: 'BlogToBlogCategory',
-		fields: [blog.categoryId],
-		references: [blogCategory.id]
-	}),
-	role: one(role, {
-		relationName: 'BlogToRole',
-		fields: [blog.roleId],
-		references: [role.id]
-	})
-}));
+// export const blogRelations = relations(blog, ({ one }) => ({
+// 	category: one(blogCategory, {
+// 		relationName: 'BlogToBlogCategory',
+// 		fields: [blog.categoryId],
+// 		references: [blogCategory.id]
+// 	}),
+// 	role: one(role, {
+// 		relationName: 'BlogToRole',
+// 		fields: [blog.roleId],
+// 		references: [role.id]
+// 	})
+// }));
 
-export const blogCategoryRelations = relations(blogCategory, ({ many }) => ({
-	blogs: many(blog, { relationName: 'BlogToBlogCategory' })
-}));
+// export const blogCategoryRelations = relations(blogCategory, ({ many }) => ({
+// 	blogs: many(blog, { relationName: 'BlogToBlogCategory' })
+// }));
 
 export const pagesRelations = relations(pages, ({ many, one }) => ({
 	meta: many(metaTag, { relationName: 'MetaTagToPages' }),
