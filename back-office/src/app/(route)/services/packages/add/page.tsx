@@ -27,7 +27,9 @@ export default function AddPage() : JSX.Element {
           <p>Input new package data</p>
         </div>
         <div className="w-full">
+        
           <FormComponents data={data}/>
+      
         </div>
       </section>
     </main>

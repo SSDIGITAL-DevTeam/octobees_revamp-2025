@@ -1,4 +1,4 @@
-import FormComponents from "@/components/layout/form/FormCategory";
+import FormComponents from "@/components/layout/form/FormBlogCategory";
 import Header from "@/components/layout/header/Header";
 
 const AddPage = () => {

@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
-
+import { Controller } from "react-hook-form";
 const planType = ["Standard", "Premium"] as const;
 const statusType = ["Draft", "Active", "NonActive"] as const;
 const optionsType = ["One-time", "Monthly", "Bi-Monthly", "3 Months", "6 Months", "Yearly"] as const;
@@ -67,30 +67,38 @@ const FormComponents = ({
       status: "Active",
       options: "Monthly",
       descriptions: "",
-      categoryId: "",
+       categoryId: (defaultValue?.categoryId)?defaultValue?.categoryId:"",
+      //categoryId: "019665a9-16ef-7789-93dc-d06fa9ef180d",
+      
       prices: [
         { curr: "SGR", amount: null, discount: null },
         { curr: "MYR", amount: null, discount: null },
         { curr: "IDR", amount: null, discount: null },
       ],
-      benefits: [{ value: "" }],
+      benefits:(defaultValue?.benefits)?defaultValue?.benefits: [{ value: "" }],
     },
   });
+  const { handleSubmit, control, reset, watch,setValue } = form;
+  //setValue("categoryId", defaultValue.categoryId);
 
-  const { handleSubmit, control, reset, watch } = form;
 
   useEffect(() => {
     if (defaultValue) {
-      reset(defaultValue);
-    }
+      reset({
+        ...defaultValue,
+      });
+    }      
   }, [defaultValue]);
+
+ 
+  
 
   const router = useRouter()
 
   const checkShowPrice = watch("showPrice");
 
   const handleInput = handleSubmit(async (newValue) => {
-   
+    //alert("test")
     let value = { ...newValue };
 
     if (value.showPrice === false) {
@@ -129,10 +137,11 @@ const FormComponents = ({
     control,
     name: "prices",
   });
-
+  
   return (
     <Form {...form}>
       <form onSubmit={handleInput}>
+       
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <div className="col-span-2">
             <RadioGroupField
@@ -143,12 +152,14 @@ const FormComponents = ({
             />
           </div>
           <InputField control={control} label="Package Name" name="name" />
+          
           <SelectField
             control={control}
             label="Category"
             name="categoryId"
             data={categoryArray}
-          />
+          />  
+          
           <div className="col-span-2">
             <SwitchField
               control={control}
@@ -242,6 +253,7 @@ const FormComponents = ({
             </Button>
           </div>
         </div>
+      
         <div className="w-full flex justify-between items-center mt-8 sm:mt-12">
           <Button
             onClick={() => router.push("/services/packages")}

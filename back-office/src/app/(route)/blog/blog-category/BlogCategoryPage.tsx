@@ -33,6 +33,7 @@ export default function DataPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+
   useEffect(() => {
     const urlPage = Number(searchParams.get("page")) || 1;
     setPage(urlPage);
@@ -84,14 +85,15 @@ export default function DataPage() {
   };
   const headings = ["Category Name", "Status", "Action"];
   const data = packages?.data.map((item: any) => ({
-    "Category Name": item.name,
-    "Status": item.status,
+   // "Category Name": item.name,
+    "Category Name": item?.blogCategory.name,
+    "Status": item.blogCategory.status,
     "Action": (
       <div className="flex items-center gap-5">
-        <Link href={`/blog/blog-category/edit?id=${item.id}`} className="text-blue-500">
+        <Link href={`/blog/blog-category/edit?id=${item.blogCategory.id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(item.id)} className="text-red-500">
+        <button onClick={() => handleDelete(item.blogCategory.id)} className="text-red-500">
           <Trash color="red" size={15} />
         </button>
       </div>
@@ -106,6 +108,7 @@ export default function DataPage() {
 
   return (
     <main className="w-full flex flex-col gap-12">
+      
       <Header title={"Blog Category"} label={"Blog Management"} />
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
       <div className="w-full flex justify-between items-center">
@@ -154,6 +157,7 @@ export default function DataPage() {
                   setPage={handleChangePage}
                   totalPage={packages?.pagination.totalPages || 1}
                 />
+               
       </section>
     </main>
   );

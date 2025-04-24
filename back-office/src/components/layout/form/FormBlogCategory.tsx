@@ -11,7 +11,7 @@ import InputAreaField from "@/components/partials/form/InputAreaField";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
-import { statusList } from "./FormComponents";
+// import { statusList } from "./FormComponents";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +23,19 @@ const dataSchema = z.object({
 });
 import { Controller } from "react-hook-form";
 type DataSchema = z.infer<typeof dataSchema>;
+
+
+export const statusList = [
+  {
+    value: "1",
+    title: "Active",
+  },
+  {
+    value:"0",
+    title: "Non Active",
+  },
+
+];
 
 const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   const form = useForm<DataSchema>({
@@ -47,7 +60,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   const handleInput = handleSubmit(async (value) => {
     try {
      
-      const url = defaultValue ? `/service-category/${defaultValue.id}` : `/service-category`;
+      const url = defaultValue ? `/blog-category/${defaultValue.id}` : `/blog-category`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast("Success", response.data.message);
@@ -66,26 +79,9 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
     <Form {...form}>
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
-          
           <InputField control={control} label="Category Name" name="name" />
-          <InputField control={control} label="Heading" name="heading" />
-          <Controller
-              control={control}
-              name="description"
-              render={({ field }) => (
-                <div className="flex flex-col space-y-2">
-                  <label htmlFor="description" className="font-medium">
-                    Description
-                  </label>
-                  <Textarea
-                    id="description"
-                    placeholder="Enter description here..."
-                    {...field}
-                    className="min-h-[120px]"
-                  />
-                </div>
-              )}
-            />
+         
+        
           <RadioGroupField
             control={control}
             label="Category Status"

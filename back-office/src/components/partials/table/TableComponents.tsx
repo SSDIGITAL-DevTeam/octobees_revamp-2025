@@ -44,12 +44,12 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
     );
   };
 
-  const checkStatus = (status: string) => {
+  const checkStatus = (status: string | boolean) => {
     return (
     <span
       className={`py-1 px-3 rounded-lg text-xs flex items-center gap-2 w-fit
           ${
-            status === "Active" || status === "Published"
+            status === "Active" || status === "Published" || status === true
               ? "bg-green-100 text-green-700"
               : "bg-red-100 text-red-700"
           }
@@ -57,7 +57,7 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
     >
       <span
         className={`h-2 w-2 rounded-full ${
-          status === "Active" || status === "Published" ? "bg-green-700" : "bg-red-700"
+          status === "Active" || status === "Published"   || status === true? "bg-green-700" : "bg-red-700"
         }`}
       />
       {status}

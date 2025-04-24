@@ -8,7 +8,7 @@ const FormComponents = lazy(() => import("@/components/layout/form/FormPackage")
 
 const EditPage = () => {
   const [category, setCategory] = useState();
-  const [defaultValue, setDefaultValue] = useState();
+  const [defaultValue, setDefaultValue] = useState(null);
   const searchParams = useSearchParams();
   const query = searchParams.get("id")
 
@@ -39,9 +39,13 @@ const EditPage = () => {
           <p>Edit package data</p>
         </div>
         <div className="w-full">
-          <Suspense fallback={<div>Loading...</div>}>
-            <FormComponents data={category} defaultValue={defaultValue} />
-          </Suspense>
+          {defaultValue !==null &&
+          //  <Suspense fallback={<div>Loading...</div>}>
+              <FormComponents data={category} defaultValue={defaultValue} />
+            // </Suspense>
+          }
+         
+          {/* {JSON.stringify(defaultValue)} */}
         </div>
       </section>
     </main>

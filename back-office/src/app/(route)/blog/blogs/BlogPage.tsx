@@ -114,6 +114,7 @@ export default function DataPage() {
   const headings = ["Title", "Category", "Status", "Action"];
   const data = packages?.data.map((item: any) => ({
     "Title": item.title,
+   // "Category": item?.category?.name,
     "Category": item?.category?.name,
     "Status": item.status,
     "Action": (
@@ -146,6 +147,7 @@ export default function DataPage() {
       String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+
 
   return (
     <main className="w-full flex flex-col gap-12">
@@ -199,6 +201,7 @@ export default function DataPage() {
           totalPage={packages?.pagination.totalPages || 1}
         />
       </section>
+      {/* {JSON.stringify(packages?.data)} */}
     </main>
   );
 }

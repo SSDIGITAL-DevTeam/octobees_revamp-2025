@@ -4,9 +4,10 @@ import Header from "@/components/layout/header/Header";
 import { Suspense, lazy, useEffect, useState } from "react";
 import axios from "axios";
 import { axiosInstance } from "@/lib/axios";
-const FormComponents = lazy(() => import("@/components/layout/form/FormCategory"));
+const FormComponents = lazy(() => import("@/components/layout/form/FormBlogCategory"));
 
 const EditPage = () => {
+  
   const [defaultValue, setDefaultValue] = useState();
   const searchParams = useSearchParams();
   const query = searchParams.get("id")
@@ -16,7 +17,11 @@ const EditPage = () => {
       try {
         if (!query) return;
         const resCategory = await axiosInstance.get(`/blog-category/${query}`);
-        setDefaultValue(resCategory.data);
+        // alert(
+        //   JSON.stringify(resCategory.data.blogCategory)
+          
+        // )
+        setDefaultValue(resCategory?.data?.blogCategory);
 
       } catch (error) {
         console.error(error);
@@ -37,6 +42,7 @@ const EditPage = () => {
           <Suspense fallback={<div>Loading...</div>}>
             <FormComponents defaultValue={defaultValue} />
           </Suspense>
+        
         </div>
       </section>
     </main>

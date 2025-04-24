@@ -57,14 +57,14 @@ export const findBlogCatById = async (where) => {
         let baseQuery = db
             .select({
                 blogCategory,
-                blog
+                // blog
             })
             .from(blogCategory)
             .leftJoin(blog, eq(blog.categoryId, blogCategory.id))
 
         if (where) baseQuery = baseQuery.where(where)
         const datas = await baseQuery.limit(1)
-        return datas
+        return datas[0]
     } catch (error) {
         console.log('GET / error: ', error)
         throw new Error('Error fetching all blog categories')

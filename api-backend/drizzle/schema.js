@@ -2,8 +2,8 @@ import { relations, sql } from 'drizzle-orm'
 import { boolean, datetime, double, json, mysqlEnum, mysqlTable, varchar,text ,timestamp} from 'drizzle-orm/mysql-core'
 import { v4 as uuidv7 } from 'uuid';
 // Enums
-export const planStatusEnum = mysqlEnum('status', ['Draft', 'Active', 'NonActive']);
-export const blogStatusEnum = mysqlEnum('blog_status', ['Published', 'Archived', 'Draft']);
+export const userStatusEnum = mysqlEnum('status', ['Draft', 'Active', 'NonActive']);
+export const blogStatusEnum = mysqlEnum('status', ['Published', 'Archived', 'Draft']);
 
 
 export const user = mysqlTable('user', {
@@ -11,7 +11,7 @@ export const user = mysqlTable('user', {
 	name: varchar('name', { length: 255 }).notNull(),
 	email: varchar('email', { length: 255 }).notNull().unique(),
 	password: varchar('password', { length: 255 }).notNull(),
-	status: planStatusEnum.notNull(),
+	status: userStatusEnum.notNull(),
 	refreshToken: text('refresh_token'),
 	role: varchar('role', { length: 50 }).notNull(),
 	features: json('features'),
