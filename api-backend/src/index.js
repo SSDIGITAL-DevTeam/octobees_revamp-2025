@@ -96,4 +96,5 @@ app.use("/api", routes);
 // app.use("/api/v1/blog-category", BlogCategoryController);
 // app.use("/api/v1/blog", upload.single("image"), BlogController);
 
-app.listen(PORT, () => console.log(`Server Running On Port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server Running On Port ${PORT}`));
+export default server;
