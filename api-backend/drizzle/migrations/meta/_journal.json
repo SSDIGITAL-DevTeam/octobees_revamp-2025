@@ -29,6 +29,13 @@
       "when": 1745396586872,
       "tag": "0003_chemical_tag",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1745546520499,
+      "tag": "0004_premium_ultimo",
+      "breakpoints": true
     }
   ]
 }
