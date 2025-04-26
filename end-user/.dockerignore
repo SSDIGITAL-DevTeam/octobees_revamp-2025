@@ -1,9 +1,20 @@
-# Ignore node_modules & Git folder
+# Abaikan semua file env kecuali yang production
+.env
+.env.*
+!.env.production
+
+# Folder & file yang biasanya tidak perlu dibawa ke image
 node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+coverage
+dist
+build
+*.log
+.DS_Store
+
+# Folder Git
 .git
-
-# Ignore semua env file...
-.env*
-
-# ...TAPI jangan abaikan yang ini:
-!*.env.production
+.gitignore
