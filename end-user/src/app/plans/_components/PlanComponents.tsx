@@ -37,9 +37,9 @@ type Currency = {
 };
 
 const currencies: Currency[] = [
-  { id: 0, code: "IDR", symbol: "Rp" },
+  { id: 0, code: "SGD", symbol: "S$" },
   { id: 1, code: "MYR", symbol: "RM" },
-  { id: 2, code: "SGD", symbol: "S$" },
+  { id: 2, code: "IDR", symbol: "Rp" },
 ];
 
 export default function PlanComponents(params: { data: PlanType[] }): JSX.Element {
