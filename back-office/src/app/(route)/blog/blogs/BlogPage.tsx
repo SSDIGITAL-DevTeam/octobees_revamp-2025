@@ -132,10 +132,10 @@ export default function DataPage() {
           />
         </button>
 
-        <Link href={`/blog/blogs/edit?id=${item.id}`} className="text-blue-500">
+        <Link href={`/blog/blogs/edit?id=${item.blog.id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(item.id)} className="text-red-500">
+        <button onClick={() => handleDelete(item.blog.id)} className="text-red-500">
           <Trash color="red" size={15} />
         </button>
       </div>

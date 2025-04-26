@@ -142,7 +142,10 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
         <Form {...form}>
             <form onSubmit={handleInput}>
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
-                    <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
+           
+                
+                    <SelectField control={control} label="Add Category" name="categoryId" data={data} />
+                    {/* <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} /> */}
                     <ImageField defaultImage={previewUrl} setImageFile={setImageFile} control={control} label="Add Cover Image" name="image" />
                     <InputField control={control} label="Add Title" name="title" />
                     <RadioGroupField control={control} name="status" label="Status" data={statusList} />
@@ -173,4 +176,4 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
 
 
 
-export default withAuth(FormBlog);
+export default FormBlog;

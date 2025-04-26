@@ -28,6 +28,7 @@ const AddPage = () => {
         </div>
         <div className="w-full">
           <FormBlog data={data || []}/>
+          
         </div>
       </section>
     </main>

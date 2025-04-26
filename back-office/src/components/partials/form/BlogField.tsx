@@ -34,7 +34,7 @@ export default function BlogField({ control, name, label }: Props) {
                                 toolbar:
                                     "undo redo | formatselect | bold italic backcolor | \
             alignleft aligncenter alignright alignjustify | \
-            bullist numlist outdent indent | removeformat | help",
+            bullist numlist outdent indent | image | removeformat | help",
                             }}
                         /></FormControl>
                     <FormMessage />

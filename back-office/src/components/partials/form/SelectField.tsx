@@ -25,8 +25,10 @@ type Props = {
 };
 
 type Data = {
-  value: string;
-  title: string;
+  blogCategory: {
+    id: string;
+    name: string;
+  };
 };
 
 // const SelectField = ({ control, name, label, data }: Props) => {
@@ -71,8 +73,10 @@ const SelectField = ({ control, name, label, data }: Props) => {
             </FormControl>
             <SelectContent>
               {data.map((item, index) => (
-                <SelectItem key={index} value={item.value}>
-                  {item.title}
+                <SelectItem key={index} value={item?.blogCategory?.id}>
+               
+                  {item?.blogCategory?.name}
+              
                 </SelectItem>
               ))}
             </SelectContent>
