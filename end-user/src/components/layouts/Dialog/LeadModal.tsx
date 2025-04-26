@@ -101,6 +101,7 @@ export function LeadModal(params: {
     const web = (process.env.NEXT_PUBLIC_SPREADSHEET_API)?.toString() || ""
 
     try {
+      console.log(dataForSpreadsheet)
       const response = await axios.post(web, new URLSearchParams(dataForSpreadsheet), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

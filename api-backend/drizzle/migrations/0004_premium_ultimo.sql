@@ -1,1 +1,0 @@
-ALTER TABLE `blog` RENAME COLUMN `blog_status` TO `status`;
