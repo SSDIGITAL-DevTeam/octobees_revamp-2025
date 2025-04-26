@@ -1,24 +1,25 @@
 "use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/partials/form/InputField";
-import InputAreaField from "@/components/partials/form/InputAreaField";
+// import InputAreaField from "@/components/partials/form/InputAreaField";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+// import axios from "axios";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
-import TinyEditor from "@/components/partials/form/BlogField";
+// import TinyEditor from "@/components/partials/form/BlogField";
 import BlogField from "@/components/partials/form/BlogField";
 import SelectField from "@/components/partials/form/SelectField";
 import ImageField from "@/components/partials/form/ImageField";
 import { useAuthStore } from "@/app/store/login";
-import { withAuth } from "@/hoc/withAuth";
+// import { withAuth } from "@/hoc/withAuth";
 import { axiosInstance } from "@/lib/axios";
+import { jwtDecode } from "jwt-decode";
 
 const blogStatus = [
     "Published",
@@ -91,7 +92,7 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
 
     useEffect(() => {
         if (defaultValue?.image) {
-            setPreviewUrl(`http://localhost:3005/uploads/${defaultValue.image}`);
+            setPreviewUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${defaultValue.image}`);
         }
     }, [defaultValue]);
 
@@ -104,19 +105,25 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
                 title: c.name
             }
         })
+
     const handleInput = handleSubmit(async (value) => {
         try {
+            const token = sessionStorage.getItem("token");
+            if (!token) {
+                router.push("/auth/login");
+                return;
+            }
+            const {id : userId} = jwtDecode(token);
             const formData = new FormData();
             formData.append("title", value.title);
             formData.append("content", value.content);
             formData.append("status", value.status);
             formData.append("favorite", String(value.favorite));
             formData.append("categoryId", value.categoryId);
-            formData.append("roleId", id);
+            formData.append("userId", userId || id);
             if (imageFile) {
                 formData.append("image", imageFile);
             }
-
             const url = defaultValue
                 ? `/blog/${defaultValue.id}`
                 : `/blog`;
@@ -144,8 +151,8 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
            
                 
-                    <SelectField control={control} label="Add Category" name="categoryId" data={data} />
-                    {/* <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} /> */}
+                    {/* <SelectField control={control} label="Add Category" name="categoryId" data={data} /> */}
+                    <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
                     <ImageField defaultImage={previewUrl} setImageFile={setImageFile} control={control} label="Add Cover Image" name="image" />
                     <InputField control={control} label="Add Title" name="title" />
                     <RadioGroupField control={control} name="status" label="Status" data={statusList} />

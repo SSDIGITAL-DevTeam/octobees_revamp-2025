@@ -24,7 +24,7 @@ type CategoryType = {
 };
 
 export default function DataPage() {
-  const [packages, setPackages] = useState<CategoryType | null>(null);
+  const [blogCats, setBlogCats] = useState<CategoryType | null>(null);
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [refetch, setRefetch] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export default function DataPage() {
   };
 
   const handleNext = () => {
-    if (packages && page < packages.pagination.totalPages) {
+    if (blogCats && page < blogCats.pagination.totalPages) {
       handleChangePage(page + 1);
     }
   };
@@ -66,7 +66,7 @@ export default function DataPage() {
         const response = await axiosInstance.get("/blog-category", {
           params: { limit: 4, page },
         });
-        setPackages(response.data);
+        setBlogCats(response.data);
       } catch (error: any) {
         setErr(error.response?.data?.error || error.response?.statusText || "Error fetching data");
       }
@@ -84,21 +84,23 @@ export default function DataPage() {
     }
   };
   const headings = ["Category Name", "Status", "Action"];
-  const data = packages?.data.map((item: any) => ({
+  const data = blogCats?.data.map((item: any) => ({
    // "Category Name": item.name,
-    "Category Name": item?.blogCategory.name,
-    "Status": item.blogCategory.status,
+    "Category Name": item?.name,
+    "Status": item.status,
     "Action": (
       <div className="flex items-center gap-5">
-        <Link href={`/blog/blog-category/edit?id=${item.blogCategory.id}`} className="text-blue-500">
+        <Link href={`/blog/blog-category/edit?id=${item.id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(item.blogCategory.id)} className="text-red-500">
+        <button onClick={() => handleDelete(item.id)} className="text-red-500">
           <Trash color="red" size={15} />
         </button>
       </div>
     ),
   }));
+
+  console.log(blogCats?.data)
 
   const filteredData = data?.filter((row: any) =>
     headings.some((key) =>
@@ -155,7 +157,7 @@ export default function DataPage() {
                   handlePrev={handlePrevious}
                   page={page}
                   setPage={handleChangePage}
-                  totalPage={packages?.pagination.totalPages || 1}
+                  totalPage={blogCats?.pagination.totalPages || 1}
                 />
                
       </section>

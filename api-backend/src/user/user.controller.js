@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+export const getAll = async (req, res) => {
   try {
     // console.log("sdsdf")
     let { page = 1, limit = 10, status,search, orderBy, createdAt } = req.query;
@@ -31,10 +31,10 @@ router.get("/", async (req, res) => {
   } catch (error) {
     res.status(400).json(error);
   }
-});
+};
 
 //Cari data berdasarkan ID
-router.get("/:id", async (req, res) => {
+export const getById = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -43,10 +43,10 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json(error);
   }
-});
+};
 
 //Tambah data
-router.post("/", async (req, res) => {
+export const create = async (req, res) => {
   try {
     const { name, email, password, status, role } = req.body;
     if (!name || !email || !password || !status || !role) {
@@ -60,10 +60,10 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
 //Hapus data
-router.delete("/:id", async (req, res) => {
+export const remove = async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -72,10 +72,10 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
 //Ubah data - semua kolom harus terisi
-router.put("/:id", async (req, res) => {
+export const put = async (req, res) => {
   try {
     const { name, email, password, status, role, features } = req.body;
 
@@ -88,10 +88,10 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
 //Ubah data - hanya kolom yang diisi
-router.patch("/:id", async (req, res) => {
+export const update = async (req, res) => {
   try {
     const id = req.params.id;
     //Buat sebuah kondisi ketika ada kolom yang tidak terisi
@@ -103,6 +103,6 @@ router.patch("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+};
 
-export default router;
+// export default router;

@@ -5,9 +5,9 @@ import { blog, blogCategory } from "../../drizzle/schema.js";
 export const findAllBlogCats = async (skip, limit, where, orderBy) => {
     try {
             let baseQuery = db
-                .select({
+                .select(
                     blogCategory,
-                })
+                )
                 .from(blogCategory)
                 // .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
                 // .leftJoin(user, eq(blog.userId, user.id))
@@ -37,9 +37,9 @@ export const findAllBlogCats = async (skip, limit, where, orderBy) => {
 export const findBlogCatByName = async (name) => {
     try {
         let baseQuery = db
-            .select({
+            .select(
                 blogCategory,
-            })
+            )
             .from(blogCategory)
             .leftJoin(blog, eq(blog.categoryId, blogCategory.id))
             .where(eq(blogCategory.name, name))
@@ -55,10 +55,10 @@ export const findBlogCatByName = async (name) => {
 export const findBlogCatById = async (where) => {
     try {
         let baseQuery = db
-            .select({
+            .select(
                 blogCategory,
                 // blog
-            })
+            )
             .from(blogCategory)
             .leftJoin(blog, eq(blog.categoryId, blogCategory.id))
 

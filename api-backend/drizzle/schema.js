@@ -3,7 +3,7 @@ import { boolean, datetime, double, json, mysqlEnum, mysqlTable, varchar,text ,t
 import { v4 as uuidv7 } from 'uuid';
 // Enums
 export const userStatusEnum = mysqlEnum('status', ['Draft', 'Active', 'NonActive']);
-export const blogStatusEnum = mysqlEnum('status', ['Published', 'Archived', 'Draft']);
+export const blogStatusEnum = mysqlEnum('status', ['Published', 'Takedown', 'Draft']);
 
 
 export const user = mysqlTable('user', {

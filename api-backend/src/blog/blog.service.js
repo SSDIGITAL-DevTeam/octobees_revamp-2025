@@ -137,7 +137,7 @@ export const createBlog = async (payload) => {
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '')
-
+console.log(payload.status)
         await insertBlog({ ...payload, slug })
     } catch (error) {
         console.error('POST / error:', error)

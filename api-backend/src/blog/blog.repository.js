@@ -54,7 +54,7 @@ export const findBlogById = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog: blog,
+                blog,
                 user: {
                     id: user.id,
                     name: user.name,
@@ -81,7 +81,7 @@ export const findBlogBySlug = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog: blog,
+                blog,
                 user: {
                     id: user.id,
                     name: user.name,

@@ -46,64 +46,70 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
 
   const checkStatus = (status: string | boolean) => {
     return (
-    <span
-      className={`py-1 px-3 rounded-lg text-xs flex items-center gap-2 w-fit
-          ${
-            status === "Active" || status === "Published" || status === true
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }
-        `}
-    >
       <span
-        className={`h-2 w-2 rounded-full ${
-          status === "Active" || status === "Published"   || status === true? "bg-green-700" : "bg-red-700"
-        }`}
-      />
-      {status}
-    </span>
-  )}
+        className={`py-1 px-3 rounded-lg text-xs flex items-center gap-2 w-fit
+        ${status === "Active" || status === "Published" || status == true
+            ? "bg-green-100 text-green-700"
+            : status === "NonActive" || status == "Takedown" || status == false
+              ? "bg-red-100 text-red-700"
+              : "bg-yellow-100 text-yellow-700"
+          }
+      `}
+      >
+        <span
+          className={`h-2 w-2 rounded-full ${status === "Active" || status === "Published" || status == true
+            ? "bg-green-700"
+            : status === "NonActive" || status == "Takedown" || status == false
+              ? "bg-red-700"
+              : "bg-yellow-700"
+            }`}
+        />
+        {typeof status === "string" ? status : status ? "Active" : "NonActive"}
+      </span>
+
+    )
+  }
 
   return (
     <>
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {headings.map((heading) => (
-            <TableHead
-              key={heading}
-              onClick={() => handleSort(heading)}
-              className="cursor-pointer select-none hover:text-red-700"
-            >
-              {heading}{" "}
-              {sortConfig?.key === heading && (
-                <span className="ml-1 inline-block">
-                  {sortConfig.direction === "asc" ? (
-                    <ChevronUp size={10} />
-                  ) : (
-                    <ChevronDown size={10} />
-                  )}
-                </span>
-              )}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sortedData.map((row, rowIndex) => (
-          <TableRow key={rowIndex}>
-            {headings.map((key) => (
-              <TableCell key={`${rowIndex}-${key}`} className="p-2">
-                {key == "Status" ? checkStatus(row[key]) : row[key]}
-              </TableCell>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {headings.map((heading) => (
+              <TableHead
+                key={heading}
+                onClick={() => handleSort(heading)}
+                className="cursor-pointer select-none hover:text-red-700"
+              >
+                {heading}{" "}
+                {sortConfig?.key === heading && (
+                  <span className="ml-1 inline-block">
+                    {sortConfig.direction === "asc" ? (
+                      <ChevronUp size={10} />
+                    ) : (
+                      <ChevronDown size={10} />
+                    )}
+                  </span>
+                )}
+              </TableHead>
             ))}
           </TableRow>
-        ))}
-      </TableBody>
+        </TableHeader>
+        <TableBody>
+          {sortedData.map((row, rowIndex) => (
+            <TableRow key={rowIndex}>
+              {headings.map((key) => (
+                <TableCell key={`${rowIndex}-${key}`} className="p-2">
+                  {key == "Status" ? checkStatus(row[key]) : row[key]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
 
-      
-    </Table>
-   
+
+      </Table>
+
     </>
   );
 };

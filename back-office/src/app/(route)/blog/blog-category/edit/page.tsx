@@ -21,7 +21,7 @@ const EditPage = () => {
         //   JSON.stringify(resCategory.data.blogCategory)
           
         // )
-        setDefaultValue(resCategory?.data?.blogCategory);
+        setDefaultValue(resCategory?.data);
 
       } catch (error) {
         console.error(error);
@@ -29,6 +29,7 @@ const EditPage = () => {
     };
     fetchData();
   }, [query]);
+  // console.log(defaultValue);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">

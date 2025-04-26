@@ -2,6 +2,7 @@
 import FormBlog from "@/components/layout/form/FormBlog";
 import Header from "@/components/layout/header/Header";
 import { axiosInstance } from "@/lib/axios";
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect } from "react";
 
 const AddPage = () => {
@@ -11,12 +12,14 @@ const AddPage = () => {
     const fetchCategory = async () => {
       const res = await axiosInstance.get(
         "/blog-category",
-        {params : {status : "Active"}}
+        { params: { status: true } }
       );
       setData(res.data.data);
     };
     fetchCategory();
   }, []);
+
+  // console.log(data);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
@@ -27,8 +30,8 @@ const AddPage = () => {
           <p>Input new blog data</p>
         </div>
         <div className="w-full">
-          <FormBlog data={data || []}/>
-          
+          <FormBlog data={data || []} />
+
         </div>
       </section>
     </main>

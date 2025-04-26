@@ -12,8 +12,8 @@ import OrderController from "./order/order.controller.js";
 import BlogCategoryController from "./blog-category/blog-category.controller.js";
 import BlogController from "./blog/blog.controller.js";
 import { upload } from "./middleware/uploadImage.js";
-import UserController from "./user/user.controller.js";
-// import loginController from "./auth/login/login.controller.js";
+import UserController from "./user/user.route.js";
+import loginController from "./auth/login/login.controller.js";
 // import refreshToken from "./auth/refresh-token/refresh.controller.js";
 // import logoutController from "./auth/logout/logout.controller.js";
 
@@ -26,7 +26,7 @@ const router = express.Router();
 
 //Auth Routes
 // router.use("/auth/refresh-token", refreshToken);
-// router.use("/auth/login", loginController);
+router.use("/auth/login", loginController);
 // router.use("/auth/logout", logoutController);
 
 // API Routes
@@ -37,12 +37,12 @@ router.use("/v1/blog-category", BlogCategoryController);
 router.use("/v1/blog", upload.single("image"), BlogController);
 //router.use("/v1/user", BlogCategoryController);
  router.use("/v1/user", UserController);
-
-//router.use("/v1/blog", BlogController);
-router.use("/v1/back-office", (req, res, next) => {
-    const backOfficeRouter = express.Router();
-    // BACK-OFFICE ROUTES (same controllers, can be extended with auth middleware)
-    backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
+ 
+ //router.use("/v1/blog", BlogController);
+ router.use("/v1/back-office", (req, res, next) => {
+     const backOfficeRouter = express.Router();
+     // BACK-OFFICE ROUTES (same controllers, can be extended with auth middleware)
+     backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
    // backOfficeRouter.use("/service-category", ServiceCatRoutes);
     backOfficeRouter.use("/plan", ServicePlanController);
     //backOfficeRouter.use("/order", OrderController);

@@ -60,14 +60,14 @@ export default function ContactForm(): JSX.Element {
     e.preventDefault();
     setIsSubmitting(true);
 
-    console.log({ name }, { email }, { interest }, { message }, { phoneNumber })
+    // console.log({ name }, { email }, { interest }, { message }, { phoneNumber })
 
 
     const dataForSpreadsheet = {
       "sheetName": "Contact Us",
       "Full Name": name,
       "Email": email,
-      "Phone Number": phoneNumber,
+      "Phone Number": phoneNumber.replace('+', ''),
       "Interest": interest,
       "Message": message
     }

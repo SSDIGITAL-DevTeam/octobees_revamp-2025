@@ -149,7 +149,11 @@ export const createBlogCat = async (payload) => {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '')
             
-        const data = await insertBlogCat({ ...payload, slug })
+        let newStatus = payload.status
+        if(typeof newStatus === 'string') {
+            newStatus = newStatus === 'true'
+        }
+        const data = await insertBlogCat({ ...payload, slug, status: newStatus })
         return data
     } catch (error) {
         throw new Error(error.message)

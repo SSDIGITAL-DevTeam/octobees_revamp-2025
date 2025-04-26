@@ -18,8 +18,8 @@ import { Textarea } from "@/components/ui/textarea";
 const dataSchema = z.object({
   name: z.string().nonempty(),
   status: z.string(),
-  heading: z.string(),
-  description: z.string(),
+  // heading: z.string(),
+  // description: z.string(),
 });
 import { Controller } from "react-hook-form";
 type DataSchema = z.infer<typeof dataSchema>;
@@ -27,11 +27,11 @@ type DataSchema = z.infer<typeof dataSchema>;
 
 export const statusList = [
   {
-    value: "1",
+    value: "true",
     title: "Active",
   },
   {
-    value:"0",
+    value: "false",
     title: "Non Active",
   },
 
@@ -42,9 +42,9 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
     resolver: zodResolver(dataSchema),
     defaultValues: {
       name: "",
-      status: "",
-      heading:"",
-      description:""
+      status: "true"
+      // heading: "",
+      // description: ""
     },
   });
   const { handleSubmit, control, reset, watch } = form;
@@ -59,12 +59,12 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
 
   const handleInput = handleSubmit(async (value) => {
     try {
-     
+      // console.log(value);
       const url = defaultValue ? `/blog-category/${defaultValue.id}` : `/blog-category`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast("Success", response.data.message);
-     // router.push("/blog/blog-category");
+      router.push("/blog/blog-category");
     } catch (error: any) {
       failedToast("Error",
         (error.response?.data?.error
@@ -75,13 +75,13 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
     }
   });
 
+  // console.log(defaultValue?.status)
+
   return (
     <Form {...form}>
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Category Name" name="name" />
-         
-        
           <RadioGroupField
             control={control}
             label="Category Status"
