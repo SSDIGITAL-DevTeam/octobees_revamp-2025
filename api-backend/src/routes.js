@@ -13,9 +13,9 @@ import BlogCategoryController from "./blog-category/blog-category.controller.js"
 import BlogController from "./blog/blog.controller.js";
 import { upload } from "./middleware/uploadImage.js";
 import UserController from "./user/user.controller.js";
-// import loginController from "../auth/login/login.controller.js";
-// import refreshToken from "../auth/refresh-token/refresh.controller.js";
-// import logoutController from "../auth/logout/logout.controller.js";
+// import loginController from "./auth/login/login.controller.js";
+// import refreshToken from "./auth/refresh-token/refresh.controller.js";
+// import logoutController from "./auth/logout/logout.controller.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -24,7 +24,7 @@ const router = express.Router();
 
 
 
-// Auth Routes
+//Auth Routes
 // router.use("/auth/refresh-token", refreshToken);
 // router.use("/auth/login", loginController);
 // router.use("/auth/logout", logoutController);

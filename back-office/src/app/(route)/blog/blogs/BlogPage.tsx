@@ -113,10 +113,10 @@ export default function DataPage() {
   };
   const headings = ["Title", "Category", "Status", "Action"];
   const data = packages?.data.map((item: any) => ({
-    "Title": item.title,
+    "Title": item.blog.title,
    // "Category": item?.category?.name,
-    "Category": item?.category?.name,
-    "Status": item.status,
+    "Category": item?.blogCategory?.name,
+    "Status": item.blog.status,
     "Action": (
       <div className="flex items-center gap-5">
         <button
