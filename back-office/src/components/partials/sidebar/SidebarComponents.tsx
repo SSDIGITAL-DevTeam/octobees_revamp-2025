@@ -87,23 +87,24 @@ export function Sidebarcomponents() {
   const router = useRouter()
   const [hasToken, setHasToken] = useState<boolean | null>(null)
   const tokenName = useAuthStore((state) => state.name);
+  const setToken = useAuthStore((state) => state.setToken);
 
-// useEffect(() => {
-//   if (tokenName) {
-//     setHasToken(true);
-//     return;
-//   }
+useEffect(() => {
+  if (tokenName) {
+    setHasToken(true);
+    return;
+  }
 
-//   const token = sessionStorage.getItem("token");
-//   if (!token) {
-//     router.push("/login");
-//   } else {
-//     setHasToken(true);
-//   }
-// }, [tokenName]);
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    router.push("/auth/login");
+  } else {
+    setToken(token)
+    setHasToken(true);
+  }
+}, [tokenName]);
 
-// if (!hasToken) return null;
-
+if (!hasToken) return null;
   
   return (
     <Sidebar>

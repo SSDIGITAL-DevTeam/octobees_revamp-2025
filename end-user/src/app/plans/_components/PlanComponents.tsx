@@ -32,15 +32,33 @@ type Price = {
 
 type Currency = {
   id: number;
-  code: string;
+  code: CurrencyCode;
   symbol: string;
 };
 
 const currencies: Currency[] = [
-  { id: 0, code: "SGD", symbol: "S$" },
-  { id: 1, code: "MYR", symbol: "RM" },
-  { id: 2, code: "IDR", symbol: "Rp" },
+  { id: 0, code: "SGD", symbol: "S" },
+  { id: 1, code: "MYR", symbol: "" },
+  { id: 2, code: "IDR", symbol: "" },
 ];
+
+type CurrencyCode = 'IDR' | 'MYR' | 'SGD';
+
+const formatCurrency = (value: number, code: CurrencyCode) => {
+  const locales: Record<CurrencyCode, string> = {
+    IDR: 'id-ID',
+    MYR: 'ms-MY',
+    SGD: 'en-SG',
+  };
+
+  return new Intl.NumberFormat(locales[code], {
+    style: 'currency',
+    currency: code,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
 
 export default function PlanComponents(params: { data: PlanType[] }): JSX.Element {
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>(currencies[0]);
@@ -106,7 +124,9 @@ export default function PlanComponents(params: { data: PlanType[] }): JSX.Elemen
                           }`}
                       >
                         {selectedCurrency.symbol}
-                        {plan.prices[selectedCurrency.id].amount}
+                        {/* {plan.prices[selectedCurrency.id].amount} */}
+                        {formatCurrency(plan.prices[selectedCurrency.id].amount, selectedCurrency.code)}
+
                       </span>
                       <span
                         className={`font-bold text-4xl ${isPremium
@@ -115,7 +135,9 @@ export default function PlanComponents(params: { data: PlanType[] }): JSX.Elemen
                           }`}
                       >
                         {selectedCurrency.symbol}
-                        {plan.prices[selectedCurrency.id].discount}
+                        {/* {plan.prices[selectedCurrency.id].discount} */}
+                        {formatCurrency(plan.prices[selectedCurrency.id].discount, selectedCurrency.code)}
+
                       </span>
                       <span className={`text-lg font-bold ${isPremium ? "text-[#E8D28F]" : "text-dark"}`}>
                         / {plan.options}
