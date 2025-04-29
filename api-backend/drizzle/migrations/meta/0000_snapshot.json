@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "3655b2f9-1d73-48a4-9eae-fa212b66affd",
+  "id": "8680ca31-f540-43fb-ba34-915da620dbeb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "benefit": {
@@ -80,8 +80,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "blog_status": {
-          "name": "blog_status",
+        "status": {
+          "name": "status",
           "type": "enum('Published','Archived','Draft')",
           "primaryKey": false,
           "notNull": true,
@@ -784,7 +784,7 @@
           "name": "features",
           "type": "json",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
