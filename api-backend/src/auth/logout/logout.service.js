@@ -1,4 +1,4 @@
-import { editUser, findUserByRefreshToken } from "../../role/role.repository.js";
+import { editUser, findUserByRefreshToken } from "../../user/user.repository.js";
 
 export const deleteRefreshToken = async (refreshToken) => {
     try {

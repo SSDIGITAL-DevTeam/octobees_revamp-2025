@@ -18,14 +18,18 @@ const AddPage = () => {
       try {
         const [category, value] = await Promise.all([
           axiosInstance.get(
-            "/blog-category"
+            "/blog-category", {
+              params: {
+                status: true
+              }
+            }
           ),
           axiosInstance.get(
             `/blog/${query}`
           )
         ])
         setData(category.data.data);
-        setDefaultValue(value.data);
+        setDefaultValue(value.data.blog);
       } catch (error) {
         console.error(error);
       }
@@ -33,6 +37,8 @@ const AddPage = () => {
     fetchCategory();
   }, [query]);
 
+  // console.log({data});
+  // console.log({defaultValue});
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
       <Header title={"Blog"} label={"Blog Management"} />

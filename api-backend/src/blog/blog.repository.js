@@ -26,13 +26,12 @@ export const findAllBlogs = async (skip, limit, where, orderBy) => {
             .from(blog)
             .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
             .leftJoin(user, eq(blog.userId, user.id))
-            console.log("======================================")
         if (where) baseQuery = baseQuery.where(where)
         if (orderBy) baseQuery = baseQuery.orderBy(...orderBy)
           
         const datas = await baseQuery.limit(limit).offset(skip)
         
-        console.log(datas)
+        // console.log(datas)
         const totalQuery = db
             .select({ count: count() })
             .from(blog)
@@ -54,7 +53,7 @@ export const findBlogById = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog: blog,
+                blog,
                 user: {
                     id: user.id,
                     name: user.name,
@@ -81,7 +80,7 @@ export const findBlogBySlug = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog: blog,
+                blog,
                 user: {
                     id: user.id,
                     name: user.name,

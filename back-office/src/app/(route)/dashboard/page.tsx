@@ -57,9 +57,9 @@ export default function Page(): JSX.Element {
           activePackage, nonActivePackage, draftPackage,
           publishedBlog, takedownBlog, draftBlog, totalBlogCategory
         ] = await Promise.all([
-          axiosInstance.get("/role", { params: { status: "Active" } }),
-          axiosInstance.get("/role", { params: { status: "NonActive" } }),
-          axiosInstance.get("/role", { params: { status: "Draft" } }),
+          axiosInstance.get("/user", { params: { status: "Active" } }),
+          axiosInstance.get("/user", { params: { status: "NonActive" } }),
+          axiosInstance.get("/user", { params: { status: "Draft" } }),
           axiosInstance.get("/service-category", { params: { status: "Active" } }),
           axiosInstance.get("/service-category", { params: { status: "NonActive" } }),
           axiosInstance.get("/service-category", { params: { status: "Draft" } }),

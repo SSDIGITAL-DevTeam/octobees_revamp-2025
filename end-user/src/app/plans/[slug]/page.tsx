@@ -1,7 +1,7 @@
 "use client";
 
 import { JSX, useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import HeaderComponents from "@/app/plans/_components/HeaderComponents";
 import PlanComponents from "@/app/plans/_components/PlanComponents";
 import { axiosInstance } from "@/lib/axios";
@@ -9,7 +9,7 @@ import { axiosInstance } from "@/lib/axios";
 export default function Page(): JSX.Element {
   const { slug } = useParams();
   const [data, setData] = useState<any>(null);
-
+  const router = useRouter();
   useEffect(() => {
     if (!slug) return;
     const fetchCategory = async () => {
@@ -18,6 +18,7 @@ export default function Page(): JSX.Element {
           params : {status : "Active"}
         });
         setData(response.data);
+        if(!response.data) return notFound();
       } catch (e) {
         console.error("Error fetching category:", e);
       }
@@ -25,6 +26,7 @@ export default function Page(): JSX.Element {
 
     fetchCategory();
   }, [slug]);
+  // console.log(data);
 
   return (
    <main className="w-full">

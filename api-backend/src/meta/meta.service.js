@@ -1,10 +1,11 @@
+import { findPageBySlug } from "../page/page.repository.js";
 import {
-  findAllServiceCats,
+  findAllMetaTags,
   findServiceCatById,
   insertServiceCat,
   deleteServiceCat,
   editServiceCat,
-  findPagesBySlug,
+  // findPagesBySlug,
 } from "./meta.repository.js";
 
 export const getAllServiceCat = async (filters) => {
@@ -67,11 +68,13 @@ export const getServiceCatById = async (id, filters) => {
 
 export const createServiceCat = async (payload) => {
   try {
-    const validPage = await findPagesBySlug(payload.page);
+    const validPage = await findPageBySlug(payload.page);
     if (!validPage) {
       throw new Error("Page tidak ditemukan");
     }
-    const data = await insertServiceCat({ ...payload, page: validPage.slug });
+    // console.log(payload);
+    // console.log(validPage);
+    const data = await insertServiceCat({ ...payload, slug: validPage.slug });
     return data;
   } catch (error) {
     throw new Error(error.message);

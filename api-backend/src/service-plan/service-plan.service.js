@@ -1,3 +1,4 @@
+import { planService } from "../../drizzle/schema.js";
 import {
   findAllServicePlans,
   findServiceCatByName,
@@ -16,25 +17,25 @@ export const getAllServicePlan = async (filters) => {
 
     // Add status filter
     if (status) {
-      whereConditions.push(eq(servicePlans.status, status));
+      whereConditions.push(eq(planService.status, status));
     }
 
     // Add search filter
     if (search) {
       const searchConditions = [
-        like(servicePlans.name, `%${search}%`),
-        like(servicePlans.descriptions, `%${search}%`),
-        like(servicePlans.options, `%${search}%`),
+        like(planService.name, `%${search}%`),
+        like(planService.descriptions, `%${search}%`),
+        like(planService.options, `%${search}%`),
       ];
 
       // Extra condition if search matches predefined statuses
       if (["Draft", "Active", "NonActive"].includes(search)) {
-        searchConditions.push(eq(servicePlans.status, search));
+        searchConditions.push(eq(planService.status, search));
       }
 
       // Extra condition if search matches types
       if (["Standard", "Premium"].includes(search)) {
-        searchConditions.push(eq(servicePlans.type, search));
+        searchConditions.push(eq(planService.type, search));
       }
 
       whereConditions.push(or(...searchConditions));

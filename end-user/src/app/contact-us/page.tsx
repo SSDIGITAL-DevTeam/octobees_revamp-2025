@@ -32,9 +32,9 @@ export default function ContactUs(): JSX.Element {
               <h1 className="font-heading font-medium text-dark text-4xl md:text-5xl !leading-[120%] max-w-3xl">Get in touch with <br /><span>OCTOBEES</span></h1>
             </div>
             <div className="mt-3 lg:mt-12 flex flex-col lg:flex-row gap-y-6 lg:gap-y-0 gap-x-0 lg:gap-x-7 w-full h-full">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1674.2295925665294!2d98.66908380915925!3d3.584836538940265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x303131d23b21aa57%3A0xf35f931f30351ed1!2sJl.%20Taruma%20No.27%2C%20Petisah%20Tengah%2C%20Kec.%20Medan%20Petisah%2C%20Kota%20Medan%2C%20Sumatera%20Utara%2020112!5e0!3m2!1sid!2sid!4v1726223421270!5m2!1sid!2sid"
-                className="w-full min-h-[350px] lg:max-h-[490px] rounded-3xl"
+            <iframe
+             src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d995.5112568363255!2d98.66427102671983!3d3.5771250695232992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zM8KwMzQnMzguOCJOIDk4wrAzOSc1Mi41IkU!5e0!3m2!1sen!2sid!4v1745895995734!5m2!1sen!2sid"
+                className="w-full min-h-[420px] lg:max-h-[490px] rounded-3xl border-0"
                 style={{ border: 0 }}
                 allowFullScreen={true}
                 loading="lazy"
@@ -42,17 +42,17 @@ export default function ContactUs(): JSX.Element {
               />
               <div className="flex flex-col py-8 px-10 gap-y-14 lg:gap-y-24 bg-primary w-full lg:w-2/5 rounded-3xl">
                 <div className="flex flex-col gap-y-5">
-                  <Link href="https://maps.app.goo.gl/XrnW7KzwN3EQzoWN9" className="flex flex-col gap-y-2">
-                    <h3 className="text-sm text-gray-300">Address</h3>
-                    <h2 className="text-lg text-white font-semibold">Jl. Taruma No.27, Petisah Tengah, Kec. Medan Petisah, Kota Medan, Sumatera Utara 20112</h2>
+                  <Link href="https://maps.app.goo.gl/37qh1YHpkE9g1XJ86" className="flex flex-col gap-y-2">
+                    <h3 className="text-base text-gray-300">Operation Office</h3>
+                    <h2 className="text-xl text-white font-semibold">Medan - Yogyakarta</h2>
                   </Link>
+                  <div className="flex flex-col gap-y-2">
+                    <h3 className="text-base text-gray-300">Regional Partner</h3>
+                    <h2 className="text-xl text-white font-semibold">Singapore</h2>
+                  </div>
                   <Link href="mailto:contact@octobees.com" className="flex flex-col gap-y-2">
-                    <h3 className="text-sm text-gray-300">Email address</h3>
-                    <h2 className="text-lg text-white font-semibold">contact@octobees.com</h2>
-                  </Link>
-                  <Link href="tel:+6289515216251" className="flex flex-col gap-y-2">
-                    <h3 className="text-sm text-gray-300">Phone</h3>
-                    <h2 className="text-lg text-white font-semibold">+62 895-1521-6251</h2>
+                    <h3 className="text-base text-gray-300">Email address</h3>
+                    <h2 className="text-xl text-white font-semibold">contact@octobees.com</h2>
                   </Link>
                 </div>
                 <div className="flex flex-row gap-x-5">

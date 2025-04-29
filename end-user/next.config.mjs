@@ -16,8 +16,14 @@ const nextConfig = {
         port: '',
         pathname: '/api/v1/end-user/**',
       },
+      {
+        protocol: 'http',
+        hostname: '192.168.100.25',
+        port: '3005',
+        pathname: '/uploads/**',
+      },
     ],
-    domains: ['lightyellow-mandrill-246257.hostingersite.com', 'localhost'],
+    domains: ['lightyellow-mandrill-246257.hostingersite.com', 'localhost','192.168.100.25'],
 
   },
 };

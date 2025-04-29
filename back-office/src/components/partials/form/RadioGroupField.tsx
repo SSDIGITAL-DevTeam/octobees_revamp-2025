@@ -16,18 +16,21 @@ type CheckBoxFieldProps = {
   label: string;
   control: Control<any>;
   data: Radio[];
+  defaultChecked?: string
 };
 type Radio = {
-    title:string;
-    value:string;
+  title: string;
+  value: string;
 }
 
-const RadioGroupField = ({ control, name, label, data }: CheckBoxFieldProps) => {
+const RadioGroupField = ({ control, name, label, data, defaultChecked }: CheckBoxFieldProps) => {
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={({ field }) => {
+        console.log("wkw", typeof field.value);
+        return(
         <FormItem className="space-y-3">
           <FormLabel className="capitalize font-semibold mb-2 text-base">
             {name}
@@ -36,23 +39,24 @@ const RadioGroupField = ({ control, name, label, data }: CheckBoxFieldProps) => 
             <RadioGroup
               onValueChange={field.onChange}
               value={field.value}
+              // defaultValue={defaultChecked}
               className="flex flex-col space-y-1"
             >
-            {
+              {
                 data.map((item, index) => (
-            <FormItem key={index} className="flex items-center space-x-3 space-y-0">
-                <FormControl>
-                  <RadioGroupItem value={item.value} />
-                </FormControl>
-                <FormLabel className="font-normal">{item.title}</FormLabel>
-              </FormItem>
+                  <FormItem key={index} className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value={item.value} />
+                    </FormControl>
+                    <FormLabel className="font-normal">{item.title}</FormLabel>
+                  </FormItem>
                 ))
-            }
+              }
             </RadioGroup>
           </FormControl>
           <FormMessage />
         </FormItem>
-      )}
+      )}}
     />
   );
 };

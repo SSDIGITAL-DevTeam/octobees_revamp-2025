@@ -111,15 +111,12 @@ export const findServiceCatBySlug = async (slug, whereCat = undefined) => {
 export const insertServiceCat = async (data) => {
     
     try {
-        
-
         const id = uuidv7(); // Generate UUIDv7
         
         await db.insert(categoryService).values({
             id, // Set ID secara manual
             ...data
         });
-
         // Karena MySQL tidak support returning, kita return manual
         return { id, ...data };
     } catch (error) {

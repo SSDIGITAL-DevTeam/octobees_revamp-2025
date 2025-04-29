@@ -16,7 +16,7 @@ const EditPage = () => {
     const fetchData = async () => {
       try {
         setQuery(searchParams.get("id") || "");
-        const res = await axiosInstance.get(`/role/${query}`);
+        const res = await axiosInstance.get(`/user/${query}`);
         setData(res.data);
       } catch (error:any) {
         failedToast("Error", error.response?.data?.error || error.response?.statusText || "Error processing data");
@@ -24,6 +24,8 @@ const EditPage = () => {
     };
     fetchData();
   }, [query]);
+
+  console.log(data);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">

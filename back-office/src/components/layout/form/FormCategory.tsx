@@ -95,8 +95,9 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
         </div>
         <div className="w-full flex justify-between features-center mt-8 sm:mt-12">
           <Button
-            onClick={() => router.push("/blog/blog-category")}
+            onClick={() => router.push("/services/categories")}
             variant={"outline"}
+            type="button"
             className="h-14 px-7 rounded-full"
           >
             Back

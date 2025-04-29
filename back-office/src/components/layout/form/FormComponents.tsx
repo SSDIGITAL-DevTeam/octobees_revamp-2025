@@ -17,7 +17,7 @@ import { axiosInstance } from "@/lib/axios";
 const dataSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email(),
-  password: z.string(),
+  password: z.string().nonempty(),
   status: z.string().nonempty(),
   role: z.string().nonempty(),
   features: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -29,8 +29,8 @@ type DataSchema = z.infer<typeof dataSchema>;
 
 export const features = [
   {
-    id: "role",
-    label: "Manage Role",
+    id: "user",
+    label: "Manage User",
   },
   {
     id: "services",
@@ -86,7 +86,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   
   const handleInput = handleSubmit(async (value) => {
     try {
-      const url = defaultValue ? `/role/${defaultValue.id}` : `/role`;
+      const url = defaultValue ? `/user/${defaultValue.id}` : `/user`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast("Success", response.data.message);
@@ -108,7 +108,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Person Name" name="name" />
           <InputField control={control} label="Email Address" name="email" />
-          <InputField control={control} label="Role ..." name="role" />
+          <InputField control={control} label="Role" name="role" />
           <InputField
             control={control}
             label="Password"
@@ -133,6 +133,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
           <Button
             onClick={() => router.push("/user")}
             variant={"outline"}
+            type="button"
             className="h-14 px-7 rounded-full"
           >
             Back

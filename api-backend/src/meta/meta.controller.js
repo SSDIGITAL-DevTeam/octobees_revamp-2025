@@ -75,6 +75,7 @@ router.post("/", async (req, res) => {
       throw new Error("Data tidak lengkap");
     }
     await createServiceCat(req.body);
+    // console.log(req.body)
     res.status(200).json({ message: "Berhasil Menambahkan Meta" });
   } catch (error) {
     if (error instanceof z.ZodError) {

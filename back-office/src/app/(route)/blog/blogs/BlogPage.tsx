@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import TableComponents from "@/components/partials/table/TableComponents";
 import Header from "@/components/layout/header/Header";
-import { failedToast } from "@/utils/toast";
+import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
@@ -25,7 +25,7 @@ type CategoryType = {
 };
 
 export default function DataPage() {
-  const [packages, setPackages] = useState<CategoryType | null>(null);
+  const [blogs, setBlog] = useState<CategoryType | null>(null);
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [refetch, setRefetch] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export default function DataPage() {
   };
 
   const handleNext = () => {
-    if (packages && page < packages.pagination.totalPages) {
+    if (blogs && page < blogs.pagination.totalPages) {
       handleChangePage(page + 1);
     }
   };
@@ -64,7 +64,7 @@ export default function DataPage() {
         const response = await axiosInstance.get("/blog", {
           params: { limit: 4, page },
         });
-        setPackages(response.data);
+        setBlog(response.data);
       } catch (error: any) {
         failedToast("Failed", error.response?.data?.error || error.response?.statusText || "Error fetching data");
       }
@@ -73,35 +73,35 @@ export default function DataPage() {
     fetchData();
   }, [page, refetch]);
 
+
+
   useEffect(() => {
     const initialFavorites: { [key: string]: boolean } = {};
-    packages?.data.forEach((item: any) => {
+    blogs?.data.forEach((item: any) => {
       initialFavorites[item.id] = item.favorite;
     });
     setFavorites(initialFavorites);
-  }, [packages]);
+  }, [blogs]);
 
   const handleFavorite = async (id: string, currentStatus: boolean) => {
-    const totalFavorites = Object.values(favorites).filter(Boolean).length;
-
-    if (!currentStatus && totalFavorites >= 3) {
-      alert("Maksimal hanya bisa 3 favorite!");
-      return;
-    }
-
     try {
-      setFavorites((prev) => ({
-        ...prev,
-        [id]: !currentStatus,
-      }));
-
       const response = await axiosInstance.patch(`/blog/${id}`, {
         favorite: !currentStatus,
       });
-    } catch (error) {
-      console.error("Failed to update favorite:", error);
+      if (response.status === 200) {
+        setRefetch(prev => !prev)
+      }
+      successToast(
+        "Success", `Blog has been ${currentStatus ? "unfavorite" : "favorite"}`
+      )
+    } catch (error: any) {
+      failedToast(
+        "Error",
+        error.response?.data?.error || error.response?.statusText || "Error processing data"
+      );
     }
   };
+
 
   const handleDelete = async (id: string) => {
     try {
@@ -112,21 +112,20 @@ export default function DataPage() {
     }
   };
   const headings = ["Title", "Category", "Status", "Action"];
-  const data = packages?.data.map((item: any) => ({
+  const data = blogs?.data.map((item: any) => ({
     "Title": item.blog.title,
-   // "Category": item?.category?.name,
     "Category": item?.blogCategory?.name,
     "Status": item.blog.status,
     "Action": (
       <div className="flex items-center gap-5">
         <button
           onClick={() =>
-            handleFavorite(item.id, favorites[item.id] ?? false)
+            handleFavorite(item.blog.id, item.blog.favorite)
           }
           className="text-red-500"
         >
           <Star
-            fill={favorites[item.id] ? "red" : "none"}
+            fill={item.blog.favorite ? "red" : "none"}
             color="red"
             size={15}
           />
@@ -198,10 +197,10 @@ export default function DataPage() {
           handlePrev={handlePrevious}
           page={page}
           setPage={handleChangePage}
-          totalPage={packages?.pagination.totalPages || 1}
+          totalPage={blogs?.pagination.totalPages || 1}
         />
       </section>
-      {/* {JSON.stringify(packages?.data)} */}
+      {/* {JSON.stringify(blogs?.data)} */}
     </main>
   );
 }

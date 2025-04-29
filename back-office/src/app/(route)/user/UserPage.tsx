@@ -24,7 +24,7 @@ type CategoryType = {
 };
 
 export default function DataPage() {
-  const [packages, setPackages] = useState<CategoryType | null>(null);
+  const [users, setUsers] = useState<CategoryType | null>(null);
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -33,6 +33,7 @@ export default function DataPage() {
 
   const searchParams = useSearchParams();
   const router = useRouter();
+
 
   useEffect(() => {
     const urlPage = Number(searchParams.get("page")) || 1;
@@ -48,7 +49,7 @@ export default function DataPage() {
   };
 
   const handleNext = () => {
-    if (packages && page < packages.pagination.totalPages) {
+    if (users && page < users.pagination.totalPages) {
       handleChangePage(page + 1);
     }
   };
@@ -63,10 +64,10 @@ export default function DataPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get("/role", {
+        const response = await axiosInstance.get("/user", {
           params: { limit: 10, page },
         });
-        setPackages(response.data);
+        setUsers(response.data);
       } catch (error: any) {
         setErr(
           error.response?.data?.error ||
@@ -79,17 +80,18 @@ export default function DataPage() {
     fetchData();
   }, [page, refetch]);
 
+  // console.log(users?.data);
   const handleDelete = async (id: string) => {
     try {
-      await axiosInstance.delete(`/role/${id}`);
+      await axiosInstance.delete(`/user/${id}`);
       setRefetch(prev => !prev)
     } catch (error) {
-      console.error("Failed to delete package:", error);
+      console.error("Failed to delete user:", error);
     }
   };
 
   const headings = ["Name", "Email", "Role", "Status", "Action"];
-  const data = packages?.data.map((item: any) => ({
+  const data = users?.data.map((item: any) => ({
     Name: item.name,
     Email: item.email,
     Role: item.role,
@@ -160,7 +162,7 @@ export default function DataPage() {
           handlePrev={handlePrevious}
           page={page}
           setPage={handleChangePage}
-          totalPage={packages?.pagination.totalPages || 1}
+          totalPage={users?.pagination.totalPages || 1}
         />
       </section>
     </main>

@@ -128,6 +128,15 @@ export const getBlogCatById = async (id, filters) => {
             : undefined
 
         let data = await findBlogCatById(where)
+        console.log({status})
+        console.log({id})
+        if(!data) {
+            data = await findBlogCatBySlug(id, status)
+        }
+        console.log({data})
+        if(!data) {
+            throw new Error('Blog Category is not found')
+        }
         return data
     } catch (error) {
         throw new Error(error.message)
@@ -149,7 +158,11 @@ export const createBlogCat = async (payload) => {
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '')
             
-        const data = await insertBlogCat({ ...payload, slug })
+        let newStatus = payload.status
+        if(typeof newStatus === 'string') {
+            newStatus = newStatus === 'true'
+        }
+        const data = await insertBlogCat({ ...payload, slug, status: newStatus })
         return data
     } catch (error) {
         throw new Error(error.message)

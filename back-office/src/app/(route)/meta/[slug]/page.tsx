@@ -20,7 +20,7 @@ type Pagination = {
 
 type PackagesType = {
   data: any;
-  pages:any;
+  pages: any;
   pagination: Pagination;
 };
 
@@ -66,16 +66,18 @@ export default function DataPage() {
     const fetchData = async () => {
       try {
         if (!pages) return;
-        const meta = await axiosInstance.get(`/page/${pages}`,{
-          params : {limit: 4, page}
+        const meta = await axiosInstance.get(`/page/${pages}`, {
+          params: { limit: 4, page }
         })
         setMeta(meta.data)
-      } catch (error:any) {
+      } catch (error: any) {
         setErr(error.response?.data?.error || error.response?.statusText || "Error fetching data");
       }
     };
     fetchData();
   }, [pages, page, refetch]);
+
+  // console.log(meta);
 
   const handleDelete = async (id: string) => {
     try {
@@ -87,78 +89,80 @@ export default function DataPage() {
   };
 
   const headings = ["Key", "Value", "Content", "Action"];
-  const data = meta?.data.map((item:any) => ({
+  const data = meta?.data.map((item: any) => ({
     "Key": item.key,
     "Value": item.value,
     "Content": item.content,
     "Action": (
       <div className="flex items-center gap-5">
-      <Link href={`/meta/${pages}/edit?id=${item.id}`} className="text-blue-500">
-        <Pencil color="red" size={15} />
-      </Link>
-      <button onClick={() => handleDelete(item.id)} className="text-red-500">
-        <Trash color="red" size={15} />
-      </button>
-    </div>
+        <Link href={`/meta/${pages}/edit?id=${item.id}`} className="text-blue-500">
+          <Pencil color="red" size={15} />
+        </Link>
+        <button onClick={() => handleDelete(item.id)} className="text-red-500">
+          <Trash color="red" size={15} />
+        </button>
+      </div>
     ),
   }))
 
-  const filteredData = data?.filter((row:any) =>
-    headings.some((key) =>
-      String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  // const filteredData = data?.filter((row: any) =>
+  //   headings.some((key) =>
+  //     String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
+  //   )
+  // );
+
+  console.log(meta);
 
   return (
     <main className="w-full flex flex-col gap-12">
       <Header title={"Meta Tag"} label={"Others"} />
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
-      <div className="w-full flex justify-between items-center">
-        <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
-          <h1 className="text-4xl font-semibold text-black">{meta?.pages.page}</h1>
-          <p>showing all meta tags</p>
-        </div>
+        <div className="w-full flex justify-between items-center">
+          <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
+            <h1 className="text-4xl font-semibold text-black">{meta?.pages.page}</h1>
+            <p>showing all meta tags</p>
+          </div>
 
-        <div className="flex items-center">
-          <div className="flex gap-3">
-            {isOpen && (
-              <input
-                type="text"
-                placeholder={`Cari Sesuatu disini...`}
-                className="border rounded-lg px-3 py-2 focus:outline-none w-full min-w-64"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            )}
-            <Button
-              variant={"outline"}
-              onClick={() => setIsOpen((prev) => !prev)}
-              className="h-12 w-12 rounded-full p-3"
-            >
-              <Search size={23} />
-            </Button>
-            <Link href={`/meta/${pages}/add`}>
+          <div className="flex items-center">
+            <div className="flex gap-3">
+              {isOpen && (
+                <input
+                  type="text"
+                  placeholder={`Cari Sesuatu disini...`}
+                  className="border rounded-lg px-3 py-2 focus:outline-none w-full min-w-64"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              )}
               <Button
-                variant={"addData"}
-                size={"sm"}
-                className="flex gap-2 items-center"
+                variant={"outline"}
+                onClick={() => setIsOpen((prev) => !prev)}
+                className="h-12 w-12 rounded-full p-3"
               >
-                <CirclePlus size={15} /> Add Meta Tag
+                <Search size={23} />
               </Button>
-            </Link>
+              <Link href={`/meta/${pages}/add`}>
+                <Button
+                  variant={"addData"}
+                  size={"sm"}
+                  className="flex gap-2 items-center"
+                >
+                  <CirclePlus size={15} /> Add Meta Tag
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
-        </div>
 
-        <TableComponents headings={headings} data={filteredData || []} />
-      
-      <PaginationComponents
-                handleNext={handleNext}
-                handlePrev={handlePrevious}
-                page={page}
-                setPage={handleChangePage}
-                totalPage={meta?.pagination.totalPages || 1}
-              />
+        <TableComponents headings={headings} data={data || []} />
+
+        <PaginationComponents
+          handleNext={handleNext}
+          handlePrev={handlePrevious}
+          page={page}
+          setPage={handleChangePage}
+          totalPage={meta?.pagination.totalPages || 1}
+        />
       </section>
     </main>
   );

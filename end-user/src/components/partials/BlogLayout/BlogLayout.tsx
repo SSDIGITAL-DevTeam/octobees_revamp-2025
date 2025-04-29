@@ -8,35 +8,36 @@ import dayjs from 'dayjs';
 import BlogCard from './HeaderGrid';
 import BlogContent from './BlogContent';
 import { useRouter, useSearchParams } from 'next/navigation';
-import axios from 'axios';
 import PaginationComponents from '../Pagination/Pagination';
 import BlogCategory from './BlogCategory';
 import { axiosInstance } from '@/lib/axios';
+import BlogNotFound from '@/assets/homepage/svg/asset-blog-notfound.svg'
+import { Button } from '@/components/ui/button';
 
 export default function BlogLayout(): JSX.Element {
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [defPage, setDefPage] = useState({totalPages: 1})
-  const [blog, setBlog]= useState<any>([]);
-  const [favBlog, setFavBlog]= useState<any>([]);
-  const [category, setCategory]= useState<any>([]);
+  const [defPage, setDefPage] = useState({ totalPages: 1 })
+  const [blog, setBlog] = useState<any>([]);
+  const [favBlog, setFavBlog] = useState<any>([]);
+  const [category, setCategory] = useState<any>([]);
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
         const [favoriteBlogs, blogs, categories] = await Promise.all([
-          axiosInstance.get("/blog",{
+          axiosInstance.get("/blog", {
             params: {
               status: "Published",
               favorite: true,
             }
           }),
-          axiosInstance.get("/blog",{
+          axiosInstance.get("/blog", {
             params: {
               search: search,
               status: "Published",
               favorite: false,
-              limit: 1,
+              limit: 4,
               page
             }
           }),
@@ -45,9 +46,9 @@ export default function BlogLayout(): JSX.Element {
         setFavBlog(favoriteBlogs.data.data);
         setBlog(blogs.data.data);
         setDefPage(blogs.data.pagination)
-        setCategory(categories.data);
+        setCategory(categories.data.data);
 
-      } catch (error:any) {
+      } catch (error: any) {
         console.error(error?.response?.data.error || error?.message || "Error fetching blog posts");
       }
     }
@@ -87,40 +88,69 @@ export default function BlogLayout(): JSX.Element {
     router.push(`/insights/search/${search}`);
   }
 
+  // console.log(favBlog)
+
   return (
-    <div className="lg:container lg:mx-auto flex flex-col gap-8">
+    <div className="lg:container lg:mx-auto flex flex-col gap-8 md:gap-16">
       {/* Hero */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 grid-rows-3 gap-6 lg:gap-4 min-h-screen lg:min-h-0 lg:h-[70vh]">
-        <BlogCard data={favBlog[0]} size="large" />
-        <BlogCard data={favBlog[1]} size="medium" />
-        <BlogCard data={favBlog[2]} size="small" />
-      </section>
+      {
+        favBlog.length > 2 ? (
+          <section className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 grid-rows-3 gap-6 lg:gap-4 lg:h-[60vh]">
+            <BlogCard data={favBlog[0]} large={true} length={3}/>
+            <BlogCard data={favBlog[1]} length={3}/>
+            <BlogCard data={favBlog[2]} length={3}/>
+          </section>
+        ) :
+        favBlog.length > 1 ? (
+          <section className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-6 lg:gap-4 lg:h-[60vh]">
+            <BlogCard data={favBlog[0]} large={true} length={2}/>
+            <BlogCard data={favBlog[1]} large={true} length={2}/>
+          </section>
+        ) : (
+          <section className="grid grid-cols-1 lg:h-[60vh]">
+            <BlogCard data={favBlog[0]} large={true} length={1} />
+          </section>
+        )
+      }
 
       {/* Main Content and Sidebar Layout */}
       <div className="flex flex-col lg:flex-row gap-8 relative">
         {/* Main Content */}
         <section className="w-full lg:w-2/3">
-          {/* Articles List */}
-          <h1 className='text-2xl lg:text-4xl font-bold lg:mt-4 mb-4 text-primary'>Related Articles</h1>
-          <div className="grid grid-cols-2 lg:grid-cols-1 gap-y-3 gap-x-2">
-            {blog.map((article: any) => (
-              <article key={article.id} className="py-3 lg:pb-8 lg:pt-4">
-                <Link href={`/insights/${article.id}`} className="flex flex-col md:flex-row gap-3 lg:gap-6">
-                  <div className="md:w-1/3">
-                    <Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${article.image}`} alt={article.title} className="w-full h-36 object-contain rounded-lg border-[1px] border-gray-300 shadow-sm" width={1920} height={1080} quality={100} />
-                  </div>
-                  <div className="md:w-2/3 flex flex-col gap-2 justify-center">
-                    <h2 className="text-sm md:text-xl lg:text-2xl font-bold text-primary font-heading !leading-[120%]">{article.title}</h2>
-                    <h3 className="flex items-center gap-2 justify-start text-xs lg:text-base text-gray-500">
-                      <span>{article.role ? article.role.name : article.name}</span>
-                      <span>•  {dayjs(article.createdAt).format("MMMM D, YYYY")}</span>
-                    </h3>
-                    <BlogContent content={article.content} className='text-sm lg:text-base text-gray-600 line-clamp-2' />
-                  </div>
-                </Link>
-              </article>
-            ))}
-          </div>
+          {
+            (blog.length > 0 || favBlog.length > 0) ? (
+            <div className="grid grid-cols-1 gap-y-5 gap-x-4 lg:gap-x-2">
+              {blog.map((article: any) => (
+                <>
+                  <article key={article.id} className="py-3 lg:py-2">
+                    <Link href={`/insights/${article.blog.slug}`} className="flex flex-col md:flex-row gap-4 lg:gap-6">
+                      <div className="w-full md:w-1/3">
+                        <Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${article.blog.image}`} alt={article.blog.title} className="w-full h-52 object-cover rounded-lg border-[1px] border-gray-300 shadow-sm" width={1920} height={1080} quality={100} />
+                      </div>
+                      <div className="md:w-2/3 flex flex-col gap-3 lg:justify-center">
+                        <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary font-heading !leading-[130%]">{article.blog.title}</h2>
+                        <h3 className="order-2 md:order-1 flex lg:items-center gap-1 md:gap-2 justify-start text-xs lg:text-base text-gray-500">
+                          <span>{article.user ? article.user.name : "Anonymous"}</span>
+                          <span>•  {dayjs(article.blog.createdAt).format("MMMM D, YYYY")}</span>
+                        </h3>
+                        <div className='order-1 md:order-2'>
+                          <BlogContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
+                        </div>
+                      </div>
+                    </Link>
+                  </article>
+                </>
+              ))}
+            </div>
+            ): (
+              <section className='w-full flex flex-col gap-4 justify-center items-center text-gray-400 py-10'>
+                <Image src={BlogNotFound} alt='Blog Not Found' className=' object-contain w-[60%] md:w-[30%]' />
+                <h2 className='text-center text-2xl font-bold w-full md:w-[40%]'>Our Blog is Coming Soon</h2>
+                <p className='text-center w-full sm:w-[40%] text-sm  md:text-lg'>We’re excited to start sharing insights, stories, and updates with you! Right now, this space is still empty</p>
+                <Button onClick={() => router.push("/")} className='w-full md:w-[40%] rounded-3xl py-3 mt-3 font-semibold'>Back to Home Page</Button>
+              </section>
+            )
+          }
         </section>
 
         {/* Sidebar */}
@@ -130,8 +160,8 @@ export default function BlogLayout(): JSX.Element {
             <p className="text-sm lg:text-lg font-bold mb-4">Search</p>
             <div className='relative flex flex-col'>
               <form onSubmit={(e) => handleSearch(e)}>
-              <input onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Search blog posts" className="w-full border text-sm lg:text-base border-gray-200 rounded-lg px-4 py-2 ps-9" />
-              <Search className='top-2 left-2 absolute text-gray-600 h-5 lg:h-6' />
+                <input onChange={(e) => setSearch(e.target.value)} type="text" placeholder="Search blog posts" className="w-full border text-sm lg:text-base border-gray-200 rounded-lg px-4 py-2 ps-9" />
+                <Search className='top-2 left-2 absolute text-gray-600 h-5 lg:h-6' />
               </form>
             </div>
           </div>
@@ -141,13 +171,13 @@ export default function BlogLayout(): JSX.Element {
       </div>
 
       <PaginationComponents
-          handleNext={handleNext}
-          handlePrev={handlePrevious}
-          page={page}
-          className='mt-10'
-          setPage={handleChangePage}
-          totalPage={defPage.totalPages || 1}
-        />
+        handleNext={handleNext}
+        handlePrev={handlePrevious}
+        page={page}
+        className='mt-10'
+        setPage={handleChangePage}
+        totalPage={defPage.totalPages || 1}
+      />
     </div>
   );
 }

@@ -11,15 +11,9 @@ import { parseBlogQuery } from '../../utils/parseBlogQuery.js'
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-  
     try {
-       
         const filters = parseBlogQuery(req.query)
-        
         const data = await getAllBlogs(filters)
-     
-        // console.log(filters);
-        
         res.status(200).json(data)
     } catch (error) {
         console.error('GET / error:', error)
