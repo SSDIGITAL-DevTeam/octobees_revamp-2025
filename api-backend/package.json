@@ -7,6 +7,7 @@
     "test": "jest",
     "clean:prisma": "rm -rf prisma && npm uninstall prisma @prisma/client",
     "start-old": "node .",
+    "seed" : "node src/seeder/seeder.js",
     "start": "node .",
     "dev": "nodemon .",
     "migrate-old": "rm -rf ./drizzle/migrations && npx drizzle-kit generate && npx drizzle-kit migrate",

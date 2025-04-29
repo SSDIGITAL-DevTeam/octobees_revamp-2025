@@ -101,7 +101,7 @@ export function LeadModal(params: {
     const web = (process.env.NEXT_PUBLIC_SPREADSHEET_API)?.toString() || ""
 
     try {
-      console.log(dataForSpreadsheet)
+      // console.log(dataForSpreadsheet)
       const response = await axios.post(web, new URLSearchParams(dataForSpreadsheet), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -112,7 +112,7 @@ export function LeadModal(params: {
         setOpen((prev) => !prev)
         setSuccess((prev) => !prev)
       }
-      console.log(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
+      // console.log(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
     } catch (error: any) {
       console.error(`Process is ${error.result}, with message :  ${error.error}`);
     } finally {
@@ -136,13 +136,13 @@ export function LeadModal(params: {
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [data, setData] = useState([]);
+  const [order, setOrder] = useState([]);
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         const response = await axiosInstance.get(`/order`)
-        setData(response.data)
+        setOrder(response.data)
       } catch (error) {
         console.log(error)
       }
@@ -238,7 +238,7 @@ export function LeadModal(params: {
                   <CalendarField control={control} name="date" />
                 </div>
                 <div className="bg-white flex justify-center items-center w-full border-[1px] border-gray-600 shadow-md p-4 rounded-3xl">
-                  <RadioComponents data={data} selectedDate={value.date} control={control} name="time" list={hour} />
+                  <RadioComponents data={order} selectedDate={value.date} control={control} name="time" list={hour} />
                 </div>
               </section>
 

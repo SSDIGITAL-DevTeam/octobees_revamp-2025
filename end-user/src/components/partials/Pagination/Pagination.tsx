@@ -6,7 +6,7 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/ui/pagination"
+} from "@/components/ui/pagination";
 
 export default function PaginationComponents({
     handlePrev,
@@ -23,33 +23,92 @@ export default function PaginationComponents({
     totalPage: number;
     className?: string;
 }) {
+    const renderPages = () => {
+        const pages = [];
+
+        const startPage = Math.max(1, page - 1);
+        const endPage = Math.min(totalPage, page + 1);
+
+        // First Page + Ellipsis
+        if (startPage > 1) {
+            pages.push(
+                <PaginationItem key={1} className="hidden sm:block">
+                    <PaginationLink
+                        onClick={() => setPage(1)}
+                        className="cursor-pointer hover:bg-red-700/10"
+                        isActive={page === 1}
+                    >
+                        1
+                    </PaginationLink>
+                </PaginationItem>
+            );
+
+            if (startPage > 2) {
+                pages.push(<PaginationEllipsis key="start-ellipsis" />);
+            }
+        }
+
+        // Middle Pages (Current ±1)
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(
+                <PaginationItem key={i}>
+                    <PaginationLink
+                        onClick={() => setPage(i)}
+                        className="cursor-pointer hover:bg-red-700/10"
+                        isActive={page === i}
+                    >
+                        {i}
+                    </PaginationLink>
+                </PaginationItem>
+            );
+        }
+
+        // Last Page + Ellipsis
+        if (endPage < totalPage) {
+            if (endPage < totalPage - 1) {
+                pages.push(<PaginationEllipsis key="end-ellipsis" />);
+            }
+
+            pages.push(
+                <PaginationItem key={totalPage} className="hidden sm:block">
+                    <PaginationLink
+                        onClick={() => setPage(totalPage)}
+                        className="cursor-pointer hover:bg-red-700/10"
+                        isActive={page === totalPage}
+                    >
+                        {totalPage}
+                    </PaginationLink>
+                </PaginationItem>
+            );
+        }
+
+        return pages;
+    };
+
     return (
-        <div className={`${className} w-full flex items-center flex-col gap-2 `}>
-            <Pagination className="w-full">
+        <div className={`${className} w-full flex items-center justify-center flex-wrap gap-2 mb-20`}>
+            <Pagination className="w-full justify-center">
                 <PaginationContent>
+                    {/* Previous Button */}
                     <PaginationItem>
                         <PaginationPrevious
-                            onClick={page <= 1 ? undefined : handlePrev}
+                            onClick={page > 1 ? handlePrev : undefined}
                             aria-disabled={page <= 1}
                         />
                     </PaginationItem>
-                    {Array.from({ length: totalPage }, (_, i) => i + 1).slice(0, 3).map((num) => (
-                        <PaginationItem key={num}>
-                            <PaginationLink className="cursor-pointer hover:bg-red-700/10" onClick={() => setPage(num)} isActive={page === num}>
-                                {num}
-                            </PaginationLink>
-                        </PaginationItem>
-                    ))}
-                    {totalPage > 3 && <PaginationEllipsis />}
+
+                    {/* Page Items */}
+                    {renderPages()}
+
+                    {/* Next Button */}
                     <PaginationItem>
                         <PaginationNext
-                            onClick={page >= totalPage ? undefined : handleNext}
+                            onClick={page < totalPage ? handleNext : undefined}
                             aria-disabled={page >= totalPage}
                         />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-            {/* <p className="text-sm mt-2">Total Page: {totalPage}</p> */}
         </div>
     );
 }

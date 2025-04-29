@@ -34,6 +34,8 @@ const CalendarField = ({
       )
       .map((item:any)=> item.time)
   : [];
+
+  console.log({data})
   
   return (
     <FormField

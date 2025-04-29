@@ -25,7 +25,7 @@ type PackagesType = {
 };
 
 export default function DataPage() {
-  const [packet, setPackages] = useState<PackagesType | null>(null);
+  const [pages, setPages] = useState<PackagesType | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
@@ -44,7 +44,7 @@ export default function DataPage() {
   };
 
   const handleNext = () => {
-    if (packet && page < packet.pagination.totalPages) {
+    if (pages && page < pages.pagination.totalPages) {
       handleChangePage(page + 1);
     }
   };
@@ -61,17 +61,17 @@ export default function DataPage() {
         const response = await axiosInstance.get("/page",{
           params: { limit: 4, page },
         });
-        setPackages(response.data);
+        setPages(response.data);
       } catch (error: any) {
         failedToast("Error", error.response?.data?.error || error.response?.statusText || "Error processing data");
       }
     };
 
     fetchData();
-  }, []);
+  }, [page]);
 
   const headings = ["Page Name", "Action"];
-  const data = packet?.data.map((item: any) => ({
+  const data = pages?.data.map((item: any) => ({
     "Page Name": item.page,
     "Action": (
       <div className="flex items-center gap-5">
@@ -98,7 +98,7 @@ export default function DataPage() {
           handlePrev={handlePrevious}
           page={page}
           setPage={handleChangePage}
-          totalPage={packet?.pagination.totalPages || 1}
+          totalPage={pages?.pagination.totalPages || 1}
         />
       </section>
     </main>

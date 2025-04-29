@@ -162,6 +162,7 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
                     <Button
                         onClick={() => router.push("/blog/blogs")}
                         variant={"outline"}
+                        type="button"
                         className="h-14 px-7 rounded-full"
                     >
                         Back

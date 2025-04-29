@@ -19,6 +19,7 @@ export const navLinks: NavLink[] = [
   },
   {
     name: 'Plans',
+    path: '/plans',
     menus: [""],
   },
   {

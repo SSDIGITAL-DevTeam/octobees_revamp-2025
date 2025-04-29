@@ -46,6 +46,7 @@ const FormMeta = ({ defaultValue }: { defaultValue?: any }) => {
     const page = params?.slug as string;
 
     const handleInput = handleSubmit(async (value) => {
+        console.log({...value, page});
         if (!defaultValue) {
             try {
                 const response = await axiosInstance.post(

@@ -133,6 +133,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
           <Button
             onClick={() => router.push("/user")}
             variant={"outline"}
+            type="button"
             className="h-14 px-7 rounded-full"
           >
             Back

@@ -8,7 +8,7 @@ import { NavLink, navLinks } from '@/constants/navlinks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Logo from '@/components/partials/Logo/Logo';
-import axios from 'axios'
+// import axios from 'axios'
 import { axiosInstance } from '@/lib/axios';
 
 export default function Navbar() {
@@ -113,6 +113,7 @@ export default function Navbar() {
           <Logo />
         </Link>
 
+
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
             <div className="flex-grow" />
@@ -127,7 +128,7 @@ export default function Navbar() {
                         handleDropdownToggle(navlink.name);
                       }
                     }}
-                    className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path ? 'text-primary font-bold' : 'text-dark'} hover:bg-gray-500/5 hover:text-primary `}
+                    className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path ? 'text-primary/80 font-semibold' : 'text-dark'} hover:bg-gray-500/5 hover:text-primary `}
                   >
                     {navlink.name}
                     {navlink.menus && <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? 'rotate-180' : ''}`} />}
@@ -148,7 +149,7 @@ export default function Navbar() {
                               <Link
                                 key={subIndex}
                                 href={submenu.path}
-                                className={`block px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 ${pathname === submenu.path ? 'text-primary font-medium' : 'text-gray-700'}`}
+                                className={`block px-4 py-2 text-base hover:bg-gray-100 hover:text-gray-900 ${pathname === submenu.path ? 'text-primary font-medium' : 'text-gray-700'}`}
                                 onClick={handleMenuItemClick}
                               >
                                 {submenu.name}
