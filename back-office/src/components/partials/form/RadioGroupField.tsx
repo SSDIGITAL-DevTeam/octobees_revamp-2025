@@ -29,7 +29,6 @@ const RadioGroupField = ({ control, name, label, data, defaultChecked }: CheckBo
       control={control}
       name={name}
       render={({ field }) => {
-        console.log("wkw", typeof field.value);
         return(
         <FormItem className="space-y-3">
           <FormLabel className="capitalize font-semibold mb-2 text-base">
