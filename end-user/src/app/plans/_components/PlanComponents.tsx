@@ -147,19 +147,22 @@ export default function PlanComponents(params: { data: PlanType[] }): JSX.Elemen
                       </p>
                     </div>
                   ) : (
-                    <p
-                      className={`font-semibold text-xl py-2 px-4 self-start ${isPremium
-                          ? "bg-gradient-to-r from-[#E8D28F] to-[#D4AF37] text-[#1a1a1a]"
-                          : "bg-primary text-white"
-                        }`}
-                    >
-                      (Consult with us)
+                   
+                    <>
+                      <p
+                        className={`hidden font-semibold text-xl py-2 px-4 self-start ${isPremium
+                            ? "bg-gradient-to-r from-[#E8D28F] to-[#D4AF37] text-[#1a1a1a]"
+                            : "bg-primary text-white"
+                          }`}
+                      >
+                        (Consult with us)
                     </p>
+                    </>
                   )}
                 </div>
               ) : (
                 <p
-                  className={`font-semibold text-xl py-2 px-4 self-start ${isPremium
+                  className={`hidden font-semibold text-xl py-2 px-4 self-start ${isPremium
                       ? "bg-gradient-to-r from-[#E8D28F] to-[#D4AF37] text-[#1a1a1a]"
                       : "bg-primary text-white"
                     }`}
@@ -169,23 +172,33 @@ export default function PlanComponents(params: { data: PlanType[] }): JSX.Elemen
               )}
 
               {/* Fitur */}
-              {plan.benefits && (
-                <ul className="flex flex-col gap-y-3">
-                  {plan.benefits.map((feature, featureIndex) => (
+             {Array.isArray(plan?.benefits) && plan.benefits.length > 0 && (
+              <ul className="flex flex-col gap-y-3">
+                {plan.benefits.map((feature, featureIndex) =>
+                  feature?.value ? (
                     <li key={featureIndex} className="flex items-center gap-x-3">
                       <span className="text-secondary">
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 18 18"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
                           <path
                             d="M9 16.5C4.85975 16.4955 1.50455 13.1403 1.5 9.00001V8.85001C1.58245 4.72841 4.97594 1.44598 9.098 1.50067C13.2201 1.55537 16.5253 4.92668 16.4983 9.04902C16.4714 13.1714 13.1224 16.4992 9 16.5ZM5.5575 8.69251L4.5 9.75001L7.5 12.75L13.5 6.75001L12.4425 5.68501L7.5 10.6275L5.5575 8.69251Z"
                             fill={isPremium ? "#E8D28F" : "#B4000B"}
                           />
                         </svg>
                       </span>
-                      <span className={isPremium ? "text-gray-300" : "text-dark"}>{feature.value}</span>
+                      <span className={isPremium ? "text-gray-300" : "text-dark"}>
+                        {feature.value}
+                      </span>
                     </li>
-                  ))}
-                </ul>
-              )}
+                  ) : null
+                )}
+              </ul>
+            )}
 
               {/* Modal */}
               <LeadModal

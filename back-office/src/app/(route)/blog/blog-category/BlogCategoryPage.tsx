@@ -100,7 +100,7 @@ export default function DataPage() {
     ),
   }));
 
-  console.log(blogCats?.data)
+  // console.log(blogCats?.data)
 
   const filteredData = data?.filter((row: any) =>
     headings.some((key) =>

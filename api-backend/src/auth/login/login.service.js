@@ -6,9 +6,10 @@ import { editUser, findUserByEmail } from '../../user/user.repository.js'
 export const loginUser = async (data) => {
     try {
         const { email, password: inputPassword } = data
-
+        
         let validatedUser = await findUserByEmail(email)
-
+        
+        console.log("==========="+email)
         if (!validatedUser || validatedUser.length === 0) {
             throw new Error('Email not found')
         }
@@ -39,6 +40,7 @@ export const loginUser = async (data) => {
 
         return { accessToken, refreshToken }
     } catch (error) {
+        //throw new Error("Tes")
         throw new Error(error.message)
     }
 }
