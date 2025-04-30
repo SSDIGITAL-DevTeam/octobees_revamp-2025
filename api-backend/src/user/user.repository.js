@@ -68,20 +68,19 @@ export const findUserById = async (id) => {
 
 export const findUserByEmail = async (email) => {
   try {
-    const selectedEmail = await db
-      .select({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        password: user.password,
-        role: user.role,
-        features: user.features,
-      })
-      .from(user)
-      .where(eq(user.email, email))
-      .limit(1);
+    const selectedEmail = await db.query.user.findFirst({
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true,
+        features: true,
+      },
+      where: eq(user.email, email),
+    })
 
-    return selectedEmail[0] || null;
+    return selectedEmail;
   } catch (error) {
     console.error("GET by Email / error: ", error);
     throw new Error("Error fetching user by email");
