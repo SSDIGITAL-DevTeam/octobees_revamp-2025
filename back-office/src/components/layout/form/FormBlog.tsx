@@ -113,7 +113,11 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
                 router.push("/auth/login");
                 return;
             }
-            const {id : userId} = jwtDecode(token);
+            let userId = "";
+            const decoded = jwtDecode(token) as any;
+            if (decoded?.id) {
+                userId = decoded?.id;
+            }
             const formData = new FormData();
             formData.append("title", value.title);
             formData.append("content", value.content);
@@ -149,8 +153,8 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
         <Form {...form}>
             <form onSubmit={handleInput}>
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
-           
-                
+
+
                     {/* <SelectField control={control} label="Add Category" name="categoryId" data={data} /> */}
                     <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
                     <ImageField defaultImage={previewUrl} setImageFile={setImageFile} control={control} label="Add Cover Image" name="image" />

@@ -13,7 +13,7 @@ export function withAuth(Component: any) {
     useEffect(() => {
       const token = typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
       if (!token) {
-        router.push("/login");
+        router.push("/auth/login");
         return;
       }
       try {
@@ -22,7 +22,7 @@ export function withAuth(Component: any) {
       } catch (error) {
         console.error("Invalid token", error);
         sessionStorage.removeItem("token");
-        router.push("/login");
+        router.push("/auth/login");
       }
     }, []); // ✅ tambahin dependency
 

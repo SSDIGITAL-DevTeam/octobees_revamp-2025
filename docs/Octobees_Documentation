@@ -464,7 +464,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{auth_url}}/login",
+							"raw": "{{auth_url}}/auth/login",
 							"host": [
 								"{{auth_url}}"
 							],
