@@ -7,17 +7,18 @@
     "test": "jest",
     "clean:prisma": "rm -rf prisma && npm uninstall prisma @prisma/client",
     "start-old": "node .",
-    "seed" : "node src/seeder/seeder.js",
+    "seed": "node src/seeder/seeder.js",
     "start": "node .",
     "dev": "nodemon .",
     "migrate-old": "rm -rf ./drizzle/migrations && npx drizzle-kit generate && npx drizzle-kit migrate",
-     "migrate": " npx drizzle-kit generate && npx drizzle-kit migrate"
+    "migrate": " npx drizzle-kit generate && npx drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/storage": "^7.16.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
