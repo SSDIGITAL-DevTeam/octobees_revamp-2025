@@ -10,3 +10,5 @@ node_modules/
 service-production.yaml
 
 cloudbuild-production.yaml
+
+#service-account.json
