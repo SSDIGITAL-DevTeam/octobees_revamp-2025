@@ -23,15 +23,15 @@ export default function Home() {
       {/* Header / Hero  */}
       <header className="flex flex-col md:flex-row gap-16 md:gap-0 bg-white overflow-x-hidden lg:min-h-screen pb-[50px] lg:pb-[80px] pt-32 lg:pt-[120px] relative md:max-w-7xl md:mx-auto">
         <div className="bg-primary/20 rounded-full overflow-x-hidden h-[50%] w-[50%] absolute top-0 md:top-60 right-0 lg:right-28 blur-[90px] z-[50]"></div>
-        <div id="left" className="container flex flex-col gap-10 justify-center relative">
-          <h1 className="font-semibold text-gray-400 tetx-base lg:text-2xl flex flex-col gap-2 lg:gap-4">
+        <div id="left" className="container flex flex-col gap-10 justify-center items-center md:items-start relative">
+          <h1 className="font-semibold text-gray-500 text-sm lg:text-2xl flex flex-col gap-2 lg:gap-4 text-center md:text-left">
             WE ARE
-            <span className="flex flex-col gap-1 lg:gap-3 font-heading text-3xl md:text-4xl lg:text-6xl text-black">
+            <span className="flex flex-col gap-1 lg:gap-3 font-heading text-4xl lg:text-6xl text-black">
               <span>Your <span className="text-primary"> Revenue</span></span>
               <span><span className="text-primary">Growth</span> Partner</span>
             </span>
           </h1>
-          <h3 className="text-xs lg:text-lg flex flex-col gap-1 lg:gap-3 text-gray-500">
+          {/* <h3 className="text-xs lg:text-lg flex flex-col gap-1 lg:gap-3 text-gray-500">
             TRUSTED BY GROWING COMPANIES
             <span className="flex gap-1 lg:gap-3 items-center">
               {brandHome.map((brand, index) => (
@@ -47,7 +47,34 @@ export default function Home() {
               ))}
               <p className="text-primary font-semibold text-lg">40+ <span className="hidden lg:block">Companies</span></p>
             </span>
-          </h3>
+          </h3> */}
+          <div>
+            <h3 className="text-xs lg:text-lg text-gray-500 max-w-36 !leading-[130%] sm:max-w-full text-center md:text-left mx-auto md:mx-0">
+              TRUSTED BY GROWING COMPANIES
+            </h3>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 md:gap-4">
+              {brandHome.map((brand, index) => (
+                <div key={index} className="p-1">
+                  <Link
+                    href={brand.web || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit ${brand.name}`}
+                  >
+                    <Image
+                      src={brand.logo}
+                      alt={`Logo of ${brand.name}, trusted partner`}
+                      width={1920}
+                      height={1080}
+                      className="object-contain w-20 md:w-28"
+                    />
+                  </Link>
+                </div>
+              ))}
+              <p className="text-primary font-semibold text-lg">40+ Companies</p>
+            </div>
+          </div>
+
           <div className="flex justify-start">
             <Link
               href="/contact-us"
@@ -356,7 +383,7 @@ export default function Home() {
                   className="w-full h-[470px] lg:h-full rounded-[30px] object-cover object-top"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-[30px]"/>
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-[30px]" />
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-between gap-y-5 p-8 lg:p-10">
                   <h2 className="uppercase text-light">customer stories</h2>
                   <div className="flex flex-col gap-y-3 md:gap-y-7 w-full lg:w-3/4">

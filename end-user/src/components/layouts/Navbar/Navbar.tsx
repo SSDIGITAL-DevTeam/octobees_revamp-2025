@@ -108,7 +108,7 @@ export default function Navbar() {
 
   return (
     <nav className={`${NavbarColor} ${NavbarPosition} fixed left-0 right-0 w-full z-[100] transition-all duration-700 ease-out`}>
-      <div className="max-w-7xl py-7 mx-auto px-7 md:px-2 flex justify-between items-center">
+      <div className="max-w-7xl py-5 md:py-7 mx-auto px-7 md:px-2 flex justify-between items-center">
         <Link href="/" className="flex-shrink-0">
           <Logo />
         </Link>
