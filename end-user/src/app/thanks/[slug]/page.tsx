@@ -14,7 +14,7 @@ export default function Page(): JSX.Element {
   useEffect(() => {
     if (!slug) return notFound();
 
-    const validSlugs = ["plans", "contact-us", "increase-your-sales"];
+    const validSlugs = ["plans", "contact-us", "increase-my-sales"];
     if (!validSlugs.includes(String(slug))) return notFound();
   }, [slug]);
 

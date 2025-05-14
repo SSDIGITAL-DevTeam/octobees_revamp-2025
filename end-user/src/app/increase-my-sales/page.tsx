@@ -60,6 +60,7 @@ export default function IncreaseMySales() {
                         <p className="text-primary font-semibold text-sm sm:text-lg">40+ Companies</p>
                     </div>
                 </div>
+                <div className="max-w-[60%] w-full">
                 <Image
                     src={HeroSectionImage.src}
                     alt="Asset Banner Hero"
@@ -67,7 +68,8 @@ export default function IncreaseMySales() {
                     height={1000}
                     className="rounded-xl md:rounded-[2rem] z-[52] w-full h-full object-contain"
                     loading="lazy"
-                />
+                    />
+                    </div>
             </header>
 
             <section className="px-8 flex flex-col items-center justify-center gap-12 md:gap-14 lg:min-h-screen md:max-w-7xl md:mx-auto py-20">
@@ -141,13 +143,13 @@ export default function IncreaseMySales() {
                         <GetStartedButton />
                     </div>
                 </div>
-                <div className='flex flex-col justify-center items-center gap-7 w-full mb-20'>
+                <div className='flex flex-col justify-center items-center gap-7 w-full pb-20'>
                     <EmblaCarousel side='right' slides={slides.slice(0, 5)} />
                     <EmblaCarousel side='left' slides={slides.slice(5, 10)} />
                 </div>
             </section>
 
-            <section id="contact" className="-scroll-mt-40">
+            <section id="contact" className="-scroll-mt-40 scroll-smooth">
                 <ContactUs />
             </section>
         </main>
