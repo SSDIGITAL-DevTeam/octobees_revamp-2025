@@ -36,13 +36,7 @@ export default function About(): JSX.Element {
               <div className="flex flex-col gap-y-5">
                 <h1 className="w-full text-3xl lg:text-4xl text-primary font-bold font-heading  !leading-[130%]">Improving our services and quality continuously</h1>
                 <p className="w-full lg:text-lg text-justify lg:text-start text-gray-600 !leading-[150%]">
-                  We believe that entrepreneurs are the visionaries shaping world’s
-                  future. They navigate through challenges and uncover opportunities that
-                  push the boundaries of what’s possible. At Octobees, we ensure that
-                  entrepreneurs stay focused on innovation and growth. By managing their
-                  digital presence and marketing strategies, we take care of the
-                  complexities, allowing them to focus on what matters most — growing
-                  their business and achieving their goals.
+                  We are a team of dedicated professionals, always striving for growth — as individuals, as employees, as business partners, and as a company. At Octobees, we never stop searching for faster, more efficient, and higher-quality ways to deliver exceptional results for our clients. Improvement is in our DNA, and we are committed to evolving with every opportunity.
                 </p>
               </div>
               <div className="w-full block lg:hidden">
