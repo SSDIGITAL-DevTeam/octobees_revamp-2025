@@ -142,7 +142,7 @@ export default function ContactForm(): JSX.Element {
           <input type="text" placeholder="I'm Interested in ..." className="p-4 rounded-xl border border-[#909396] w-full text-sm lg:text-lg" value={interest} onChange={(e) => setInterest(e.target.value)} />
         </div>
         <textarea placeholder="How can we help?" className="p-4 rounded-xl border border-[#909396] w-full text-sm lg:text-lg" rows={5} value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
-        <button type="submit" className="py-4 px-14 rounded-full bg-primary text-white font-semibold text-sm lg:text-lg self-center hover:text-primary hover:bg-light border border-primary transition-colors duration-300" disabled={isSubmitting}>
+        <button type="submit" className="py-4 px-14 rounded-full bg-primary text-white font-semibold text-sm lg:text-lg self-center hover:bg-red-900 border border-primary transition-colors duration-300" disabled={isSubmitting}>
           {isSubmitting ? 'Sending...' : 'Send your message'}
         </button>
       </form>

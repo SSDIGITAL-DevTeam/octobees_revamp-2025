@@ -113,7 +113,6 @@ export default function Navbar() {
           <Logo />
         </Link>
 
-
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
             <div className="flex-grow" />
@@ -169,7 +168,7 @@ export default function Navbar() {
 
         {matches && (
           <Link href="/contact-us" className="bg-primary py-3 px-8 text-light font-semibold rounded-full hover:bg-[#EB9085] transition-colors duration-300 flex-shrink-0">
-            Contact us
+            Contact Us
           </Link>
         )}
 

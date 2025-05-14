@@ -40,8 +40,8 @@ export default function FloatButton(): JSX.Element {
           <div className="bg-white rounded-full shadow-lg overflow-hidden px-4 py-3 hidden md:block">
             <div className="flex flex-row gap-x-3">
               <Link
-                href="/contact-us"
-                className="bg-primary border-2 flex gap-3 border-primary px-10 md:px-12 py-3 lg:py-4 font-semibold text-light rounded-full text-sm lg:text-xl xl:text-xl whitespace-nowrap transition-colors duration-300 hover:bg-[#EB9085]"
+                href="/increase-my-sales"
+                className="bg-primary border-2 flex gap-3 border-primary px-10 md:px-12 py-3 lg:py-4 font-semibold text-light rounded-full text-sm lg:text-xl xl:text-xl whitespace-nowrap transition-colors duration-300 hover:bg-red-800"
               >
                 Increase Your Sales <Rocket/>
               </Link>

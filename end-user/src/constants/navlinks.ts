@@ -23,7 +23,7 @@ export const navLinks: NavLink[] = [
     menus: [""],
   },
   {
-    name: 'Contact us',
+    name: 'Contact Us',
     path: '/contact-us',
   },
 ];

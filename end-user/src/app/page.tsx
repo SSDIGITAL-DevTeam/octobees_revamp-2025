@@ -77,8 +77,8 @@ export default function Home() {
 
           <div className="flex justify-start">
             <Link
-              href="/contact-us"
-              className="bg-primary border-2 flex items-center gap-3 border-primary hover:bg-primary px-8 md:px-10 py-3 lg:py-4 font-semibold text-light rounded-full text-base md:text-lg lg:text-xl xl:text-xl whitespace-nowrap transition-all duration-500 shadow-md hover:shadow-primary/50 hover:shadow-lg"
+              href="/increase-my-sales"
+              className="bg-primary border-2 flex items-center gap-3 border-primary hover:bg-primary px-8 md:px-10 py-3 lg:py-3 font-semibold text-light rounded-full text-base md:text-lg lg:text-xl xl:text-xl whitespace-nowrap transition-all duration-500 shadow-md hover:shadow-primary/50 hover:shadow-lg"
             >
               Increase My Sales<TrendingUp />
             </Link>
