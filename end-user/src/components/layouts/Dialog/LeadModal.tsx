@@ -2,7 +2,7 @@
 
 import { Form } from "@/components/ui/form";
 import React, { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -24,7 +24,6 @@ import CalendarField from "@/components/partials/Form/CalendarField";
 import RadioComponents from "@/components/partials/Radio/RadioComponents";
 import { formattedDate } from "@/utils/timezone";
 import axios from "axios";
-import ThanksModal from "./ThanksModal";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
 
@@ -64,6 +63,8 @@ export function LeadModal(params: {
     },
     resolver: zodResolver(contactSchema),
   });
+
+  const router = useRouter();
 
   const { handleSubmit, control, watch } = form;
   const handleInput = handleSubmit(async (value) => {
@@ -110,7 +111,7 @@ export function LeadModal(params: {
       const dbResponse = await axiosInstance.post("/order", dataForDatabase)
       if (dbResponse.status == 200) {
         setOpen((prev) => !prev)
-        setSuccess((prev) => !prev)
+        router.push(`/thanks/plans`);
       }
       // console.log(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
     } catch (error: any) {
@@ -135,7 +136,6 @@ export function LeadModal(params: {
 
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean>(false);
   const [order, setOrder] = useState([]);
 
   useEffect(() => {
@@ -169,7 +169,6 @@ export function LeadModal(params: {
 
   return (
     <>
-      <ThanksModal open={success} setOpen={setSuccess} />
       {isLoading &&
         <div className="bg-black/20 fixed inset-0 flex justify-center items-center overflow-hidden z-[400]">
           <p className="text-white font-bold text-2xl text-center">Loading...</p>

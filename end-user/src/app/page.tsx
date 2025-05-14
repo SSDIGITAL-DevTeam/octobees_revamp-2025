@@ -8,13 +8,15 @@ import AssetWhatWeDO2 from "@/assets/homepage/svg/undraw_success-factors_3eki 1.
 import AssetBarista from "@/assets/homepage/webp/asset-barista-smile.webp";
 import AssetIllingWarm from "@/assets/homepage/webp/asset-illing-warm.webp";
 import AssetSerious from "@/assets/homepage/webp/asset-serious-partner.webp";
-import AssetWhyChooseUs1 from "@/assets/homepage/webp/asset-why-choose-us-1.webp";
-import AssetWhyChooseUs2 from "@/assets/homepage/webp/asset-why-choose-us-2.webp";
+
 import AssetTestimonial from "@/assets/homepage/webp/asset-testimonials.webp";
 import Link from "next/link";
 import FloatButton from "@/components/partials/FloatButton/FloatButton";
 import { TrendingUp } from "lucide-react";
 import { brandHome } from "@/constants/brands";
+import WhyChooseUs from "./_components/WhyChooseUs";
+
+
 
 export default function Home() {
   return (
@@ -31,23 +33,6 @@ export default function Home() {
               <span><span className="text-primary">Growth</span> Partner</span>
             </span>
           </h1>
-          {/* <h3 className="text-xs lg:text-lg flex flex-col gap-1 lg:gap-3 text-gray-500">
-            TRUSTED BY GROWING COMPANIES
-            <span className="flex gap-1 lg:gap-3 items-center">
-              {brandHome.map((brand, index) => (
-                <div key={index} className="p-1 flex flex-col items-center justify-center">
-                  {brand.web ? (
-                    <Link href={brand.web} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                      <Image src={brand.logo} alt={`${brand.name} logo`} width={175} height={175} className="w-[70px]" priority={index < 4} quality={100} />
-                    </Link>
-                  ) : (
-                    <Image src={brand.logo} alt={`${brand.name} logo`} width={175} height={175} className="object-contain w-[175px] h-auto" priority={index < 4} quality={100} />
-                  )}
-                </div>
-              ))}
-              <p className="text-primary font-semibold text-lg">40+ <span className="hidden lg:block">Companies</span></p>
-            </span>
-          </h3> */}
           <div>
             <h3 className="text-xs lg:text-lg text-gray-500 max-w-36 !leading-[130%] sm:max-w-full text-center md:text-left mx-auto md:mx-0">
               TRUSTED BY GROWING COMPANIES
@@ -66,12 +51,12 @@ export default function Home() {
                       alt={`Logo of ${brand.name}, trusted partner`}
                       width={1920}
                       height={1080}
-                      className="object-contain w-20 md:w-28"
+                      className="object-contain w-14 md:w-28"
                     />
                   </Link>
                 </div>
               ))}
-              <p className="text-primary font-semibold text-lg">40+ Companies</p>
+              <p className="text-primary font-semibold text-base md:text-lg">40+ Companies</p>
             </div>
           </div>
 
@@ -135,7 +120,7 @@ export default function Home() {
         <div className="container flex flex-col items-center justify-center md:max-w-7xl md:mx-auto  gap-y-14 lg:gap-y-24">
           <div className="flex flex-col md:w-[660px] lg:w-[900px] items-center justify-center text-center gap-y-5">
             <h2 className="uppercase text-secondary text-sm lg px-3 py-1 border-[1px] border-secondary shadow-sm rounded-full">what we do</h2>
-            <h1 className="font-heading text-3xl lg:text-4xl xl:text-5xl font-medium !leading-[120%]">Flexible services for every stage of your business</h1>
+            <h1 className="font-heading text-3xl lg:text-4xl xl:text-5xl font-medium !leading-[130%]">Flexible services for every stage of your business</h1>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 place-items-center gap-y-6 lg:gap-x-0 md:gap-x-2 xl:gap-x-7">
             {/* Card 1 */}
@@ -143,18 +128,16 @@ export default function Home() {
               <Image
                 src={AssetWhatWeDO1}
                 alt="Asset What We Do 1"
-                className=" w-full h-[30vh] px-5"
+                className="w-[80%] md:w-full md:h-[30vh] px-5"
                 loading="lazy"
                 quality={100}
               />
-
-              <div className="flex flex-col gap-y-4 w-full">
-                <h1 className="font-heading font-semibold text-2xl md:text-3xl lg:text-4xl">
+              <div className="flex flex-col gap-y-2 md:gap-y-4 w-full">
+                <h1 className="font-heading font-semibold text-xl md:text-3xl lg:text-4xl">
                   <span className="text-primary">Start</span> your business
                 </h1>
-                <p className="text-sm text-gray-500 md:text-base font-medium !leading-[150%]">
-                  Enhance Your Business Brand Identity by Leveraging Affordable
-                  Digital Solutions for SMEs
+                <p className="text-sm text-gray-600 md:text-base font-medium !leading-[150%]">
+                  Enhance Your Business Brand Identity by Leveraging Affordable Digital Solutions for SMEs
                 </p>
               </div>
               <div className="w-full items-start">
@@ -172,15 +155,16 @@ export default function Home() {
               <Image
                 src={AssetWhatWeDO2}
                 alt="Asset What We Do 2"
-                className=" w-full h-[30vh] px-5"
+                className="w-[90%] md:w-full h-[20vh] md:h-[30vh] px-5"
                 loading="lazy"
                 quality={100}
               />
-              <div className="flex flex-col gap-y-4 w-full">
-                <h1 className="font-heading font-semibold text-2xl md:text-3xl lg:text-4xl">
+              <div className="flex flex-col gap-y-2 md:gap-y-4 w-full">
+                <h1 className="font-heading font-semibold text-xl md:text-3xl lg:text-4xl">
                   <span className="text-primary">Switch</span> to Octobees
                 </h1>
-                <p className="text-sm text-gray-500 md:text-base font-medium !leading-[150%]">
+                <p className="text-sm text-gray-700 md:text-base font-medium !leading-[150%]">
+
                   Get Expert Digital Marketing Services with best practices for
                   website optimization and targeted B2B and B2C Strategies
                 </p>
@@ -215,7 +199,7 @@ export default function Home() {
                 className="w-full lg:w-4/5 rounded-[30px]"
                 loading="lazy"
               />
-              <h2 className="text-center font-semibold text-base lg:text-xl w-full lg:w-2/3">
+              <h2 className="text-center font-medium md:font-semibold text-base lg:text-xl w-full lg:w-2/3">
                 <span className="text-primary">
                   Solo founders
                 </span>{" "}
@@ -231,7 +215,7 @@ export default function Home() {
                 className="w-full lg:w-4/5 rounded-[30px]"
                 loading="lazy"
               />
-              <h2 className="text-center font-semibold text-base lg:text-xl w-full lg:w-2/3">
+              <h2 className="text-center font-medium md:font-semibold text-base lg:text-xl w-full lg:w-2/3">
                 <span className="text-primary">
                   Business owners
                 </span>{" "}
@@ -247,7 +231,7 @@ export default function Home() {
                 className="w-full lg:w-4/5 rounded-[30px]"
                 loading="lazy"
               />
-              <h2 className="text-center font-semibold text-base lg:text-xl w-full lg:w-2/3">
+              <h2 className="text-center font-medium md:font-semibold text-base lg:text-xl w-full lg:w-2/3">
                 <span className="text-primary">Companies</span>{" "}
                 looking to scale their business in Singapore
               </h2>
@@ -258,120 +242,15 @@ export default function Home() {
 
       {/* Why Choose Us */}
       <section className="flex flex-col bg-tertiary overflow-x-hidden py-[50px] lg:py-[70px]">
-        <div className="container flex flex-col items-center justify-center md:px-10 gap-y-10 md:gap-y-20 lg:gap-y-24">
-          <div className="flex flex-col md:w-[660px] lg:w-[900px] items-center justify-center text-center gap-y-5">
-            <h2 className="uppercase text-secondary text-sm lg px-3 py-1 border-[1px] border-secondary shadow-sm rounded-full">why choose us</h2>
-            <h1 className="font-heading text-3xl lg:text-4xl xl:text-5xl font-medium !leading-[120%]">From brand analysis to marketing strategy and beyond, we&apos;re
-              with you.</h1>
-          </div>
-          <div className="mt-3 lg:mt-12 flex flex-col gap-y-16 lg:gap-y-32 w-full justify-center items-center">
-            {/*  First Section */}
-            <div className="flex flex-col justify-center lg:flex-row-reverse gap-y-10 lg:gap-y-0 gap-x-0 lg:gap-x-28">
-              <Image
-                src={AssetWhyChooseUs1}
-                alt="AssetWhyChooseUS"
-                className="w-full lg:w-2/5 lg:h-[50vh] object-cover rounded-[30px]"
-                loading="lazy"
-              />
-              <div className="flex flex-col h-auto gap-y-4 md:gap-y-6 lg:gap-y-8 items-center w-full lg:w-1/3 ">
-                <h1 className="text-2xl font-heading !leading-[120%] lg:text-4xl w-full">
-                  Agency that know your business
-                </h1>
-                <p className="text-base text-gray-500 lg:text-xl">
-                  We take a proactive approach to help you make best marketing
-                  financial decisions to grow revenue.
-                </p>
-                <Link
-                  href="/about"
-                  className="group bg-transparent px-5 py-2 lg:px-7 lg:py-4 font-semibold text-dark border-2 border-dark rounded-full md:text-lg whitespace-nowrap flex gap-x-2 md:gap-x-4 items-center self-start hover:bg-dark hover:text-white transition-all duration-300"
-                >
-                  Learn More
-                  <svg
-                    width="25"
-                    height="24"
-                    viewBox="0 0 25 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="transition-all duration-300 stroke-dark group-hover:stroke-white"
-                  >
-                    <path
-                      d="M14.93 18.07L21 12L14.93 5.92999"
-                      strokeWidth="1.5"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M4.00008 12L20.8301 12"
-                      strokeWidth="1.5"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-
-            {/*  Second Section */}
-            <div className="flex flex-col-reverse lg:flex-row-reverse justify-center gap-y-10 lg:gap-y-0 gap-x-0 lg:gap-x-28">
-
-              <div className="flex flex-col h-auto gap-y-4 md:gap-y-6 lg:gap-y-8 items-center w-full lg:w-1/3 ">
-                <h1 className="text-2xl font-heading !leading-[120%] lg:text-4xl w-full">
-                  Google SEO-powered website for your business
-                </h1>
-                <p className="text-base text-gray-500 lg:text-xl">
-                  Our team helps to create the best Google SEO-Powered Website
-                  to drive traffic, increase visibility, and convert visitors
-                  into loyal customers.
-                </p>
-                <Link
-                  href="/about"
-                  className="group bg-transparent px-5 py-2 lg:px-7 lg:py-4 font-semibold text-dark border-2 border-dark rounded-full md:text-lg whitespace-nowrap flex gap-x-2 md:gap-x-4 items-center self-start hover:bg-dark hover:text-white transition-all duration-300"
-                >
-                  Learn More
-                  <svg
-                    width="25"
-                    height="24"
-                    viewBox="0 0 25 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="transition-all duration-300 stroke-dark group-hover:stroke-white"
-                  >
-                    <path
-                      d="M14.93 18.07L21 12L14.93 5.92999"
-                      strokeWidth="1.5"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M4.00008 12L20.8301 12"
-                      strokeWidth="1.5"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
-              </div>
-              <Image
-                src={AssetWhyChooseUs2}
-                alt="AssetWhyChooseUS"
-                className="w-full lg:w-2/5 object-[10%_80%] lg:h-[50vh] object-cover rounded-[30px]"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
+        <WhyChooseUs />
       </section>
 
       {/* Testimonials */}
       <section className="flex flex-col bg-light overflow-x-hidden py-[50px] lg:py-[60px]">
-        <div className="container flex flex-col items-center justify-center md:px-10 gap-y-16">
+        <div className="container flex flex-col items-center justify-center md:px-10 gap-y-8 md:gap-y-16">
           <div className="flex flex-col md:w-[660px] lg:w-[900px] items-center justify-center text-center gap-y-5">
-            <h2 className="uppercase text-secondary text-sm lg px-3 py-1 border-[1px] border-secondary shadow-sm rounded-full">testimonials</h2>
-            <h1 className="font-heading text-3xl lg:text-4xl xl:text-5xl font-medium !leading-[120%]">What our clients think about Octobees services</h1>
+            <span className="uppercase text-secondary text-sm lg px-3 py-1 border-[1px] border-secondary shadow-sm rounded-full">testimonials</span>
+            <h1 className="font-heading text-3xl lg:text-4xl xl:text-5xl font-medium !leading-[130%]">What our clients think about Octobees services</h1>
           </div>
           <div className="flex flex-col gap-y-6">
             <div className="mt-3 lg:mt-12 flex flex-col lg:flex-row gap-y-6 lg:gap-y-0 gap-x-0 lg:gap-x-4 lg:max-h-[55vh]">
@@ -380,14 +259,14 @@ export default function Home() {
                 <Image
                   src={AssetTestimonial}
                   alt="Asset Testimonial"
-                  className="w-full h-[470px] lg:h-full rounded-[30px] object-cover object-top"
+                  className="w-full h-[40vh] md:h-[470px] lg:h-full rounded-[30px] object-cover object-top"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 rounded-[30px]" />
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-between gap-y-5 p-8 lg:p-10">
-                  <h2 className="uppercase text-light">customer stories</h2>
+                  <h2 className="uppercase text-light text-sm md:text-base">customer stories</h2>
                   <div className="flex flex-col gap-y-3 md:gap-y-7 w-full lg:w-3/4">
-                    <h1 className="font-heading text-3xl lg:text-5xl text-light">
+                    <h1 className="font-heading text-xl md:text-3xl lg:text-5xl text-light">
                       “I use Octobees to help me succeed“
                     </h1>
                     <p className="text-light text-base lg:text-xl">
@@ -404,7 +283,7 @@ export default function Home() {
                     <path d="M50,10 A40,40 0 1,1 15,40" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" />
                     <text x="50" y="58" font-size="24" font-weight="bold" text-anchor="middle" fill="white">91%</text>
                   </svg>
-                  <p className="text-light text-xl capitalize text-center">
+                  <p className="text-light text-base md:text-xl capitalize text-center">
                     of customers recommend Octobees services
                   </p>
                 </div>
@@ -412,10 +291,10 @@ export default function Home() {
 
             </div>
             <div className="w-full flex flex-col justify-center bg-[#FFEEEF] p-10 lg:p-14 rounded-[30px]">
-              <div className="flex flex-col justify-between gap-y-14">
+              <div className="flex flex-col justify-between gap-y-10 md:gap-y-14">
                 <div className="flex flex-col justify-between gap-y-6 lg:gap-y-14">
-                  <h2 className="uppercase text-secondary">review</h2>
-                  <h1 className="font-heading text-xl lg:text-4xl !leading-snug">
+                  <h2 className="uppercase text-secondary text-sm md:text-base">review</h2>
+                  <h1 className="font-heading text-xl lg:text-4xl !leading-[140%]">
                     “The good thing about Octobees is that it saves a lot of
                     time so I can do other things – the running of the business
                     part.”

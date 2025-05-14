@@ -1,10 +1,8 @@
 import { countryCode, Country } from '@/constants/countryCodes';
 import Image from 'next/image';
 import { JSX, useState, useEffect, FormEvent } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import axios from 'axios';
-import ThanksModal from '@/components/layouts/Dialog/ThanksModal';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function ContactForm(): JSX.Element {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -14,7 +12,9 @@ export default function ContactForm(): JSX.Element {
   const [message, setMessage] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+
+  const  pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserCountry = async () => {
@@ -60,9 +60,6 @@ export default function ContactForm(): JSX.Element {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // console.log({ name }, { email }, { interest }, { message }, { phoneNumber })
-
-
     const dataForSpreadsheet = {
       "sheetName": "Contact Us",
       "Full Name": name,
@@ -79,7 +76,7 @@ export default function ContactForm(): JSX.Element {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
-      setIsSuccess(true);
+      router.push(`/thanks/${pathname.slice(1)}`);
       console.log(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
     } catch (error: any) {
       console.log(error)
@@ -101,7 +98,6 @@ export default function ContactForm(): JSX.Element {
 
   return (
     <>
-      <ThanksModal open={isSuccess} setOpen={setIsSuccess} />
       {isSubmitting &&
         <div className="bg-black/20 fixed inset-0 flex justify-center items-center overflow-hidden z-[400]">
           <p className="text-white font-bold text-2xl text-center">Loading...</p>

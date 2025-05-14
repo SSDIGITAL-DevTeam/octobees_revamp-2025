@@ -9,7 +9,7 @@ import { axiosInstance } from "@/lib/axios";
 export default function Page(): JSX.Element {
   const { slug } = useParams();
   const [data, setData] = useState<any>(null);
-  const router = useRouter();
+
   useEffect(() => {
     if (!slug) return;
     const fetchCategory = async () => {
