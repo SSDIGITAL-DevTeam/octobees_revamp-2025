@@ -15,13 +15,13 @@ export default function About(): JSX.Element {
       </Head>
       <main className="bg-light font-openSans overflow-x-hidden">
         {/* Header or Hero */}
-        <header className="flex flex-col overflow-x-hidden pt-[160px] pb-[60px] lg:py-[100px] bg-merah-200/30 min-h-[75vh] lg:min-h-[90vh] items-center justify-center">
+        <header className="flex flex-col overflow-x-hidden pt-[160px] pb-[60px] lg:pt-[160px] lg:pb-[120px] bg-merah-200/30 min-h-[75vh] lg:min-h-[80vh] items-center justify-center">
           <div className="flex flex-col items-center justify-center text-justify lg:text-center w-full gap-y-5 px-10">
             {/* <h2 className="px-3 text-xs md:text-sm py-2 bg-white font-semibold text-zinc-900 border-[1px] shadow-sm rounded-full w-fit">
               ABOUT OCTOBEES
             </h2> */}
             <h1 className="text-primary font-bold text-4xl lg:text-6xl font-Josefin">About Us</h1>
-            <p className=" w-full lg:w-[60%] text-primary lg:text-lg !leading-[150%]">
+            <p className=" w-full lg:w-[60%] text-primary/70 lg:text-lg !leading-[150%]">
               We believe that entrepreneurs are the visionaries shaping world&apos;s future. They navigate through challenges and uncover opportunities that push the boundaries of what&apos;s possible. At <strong>Octobees</strong>, we
               ensure that entrepreneurs stay focused on innovation and growth. By managing their digital presence and marketing strategies, we take care of the complexities, allowing them to focus on what matters most — growing their
               business and achieving their goals.
@@ -84,9 +84,9 @@ export default function About(): JSX.Element {
               <div className="flex flex-col lg:flex-row items-center justify-center lg:gap-x-16 2xl:gap-x-32">
                 <div className="flex flex-col gap-y-4 items-center justify-center">
                   <Image src={AssetHarvineAbout} alt="Harvine about" className="w-[150px] lg:w-[250px]" loading="lazy" />
-                  <div className="hidden md:flex flex-col items-center justify-center text-[#682d2d]">
-                    <h1 className="font-medium lg:text-xl">Harvine Khong</h1>
-                    <p className="uppercase font-medium lg:text-xl">co-founder & ceo</p>
+                  <div className="hidden font-semibold md:flex flex-col gap-y-2 items-center justify-center text-[#682d2d]">
+                    <h1 className=" lg:text-xl">Harvine Khong</h1>
+                    <p className="uppercase lg:text-xl">co-founder & ceo</p>
                   </div>
                 </div>
                 <div className=" p-8 lg:p-10 lg:w-[58%] rounded-2xl">
@@ -100,7 +100,7 @@ export default function About(): JSX.Element {
                       Starting from nothing wasn’t easy. From securing our first clients, educating the clients, to building a team of talented professionals, the journey was filled with challenges. But with determination and a clear
                       vision, opportunities came and we’ve been noticed and formed a partnership with Singapore’s sales & marketing company.
                     </p>
-                    <p className='text-black font-medium'>- Harvine Khong, Co-Founder & CEO</p>
+                    <p className='text-black font-medium text-lg'>- Harvine Khong, Co-Founder & CEO</p>
                   </div>
                 </div>
               </div>

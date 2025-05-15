@@ -115,7 +115,7 @@ export default function Navbar() {
 
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
-            <div className={`${pathname == "/increase-my-sales" ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
+            <div className={`${(pathname == "/increase-my-sales" || pathname.startsWith('/plans')) ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
             <div className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-border border-[1px]">
               {navLinks.slice(0, 4).map((navlink: NavLink, index: number) => (
                 <div key={index} className="relative group rounded-full" ref={dropdownRef}>
@@ -166,7 +166,7 @@ export default function Navbar() {
           </div>
         )}
 
-        {(matches && pathname !== '/increase-my-sales') && (
+        {(matches && pathname !== '/increase-my-sales' && !pathname.startsWith('/plans')) && (
           <Link href="/contact-us" className="bg-primary py-3 px-8 text-light font-semibold rounded-full hover:bg-red-800 transition-colors duration-300 flex-shrink-0">
             Contact Us
           </Link>

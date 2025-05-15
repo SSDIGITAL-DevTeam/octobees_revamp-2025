@@ -101,7 +101,7 @@ export default function RootLayout({
           __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W453F787');`,
         }}
       />
-      <Script
+      {/* <Script
         id="fb-pixel"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -118,7 +118,7 @@ fbq('init', '707136298400890');
 fbq('track', 'PageView');
     `,
         }}
-      />
+      /> */}
       <html lang="en">
         <body className="font-body">
           {/* GTM */}
@@ -127,14 +127,14 @@ fbq('track', 'PageView');
               __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W453F787" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
             }}
           ></noscript>
-          <noscript>
+          {/* <noscript>
             <img
               height="1"
               width="1"
               style={{ display: "none" }}
               src="https://www.facebook.com/tr?id=707136298400890&ev=PageView&noscript=1"
             />
-          </noscript>
+          </noscript> */}
           <Navbar />
 
           <Providers>
