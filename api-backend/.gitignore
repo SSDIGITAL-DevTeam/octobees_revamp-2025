@@ -8,6 +8,7 @@ node_modules
 node_modules/
 
 service-production.yaml
+service-production-private.yaml
 
 cloudbuild-production.yaml
 
