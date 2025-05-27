@@ -6,9 +6,9 @@
     "dev": "next dev ",
     "build": "next build",
     "build:prod": "rm -rf .next && next build",
-    "start": "next start",
-    "start-cpanel": "NODE_ENV=production node server.js",
-    "lint": "next lint"
+    "start": "NODE_ENV=production node server.js ",
+    "start-local": "next start"
+   
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

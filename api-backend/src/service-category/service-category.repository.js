@@ -2,6 +2,7 @@ import { db } from "../../drizzle/db.js";
 import {  categoryService,  planService } from "../../drizzle/schema.js";
 import { eq, asc, desc, sql, and } from "drizzle-orm";
 import { v7 as uuidv7 } from 'uuid'; // Import uuid7 generator
+import logger from "../../utils/logger.js";
 // 1. Find All Service Categories
 export const findAllServiceCats = async (skip, limit, where = undefined, orderBy = {}) => {
   
@@ -27,7 +28,7 @@ export const findAllServiceCats = async (skip, limit, where = undefined, orderBy
                 // orderBy: orderBy,
                 where: where
               });
-        
+            //  logger.error(datas)
 
         const [{ count: total }] = await db
             .select({ count: sql`COUNT(*)` })
@@ -36,7 +37,8 @@ export const findAllServiceCats = async (skip, limit, where = undefined, orderBy
 
         return { datas, total: Number(total) };
     } catch (error) {
-        console.error(error);
+        // logger.error(error)
+        // console.error(error);
         throw new Error("Kesalahan mengambil seluruh data category services");
     }
 };

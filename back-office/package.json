@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "start:cpanel": "NODE_ENV=production node server.js",
+    "build:prod": "NODE_ENV=production next build ",
+    "start": "NODE_ENV=production node server.js",
+    "start:local": "next start",
+ 
     "lint": "next lint"
   },
   "dependencies": {

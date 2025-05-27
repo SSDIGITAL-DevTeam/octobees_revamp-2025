@@ -8,7 +8,7 @@
     "clean:prisma": "rm -rf prisma && npm uninstall prisma @prisma/client",
     "start-old": "node .",
     "seed": "node src/seeder/seeder.js",
-    "start": "node .",
+    "start": "node server.cjs",
     "dev": "nodemon .",
     "migrate-old": "rm -rf ./drizzle/migrations && npx drizzle-kit generate && npx drizzle-kit migrate",
     "migrate": " npx drizzle-kit generate && npx drizzle-kit migrate"
@@ -31,6 +31,10 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.13.0",
+    "pino": "^9.7.0",
+    "pino-http": "^10.4.0",
+    "pino-multi-stream": "^6.0.0",
+    "pino-pretty": "^13.0.0",
     "socket.io": "^4.8.1",
     "uuid": "^11.1.0",
     "zod": "^3.24.1"

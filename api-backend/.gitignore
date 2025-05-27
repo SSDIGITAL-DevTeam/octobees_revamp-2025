@@ -12,4 +12,6 @@ service-production-private.yaml
 
 cloudbuild-production.yaml
 
+logs
+
 #service-account.json
