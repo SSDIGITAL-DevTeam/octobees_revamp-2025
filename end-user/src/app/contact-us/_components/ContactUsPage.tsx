@@ -3,12 +3,12 @@
 import React, { JSX } from 'react';
 import Link from 'next/link';
 import { Instagram } from 'iconsax-react';
-import ContactForm from '@/components/partials/ContactForm/ContactForm';
+import FormContact from '@/components/partials/Form/FormContact';
 
 export default function ContactUs(): JSX.Element {
   return (
     <main className="">
-      <header className="flex flex-col overflow-x-hidden py-[50px] lg:pt-[80px] bg-[#F2EDE6]">
+      <header className="flex flex-col overflow-x-hidden py-[50px] lg:pt-[80px] bg-[#F7E6E7]">
         <div className="container flex flex-col items-center justify-center py-20 md:px-10">
           <div className="flex flex-col w-full gap-y-10 items-center justify-center">
             <div className="flex flex-col text-center gap-y-7 w-full max-w-[36rem]">
@@ -20,7 +20,7 @@ export default function ContactUs(): JSX.Element {
               </div>
               <p className="">Get in touch and ask us anything - we&apos;ll answer it all.</p>
             </div>
-            <ContactForm />
+            <FormContact />
           </div>
         </div>
       </header>

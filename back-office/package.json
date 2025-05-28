@@ -5,10 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:prod": "NODE_ENV=production next build ",
-    "start": "NODE_ENV=production node server.js",
+    "build:prod": "rm -rf .next && next build ",
+    "start": "node server.js",
     "start:local": "next start",
- 
     "lint": "next lint"
   },
   "dependencies": {

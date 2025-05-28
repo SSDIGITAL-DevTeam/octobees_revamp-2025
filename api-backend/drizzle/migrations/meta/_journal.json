@@ -15,6 +15,13 @@
       "when": 1745653447814,
       "tag": "0001_outgoing_black_widow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1748415604131,
+      "tag": "0002_big_landau",
+      "breakpoints": true
     }
   ]
 }

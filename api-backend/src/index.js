@@ -27,8 +27,8 @@ import logger from "../utils/logger.js";
 // import logoutController from "./auth/logout/logout.controller.js";
 
 // middlewares
-import verifyToken from "./middleware/verify.token.js";
-import { upload } from "./middleware/uploadImage.js";
+// import verifyToken from "./middleware/verify.token.js";
+// import { upload } from "./middleware/uploadImage.js";
 
 dotenv.config();
 const app = express();

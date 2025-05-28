@@ -20,11 +20,11 @@ import { Control } from "react-hook-form";
 
 type InputFieldProps = {
   name: string;
-  label: string;
   control: Control<any>;
+  className?: string;
 };
 
-export function SelectField({ control, name, label }: InputFieldProps) {
+export default function SelectField({ control, name, className }: InputFieldProps) {
   const [selectCountry, setSelectCountry] = React.useState<string>("ID");
   const [image, setImage] = React.useState<string>("");
 
@@ -50,7 +50,7 @@ export function SelectField({ control, name, label }: InputFieldProps) {
             value={selectCountry}
           >
             <FormControl>
-              <SelectTrigger asChild className="p-3 px-5 cursor-pointer">
+              <SelectTrigger asChild className={`p-3 px-5 cursor-pointer rounded-xl rounded-e-none ${className}`}>
                 {
                  image ? <Image src={image} alt="flag" width={12} height={10} className="object-contain" />
                  : <div>...</div>

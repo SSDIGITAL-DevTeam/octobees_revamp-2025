@@ -4,7 +4,7 @@ import { JSX, useState, useEffect, FormEvent } from 'react';
 import axios from 'axios';
 import { usePathname, useRouter } from 'next/navigation';
 
-export default function ContactForm(): JSX.Element {
+export default function FormContact(): JSX.Element {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

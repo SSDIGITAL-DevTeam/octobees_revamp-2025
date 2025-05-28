@@ -1,7 +1,7 @@
 "use client";
 
 import { JSX, useState, useEffect } from "react";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import HeaderComponents from "@/app/plans/_components/HeaderComponents";
 import PlanComponents from "@/app/plans/_components/PlanComponents";
 import { axiosInstance } from "@/lib/axios";
@@ -54,16 +54,16 @@ fbq('track', 'PageView');
       <main className="w-full">
         {/* Header */}
         <HeaderComponents
-          breadcrump={`Octobees,Plans,${data?.name || "..."} `}
-          desc={data?.description || "..."}
-          title={data?.heading || "..."}
+          plans={data?.name}
+          desc={data?.description}
+          title={data?.heading}
         />
 
         {/* Section 2 */}
 
         <section className="flex flex-col overflow-x-auto py-[10px] xl:py-[20px]">
           <div className="container">
-            {data ? <PlanComponents data={data?.plans} /> : <p>...</p>}
+            {data && <PlanComponents data={data?.plans} />}
           </div>
         </section>
       </main>

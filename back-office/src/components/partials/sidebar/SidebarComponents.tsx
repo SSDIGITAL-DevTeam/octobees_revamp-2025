@@ -70,6 +70,16 @@ const items = [
     ],
   },
   {
+    group: "Career Management",
+    data: [
+      {
+        title: "Career",
+        url: "/career",
+        icon: User,
+      },
+    ],
+  },
+  {
     group: "Others",
     data: [
       {

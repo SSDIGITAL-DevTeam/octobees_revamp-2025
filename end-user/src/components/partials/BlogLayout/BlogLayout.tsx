@@ -96,21 +96,22 @@ export default function BlogLayout(): JSX.Element {
       {
         favBlog.length > 2 ? (
           <section className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 grid-rows-3 gap-6 lg:gap-4 lg:h-[60vh]">
-            <BlogCard data={favBlog[0]} large={true} length={3}/>
-            <BlogCard data={favBlog[1]} length={3}/>
-            <BlogCard data={favBlog[2]} length={3}/>
+            <BlogCard data={favBlog[0]} large={true} length={3} />
+            <BlogCard data={favBlog[1]} length={3} />
+            <BlogCard data={favBlog[2]} length={3} />
           </section>
         ) :
-        favBlog.length > 1 ? (
-          <section className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-6 lg:gap-4 lg:h-[60vh]">
-            <BlogCard data={favBlog[0]} large={true} length={2}/>
-            <BlogCard data={favBlog[1]} large={true} length={2}/>
-          </section>
-        ) : (
-          <section className="grid grid-cols-1 lg:h-[60vh]">
-            <BlogCard data={favBlog[0]} large={true} length={1} />
-          </section>
-        )
+          favBlog.length > 1 ? (
+            <section className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-6 lg:gap-4 lg:h-[60vh]">
+              <BlogCard data={favBlog[0]} large={true} length={2} />
+              <BlogCard data={favBlog[1]} large={true} length={2} />
+            </section>
+          ) :
+            favBlog.length > 0 ? (
+              <section className="grid grid-cols-1 lg:h-[60vh]">
+                <BlogCard data={favBlog[0]} large={true} length={1} />
+              </section>
+            ) : null
       }
 
       {/* Main Content and Sidebar Layout */}
@@ -119,30 +120,30 @@ export default function BlogLayout(): JSX.Element {
         <section className="w-full lg:w-2/3">
           {
             (blog.length > 0 || favBlog.length > 0) ? (
-            <div className="grid grid-cols-1 gap-y-5 gap-x-4 lg:gap-x-2">
-              {blog.map((article: any) => (
-                <>
-                  <article key={article.id} className="py-3 lg:py-2">
-                    <Link href={`/insights/${article.blog.slug}`} className="flex flex-col md:flex-row gap-4 lg:gap-6">
-                      <div className="w-full md:w-1/3">
-                        <Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${article.blog.image}`} alt={article.blog.title} className="w-full h-52 object-cover rounded-lg border-[1px] border-gray-300 shadow-sm" width={1920} height={1080} quality={100} />
-                      </div>
-                      <div className="md:w-2/3 flex flex-col gap-3 lg:justify-center">
-                        <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary font-heading !leading-[130%]">{article.blog.title}</h2>
-                        <h3 className="order-2 md:order-1 flex lg:items-center gap-1 md:gap-2 justify-start text-xs lg:text-base text-gray-500">
-                          <span>{article.user ? article.user.name : "Anonymous"}</span>
-                          <span>•  {dayjs(article.blog.createdAt).format("MMMM D, YYYY")}</span>
-                        </h3>
-                        <div className='order-1 md:order-2'>
-                          <BlogContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
+              <div className="grid grid-cols-1 gap-y-5 gap-x-4 lg:gap-x-2">
+                {blog.map((article: any) => (
+                  <>
+                    <article key={article.id} className="py-3 lg:py-2">
+                      <Link href={`/insights/${article.blog.slug}`} className="flex flex-col md:flex-row gap-4 lg:gap-6">
+                        <div className="w-full md:w-1/3">
+                          <Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${article.blog.image}`} alt={article.blog.title} className="w-full h-52 object-cover rounded-lg border-[1px] border-gray-300 shadow-sm" width={1920} height={1080} quality={100} />
                         </div>
-                      </div>
-                    </Link>
-                  </article>
-                </>
-              ))}
-            </div>
-            ): (
+                        <div className="md:w-2/3 flex flex-col gap-3 lg:justify-center">
+                          <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary font-heading !leading-[130%]">{article.blog.title}</h2>
+                          <h3 className="order-2 md:order-1 flex lg:items-center gap-1 md:gap-2 justify-start text-xs lg:text-base text-gray-500">
+                            <span>{article.user ? article.user.name : "Anonymous"}</span>
+                            <span>•  {dayjs(article.blog.createdAt).format("MMMM D, YYYY")}</span>
+                          </h3>
+                          <div className='order-1 md:order-2'>
+                            <BlogContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
+                          </div>
+                        </div>
+                      </Link>
+                    </article>
+                  </>
+                ))}
+              </div>
+            ) : (
               <section className='w-full flex flex-col gap-4 justify-center items-center text-gray-400 py-10'>
                 <Image src={BlogNotFound} alt='Blog Not Found' className=' object-contain w-[60%] md:w-[30%]' />
                 <h2 className='text-center text-2xl font-bold w-full md:w-[40%]'>Our Blog is Coming Soon</h2>
@@ -169,15 +170,16 @@ export default function BlogLayout(): JSX.Element {
           <BlogCategory data={category} />
         </aside>
       </div>
-
-      <PaginationComponents
-        handleNext={handleNext}
-        handlePrev={handlePrevious}
-        page={page}
-        className='mt-10'
-        setPage={handleChangePage}
-        totalPage={defPage.totalPages || 1}
-      />
+      {
+        blog.length > 0 ? <PaginationComponents
+          handleNext={handleNext}
+          handlePrev={handlePrevious}
+          page={page}
+          className='mt-10'
+          setPage={handleChangePage}
+          totalPage={defPage.totalPages || 1}
+        /> : null
+      }
     </div>
   );
 }

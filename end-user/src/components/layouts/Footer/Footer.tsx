@@ -9,7 +9,7 @@ import { Instagram, Call } from 'iconsax-react';
 export default function Footer(): JSX.Element {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-[#212833]" id="footer">
+    <footer className="bg-[#121212]" id="footer">
       <div className="flex flex-col container pt-[60px] pb-[30px] px-10 items-center justify-center gap-y-14">
         <div className="flex flex-col gap-y-6 items-center lg:items-start w-full">
           <LogoLight />

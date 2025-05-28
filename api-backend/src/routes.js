@@ -11,11 +11,12 @@ import MetaController from "./meta/meta.controller.js";
 import PageController from "./page/page.controller.js";
 import BlogCategoryController from "./blog-category/blog-category.controller.js";
 import BlogController from "./blog/blog.controller.js";
-import { upload } from "./middleware/uploadImage.js";
+import {uploadImage} from "./middleware/uploadFile.js";
 import UserController from "./user/user.route.js";
 import loginController from "./auth/login/login.controller.js";
 // import refreshToken from "./auth/refresh-token/refresh.controller.js";
 import logoutController from "./auth/logout/logout.controller.js";
+import career from "./career/_career.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -33,9 +34,10 @@ router.use("/v1/plan", ServicePlanController);
 router.use("/v1/page", PageController);
 router.use("/v1/order", OrderController);
 router.use("/v1/blog-category", BlogCategoryController);
-router.use("/v1/blog", upload.single("image"), BlogController);
+router.use("/v1/blog", uploadImage.single("image"), BlogController);
 router.use("/v1/meta", MetaController);
 router.use("/v1/user", UserController);
+router.use("/v1/career", career.endUser);
 
 //router.use("/v1/blog", BlogController);
 router.use("/v1/back-office", (req, res, next) => {
@@ -45,6 +47,7 @@ router.use("/v1/back-office", (req, res, next) => {
   // backOfficeRouter.use("/service-category", ServiceCatRoutes);
   backOfficeRouter.use("/plan", ServicePlanController);
   //backOfficeRouter.use("/order", OrderController);
+  backOfficeRouter.use("/career", career.backOffice);
 
   backOfficeRouter(req, res, next);
 });

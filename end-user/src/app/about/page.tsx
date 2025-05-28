@@ -15,13 +15,13 @@ export default function About(): JSX.Element {
       </Head>
       <main className="bg-light font-openSans overflow-x-hidden">
         {/* Header or Hero */}
-        <header className="flex flex-col overflow-x-hidden pt-[160px] pb-[60px] lg:pt-[160px] lg:pb-[120px] bg-merah-200/30 min-h-[75vh] lg:min-h-[80vh] items-center justify-center">
+        <header className="flex flex-col overflow-x-hidden pt-[160px] pb-[60px] lg:pt-[160px] lg:pb-[90px] bg-[#F7E6E7] min-h-[75vh] lg:min-h-[80vh] items-center justify-center">
           <div className="flex flex-col items-center justify-center text-justify lg:text-center w-full gap-y-5 px-10">
             {/* <h2 className="px-3 text-xs md:text-sm py-2 bg-white font-semibold text-zinc-900 border-[1px] shadow-sm rounded-full w-fit">
               ABOUT OCTOBEES
             </h2> */}
             <h1 className="text-primary font-bold text-4xl lg:text-6xl font-Josefin">About Us</h1>
-            <p className=" w-full lg:w-[60%] text-primary/70 lg:text-lg !leading-[150%]">
+            <p className=" w-full lg:w-[60%] text-primary/70 lg:text-lg !leading-[150%] md:!leading-[170%]">
               We believe that entrepreneurs are the visionaries shaping world&apos;s future. They navigate through challenges and uncover opportunities that push the boundaries of what&apos;s possible. At <strong>Octobees</strong>, we
               ensure that entrepreneurs stay focused on innovation and growth. By managing their digital presence and marketing strategies, we take care of the complexities, allowing them to focus on what matters most — growing their
               business and achieving their goals.
@@ -52,28 +52,28 @@ export default function About(): JSX.Element {
             </div>
           </div>
         </section>
-        
+
         {/* Section 4 */}
-                   <section className=" bg-merah-700 py-20 flex flex-col md:flex-row gap-10 md:justify-center md:gap-44 w-full text-lg text-white">
-             <div className="flex flex-col md:gap-3 gap-2 items-center justify-center">
-               <h1 className="text-5xl font-bold text-merah-200">20+</h1>
-               <p>Client worldwide</p>
-             </div>
-             <div className="flex flex-col md:gap-5 gap-2 items-center justify-center">
-               <h1 className="text-5xl font-bold text-merah-200">40+</h1>
-               <p>Companies we’ve helped to upscale</p>
-             </div>
-             <div className="flex flex-col md:gap-5 gap-2 items-center justify-center">
-               <h1 className="text-5xl font-bold text-merah-200">2 years</h1>
-               <p>of Operations</p>
-             </div>
-           </section>
+        <section className=" bg-merah-700 py-20 flex flex-col md:flex-row gap-10 md:justify-center md:gap-44 w-full text-lg text-white">
+          <div className="flex flex-col md:gap-3 gap-2 items-center justify-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-merah-200">20+</h1>
+            <p>Client worldwide</p>
+          </div>
+          <div className="flex flex-col md:gap-5 gap-2 items-center justify-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-merah-200">40+</h1>
+            <p>Companies we’ve helped to upscale</p>
+          </div>
+          <div className="flex flex-col md:gap-5 gap-2 items-center justify-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-merah-200">2 years</h1>
+            <p>of Operations</p>
+          </div>
+        </section>
 
 
         {/* Section 5 */}
         <section className="flex flex-col py-[60px] lg:py-[150px] items-center justify-center">
           <div className="container flex flex-col px-5 lg:px-[5rem] 2xl:px-[3rem] gap-y-[6rem] lg:gap-y-[5rem] xl:gap-y-[7rem] h-full">
-            
+
             <div className="flex flex-col px-5">
               <ClientBrand />
               <p className="text-center mt-7 font-semibold text-lg text-primary">And many more</p>

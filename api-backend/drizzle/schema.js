@@ -4,6 +4,7 @@ import { v4 as uuidv7 } from 'uuid';
 // Enums
 export const userStatusEnum = mysqlEnum('status', ['Draft', 'Active', 'NonActive']);
 export const blogStatusEnum = mysqlEnum('status', ['Published', 'Takedown', 'Draft']);
+export const careerStatusEnum = mysqlEnum('status', ['Rejected', 'Review', 'Accepted']);
 
 
 export const user = mysqlTable('user', {
@@ -122,6 +123,20 @@ export const order = mysqlTable('order', {
 	idPlan: varchar('idPlan', { length: 191 }).notNull(),
 	time: varchar('time', { length: 191 }).notNull()
 });
+
+export const career = mysqlTable('career', {
+	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
+	name: varchar('name', { length: 255 }).notNull(),
+	email: varchar('email', { length: 255 }).notNull().unique(),
+	phoneNumber: varchar('phoneNumber', { length: 255 }).notNull(),
+	position: varchar('position', { length: 255 }).notNull(),
+	resume: text('resume').notNull(),
+	portfolio: varchar('portfolio', { length: 255 }).notNull(),
+	message: text('message'),
+	status: careerStatusEnum.notNull().$defaultFn(() => 'Review'),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  });
 
 // Relations
 

@@ -18,6 +18,10 @@ export const navLinks: NavLink[] = [
     path: '/insights',
   },
   {
+    name: 'Career',
+    path: '/career',
+  },
+  {
     name: 'Plans',
     path: '/plans',
     menus: [""],

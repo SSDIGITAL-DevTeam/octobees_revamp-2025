@@ -5,11 +5,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+// import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import InputField from "@/components/partials/Form/InputField";
-import InputAreaField from "@/components/partials/Form/InputAreaField";
-import { SelectField } from "@/components/partials/Form/SelectField";
+import { SelectField, InputField, CalendarField, InputAreaField, RadioField } from "@/components/partials/Field";
 import { countryCode } from "@/constants/countryCodes";
 
 import {
@@ -20,25 +18,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TrendingUp } from "lucide-react";
-import CalendarField from "@/components/partials/Form/CalendarField";
-import RadioComponents from "@/components/partials/Radio/RadioComponents";
 import { formattedDate } from "@/utils/timezone";
 import axios from "axios";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
-
-const contactSchema = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email(),
-  dialCodes: z.string(),
-  phoneNumber: z.string().nonempty(),
-  bussiness: z.string().nonempty(),
-  message: z.string().nonempty(),
-  date: z.date(),
-  time: z.string().nonempty("Please select a time"),
-});
-
-type ContactSchema = z.infer<typeof contactSchema>;
+import { contactSchema, ContactSchema } from "@/constants/zodSchema";
 
 export function LeadModal(params: {
   showPrices: boolean;
@@ -51,16 +35,6 @@ export function LeadModal(params: {
 }) {
 
   const form = useForm<ContactSchema>({
-    defaultValues: {
-      name: "",
-      email: "",
-      dialCodes: "",
-      phoneNumber: "+62",
-      bussiness: "",
-      message: "",
-      date: new Date(),
-      time: "",
-    },
     resolver: zodResolver(contactSchema),
   });
 
@@ -210,7 +184,7 @@ export function LeadModal(params: {
                   <div className="gap-0 flex flex-row w-full">
                     <SelectField
                       control={control}
-                      label={"Kode"}
+                      // label={"Kode"}
                       name={"dialCodes"}
                     />
                     <InputField
@@ -237,7 +211,7 @@ export function LeadModal(params: {
                   <CalendarField control={control} name="date" />
                 </div>
                 <div className="bg-white flex justify-center items-center w-full border-[1px] border-gray-600 shadow-md p-4 rounded-3xl">
-                  <RadioComponents data={order} selectedDate={value.date} control={control} name="time" list={hour} />
+                  <RadioField data={order} selectedDate={value.date} control={control} name="time" list={hour} />
                 </div>
               </section>
 

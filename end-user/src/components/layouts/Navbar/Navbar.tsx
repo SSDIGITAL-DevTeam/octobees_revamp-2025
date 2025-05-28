@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useMediaQuery } from 'usehooks-ts';
 import { usePathname } from 'next/navigation';
+import { useMediaQuery } from 'usehooks-ts';
 import { NavLink, navLinks } from '@/constants/navlinks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
@@ -107,7 +107,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`${NavbarColor} ${NavbarPosition} fixed left-0 right-0 w-full z-[100] transition-all duration-700 ease-out`}>
+    <nav className={`${NavbarColor} ${NavbarPosition} fixed left-0 right-0 w-full z-[100] transition-all duration-700 ease-out sm:px-5`}>
       <div className="max-w-7xl py-5 md:py-7 mx-auto px-7 md:px-2 flex justify-between items-center">
         <Link href="/" className="flex-shrink-0">
           <Logo />
@@ -117,7 +117,7 @@ export default function Navbar() {
           <div className="flex justify-between items-center flex-grow mx-4">
             <div className={`${(pathname == "/increase-my-sales" || pathname.startsWith('/plans')) ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
             <div className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-border border-[1px]">
-              {navLinks.slice(0, 4).map((navlink: NavLink, index: number) => (
+              {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
                 <div key={index} className="relative group rounded-full" ref={dropdownRef}>
                   <Link
                     href={navlink.path || '#'}

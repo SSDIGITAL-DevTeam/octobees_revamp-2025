@@ -11,11 +11,10 @@ export default defineConfig({
   //   url: process.env.DATABASE_URL || 'mysql://localhost.internal:3306/octobees',
   // },
   dbCredentials: {
-    host: process.env.DB_HOST ,
+    host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
-    user: process.env.DB_USERNAME,
+    user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    //password: "",
     database: process.env.DB_NAME,
   },
   verbose: true,

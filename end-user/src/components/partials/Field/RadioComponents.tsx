@@ -18,7 +18,7 @@ type InputFieldProps = {
   data?: any
 };
 
-const CalendarField = ({
+const RadioField = ({
   control,
   name,
   className,
@@ -77,4 +77,4 @@ const CalendarField = ({
     />
   );
 };
-export default CalendarField;
+export default RadioField;

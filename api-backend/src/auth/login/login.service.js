@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import { editUser, findUserByEmail } from '../../user/user.repository.js'
 
 export const loginUser = async (data) => {
