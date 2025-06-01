@@ -1,5 +1,5 @@
 'use client'
-import { User } from "lucide-react"
+import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import {
   Sidebar,
@@ -25,7 +25,7 @@ const items = [
       {
         title: "Overview",
         url: "/dashboard",
-        icon: User,
+        icon: ChartPie,
       }
     ],
   },
@@ -35,7 +35,7 @@ const items = [
       {
         title: "User",
         url: "/user",
-        icon: User,
+        icon: Users,
       }
     ],
   },
@@ -45,12 +45,12 @@ const items = [
       {
         title: "Blogs",
         url: "/blog/blogs",
-        icon: User,
+        icon: NotebookPen,
       },
       {
         title: "Blog Category",
         url: "/blog/blog-category",
-        icon: User,
+        icon: NotebookTabs,
       }
     ],
   },
@@ -60,12 +60,12 @@ const items = [
       {
         title: "Services Category",
         url: "/services/categories",
-        icon: User,
+        icon: Shapes,
       },
       {
         title: "Services Package",
         url: "/services/packages",
-        icon: User,
+        icon: Archive,
       },
     ],
   },
@@ -73,9 +73,14 @@ const items = [
     group: "Career Management",
     data: [
       {
-        title: "Career",
-        url: "/career",
-        icon: User,
+        title: "Position",
+        url: "/position",
+        icon: Briefcase,
+      },
+      {
+        title: "Applicants Data",
+        url: "/applicants-data",
+        icon: Folder,
       },
     ],
   },
@@ -85,7 +90,7 @@ const items = [
       {
         title: "Meta Content Management",
         url: "/meta",
-        icon: User,
+        icon: Hash,
       }
     ],
   },

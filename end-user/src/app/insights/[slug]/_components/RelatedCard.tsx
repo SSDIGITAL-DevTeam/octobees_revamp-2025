@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import BlogContent from "@/components/partials/BlogLayout/BlogContent";
+import { InsightContent } from "@/app/insights/_components";
 
 const RelatedPostCard = ({ data }: { data: [] }) => {
   return (
@@ -22,7 +22,7 @@ const RelatedPostCard = ({ data }: { data: [] }) => {
               <Link href={`/insights/${d.blog.slug}`} className="hover:underline duration-500 transition-all text-lg lg:text-xl font-semibold text-primary line-clamp-2 font-heading !leading-[120%]">
                 {d.blog.title}
               </Link>
-              <BlogContent content={d.blog.content} className="text-sm lg:text-base line-clamp-3 text-gray-600 !leading-[150%]" />
+              <InsightContent content={d.blog.content} className="text-sm lg:text-base line-clamp-3 text-gray-600 !leading-[150%]" />
             </div>
           </div>
         ))}

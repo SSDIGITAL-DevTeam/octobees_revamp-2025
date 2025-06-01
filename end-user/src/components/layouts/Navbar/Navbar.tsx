@@ -116,7 +116,7 @@ export default function Navbar() {
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
             <div className={`${(pathname == "/increase-my-sales" || pathname.startsWith('/plans')) ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
-            <div className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-border border-[1px]">
+            <div className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
               {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
                 <div key={index} className="relative group rounded-full" ref={dropdownRef}>
                   <Link

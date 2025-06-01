@@ -1,17 +1,14 @@
 "use client";
 
 import React, { JSX, useEffect, useState } from "react";
-import BlogLayout from "@/components/partials/BlogLayout/BlogLayout";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import axios from "axios";
 import BackArticleButton from "@/components/partials/Button/BackArticleButton";
-import { ArrowRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import BlogContent from "@/components/partials/BlogLayout/BlogContent";
 import dayjs from "dayjs";
 import PaginationComponents from "@/components/partials/Pagination/Pagination";
-import BlogCategory from "@/components/partials/BlogLayout/BlogCategory";
+import { InsightCategory, InsightContent } from "@/app/insights/_components";
 import { axiosInstance } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import BlogNotFound from '@/assets/homepage/svg/asset-blog-notfound.svg'
@@ -25,16 +22,18 @@ export default function Page(): JSX.Element {
     const searchParams = useSearchParams()
     const router = useRouter()
     const { id } = useParams()
-    const blogId = decodeURIComponent(Array.isArray(id) ? id[0] : id)
+    const blogSearch = decodeURIComponent(Array.isArray(id) ? id[0] : id)
 
 
     useEffect(() => {
         const fetchData = async () => {
             const [response, category] = await Promise.all([
                 axiosInstance.get("/blog", {
-                    params: { search: blogId, limit:5 }
+                    params: { search: blogSearch, limit: 5 }
                 }),
-                axiosInstance.get("/blog-category")
+                axiosInstance.get("/blog-category",{
+                    params : {status: true}
+                })
             ])
             setBlog(response.data.data)
             setPagination(response.data.pagination)
@@ -78,7 +77,7 @@ export default function Page(): JSX.Element {
             <BackArticleButton />
             <header className="flex flex-col justify-normal items-start overflow-x-hidden gap-3 lg:gap-4 py-8">
                 <h1 className="font-bold text-3xl lg:text-4xl !leading-[130%]">
-                    <span className="text-gray-400">Result For</span> {blogId}
+                    <span className="text-gray-400">Result For</span> {blogSearch}
                 </h1>
                 <p className="text-base text-primary lg:text-lg !leading-[150%] w-[80%] lg:w-full ">
                     {pagination?.total} articles found
@@ -108,7 +107,7 @@ export default function Page(): JSX.Element {
                                                             <span>•  {dayjs(article.blog.createdAt).format("MMMM D, YYYY")}</span>
                                                         </h3>
                                                         <div className='order-1 md:order-2'>
-                                                            <BlogContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
+                                                            <InsightContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
                                                         </div>
                                                     </div>
                                                 </Link>
@@ -140,7 +139,7 @@ export default function Page(): JSX.Element {
                             </div>
                         </div>
                         {/* Category */}
-                        <BlogCategory data={category} />
+                        <InsightCategory data={category} />
                     </aside>
                 </div>
                 <PaginationComponents

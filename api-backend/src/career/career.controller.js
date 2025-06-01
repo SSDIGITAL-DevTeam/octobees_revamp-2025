@@ -62,12 +62,12 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const { name, email, phoneNumber, position, portfolio, message } = req.body;
+    const { name, email, phoneNumber, positionId, portfolio, message } = req.body;
     if (
       !name ||
       !email ||
       !phoneNumber ||
-      !position ||
+      !positionId ||
       !portfolio ||
       !message
     ) {

@@ -61,6 +61,7 @@ import { useRef } from "react";
 import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Control } from "react-hook-form";
+import { Upload } from "lucide-react";
 
 type PDFUploadProps = {
     name: string;
@@ -93,12 +94,13 @@ const FieldFile = ({ control, name, className, label }: PDFUploadProps) => {
                             <div className="flex h-14">
                                 <Button
                                     type="button"
-                                    className="bg-gray-100 border-2 border-e-0 border-gray-300 rounded-md rounded-e-none text-black hover:bg-gray-300 md:text-sm"
+                                    className="bg-gray-100 border-2 border-e-0 px-4 border-gray-300 rounded-md rounded-e-none text-black hover:bg-gray-300 text-sm"
                                     onClick={() => inputRef.current?.click()}
                                 >
-                                    Upload File
+                                    <span className="hidden md:inline">Upload File</span>
+                                    <span className="md:hidden"><Upload className="w-5 h-5"/></span>
                                 </Button>
-                                <div className={`text-sm md:text-base flex items-center ps-2 text-black rounded-md rounded-s-none border-2 border-gray-300 w-full ${className}`}>
+                                <div className={`text-sm md:text-base flex items-center ps-2 text-black rounded-md rounded-s-none border-2 border-gray-300 w-full max-w-full overflow-hidden ${className}`}>
                                     <p className="break-words line-clamp-2">
                                         {field.value?.name ? (
                                             field.value.name

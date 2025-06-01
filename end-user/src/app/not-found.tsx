@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function NotFound() {
   const router = useRouter()
-
-
   return (
     <main className="w-full h-screen bg-white lg:pt-44">
       <section className="max-w-7xl mx-auto h-full flex flex-col justify-center lg:justify-start items-center lg:items-start gap-2 lg:gap-6 relative px-10">

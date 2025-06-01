@@ -1,9 +1,9 @@
 "use client";
 
-import React, { JSX} from "react";
-import BlogLayout from "@/components/partials/BlogLayout/BlogLayout";
+import React, { JSX } from "react";
+import { InsightLayout } from "@/app/insights/_components";
 
-export default function Page(): JSX.Element {
+export default function PageInsight(): JSX.Element {
   return (
     <main className="w-full pt-24 lg:px-10 px-8">
       <header className="flex flex-col justify-normal items-start overflow-x-hidden gap-3 lg:gap-4 xl:py-12 py-8 max-w-7xl md:px-6 mx-auto">
@@ -16,7 +16,7 @@ export default function Page(): JSX.Element {
       </header>
       <div className="w-full border-b-[1.2px] border-gray-300" />
       <section className="flex flex-col overflow-x-auto lg:max-w-7xl mx-auto py-8">
-        <BlogLayout/>
+        <InsightLayout />
       </section>
     </main>
   );

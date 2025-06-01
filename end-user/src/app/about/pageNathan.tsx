@@ -6,7 +6,7 @@ import Image from 'next/image';
 import AssetImprovingAbout from '@/assets/about/png/asset-improving-about.png';
 import AssetHarvineAbout from '@/assets/about/png/asset-harvine-about.png';
 import AssetNathanAbout from '@/assets/about/png/asset-nathan-about.png';
-import ClientBrand from '@/components/partials/ClientBrand/ClientBrand';
+import ClientBrand from '@/app/about/_components/SectionClientBrand';
 import Head from 'next/head';
 // import ArticleCard from '@/components/partials/ArticleCard/ArticleCard';
 

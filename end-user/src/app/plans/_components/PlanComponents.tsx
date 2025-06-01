@@ -1,7 +1,7 @@
 "use client";
 
 import React, { JSX, useState } from "react";
-import { LeadModal } from "@/components/layouts/Dialog/LeadModal";
+import { DialogLead } from "@/components/layouts/Dialog";
 
 type PlanType = {
   categoryId: string;
@@ -201,7 +201,7 @@ export default function PlanComponents(params: { data: PlanType[] }): JSX.Elemen
             )}
 
               {/* Modal */}
-              <LeadModal
+              <DialogLead
                 showPrices={plan.showPrice}
                 type={plan.type}
                 category={plan.categoryId}

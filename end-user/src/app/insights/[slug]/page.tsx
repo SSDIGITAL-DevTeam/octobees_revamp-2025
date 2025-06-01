@@ -58,7 +58,7 @@ import BackArticleButton from "@/components/partials/Button/BackArticleButton";
 import ShareSocmedButton from "@/components/partials/Button/ShareSocmedButton";
 import AdsCarousel from "@/app/insights/[slug]/_components/AdsCarousel";
 import RelatedPostCard from "@/app/insights/[slug]/_components/RelatedCard";
-import BlogContent from "@/components/partials/BlogLayout/BlogContent";
+import { InsightContent } from "@/app/insights/_components";
 import dayjs from "dayjs";
 import { axiosInstance } from "@/lib/axios";
 
@@ -76,8 +76,8 @@ export default function ArticleDetail({
         const blogs = await axiosInstance.get(`/blog/${params.slug}`)
         const relatedBlog = await axiosInstance.get(`/blog`,
           {
-            params : {
-              categoryId : blogs.data.blog.categoryId,
+            params: {
+              categoryId: blogs.data.blog.categoryId,
               limit: 3
             }
           }
@@ -136,7 +136,7 @@ export default function ArticleDetail({
                 className="object-cover w-full h-full"
               />
             </div>
-            <BlogContent content={blog.blog.content} className="!leading-[150%] text-sm lg:text-base text-gray-600" />
+            <InsightContent content={blog.blog.content} className="!leading-[150%] text-sm lg:text-base text-gray-600" />
           </article>
         )
       }

@@ -10,6 +10,7 @@ import { career } from "../../drizzle/schema.js";
 import dayjs from "dayjs";
 import fs from "fs";
 import path from "path";
+import { findPositionById } from "../position/position.repository.js";
 
 export const getAllCareers = async (filters) => {
   try {
@@ -86,7 +87,7 @@ export const getAllCareers = async (filters) => {
 export const getCareerById = async (id, filters) => {
   try {
     const { status } = filters;
-    const data = await findCareerById(id, status)
+    const data = await findCareerById(id, status);
     if (!data) {
       throw new Error("Career is not found");
     }
@@ -98,18 +99,13 @@ export const getCareerById = async (id, filters) => {
 
 export const createCareer = async (payload) => {
   try {
-    const { name, email, phoneNumber, position, resume, portfolio, message } =
-      payload;
-    console.log({
-      name,
-      email,
-      phoneNumber,
-      position,
-      resume,
-      portfolio,
-      message,
-    });
-    await insertCareer({ ...payload });
+    const { positionId } = payload;
+    const newPositions = Number(positionId);
+    const isPositionIdExist = await findPositionById(newPositions);
+    if (!isPositionIdExist) {
+      throw new Error("Position is not found");
+    }
+    await insertCareer({ ...payload, positionId: newPositions });
   } catch (error) {
     throw new Error(error.message);
   }

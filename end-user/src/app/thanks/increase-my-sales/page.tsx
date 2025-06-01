@@ -1,6 +1,6 @@
 "use client"
 import Script from "next/script";
-import ThanksPage from "../_components/thanksPage";
+import SectionThanks from "../_components/SectionThanks";
 
 export default function Page(): JSX.Element {
   return (
@@ -25,7 +25,7 @@ fbq('track', 'PageView');
         <img height="1" width="1" style={{ display: 'none' }}
           src="https://www.facebook.com/tr?id=1687852881844759&ev=PageView&noscript=1" />
       </noscript>
-      <ThanksPage />
+      <SectionThanks />
     </>
   )
 }

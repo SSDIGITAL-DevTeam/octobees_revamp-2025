@@ -129,14 +129,14 @@ export const CreativeDesign = [
 ]
 
 export const slides = [
-    CarouselImage01.src,
-    CarouselImage02.src,
-    CarouselImage03.src,
-    CarouselImage04.src,
-    CarouselImage05.src,
-    CarouselImage06.src,
-    CarouselImage07.src,
-    CarouselImage08.src,
-    CarouselImage09.src,
-    CarouselImage10.src
+    CarouselImage01,
+    CarouselImage02,
+    CarouselImage03,
+    CarouselImage04,
+    CarouselImage05,
+    CarouselImage06,
+    CarouselImage07,
+    CarouselImage08,
+    CarouselImage09,
+    CarouselImage10
 ]

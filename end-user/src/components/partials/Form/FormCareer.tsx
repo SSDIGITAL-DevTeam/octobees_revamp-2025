@@ -10,17 +10,17 @@ import {
     CareerSchema
 } from "@/constants/zodSchema";
 import {
-    InputField,
-    SelectField,
+    FieldInput,
     InputAreaField,
     FieldSelect,
     FieldFile,
     FieldPhoneNumber
 } from "@/components/partials/Field";
 import { Label } from "@/components/ui/label";
-
-import { countryCode } from "@/constants/countryCodes";
 import { axiosInstance } from "@/lib/axios";
+import { useToast } from "@/hooks/use-toast";
+import { CircleCheck, XCircle } from "lucide-react";
+import { Position } from "@/constants/payload";
 
 const dummyDataJobApply = [
     {
@@ -48,11 +48,35 @@ const dummyDataJobApply = [
 export default function FormCareer() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [phoneNum, setPhoneNum] = useState<string>("+62");
+    const [positions, setPositions] = useState<Position[]>([]);
     const form = useForm<CareerSchema>({
         resolver: zodResolver(careerSchema),
     });
-    const { handleSubmit, control, watch, reset } = form;
+    const { handleSubmit, control, reset } = form;
+    const { toast } = useToast()
+
+    useEffect(() => {
+        const fetchPositions = async () => {
+            try {
+                const response = await axiosInstance.get("/position");
+                setPositions(response.data.data);
+            } catch (error) {
+                toast({
+                    title: "Failed to fetch positions",
+                    description: "Something went wrong while fetching positions. Please try again.",
+                    variant: "destructive",
+                    action: <XCircle />
+                })
+            }
+        };
+        fetchPositions();
+    }, [])
+
+    const positionOptions = positions.map((position) => ({
+        value: position.id.toString(),
+        name: position.name,
+    }));
+
     const handleInput = handleSubmit(async (values) => {
         try {
             setIsLoading(true);
@@ -60,32 +84,41 @@ export default function FormCareer() {
             formData.append("name", values.name);
             formData.append("email", values.email);
             formData.append("phoneNumber", values.phoneNumber);
-            formData.append("position", values.position);
+            formData.append("positionId", values.position);
             formData.append("portfolio", values.portfolio);
             formData.append("message", values.message || "");
             formData.append("resume", values.resume);
 
-            const response = await axiosInstance.post("/career", formData, {
+            await axiosInstance.post("/career", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
+            toast({
+                title: "Application Sent",
+                description: "Your job application has been submitted successfully.",
+                variant: "success",
+                action: <CircleCheck />
+            })
+            reset({
+                name: "",
+                email: "",
+                position: "",
+                portfolio: "",
+                message: "",
+            });
             router.push("/");
         } catch (error) {
-            console.error(error);
+            toast({
+                title: "Submission Failed",
+                description: "Something went wrong while sending your application. Please try again.",
+                variant: "destructive",
+                action: <XCircle />
+            })
         } finally {
-            reset();
             setIsLoading(false);
         }
-    });
-
-
-    useEffect(() => {
-        const dialCodes = watch("dialCodes");
-        const selectCode = countryCode.find((c) => c.code === dialCodes);
-        setPhoneNum(selectCode?.dialCodes?.[0] ?? "+62");
-    }, [watch("dialCodes")])
-
+    })
 
     return (
         <Form {...form}>
@@ -93,35 +126,19 @@ export default function FormCareer() {
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-10 gap-x-5">
                     <div className="md:col-span-2 space-y-2">
                         <Label>Full Name <span className="text-primary">*</span></Label>
-                        <InputField control={control} label="Enter your full name" name="name" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
+                        <FieldInput control={control} label="Enter your full name" name="name" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
                     </div>
                     <div className="space-y-2">
                         <Label>Email Address <span className="text-primary">*</span></Label>
-                        <InputField control={control} label="Enter your email address" name="email" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
+                        <FieldInput control={control} label="Enter your email address" name="email" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
                     </div>
                     <div className="space-y-2">
                         <Label>Phone Number<span className="text-primary">*</span></Label>
-                        {/* <div className="gap-0 flex flex-row w-full">
-                         <SelectField
-                                control={control}
-                                name={"dialCodes"}
-                                className="rounded-md rounded-e-none border-2 border-gray-300 placeholder:text-base border-e-0"
-                            /> 
-                        {/* <InputField
-                                defaultValue={phoneNum}
-                                className="rounded-md rounded-s-none w-full border-gray-300 placeholder:text-base border-2"
-                                control={control}
-                                label="Phone Number"
-                                name="phoneNumber"
-                            /> 
-                         </div> */}
-                        <div className="w-full border-[1px] border-gray-300 rounded-md">
-                            <FieldPhoneNumber control={control} name="phoneNumber" label="Phone Number" />
-                        </div>
+                        <FieldPhoneNumber control={control} name="phoneNumber" label="Phone Number" />
                     </div>
                     <div className="space-y-2">
-                        <Label>Position Applying For<span className="text-primary">*</span></Label>
-                        <FieldSelect label="Select Position" datas={dummyDataJobApply} control={control} name="position" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
+                        <Label>Applying For<span className="text-primary">*</span></Label>
+                        <FieldSelect label="Select Position" datas={positionOptions} control={control} name="position" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
                     </div>
                     <div className="hidden md:block" />
                     <div className="space-y-2">
@@ -130,7 +147,7 @@ export default function FormCareer() {
                     </div>
                     <div className="space-y-2">
                         <Label>Portfolio or LinkedIn URL<span className="text-primary">*</span></Label>
-                        <InputField label="Enter your portfolio or LinkedIn link" control={control} name="portfolio" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
+                        <FieldInput label="Enter your portfolio or LinkedIn link" control={control} name="portfolio" className="rounded-md border-2 border-gray-300 placeholder:text-base" />
                     </div>
                     <div className="space-y-2 col-span-1 md:col-span-2">
                         <Label>Message</Label>
@@ -141,7 +158,7 @@ export default function FormCareer() {
                 <Button
                     type="submit"
                     disabled={isLoading}
-                    className={`${isLoading ? "pointer-events-none bg-primary/30" : "bg-primary"} text-white text-base sm:text-lg font-semibold w-full hover:bg-primary/30 h-14 rounded-full mt-8`}
+                    className={`${isLoading ? "pointer-events-none bg-primary/50" : "bg-primary"} text-white text-base sm:text-lg font-semibold w-full hover:bg-red-900 h-14 rounded-full mt-8`}
                 >
                     {isLoading ? "Loading..." : "Submit Application"}
                 </Button>

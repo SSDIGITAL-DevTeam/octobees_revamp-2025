@@ -22,3 +22,6 @@
     @apply font-body;
   }
 }
+.react-international-phone-country-selector-button {
+  padding: 0 16px !important;
+}

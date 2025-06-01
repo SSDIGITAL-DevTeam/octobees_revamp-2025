@@ -17,6 +17,7 @@ import loginController from "./auth/login/login.controller.js";
 // import refreshToken from "./auth/refresh-token/refresh.controller.js";
 import logoutController from "./auth/logout/logout.controller.js";
 import career from "./career/_career.route.js";
+import position from "./position/_position.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -38,16 +39,17 @@ router.use("/v1/blog", uploadImage.single("image"), BlogController);
 router.use("/v1/meta", MetaController);
 router.use("/v1/user", UserController);
 router.use("/v1/career", career.endUser);
-
+router.use("/v1/position", position.endUser);
 //router.use("/v1/blog", BlogController);
+
 router.use("/v1/back-office", (req, res, next) => {
   const backOfficeRouter = express.Router();
-  // BACK-OFFICE ROUTES (same controllers, can be extended with auth middleware)
   backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
-  // backOfficeRouter.use("/service-category", ServiceCatRoutes);
   backOfficeRouter.use("/plan", ServicePlanController);
-  //backOfficeRouter.use("/order", OrderController);
   backOfficeRouter.use("/career", career.backOffice);
+  backOfficeRouter.use("/position", position.backOffice);
+  //backOfficeRouter.use("/order", OrderController);
+  // backOfficeRouter.use("/service-category", ServiceCatRoutes);
 
   backOfficeRouter(req, res, next);
 });

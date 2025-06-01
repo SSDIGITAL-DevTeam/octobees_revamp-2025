@@ -1,90 +1,18 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "@/components/layouts/Navbar/Navbar";
 import Footer from "@/components/layouts/Footer/Footer";
 import Script from "next/script";
 import React from "react";
+import { Toaster } from "@/components/ui/toaster";
 
-export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const res = await fetch(`${process.env.API_URL}/meta/home`);
-    const meta = await res.json();
-    if (!meta)
-      return {
-        metadataBase: new URL("https://octobees.com/"),
-        title: "OCTOBEES | Branding-focused & marketing tech company",
-        description: "OCTOBEES is a Branding-focused & marketing tech company",
-        keywords: [
-          "Digital Marketing",
-          "Marketing Automation",
-          "Social Media Marketing",
-          "SEO",
-        ],
-        icons: {
-          icon: "/assets/png/asset-logo-octobees.png",
-        },
-        openGraph: {
-          title: "Octobees | Octobees",
-          description:
-            "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
-          images: "/assets/png/asset-logo-octobees.png",
-        },
-      };
+import { pageMetadata } from "@/constants/metadata";
+import generateMetatag from "@/utils/generateMetadata";
 
-    const title =
-      meta.meta.find((item: any) => item.value === "title")?.content || "";
-    const description =
-      meta.meta.find((item: any) => item.value === "description")?.content ||
-      "";
-    const keywords =
-      meta.meta.find((item: any) => item.value === "keywords")?.content || "";
-    const newKeywords = keywords.split(",").map((item: string) => item.trim());
-
-    return {
-      metadataBase: new URL("https://octobees.com/"),
-      title: title || "OCTOBEES | Branding-focused & marketing tech company",
-      description:
-        description ||
-        "OCTOBEES is a Branding-focused & marketing tech company",
-      keywords: newKeywords || [
-        "Digital Marketing",
-        "Marketing Automation",
-        "Social Media Marketing",
-        "SEO",
-      ],
-      icons: {
-        icon: "/assets/png/asset-logo-octobees.png",
-      },
-      openGraph: {
-        title: "Octobees | Octobees",
-        description:
-          "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
-        images: "/assets/png/asset-logo-octobees.png",
-      },
-    };
-  } catch (error: any) {
-    return {
-      metadataBase: new URL("https://octobees.com/"),
-      title: "OCTOBEES | Branding-focused & marketing tech company",
-      description: "OCTOBEES is a Branding-focused & marketing tech company",
-      keywords: [
-        "Digital Marketing",
-        "Marketing Automation",
-        "Social Media Marketing",
-        "SEO",
-      ],
-      icons: {
-        icon: "/assets/png/asset-logo-octobees.png",
-      },
-      openGraph: {
-        title: "Octobees | Octobees",
-        description:
-          "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
-        images: "/assets/png/asset-logo-octobees.png",
-      },
-    };
-  }
+export async function generateMetadata() {
+  const metaTag = pageMetadata.home
+  const location = "home";
+  return await generateMetatag({ location, metaTag });
 }
 
 export default function RootLayout({
@@ -141,6 +69,7 @@ fbq('track', 'PageView');
             <div className="flex flex-col min-h-screen">{children}</div>
           </Providers>
           <Footer />
+          <Toaster />
         </body>
       </html>
     </>

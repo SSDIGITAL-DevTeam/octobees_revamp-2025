@@ -2,11 +2,11 @@
 import React from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import AutoScroll from "embla-carousel-auto-scroll"
-import Image from "next/image"
+import Image, { StaticImageData } from "next/image"
 
 type Props = {
   side?: "left" | "right"
-  slides: string[]
+  slides: StaticImageData[]
 }
 
 const EmblaCarousel: React.FC<Props> = ({ side = "right", slides }) => {

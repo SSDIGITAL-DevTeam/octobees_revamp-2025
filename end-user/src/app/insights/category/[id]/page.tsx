@@ -6,10 +6,9 @@ import BackArticleButton from "@/components/partials/Button/BackArticleButton";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import BlogContent from "@/components/partials/BlogLayout/BlogContent";
 import dayjs from "dayjs";
 import PaginationComponents from "@/components/partials/Pagination/Pagination";
-import BlogCategory from "@/components/partials/BlogLayout/BlogCategory";
+import { InsightCategory, InsightContent } from "@/app/insights/_components";
 import { axiosInstance } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import BlogNotFound from '@/assets/homepage/svg/asset-blog-notfound.svg'
@@ -35,7 +34,11 @@ export default function Page() {
           page
         }
       })
-      const getAllCat = await axiosInstance.get(`/blog-category`)
+      const getAllCat = await axiosInstance.get(`/blog-category`,{
+        params: {
+          status: true
+        }
+      })
       setBlog(getBlogCat.data.data);
       setPagination(getBlogCat.data.pagination);
       setAllCat(getAllCat.data.data)
@@ -177,7 +180,7 @@ export default function Page() {
                               <span>•  {dayjs(article.blog.createdAt).format("MMMM D, YYYY")}</span>
                             </h3>
                             <div className='order-1 md:order-2'>
-                              <BlogContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
+                              <InsightContent content={article.blog.content} className='text-sm lg:text-base text-gray-600 line-clamp-3' />
                             </div>
                           </div>
                         </Link>
@@ -209,7 +212,7 @@ export default function Page() {
               </div>
             </div>
             {/* Category */}
-            <BlogCategory data={allCat} />
+            <InsightCategory data={allCat} />
           </aside>
         </div>
         <PaginationComponents

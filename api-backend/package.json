@@ -12,7 +12,8 @@
     "dev": "nodemon .",
     "generate": "npx drizzle-kit generate",
     "migrate": "npx drizzle-kit migrate",
-    "studio": "npx drizzle-kit studio"
+    "studio": "npx drizzle-kit studio",
+    "push": "npx drizzle-kit push"
   },
   "keywords": [],
   "author": "",

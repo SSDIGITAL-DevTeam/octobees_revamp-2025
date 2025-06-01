@@ -35,8 +35,6 @@ const RadioField = ({
       .map((item:any)=> item.time)
   : [];
 
-  console.log({data})
-  
   return (
     <FormField
       name={name}
