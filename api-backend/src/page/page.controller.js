@@ -6,7 +6,6 @@ import {
   deletePageById,
   updatePage,
 } from "./page.service.js";
-// import { z } from "zod";
 const router = express.Router();
 
 router.get("/", async (req, res) => {

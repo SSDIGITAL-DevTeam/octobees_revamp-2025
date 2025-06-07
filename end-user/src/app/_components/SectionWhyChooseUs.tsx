@@ -37,7 +37,7 @@ export default function SectionWhyChooseUs() {
                                 <Image
                                     src={data.image}
                                     alt={data.heading}
-                                    className="w-[80%] lg:w-2/5 lg:h-[50vh] object-cover rounded-[30px] hover:rotate-6 transition-all duration-500 active:scale-105 shadow-md"
+                                    className="w-[80%] lg:w-2/5 lg:min-h-[280px] object-cover rounded-[30px] hover:rotate-6 transition-all duration-500 active:scale-105 shadow-md"
                                     loading="lazy"
                                 />
                                 <div className="flex flex-col gap-y-5 md:gap-y-6 justify-center w-full lg:w-1/3">

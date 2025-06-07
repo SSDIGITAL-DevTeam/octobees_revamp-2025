@@ -2,13 +2,7 @@ import { db } from "../../drizzle/db.js";
 import { metaTag, pages } from "../../drizzle/schema.js";
 import { eq, sql, desc, asc, count } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
-// Find All MetaTags with Pagination & Sorting
-// findAllPages,
-// findPageById,
-// insertServiceCat,
-// deletePage,
-// editPage,
-// findPageBySlug,
+
 export const findAllPages = async (skip, limit, where, orderBy) => {
   try {
     let baseQuery = db.select().from(pages);

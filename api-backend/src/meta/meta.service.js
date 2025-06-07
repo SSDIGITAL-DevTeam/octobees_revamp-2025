@@ -1,14 +1,13 @@
 import { findPageBySlug } from "../page/page.repository.js";
 import {
   findAllMetaTags,
-  findServiceCatById,
-  insertServiceCat,
-  deleteServiceCat,
-  editServiceCat,
-  // findPagesBySlug,
+  findMetaById,
+  insertMeta,
+  deleteMeta,
+  editMeta,
 } from "./meta.repository.js";
 
-export const getAllServiceCat = async (filters) => {
+export const getAllMetas = async (filters) => {
   try {
     const { page, limit, slug, search, orderBy } = filters;
     const skip = (page - 1) * limit;
@@ -25,7 +24,7 @@ export const getAllServiceCat = async (filters) => {
         },
       ],
     };
-    const { datas, total } = await findAllServiceCats(
+    const { datas, total } = await findAllMetaTags(
       skip,
       limit,
       where,
@@ -42,11 +41,11 @@ export const getAllServiceCat = async (filters) => {
       },
     };
   } catch (error) {
-    throw new Error("Gagal Mengambil Seluruh Data Meta");
+    throw new Error(error.message);
   }
 };
 
-export const getServiceCatById = async (id, filters) => {
+export const getMetaById = async (id, filters) => {
   try {
     const { page, limit, orderBy, search } = filters;
     const skip = (page - 1) * limit;
@@ -58,15 +57,15 @@ export const getServiceCatById = async (id, filters) => {
       ],
     };
     const data =
-      (await findServiceCatById(id, skip, limit, where, orderBy)) ||
-      (await findPagesBySlug(id, skip, limit, where, orderBy));
+      (await findMetaById(id, skip, limit, where, orderBy)) 
+      //|| (await findMetaBySlug(id, skip, limit, where, orderBy));
     return data;
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-export const createServiceCat = async (payload) => {
+export const createMeta = async (payload) => {
   try {
     const validPage = await findPageBySlug(payload.page);
     if (!validPage) {
@@ -74,29 +73,29 @@ export const createServiceCat = async (payload) => {
     }
     // console.log(payload);
     // console.log(validPage);
-    const data = await insertServiceCat({ ...payload, slug: validPage.slug });
+    const data = await insertMeta({ ...payload, slug: validPage.slug });
     return data;
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-export const deleteServiceCatById = async (id) => {
+export const removeMeta = async (id) => {
   try {
-    await findServiceCatById(id);
-    await deleteServiceCat(id);
+    await findMetaById(id);
+    await deleteMeta(id);
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-export const updateServiceCat = async (id, payload) => {
+export const updateMeta = async (id, payload) => {
   try {
-    const data = await findServiceCatById(id);
+    const data = await findMetaById(id);
     if (!data) {
       throw new Error("Meta dengan Id tersebut tidak ditemukan");
     }
-    await editServiceCat(id, payload);
+    await editMeta(id, payload);
   } catch (error) {
     throw new Error(error.message);
   }

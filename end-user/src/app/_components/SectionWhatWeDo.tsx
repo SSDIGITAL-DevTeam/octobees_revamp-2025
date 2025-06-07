@@ -29,7 +29,7 @@ export default function SectionWhatWeDo() {
     return (
         <div className="space-y-10 md:space-y-16 w-full">
             <SectionTitle heading="Flexible services for every stage of your business" subheading="what we do" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 lg:gap-x-0 md:gap-x-2 xl:gap-x-7">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 md:gap-x-2 xl:gap-x-7">
                 {
                     WhatWeDoMap.map((data, i) => (
                         <div className="group flex flex-col items-center px-8 py-12 md:p-14 bg-white rounded-3xl gap-y-8 shadow-md transition-all duration-300 hover:shadow-primary/40 border-2">

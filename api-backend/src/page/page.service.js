@@ -64,7 +64,7 @@ export const getAllPages = async (filters) => {
     const { datas, total } = await findAllPages(skip, limit, where, order);
 
     const totalPages = Math.ceil(total / limit);
-    // console.log({ datas, total, totalPages })
+
     return {
       data: datas,
       pagination: {
@@ -75,7 +75,7 @@ export const getAllPages = async (filters) => {
       },
     };
   } catch (error) {
-    throw new Error("Gagal Mengambil Seluruh Data Page");
+    throw new Error(error.message);
   }
 };
 
@@ -132,7 +132,7 @@ export const getPageById = async (id, filters) => {
       selectedPage = await findPageBySlug(id);
     }
     if (!selectedPage) {
-      throw new Error("Page tidak ditemukan");
+      throw new Error("Page not found");
     }
 
     whereConditions.push(eq(pages.id, selectedPage.id));
@@ -142,10 +142,12 @@ export const getPageById = async (id, filters) => {
     const { datas, total } = await findAllMetaTags(skip, limit, where, order);
 
     const totalPages = Math.ceil(total / limit);
-    // console.log(datas, total, totalPages )
+
     return {
-      pages: selectedPage,
-      data: datas,
+      data: {
+        pages: selectedPage,
+        meta : [...datas],
+      },
       pagination: {
         total,
         totalPages,
@@ -154,7 +156,6 @@ export const getPageById = async (id, filters) => {
       },
     };
   } catch (error) {
-    // console.log(error);
     throw new Error(error.message);
   }
 };

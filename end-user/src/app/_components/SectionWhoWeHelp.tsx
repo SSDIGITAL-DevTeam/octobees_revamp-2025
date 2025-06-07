@@ -20,7 +20,7 @@ const WhoWeHelpMap: SectionWhoWeHelpType[] = [
         image: AssetIllingWarm
     },
     {
-        title: <><span className="text-primary">Companies</span>{" "}looking to scale their business in Singapore</>,
+        title: <>Company looking to<span className="text-primary">{" "}scale up{" "}</span>their business</>,
         image: AssetSerious
     }
 ]
@@ -28,11 +28,12 @@ const WhoWeHelpMap: SectionWhoWeHelpType[] = [
 export default function SectionWhoWeHelp() {
     return (
         <div className="space-y-16 md:space-y-20 w-full">
-            <SectionTitle heading="For founders to expand their client base and strengthen brand identity" subheading="what we help" />
+            <SectionTitle heading="For founders to expand their client base and strengthen brand identity" subheading="who we help" />
             <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8 w-full">
                 {
-                    WhoWeHelpMap.map((data, i) => (
-                        <div className="flex flex-col justify-start items-center w-full gap-4 lg:gap-y-8">
+                    WhoWeHelpMap.map((data, i) => {
+                        const isLast = i === WhoWeHelpMap.length - 1;
+                        return (<div className={`flex flex-col items-center w-full gap-4 lg:gap-y-8 justify-start ${isLast && "md:col-span-2 md:justify-center lg:col-span-1"}`}>
                             <Image
                                 src={data.image}
                                 alt={`image-who-we-help-${i + 1}`}
@@ -43,7 +44,8 @@ export default function SectionWhoWeHelp() {
                                 {data.title}
                             </h2>
                         </div>
-                    ))
+                        )
+                    })
                 }
             </div>
         </div>

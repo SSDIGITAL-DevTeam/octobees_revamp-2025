@@ -30,6 +30,8 @@ router.use("/auth/login", loginController);
 router.use("/auth/logout", logoutController);
 
 // API Routes
+router.use("/v1/career", career.endUser);
+router.use("/v1/position", position.endUser);
 router.use("/v1/service-category", ServiceCatRoutes);
 router.use("/v1/plan", ServicePlanController);
 router.use("/v1/page", PageController);
@@ -38,19 +40,15 @@ router.use("/v1/blog-category", BlogCategoryController);
 router.use("/v1/blog", uploadImage.single("image"), BlogController);
 router.use("/v1/meta", MetaController);
 router.use("/v1/user", UserController);
-router.use("/v1/career", career.endUser);
-router.use("/v1/position", position.endUser);
 //router.use("/v1/blog", BlogController);
 
 router.use("/v1/back-office", (req, res, next) => {
   const backOfficeRouter = express.Router();
-  backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
-  backOfficeRouter.use("/plan", ServicePlanController);
   backOfficeRouter.use("/career", career.backOffice);
   backOfficeRouter.use("/position", position.backOffice);
-  //backOfficeRouter.use("/order", OrderController);
-  // backOfficeRouter.use("/service-category", ServiceCatRoutes);
-
+  backOfficeRouter.use("/service-category", ServiceCatBackOfficeRoutes);
+  backOfficeRouter.use("/plan", ServicePlanController);
+  backOfficeRouter.use("/v1/meta", MetaController);
   backOfficeRouter(req, res, next);
 });
 

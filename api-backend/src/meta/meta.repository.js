@@ -15,23 +15,20 @@ export const findAllMetaTags = async (skip, limit, where, orderBy) => {
 
     const datas = await baseQuery.offset(skip).limit(limit);
 
-    console.log(datas);
-
     let totalQuery = db
       .select({ count: count() })
       .from(metaTag)
       .leftJoin(pages, eq(metaTag.slug, pages.slug));
 
     if (where) {
-      totalQuery = totalQuery.where(where); // ← harus di-*re-assign*
+      totalQuery = totalQuery.where(where);
     }
 
-    const [{ count: total }] = await totalQuery; // ← jangan lupa di-*await* query-nya
+    const [{ count: total }] = await totalQuery;
 
     return { datas, total };
   } catch (error) {
-    // console.error(error);
-    throw new Error("Kesalahan mengambil seluruh data meta");
+    throw new Error("Get All MetaTag Unsuccessfully");
   }
 };
 
@@ -43,13 +40,12 @@ export const findPagesBySlug = async (slug) => {
     })
     return data
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan mengambil data berdasarkan page");
+    throw new Error("Get Meta By Slug Unsuccessfully");
   }
 };
 
 // Find MetaTag By ID
-export const findServiceCatById = async (id) => {
+export const findMetaById = async (id) => {
   try {
     const data = await db
       .select({
@@ -69,7 +65,7 @@ export const findServiceCatById = async (id) => {
 };
 
 // Insert New MetaTag
-export const insertServiceCat = async (data) => {
+export const insertMeta = async (data) => {
   const { page, key, value, content, slug } = data;
   try {
     await db.insert(metaTag).values({
@@ -100,7 +96,7 @@ export const insertPage = async (name, slug, categoryServiceId) => {
 };
 
 // Delete MetaTag by ID
-export const deleteServiceCat = async (id) => {
+export const deleteMeta = async (id) => {
   try {
     await db.delete(metaTag).where(eq(metaTag.id, id));
   } catch (error) {
@@ -110,7 +106,7 @@ export const deleteServiceCat = async (id) => {
 };
 
 // Edit MetaTag by ID
-export const editServiceCat = async (id, data) => {
+export const editMeta = async (id, data) => {
   try {
     await db.update(metaTag).set(data).where(eq(metaTag.id, id));
   } catch (error) {
