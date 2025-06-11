@@ -1,4 +1,4 @@
-import { DialogSubscription } from "@/components/layouts/Dialog";
+import { DialogSuccessSubscription } from "@/components/layouts/Dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -29,7 +29,7 @@ export default function FormSubscription({ className, source }: { className?: st
     
     return (
         <>
-            <form onSubmit={handleSubmit} className={`bg-white md:mt-8 p-[4px] md:p-1 flex items-center gap-2 md:gap-3 rounded-full w-full shadow-sm md:w-[90%] ${className}`}>
+            <form onSubmit={handleSubmit} className={`bg-white md:mt-8 p-[4px] md:p-1 flex items-center gap-2 md:gap-3 rounded-full w-full shadow-md md:w-[90%] ${className}`}>
                 <Input
                     type="email"
                     required
@@ -39,12 +39,12 @@ export default function FormSubscription({ className, source }: { className?: st
                     placeholder="Enter your email address"
                     className="px-3 md:px-4 text-sm md:text-base border-none focus-visible:ring-0 h-fit placeholder:text-sm placeholder:text-gray-600" />
                 <Button
-                    type="submit"
-                    className="rounded-full px-2 sm:px-6 h-full">
+                    type="submit" 
+                    className="rounded-full px-4 sm:px-6 h-full">
                     Subscribe
                 </Button>
             </form>
-            <DialogSubscription open={isOpen} setOpen={setIsOpen} />
+            <DialogSuccessSubscription open={isOpen} setOpen={setIsOpen} />
         </>
     )
 }
