@@ -8,19 +8,23 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 
+type PaginationProps = {
+handlePrev: () => void;
+    handleNext: () => void;
+    setPage: (page: number) => void;
+    page: number;
+    totalPage: number;
+    totalData: number;
+}
+
 export default function PaginationComponents({
     handlePrev,
     handleNext,
     page,
     setPage,
     totalPage,
-}: {
-    handlePrev: () => void;
-    handleNext: () => void;
-    setPage: (page: number) => void;
-    page: number;
-    totalPage: number;
-}) {
+    totalData
+}: PaginationProps) {
     return (
         <div className="w-full flex items-end flex-col gap-2">
             <Pagination className="w-full justify-end">
@@ -47,7 +51,10 @@ export default function PaginationComponents({
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-            <p className="text-sm mt-2">Total Page: {totalPage}</p>
+            <div className="w-full flex justify-between items-center text-gray-600">
+            <p className="text-sm mt-2">Total Data : {totalData} </p>
+            <p className="text-sm mt-2">Page {page} of {totalPage}</p>
+            </div>
         </div>
     );
 }

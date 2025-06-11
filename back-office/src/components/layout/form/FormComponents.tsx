@@ -89,15 +89,15 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
       const url = defaultValue ? `/user/${defaultValue.id}` : `/user`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
-      successToast("Success", response.data.message);
+      successToast(response.data.message);
       router.push("/user")
     } catch (error: any) {
-      failedToast("Error",
-        (error.response?.data?.error
+      failedToast(
+        error.response?.data?.error
           || error.response?.statusText
           || error.message
           || "Error processing data"
-        ));
+        );
     }
   });
 

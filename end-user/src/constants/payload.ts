@@ -1,4 +1,11 @@
-export interface User {
+export type Pagination = {
+  currentPage: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+};
+
+export type User = {
   id: string;
   name: string;
   email: string;
@@ -11,7 +18,7 @@ export interface User {
   updatedAt: Date;
 }
 
-export interface PlanService {
+export type PlanService = {
   id: string;
   name: string;
   type: 'Standard' | 'Premium';
@@ -22,7 +29,7 @@ export interface PlanService {
   categoryId: string;
 }
 
-export interface CategoryService {
+export type CategoryService = {
   id: string;
   name: string;
   heading: string;
@@ -31,7 +38,7 @@ export interface CategoryService {
   slug: string;
 }
 
-export interface Price {
+export type Price = {
   id: string;
   curr: 'IDR' | 'SGR' | 'MYR';
   amount: number;
@@ -39,13 +46,13 @@ export interface Price {
   idPlan: string;
 }
 
-export interface Benefit {
+export type Benefit = {
   id: string;
   value: string;
   idPlan: string;
 }
 
-export interface Role {
+export type Role = {
   id: string;
   name: string;
   email: string;
@@ -56,7 +63,7 @@ export interface Role {
   features: any; // bisa diganti lebih spesifik
 }
 
-export interface BlogCategory {
+export type BlogCategory = {
   id: string;
   name: string;
   slug: string;
@@ -65,28 +72,37 @@ export interface BlogCategory {
   status: boolean;
 }
 
-export interface Blog {
+export type Blog = {
   id: string;
   title: string;
   image: string;
   content: string;
   slug: string;
-  status: string; // Sesuaikan dengan blogStatusEnum
+  status: string;
   favorite: boolean;
   categoryId: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+  user: {
+    id: string;
+    name: string;
+  },
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  }
 }
 
-export interface Pages {
+export type Pages = {
   id: string;
   page: string;
   slug: string;
   categoryServiceId?: string | null;
 }
 
-export interface MetaTag {
+export type MetaTag = {
   id: string;
   key: string;
   value: string;
@@ -94,7 +110,7 @@ export interface MetaTag {
   slug: string;
 }
 
-export interface Order {
+export type Order = {
   id: string;
   amount: number;
   bussiness: string;
@@ -108,7 +124,7 @@ export interface Order {
   time: string;
 }
 
-export interface Career {
+export type Career = {
   id: string;
   name: string;
   email: string;
@@ -118,18 +134,28 @@ export interface Career {
   portfolio: string;
   message?: string | null;
   status: string; // Sesuaikan dengan careerStatusEnum
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   position: {
     id: number;
     name: string;
-  };
+  }
 }
-export interface Position {
+export type Position = {
   id: number;
   name: string;
   status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
+
+export type Subscription = {
+  id: number;
+  email: string;
+  source: string;
+  insight?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 

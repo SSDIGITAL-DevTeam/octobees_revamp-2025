@@ -85,7 +85,7 @@ export function DialogPosition({ children, data, refetch }: Props) {
                     }
                     <div className="w-full flex justify-end gap-2">
                         <Button type="button" onClick={() => setOpen(false)} variant={"outline"} className="px-6 h-12 rounded-2xl">Cancel</Button>
-                        <Button type="submit" variant={"addData"} className={`px-6 h-12 rounded-2xl ${data && "bg-[#E7BB53] text-black"}`}>{data ? "Save Changes" : "Add Position"}</Button>
+                        <Button type="submit" variant={"addData"} className={`px-6 h-12 rounded-2xl ${data && "bg-[#E7BB53] hover:bg-[#d0a644] text-black"}`}>{data ? "Save Changes" : "Add Position"}</Button>
                     </div>
                 </form>
             </DialogContent>

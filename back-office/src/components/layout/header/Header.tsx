@@ -2,15 +2,11 @@
 
 import { useAuthStore } from '@/app/store/login';
 import BreadCrumbComponents from '@/components/partials/breadcrumb/BreadCrumbComponents'
-import { LogoutDialog } from '@/components/partials/dialog/LogoutDialog';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { withAuth } from '@/hoc/withAuth';
-import { Dialog, DialogContent } from '@radix-ui/react-dialog';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import React from 'react'
 
 const Header = (params: { title: string, label?: string }) => {
-  const [open, setOpen] = React.useState(false);
   const path = usePathname();
   const name = useAuthStore((state) => state.name);
   const role = useAuthStore((state) => state.role);
@@ -22,13 +18,12 @@ const Header = (params: { title: string, label?: string }) => {
         <h1 className='font-semibold sm:text-3xl text-lg'>{params.title}</h1>
         <BreadCrumbComponents data={`${params.label}/${path}`} />
       </div>
-      <button className='flex items-end text-end gap-5'>
-        <LogoutDialog role={role} name={name}/>
-        {/* <span onClick={()=>setOpen(!open)}>{name} <br/> <span className='text-red-800'>{role}</span></span> */}
+      <div className='flex items-end text-end gap-5'>
+        <span>{name} <br/> <span className='text-red-800'>{role}</span></span>
         {
           name && <SidebarTrigger  />
         }
-      </button>
+      </div>
     </header>
   )
 }

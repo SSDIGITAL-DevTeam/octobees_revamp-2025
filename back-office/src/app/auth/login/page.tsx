@@ -47,7 +47,7 @@ const FormMeta = () => {
             setToken(response.data.accessToken)
             router.push("/dashboard");
         } catch (error: any) {
-            failedToast("Error", (error.response?.data?.error || error.response?.statusText || error.message || "Error processing data"));
+            failedToast(error.response?.data?.error || error.response?.statusText || error.message || "Error processing data");
         }
     }
     )
@@ -76,12 +76,12 @@ const FormMeta = () => {
                     </form>
                 </Form>
                 <button
-                    type="submit"
+                    type="button"
                     className=" underline text-red-800 text-base self-start"
                 >
-                    Forgot Your Password
+                    Forgot Password?
                 </button>
-                <label className="text-gray-600 text-sm">© 2025 Octobees</label>
+                <label className="text-gray-600 text-sm">© {new Date().getFullYear()} Octobees</label>
             </section>
             <section className="w-full max-w-[80%] h-[60vh]">
                 <Image src={loginImage.src} alt="login-image" width={1920} height={1080} className="object-cover w-full h-full rounded-2xl" />

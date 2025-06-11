@@ -20,6 +20,7 @@ import { useAuthStore } from "@/app/store/login";
 // import { withAuth } from "@/hoc/withAuth";
 import { axiosInstance } from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
+import { Blog, BlogCategory } from "@/constrant/payload";
 
 const blogStatus = [
     "Published",
@@ -57,7 +58,7 @@ const dataSchema = z.object({
         )
         .optional(),
     content: z.string().nonempty("Content is required"),
-    status: z.enum([...blogStatus]),
+    status: z.string(),
     favorite: z.boolean(),
     categoryId: z.string().nonempty("Category is required"),
 });
@@ -65,19 +66,25 @@ const dataSchema = z.object({
 
 type DataSchema = z.infer<typeof dataSchema>;
 
-const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => {
+type FormBlogProps ={
+    blog?: Blog;
+    categories: BlogCategory[]
+}
+
+const FormBlog = ({ blog, categories }: FormBlogProps) => {
+
     const form = useForm<DataSchema>({
         resolver: zodResolver(dataSchema),
         defaultValues: {
             title: "",
             image: undefined,
             content: "",
-            status: "Draft",
+            status: "Published",
             favorite: false,
             categoryId: "",
         },
     });
-    const { handleSubmit, control, reset, watch } = form;
+    const { handleSubmit, control, reset } = form;
 
     const [imageFile, setImageFile] = React.useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = React.useState<string>("");
@@ -85,21 +92,22 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
 
 
     useEffect(() => {
-        if (defaultValue) {
-            reset(defaultValue);
+        if (blog) {
+            reset({
+                title: blog.title,
+                image: blog.image,
+                content: blog.content,
+                status: blog.status,
+                favorite: blog.favorite,
+                categoryId: blog.categoryId || "",
+            });
+            setPreviewUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`);
         }
-    }, [defaultValue]);
-
-    useEffect(() => {
-        if (defaultValue?.image) {
-            setPreviewUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${defaultValue.image}`);
-        }
-    }, [defaultValue]);
-
+    }, [blog]);
 
     const router = useRouter()
-    const blogCategory = data
-        .map((c: any) => {
+    const blogCategory = categories
+        .map((c) => {
             return {
                 value: c.id,
                 title: c.name
@@ -128,19 +136,18 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
             if (imageFile) {
                 formData.append("image", imageFile);
             }
-            const url = defaultValue
-                ? `/blog/${defaultValue.id}`
+            const url = blog
+                ? `/blog/${blog.id}`
                 : `/blog`;
-            const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
+            const method = blog ? axiosInstance.patch : axiosInstance.post;
             const response = await method(url, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            successToast("Success", response.data.message);
+            successToast( response.data.message);
             router.push("/blog/blogs");
         } catch (error: any) {
             failedToast(
-                "Error",
                 error.response?.data?.error ||
                 error.response?.statusText ||
                 error.message ||
@@ -153,9 +160,6 @@ const FormBlog = ({ defaultValue, data }: { defaultValue?: any, data: any }) => 
         <Form {...form}>
             <form onSubmit={handleInput}>
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
-
-
-                    {/* <SelectField control={control} label="Add Category" name="categoryId" data={data} /> */}
                     <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
                     <ImageField defaultImage={previewUrl} setImageFile={setImageFile} control={control} label="Add Cover Image" name="image" />
                     <InputField control={control} label="Add Title" name="title" />

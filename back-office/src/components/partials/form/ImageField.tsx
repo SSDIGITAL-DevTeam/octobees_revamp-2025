@@ -72,10 +72,10 @@ const ImageField = ({
                             alt="Preview"
                             width={500}
                             height={500}
-                            className="h-72 w-full object-cover"
+                            className="h-full w-[600px] object-cover"
                         />
                     ) : (
-                        <div className="h-72 w-full flex items-center justify-center bg-gray-100 text-gray-400">
+                        <div className="w-full min-h-64 flex items-center justify-center bg-gray-100 text-gray-400">
                             No Image
                         </div>
                     )}

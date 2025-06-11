@@ -79,14 +79,14 @@ export default function PageAbout(): JSX.Element {
           }
         </section>
 
-        <section className="bg-white">
+        <section className="bg-white hidden">
           <div className="space-y-8 py-12 md:py-20 w-full md:max-w-7xl md:mx-auto px-10">
             <SectionClientBrand />
             <p className="text-center w-full font-semibold text-lg text-primary">And many more</p>
           </div>
         </section>
 
-        <section className='bg-white'>
+        <section className='bg-white hidden'>
           <div className="py-12 md:py-16 pb-20 md:pb-32 w-full md:max-w-7xl md:mx-auto px-10 space-x-10">
             <div className="w-full flex flex-col md:flex-row gap-y-12 md:gap-y-10 lg:gap-x-24 items-center justify-center">
 

@@ -86,7 +86,7 @@ export default function PaginationComponents({
     };
 
     return (
-        <div className={`${className} w-full flex items-center justify-center flex-wrap gap-2 mb-20`}>
+        <div className={`w-full flex items-center justify-center flex-wrap gap-2 ${className} ${totalPage <= 1 && 'hidden'}`}>
             <Pagination className="w-full justify-center">
                 <PaginationContent>
                     {/* Previous Button */}

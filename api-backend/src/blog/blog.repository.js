@@ -5,19 +5,18 @@
 import { db } from '../../drizzle/db.js'
 import { blog, blogCategory, user } from '../../drizzle/schema.js'
 import { eq, count } from 'drizzle-orm'
+import logger from '../../utils/logger.js'
 
 export const findAllBlogs = async (skip, limit, where, orderBy) => {
-   
     try {
-      
         let baseQuery = db
             .select({
-                blog: blog,
+                ...blog, 
                 user: {
                     id: user.id,
                     name: user.name,
                 },
-                blogCategory: {
+                category: {
                     id: blogCategory.id,
                     name: blogCategory.name,
                     slug: blogCategory.slug,
@@ -31,7 +30,6 @@ export const findAllBlogs = async (skip, limit, where, orderBy) => {
           
         const datas = await baseQuery.limit(limit).offset(skip)
         
-        // console.log(datas)
         const totalQuery = db
             .select({ count: count() })
             .from(blog)
@@ -44,7 +42,7 @@ export const findAllBlogs = async (skip, limit, where, orderBy) => {
 
         return { datas, total }
     } catch (error) {
-        console.log('GET / error: ', error)
+        logger.error('GET / error: ', error)
         throw new Error('Error fetching all blogs')
     }
 }
@@ -53,12 +51,12 @@ export const findBlogById = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog,
+                ...blog,
                 user: {
                     id: user.id,
                     name: user.name,
                 },
-                blogCategory: {
+                category: {
                     id: blogCategory.id,
                     name: blogCategory.name,
                     slug: blogCategory.slug,
@@ -72,7 +70,7 @@ export const findBlogById = async (blogId) => {
 
         return selectedBlog[0] || null
     } catch (error) {
-        console.error('GET by ID / error: ', error)
+        logger.error('GET by ID / error: ', error)
         throw new Error('Error fetching blog by ID')
     }
 }
@@ -80,12 +78,12 @@ export const findBlogBySlug = async (blogId) => {
     try {
         const selectedBlog = await db
             .select({
-                blog,
+                ...blog,
                 user: {
                     id: user.id,
                     name: user.name,
                 },
-                blogCategory: {
+                category: {
                     id: blogCategory.id,
                     name: blogCategory.name,
                     slug: blogCategory.slug,
@@ -99,7 +97,7 @@ export const findBlogBySlug = async (blogId) => {
 
         return selectedBlog[0] || null
     } catch (error) {
-        console.error('GET by ID / error: ', error)
+        logger.error('GET by ID / error: ', error)
         throw new Error('Error fetching blog by ID')
     }
 }
@@ -114,7 +112,7 @@ export const findBlogByTitle = async (title) => {
 
         return result[0] || null
     } catch (error) {
-        console.error('GET by Title / error: ', error)
+        logger.error('GET by Title / error: ', error)
         throw new Error('Error fetching blog by title')
     }
 }
@@ -123,7 +121,7 @@ export const insertBlog = async (data) => {
     try {
         await db.insert(blog).values(data)
     } catch (error) {
-        console.error('POST / error: ', error)
+        logger.error('POST / error: ', error)
         throw new Error('Error inserting blog')
     }
 }
@@ -132,16 +130,16 @@ export const deleteBlog = async (id) => {
     try {
         await db.delete(blog).where(eq(blog.id, id))
     } catch (error) {
-        console.error('DELETE / error: ', error)
+        logger.error('DELETE / error: ', error)
         throw new Error('Error deleting blog')
     }
 }
 
-export const editQueue = async (id, data) => {
+export const editBlog = async (id, data) => {
     try {
         await db.update(blog).set(data).where(eq(blog.id, id))
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         throw new Error('Blog edit unsuccessfully')
     }
 }

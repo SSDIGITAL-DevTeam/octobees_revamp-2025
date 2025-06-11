@@ -1,15 +1,16 @@
 "use client"
 import FormBlog from "@/components/layout/form/FormBlog";
 import Header from "@/components/layout/header/Header";
+import { Blog, BlogCategory } from "@/constrant/payload";
 import { axiosInstance } from "@/lib/axios";
-import axios from "axios";
+import { failedToast } from "@/utils/toast";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const AddPage = () => {
 
-  const [data, setData] = React.useState<any>([]);
-  const [defaultValue, setDefaultValue] = React.useState<any>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [blog, setBlog] = useState<Blog>();
   const searchParams = useSearchParams();
   const query = searchParams.get("id")
 
@@ -18,27 +19,23 @@ const AddPage = () => {
       try {
         const [category, value] = await Promise.all([
           axiosInstance.get(
-            "/blog-category", {
-              params: {
-                status: true
-              }
-            }
+            "/blog-category"
           ),
           axiosInstance.get(
             `/blog/${query}`
           )
         ])
-        setData(category.data.data);
-        setDefaultValue(value.data.blog);
-      } catch (error) {
-        console.error(error);
+        setCategories(category.data.data);
+        setBlog(value.data);
+      } catch (error : any) {
+        failedToast(
+          error.response?.data?.error || error.response?.statusText || "Error fetching data"
+        )
       }
     };
     fetchCategory();
   }, [query]);
 
-  // console.log({data});
-  // console.log({defaultValue});
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
       <Header title={"Blog"} label={"Blog Management"} />
@@ -48,7 +45,7 @@ const AddPage = () => {
           <p>Input new blog data</p>
         </div>
         <div className="w-full">
-          <FormBlog data={data || []} defaultValue={defaultValue || []}/>
+          <FormBlog categories={categories || []} blog={blog}/>
         </div>
       </section>
     </main>

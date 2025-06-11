@@ -10,6 +10,7 @@ import Header from "@/components/layout/header/Header";
 import { axiosInstance } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
+import { failedToast, successToast } from "@/utils/toast";
 
 type Pagination = {
   currentPage: number;
@@ -41,7 +42,6 @@ export default function DataPage() {
   }, [searchParams]);
 
   const handleChangePage = (newPage: number) => {
-  //  const params = new URLSearchParams(searchParams.toString());
     const params = new URLSearchParams(window.location.search);
     params.set("page", newPage.toString());
     router.push(`?${params.toString()}`);
@@ -69,24 +69,20 @@ export default function DataPage() {
         });
         setUsers(response.data);
       } catch (error: any) {
-        setErr(
-          error.response?.data?.error ||
-          error.response?.statusText ||
-          "Error fetching data"
-        );
+        failedToast("Failed to fetch users");
       }
     };
 
     fetchData();
   }, [page, refetch]);
 
-  // console.log(users?.data);
   const handleDelete = async (id: string) => {
     try {
       await axiosInstance.delete(`/user/${id}`);
+      successToast("User deleted successfully");
       setRefetch(prev => !prev)
     } catch (error) {
-      console.error("Failed to delete user:", error);
+      failedToast("Failed to delete user");
     }
   };
 
@@ -163,6 +159,7 @@ export default function DataPage() {
           page={page}
           setPage={handleChangePage}
           totalPage={users?.pagination.totalPages || 1}
+          totalData={users?.pagination.total || 0}
         />
       </section>
     </main>

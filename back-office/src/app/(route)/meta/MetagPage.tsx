@@ -59,7 +59,7 @@ export default function DataPage() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/page",{
-          params: { limit: 4, page },
+          params: { limit: 10, page },
         });
         setPages(response.data);
       } catch (error: any) {
@@ -99,6 +99,7 @@ export default function DataPage() {
           page={page}
           setPage={handleChangePage}
           totalPage={pages?.pagination.totalPages || 1}
+          totalData={pages?.pagination.total || 0}
         />
       </section>
     </main>

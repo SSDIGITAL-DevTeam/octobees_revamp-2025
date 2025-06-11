@@ -1,20 +1,20 @@
 "use client"
 import FormBlog from "@/components/layout/form/FormBlog";
 import Header from "@/components/layout/header/Header";
+import { BlogCategory } from "@/constrant/payload";
 import { axiosInstance } from "@/lib/axios";
-import { jwtDecode } from "jwt-decode";
 import React, { useEffect } from "react";
 
 const AddPage = () => {
 
-  const [data, setData] = React.useState<any>([]);
+  const [categories, setCategories] = React.useState<BlogCategory[]>([]);
   useEffect(() => {
     const fetchCategory = async () => {
       const res = await axiosInstance.get(
         "/blog-category",
         { params: { status: true } }
       );
-      setData(res.data.data);
+      setCategories(res.data.data);
     };
     fetchCategory();
   }, []);
@@ -30,8 +30,7 @@ const AddPage = () => {
           <p>Input new blog data</p>
         </div>
         <div className="w-full">
-          <FormBlog data={data || []} />
-
+          <FormBlog categories={categories} />
         </div>
       </section>
     </main>

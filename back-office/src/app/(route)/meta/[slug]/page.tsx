@@ -67,7 +67,7 @@ export default function DataPage() {
       try {
         if (!pages) return;
         const meta = await axiosInstance.get(`/page/${pages}`, {
-          params: { limit: 4, page }
+          params: { limit: 10, page }
         })
         setMeta(meta.data)
       } catch (error: any) {
@@ -162,6 +162,7 @@ export default function DataPage() {
           page={page}
           setPage={handleChangePage}
           totalPage={meta?.pagination.totalPages || 1}
+          totalData={meta?.pagination.total || 0}
         />
       </section>
     </main>

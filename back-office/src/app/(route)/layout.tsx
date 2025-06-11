@@ -4,19 +4,19 @@ import { Sidebarcomponents } from "@/components/partials/sidebar/SidebarComponen
 import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) {
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <>
-     <SidebarProvider>
-          <Sidebarcomponents />
-          <div className="bg-slate-50 w-full px-2 md:px-12">
-            {children}
-          </div>
-          <Toaster />
-        </SidebarProvider>
+      <SidebarProvider>
+        <Sidebarcomponents />
+        <div className="bg-slate-50 w-full px-2 md:px-12">
+          {children}
+        </div>
+        <Toaster />
+      </SidebarProvider>
     </>
   )
 }

@@ -7,21 +7,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/partials/form/InputField";
-import InputAreaField from "@/components/partials/form/InputAreaField";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
-// import { statusList } from "./FormComponents";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
-import { Textarea } from "@/components/ui/textarea";
+import { BlogCategory } from "@/constrant/payload";
+
 const dataSchema = z.object({
   name: z.string().nonempty(),
   status: z.string(),
-  // heading: z.string(),
-  // description: z.string(),
 });
-import { Controller } from "react-hook-form";
 type DataSchema = z.infer<typeof dataSchema>;
 
 
@@ -37,45 +32,42 @@ export const statusList = [
 
 ];
 
-const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
+export default function FormBlogCategory({ categories }: { categories?: BlogCategory }) {
   const form = useForm<DataSchema>({
     resolver: zodResolver(dataSchema),
     defaultValues: {
       name: "",
       status: "true"
-      // heading: "",
-      // description: ""
     },
   });
-  const { handleSubmit, control, reset, watch } = form;
+  const { handleSubmit, control, reset } = form;
+  const router = useRouter()
 
   useEffect(() => {
-    if (defaultValue) {
-      reset(defaultValue);
+    if (categories) {
+      reset({
+        name: categories.name,
+        status: categories.status ? "true" : "false",
+      });
     }
-  }, [defaultValue]);
-
-  const router = useRouter()
+  }, [categories]);
 
   const handleInput = handleSubmit(async (value) => {
     try {
-      // console.log(value);
-      const url = defaultValue ? `/blog-category/${defaultValue.id}` : `/blog-category`;
-      const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
+      const url = categories ? `/blog-category/${categories.id}` : `/blog-category`;
+      const method = categories ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
-      successToast("Success", response.data.message);
+      successToast(response.data.message || "Data saved successfully");
       router.push("/blog/blog-category");
     } catch (error: any) {
-      failedToast("Error",
-        (error.response?.data?.error
-          || error.response?.statusText
-          || error.message
-          || "Error processing data"
-        ));
+      failedToast(
+        error.response?.data?.error
+        || error.response?.statusText
+        || error.message
+        || "Error processing data"
+      );
     }
   });
-
-  // console.log(defaultValue?.status)
 
   return (
     <Form {...form}>
@@ -91,6 +83,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
         </div>
         <div className="w-full flex justify-between features-center mt-8 sm:mt-12">
           <Button
+            type="button"
             onClick={() => router.push("/blog/blog-category")}
             variant={"outline"}
             className="h-14 px-7 rounded-full"
@@ -112,6 +105,3 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   );
 };
 
-
-
-export default FormComponents;

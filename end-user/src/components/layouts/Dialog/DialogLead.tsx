@@ -7,8 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { SelectField, FieldInput, FieldCalendar, InputAreaField, RadioField, FieldPhoneNumber } from "@/components/partials/Field";
-import { countryCode } from "@/constants/countryCodes";
+import { FieldInput, FieldCalendar, InputAreaField, RadioField, FieldPhoneNumber } from "@/components/partials/Field";
 
 import {
   Dialog,
@@ -76,7 +75,6 @@ export default function DialogLead(params: {
     const web = (process.env.NEXT_PUBLIC_SPREADSHEET_API)?.toString() || ""
 
     try {
-      // console.log(dataForSpreadsheet)
       await axios.post(web, new URLSearchParams(dataForSpreadsheet), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

@@ -1,35 +1,29 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/header/Header";
-import { Suspense, lazy, useEffect, useState } from "react";
-import axios from "axios";
 import { axiosInstance } from "@/lib/axios";
-const FormComponents = lazy(() => import("@/components/layout/form/FormBlogCategory"));
+import { useEffect, useState } from "react";
+import { FormBlogCategory } from "@/components/layout/form";
+import { failedToast } from "@/utils/toast";
 
-const EditPage = () => {
-  
-  const [defaultValue, setDefaultValue] = useState();
+export default function PageEditBlogCategory() {
+
+  const [blogcategory, setBlogCategory] = useState();
   const searchParams = useSearchParams();
-  const query = searchParams.get("id")
+  const id = searchParams.get("id")
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!query) return;
-        const resCategory = await axiosInstance.get(`/blog-category/${query}`);
-        // alert(
-        //   JSON.stringify(resCategory.data.blogCategory)
-          
-        // )
-        setDefaultValue(resCategory?.data);
-
+        if (!id) return;
+        const responseCategories = await axiosInstance.get(`/blog-category/${id}`);
+        setBlogCategory(responseCategories.data);
       } catch (error) {
-        console.error(error);
+        failedToast("Failed to fetch blog category data. Please try again later.");
       }
     };
     fetchData();
-  }, [query]);
-  // console.log(defaultValue);
+  }, [id]);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
@@ -40,14 +34,10 @@ const EditPage = () => {
           <p>Edit Blog Category Data</p>
         </div>
         <div className="w-full">
-          <Suspense fallback={<div>Loading...</div>}>
-            <FormComponents defaultValue={defaultValue} />
-          </Suspense>
-        
+          <FormBlogCategory categories={blogcategory} />
         </div>
       </section>
     </main>
   );
 };
 
-export default EditPage;

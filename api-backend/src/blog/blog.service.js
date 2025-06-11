@@ -2,7 +2,7 @@
 
 import {
   deleteBlog,
-  editQueue,
+  editBlog,
   findAllBlogs,
   findBlogByTitle,
   findBlogById,
@@ -20,7 +20,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { asc, desc, ilike, and, or, eq, like, sql, gte } from "drizzle-orm";
-import { blog, blogCategory, user } from "../../drizzle/schema.js";
+import { blog, user } from "../../drizzle/schema.js";
+import { findBlogCatById } from "../blog-category/blog-category.repository.js";
+import slug from "slug";
+import { generateUniqueSlug } from "../../utils/generate-slug.js";
 
 export const getAllBlogs = async (filters) => {
   try {
@@ -127,47 +130,46 @@ export const createBlog = async (payload) => {
       throw new Error("Title already exists");
     }
 
-    const slug = payload.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-    // console.log(payload.status)
-    await insertBlog({ ...payload, slug });
+    const existingCategory = await findBlogCatById(payload.categoryId);
+    if (!existingCategory) {
+      throw new Error("Category not found");
+    }
+
+    const baseSlug = slug(payload.title);
+    const uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
+
+    await insertBlog({ ...payload, slug : uniqueSlug });
   } catch (error) {
-    console.error("POST / error:", error);
-    throw new Error(error.message || "Error inserting blog");
+    throw new Error(error.message);
   }
 };
 
 export const deleteBlogById = async (id) => {
   try {
-    const blog = await findBlogById(id);
-    if (blog == null) {
+    const _blog = await findBlogById(id);
+    if (_blog == null) {
       throw new Error("Blog with that ID not found");
     }
-    const imagePath = path.join(__dirname, "../../upload", blog.blog.image);
+    const imagePath = path.join(__dirname, "../../upload", _blog.image);
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     }
     await deleteBlog(id);
   } catch (error) {
-    console.log(error);
     throw new Error(error.message);
   }
 };
 
-export const updateQueue = async (id, payload) => {
+export const updateBlog = async (id, payload) => {
   try {
-    console.log(payload, id);
-    const queue = await findBlogById(id);
-    if (!queue) {
+    const _blog = await findBlogById(id);
+    if (!_blog) {
       throw new Error("Blog not found");
     }
 
     const { image, favorite } = payload;
-    console.log(queue);
     if (image) {
-      const imagePath = path.join(__dirname, "../../upload", queue.image);
+      const imagePath = path.join(__dirname, "../../upload", _blog.image);
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
       }
@@ -178,23 +180,29 @@ export const updateQueue = async (id, payload) => {
     if (typeof favorite === "string") {
       newFavorite = favorite === "true";
     }
-    // console.log({newFavorite});
 
-    const response = await findAllBlogs(0, 10, eq(blog.favorite, true), [
-      desc(blog.createdAt),
+    const response = await findAllBlogs(0, 10, eq(_blog.favorite, true), [
+      desc(_blog.createdAt),
     ]);
-    // console.log(queue)
-    if (queue.blog.status !== "Published" && newFavorite === true) {
+
+    if (_blog.status !== "Published" && newFavorite === true) {
       throw new Error("Blog must be published first");
     }
     if (
       newFavorite === true &&
       response.datas.length >= 3 &&
-      queue.blog.favorite === false
+      _blog.favorite === false
     ) {
       throw new Error("You can only favorite up to 3 blogs");
     }
-    await editQueue(id, { ...payload, favorite: newFavorite });
+
+    let uniqueSlug = _blog.slug;
+    if(payload.title !== _blog.title){
+      const baseSlug = slug(payload.title);
+      uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
+    }
+
+    await editBlog(id, { ...payload, favorite: newFavorite, slug: uniqueSlug });
   } catch (error) {
     throw new Error(error.message);
   }

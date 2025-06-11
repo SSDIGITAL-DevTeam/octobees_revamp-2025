@@ -45,7 +45,6 @@ export const user = mysqlTable("user", {
 });
 
 export const planService = mysqlTable("planservice", {
-  //id: varchar('id', { length: 191 }).notNull().primaryKey().default(sql`uuid(4)`),
   id: varchar("id", { length: 36 })
     .primaryKey()
     .$defaultFn(() => uuidv7()),
@@ -168,22 +167,8 @@ export const order = mysqlTable("order", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-// export const career = mysqlTable('career', {
-// 	id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
-// 	name: varchar('name', { length: 255 }).notNull(),
-// 	email: varchar('email', { length: 255 }).notNull().unique(),
-// 	phoneNumber: varchar('phoneNumber', { length: 255 }).notNull(),
-// 	position: varchar('position', { length: 255 }).notNull(),
-// 	resume: text('resume').notNull(),
-// 	portfolio: varchar('portfolio', { length: 255 }).notNull(),
-// 	message: text('message'),
-// 	status: careerStatusEnum.notNull().$defaultFn(() => 'Review'),
-// 	createdAt: timestamp('created_at').defaultNow().notNull(),
-// 	updatedAt: timestamp('updated_at').defaultNow().notNull(),
-//   });
-
 export const position = mysqlTable("position", {
-  id: int('id').primaryKey().autoincrement(),
+  id: int("id").primaryKey().autoincrement(),
   name: varchar("name", { length: 255 }).notNull().unique(),
   status: mysqlEnum("status", ["Active", "NonActive"])
     .notNull()
@@ -194,17 +179,27 @@ export const position = mysqlTable("position", {
 
 export const career = mysqlTable("career", {
   id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
+  .primaryKey()
+  .$defaultFn(() => uuidv7()),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   phoneNumber: varchar("phoneNumber", { length: 255 }).notNull(),
-  positionId: int("positionId")
-    .references(() => position.id, { onDelete: "restrict" }),
+  positionId: int("positionId").references(() => position.id, {
+    onDelete: "restrict",
+  }),
   resume: text("resume").notNull(),
   portfolio: varchar("portfolio", { length: 255 }).notNull(),
   message: text("message"),
   status: careerStatusEnum.notNull().$defaultFn(() => "Review"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export const subscription = mysqlTable("subscription", {
+  id: int("id").primaryKey().autoincrement(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  source : varchar("source", { length: 255 }).notNull(),
+  insight: varchar("insight", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check, CirclePlus, Download, Eye, Pencil, Search, Trash, Upload } from "lucide-react";
+import { Download, Eye, Search, Upload } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TableCareer } from "@/components/partials/table";
@@ -10,7 +10,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
 import { axiosInstance } from "@/lib/axios";
 import { Career, Pagination } from "@/constrant/payload";
-import exportToCSV from "@/utils/exportCareerCSV";
+import { exportCareer } from "@/utils/exportToCSV";
 import { failedToast } from "@/utils/toast";
 
 type CareerType = {
@@ -55,11 +55,11 @@ export default function PageCareer() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/career", {
-          params: { limit: 4, page },
+          params: { limit: 10, page },
         });
         setCareer(response.data);
       } catch (error: any) {
-        failedToast("Error", error.response?.data?.error || error.response?.statusText || "Error processing data");
+        failedToast(error.response?.data?.error || error.response?.statusText || "Error processing data");
       }
     };
 
@@ -117,16 +117,15 @@ export default function PageCareer() {
               </Button>
 
 
-              {/* <Link href="/career/add"> */}
               <Button
                 variant={"addData"}
                 size={"sm"}
+                type="button"
                 className="flex gap-2 items-center"
-                onClick={()=>exportToCSV(career?.data || [])}
+                onClick={() => exportCareer(career?.data || [])}
               >
                 <Upload size={15} /> Export Data
               </Button>
-              {/* </Link> */}
             </div>
           </div>
         </div>
@@ -139,6 +138,7 @@ export default function PageCareer() {
           page={page}
           setPage={handleChangePage}
           totalPage={career?.pagination.totalPages || 1}
+          totalData={career?.pagination.total || 0}
         />
 
       </section>

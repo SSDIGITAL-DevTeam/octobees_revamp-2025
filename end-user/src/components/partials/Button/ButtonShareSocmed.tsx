@@ -14,8 +14,7 @@ const ShareSocmedButton = ({ title, slug }: { title: string; slug: string }) => 
         rel="noopener noreferrer"
       >
         <button><svg
-          width="18"
-          height="19"
+          className="w-5 h-5"
           viewBox="0 0 18 19"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -37,8 +36,7 @@ const ShareSocmedButton = ({ title, slug }: { title: string; slug: string }) => 
         rel="noopener noreferrer"
       >
         <button><svg
-          width="18"
-          height="19"
+          className="w-5 h-5"
           viewBox="0 0 18 19"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -60,8 +58,7 @@ const ShareSocmedButton = ({ title, slug }: { title: string; slug: string }) => 
         rel="noopener noreferrer"
       >
         <button><svg
-          width="18"
-          height="19"
+          className="w-5 h-5"
           viewBox="0 0 18 19"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -83,8 +80,7 @@ const ShareSocmedButton = ({ title, slug }: { title: string; slug: string }) => 
         rel="noopener noreferrer"
       >
         <button><svg
-          width="18"
-          height="19"
+          className="w-5 h-5"
           viewBox="0 0 18 19"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

@@ -1,12 +1,5 @@
-import { Suspense } from "react";
-import EditPage from "./page";
+import { ReactNode, Suspense } from "react";
 
-const EditPageWrapper = () => {
-  return (
-    <Suspense fallback={<div></div>}>
-      <EditPage />
-    </Suspense>
-  );
-};
-
-export default EditPageWrapper;
+export default function Layout({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<div></div>}>{children}</Suspense>;
+}

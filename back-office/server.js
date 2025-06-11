@@ -3,12 +3,12 @@ const { createServer } = require("http");
 const { parse } = require("url");
 const next = require("next");
 
-const dev = process.env.NODE_ENV !== "development";
+const prod = process.env.NODE_ENV !== "development";
 const hostname =
-  process.env.NODE_ENV !== "development" ? "localhost" : "back-office.octobees.com";
+  process.env.NODE_ENV == "development" ? "localhost" : "back-office.octobees.com";
 const port = process.env.port || 3000;
 // when using middleware `hostname` and `port` must be provided below
-const app = next({ dev, hostname, port });
+const app = next({ prod, hostname, port });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -33,6 +33,6 @@ app.prepare().then(() => {
     }
   }).listen(port, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://${hostname}:${port}`);
+    console.log(`> Ready on https://${hostname}:${port}`);
   });
 });

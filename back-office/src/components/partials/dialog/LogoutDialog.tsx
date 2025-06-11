@@ -9,16 +9,12 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 
-export function LogoutDialog({ role, name }: { role: string, name: string }) {
+export function LogoutDialog({ children }: { children: string }) {
     const [open, setOpen] = useState(false);
     const logout = useAuthStore((state) => state.clearUser);
-    const router = useRouter()
 
     const handleLogout = () => {
         sessionStorage.removeItem('token')
@@ -29,7 +25,7 @@ export function LogoutDialog({ role, name }: { role: string, name: string }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <span onClick={() => setOpen(!open)}>{name} <br /> <span className='text-red-800'>{role}</span></span>
+                <Button className="text-white bg-red-800 hover:bg-red-900" onClick={() => setOpen(!open)}>{children}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[465px]">
                 <DialogHeader>

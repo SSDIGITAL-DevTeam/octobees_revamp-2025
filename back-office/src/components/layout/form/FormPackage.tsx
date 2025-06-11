@@ -68,7 +68,6 @@ const FormComponents = ({
       options: "Monthly",
       descriptions: "",
        categoryId: (defaultValue?.categoryId)?defaultValue?.categoryId:"",
-      //categoryId: "019665a9-16ef-7789-93dc-d06fa9ef180d",
       
       prices: [
         { curr: "SGR", amount: null, discount: null },
@@ -78,8 +77,7 @@ const FormComponents = ({
       benefits:(defaultValue?.benefits)?defaultValue?.benefits: [{ value: "" }],
     },
   });
-  const { handleSubmit, control, reset, watch,setValue } = form;
-  //setValue("categoryId", defaultValue.categoryId);
+  const { handleSubmit, control, reset, watch } = form;
 
 
   useEffect(() => {
@@ -111,11 +109,11 @@ const FormComponents = ({
       const url = defaultValue ? `/plan/${defaultValue.id}` : "/plan";
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
-      successToast("Success", response.data.message);
+      successToast(response.data.message);
       router.push("/services/packages");
 
     } catch (error: any) {
-      failedToast("Error", (error.response?.data?.error || error.response?.statusText || error.message || "Error processing data"));
+      failedToast(error.response?.data?.error || error.response?.statusText || error.message || "Error processing data");
     }
   });
 

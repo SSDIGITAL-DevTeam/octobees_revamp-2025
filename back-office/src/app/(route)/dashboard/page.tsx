@@ -98,16 +98,14 @@ export default function Page(): JSX.Element {
     fetchAllData();
   }, []);
 
-  const { 
+  const {
     activeUsers, nonActiveUsers, draftUsers,
     activeServices, nonActiveServices, draftServices,
     activePackages, nonActivePackages, draftPackages,
     publishedBlogs, takedownBlogs, draftBlogs,
-    totalBlogCategories, loading, error 
+    totalBlogCategories, loading, error
   } = state;
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  // Komponen BlockCard
   const BlockCard: React.FC<BlockCardProps> = ({ text, value, className }) => (
     <div
       className={`h-full w-full rounded-lg shadow-md hover:shadow-lg transition-all p-5 flex flex-col gap-4 ${className || "text-black bg-white"
@@ -122,15 +120,13 @@ export default function Page(): JSX.Element {
   );
 
   return (
-    <main className="w-full flex flex-col gap-12">
+    <main className="w-full flex flex-col gap-12 pb-12">
       <Header title="Overview" label="Overview" />
-      
-  
-      <section className="flex flex-col gap-8 w-full min-h-[50vh] items-center pb-20">
+      <section className="flex flex-col gap-6 w-full items-center">
         {/* User Section */}
         <div className="flex flex-col gap-4 w-full">
           <h1 className="text-xl font-semibold">User</h1>
-          <div className="w-full h-36 grid grid-cols-3 gap-8">
+          <div className="w-full min-h-28 grid grid-cols-3 gap-8">
             <BlockCard text="Active User" value={activeUsers} className="bg-red-700 text-white" />
             <BlockCard text="NonActive User" value={nonActiveUsers} />
             <BlockCard text="Drafted User" value={draftUsers} />
@@ -141,11 +137,11 @@ export default function Page(): JSX.Element {
         <div className="flex flex-col gap-4 w-full">
           <h1 className="text-xl font-semibold">Services Category & Packages</h1>
           <div className="w-full grid grid-cols-4 grid-rows-2 gap-6">
-            <BlockCard text="Active Category" value={activeServices} className="bg-red-700 h-36 col-span-2 text-white" />
+            <BlockCard text="Active Category" value={activeServices} className="bg-red-700 min-h-28 col-span-2 text-white" />
             <BlockCard
               text="Active Package"
               value={activePackages}
-              className="h-36 col-span-2 col-start-3 bg-red-700/10 text-red-700 border-[2px] border-red-700/50"
+              className="min-h-28 col-span-2 col-start-3 bg-red-700/10 text-red-700 border-[2px] border-red-700/50"
             />
             <BlockCard text="Non Active Category" value={nonActiveServices} />
             <BlockCard text="Drafted Category" value={draftServices} />
@@ -157,7 +153,7 @@ export default function Page(): JSX.Element {
         {/* Blog Section */}
         <div className="flex flex-col gap-4 w-full">
           <h1 className="text-xl font-semibold">Blog</h1>
-          <div className="w-full h-36 grid grid-cols-4 gap-6">
+          <div className="w-full min-h-28 grid grid-cols-4 gap-6">
             <BlockCard text="Published Blog" value={publishedBlogs} className="bg-red-700 text-white" />
             <BlockCard text="Takedown Blog" value={takedownBlogs} />
             <BlockCard text="Drafted Blog" value={draftBlogs} />

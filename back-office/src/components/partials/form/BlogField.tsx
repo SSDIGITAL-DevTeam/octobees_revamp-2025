@@ -29,12 +29,13 @@ export default function BlogField({ control, name, label }: Props) {
                             onEditorChange={field.onChange}
                             init={{
                                 height: 500,
-                                menubar: false,
-                                plugins: "link image code",
+                                menubar: true,
+                                plugins: "link image code lists advlist",
                                 toolbar:
                                     "undo redo | formatselect | bold italic backcolor | \
-            alignleft aligncenter alignright alignjustify | \
-            bullist numlist outdent indent | image | removeformat | help",
+alignleft aligncenter alignright alignjustify | \
+bullist numlist outdent indent | image | removeformat | help",
+                                block_formats: "Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6",
                             }}
                         /></FormControl>
                     <FormMessage />

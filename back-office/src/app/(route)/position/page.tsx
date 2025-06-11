@@ -12,6 +12,7 @@ import { axiosInstance } from "@/lib/axios";
 import { Pagination, Position } from "@/constrant/payload";
 import { DialogPosition } from "@/components/partials/dialog/DialogPosition";
 import { failedToast, successToast } from "@/utils/toast";
+import { exportPosition } from "@/utils/exportToCSV";
 
 type PositionType = {
   data: Position[];
@@ -56,7 +57,7 @@ export default function PagePosition() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/position", {
-          params: { limit: 4, page },
+          params: { limit: 10, page },
         });
         setPosition(response.data);
       } catch (error: any) {
@@ -107,7 +108,7 @@ export default function PagePosition() {
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
         <div className="w-full flex justify-between items-center">
           <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
-            <h1 className="text-4xl font-semibold text-black">Applicant Data</h1>
+            <h1 className="text-4xl font-semibold text-black">Position</h1>
           </div>
 
           <div className="flex items-center">
@@ -133,6 +134,8 @@ export default function PagePosition() {
                 variant={"addData"}
                 size={"sm"}
                 className="flex gap-2 items-center"
+                onClick={()=>exportPosition(position?.data || [])}
+                
               >
                 <Upload size={15} /> Export Data
               </Button>
@@ -154,6 +157,7 @@ export default function PagePosition() {
           page={page}
           setPage={handleChangePage}
           totalPage={position?.pagination.totalPages || 1}
+          totalData={position?.pagination.total || 0}
         />
 
       </section>

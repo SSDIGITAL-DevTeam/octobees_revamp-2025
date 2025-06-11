@@ -50,15 +50,15 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
       const url = defaultValue ? `/service-category/${defaultValue.id}` : `/service-category`;
       const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
-      successToast("Success", response.data.message);
-     // router.push("/blog/blog-category");
+      successToast(response.data.message);
+     router.push("/services/categories");
     } catch (error: any) {
-      failedToast("Error",
-        (error.response?.data?.error
+      failedToast(
+        error.response?.data?.error
           || error.response?.statusText
           || error.message
           || "Error processing data"
-        ));
+        );
     }
   });
 

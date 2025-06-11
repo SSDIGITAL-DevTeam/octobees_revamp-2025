@@ -78,12 +78,21 @@ export type Blog = {
   image: string;
   content: string;
   slug: string;
-  status: string; // Sesuaikan dengan blogStatusEnum
+  status: string;
   favorite: boolean;
   categoryId: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+  user: {
+    id: string;
+    name: string;
+  },
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  }
 }
 
 export type Pages = {
@@ -136,6 +145,14 @@ export type Position = {
   id: number;
   name: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export type Subscription = {
+  id: number;
+  email: string;
+  source: string;
+  insight?: string | null;
   createdAt: string;
   updatedAt: string;
 }
