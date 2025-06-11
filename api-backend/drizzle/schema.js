@@ -55,6 +55,8 @@ export const planService = mysqlTable("planservice", {
   options: varchar("options", { length: 191 }).notNull(),
   descriptions: varchar("descriptions", { length: 191 }).notNull(),
   categoryId: varchar("categoryId", { length: 191 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const categoryService = mysqlTable("categoryservice", {
@@ -64,8 +66,10 @@ export const categoryService = mysqlTable("categoryservice", {
   name: varchar("name", { length: 191 }).notNull().unique(),
   heading: varchar("heading", { length: 191 }).notNull(),
   description: varchar("description", { length: 191 }).notNull(),
-  status: mysqlEnum("status", ["Draft", "Active", "NonActive"]).notNull(),
+  status: mysqlEnum("status", ["Draft", "Active", "NonActive"]).notNull().default("Draft"),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const price = mysqlTable("price", {
@@ -137,6 +141,8 @@ export const pages = mysqlTable("pages", {
   page: varchar("page", { length: 191 }).notNull(),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
   categoryServiceId: varchar("categoryServiceId", { length: 191 }).unique(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const metaTag = mysqlTable("metatag", {
@@ -146,7 +152,9 @@ export const metaTag = mysqlTable("metatag", {
   key: varchar("key", { length: 191 }).notNull(),
   value: varchar("value", { length: 191 }).notNull(),
   content: varchar("content", { length: 191 }).notNull(),
-  slug: varchar("slug", { length: 191 }).notNull(),
+  slug: varchar("slug", { length: 191 })
+  .notNull()
+  .references(() => pages.slug, { onDelete: "cascade" }),
 });
 
 export const order = mysqlTable("order", {

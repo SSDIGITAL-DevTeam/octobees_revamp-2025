@@ -86,7 +86,6 @@ export const getAllBlogCat = async (filters) => {
       },
     };
   } catch (error) {
-    console.log(error);
     throw new Error(error);
   }
 };

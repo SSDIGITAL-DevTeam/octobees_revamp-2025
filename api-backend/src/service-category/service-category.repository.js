@@ -1,150 +1,115 @@
 import { db } from "../../drizzle/db.js";
-import {  categoryService,  planService } from "../../drizzle/schema.js";
-import { eq, asc, desc, sql, and } from "drizzle-orm";
-import { v7 as uuidv7 } from 'uuid'; // Import uuid7 generator
+import { categoryService } from "../../drizzle/schema.js";
+import { count, eq } from "drizzle-orm";
+import { v7 as uuidv7 } from "uuid";
 import logger from "../../utils/logger.js";
-// 1. Find All Service Categories
-export const findAllServiceCats = async (skip, limit, where = undefined, orderBy = {}) => {
-  
-    try {
-        
 
-        // const query = db
-        //     .select()
-        //     .from(categoryService)
-        //     .where(where ? where : undefined) // optional
-        //     .limit(limit) // optional
-        //     .offset(skip) // optional
-        //     // .orderBy(
-        //     //     ...Object.entries(orderBy).map(([key, value]) =>
-        //     //     value === 'asc' ? asc(categoryService[key]) : desc(categoryService[key])
-        //     //     )
-        //     // );
-        // const datas = await query;
-    
-            const datas = await db.query.categoryService.findMany({
-                offset: skip,
-                limit: limit,
-                // orderBy: orderBy,
-                where: where
-              });
-            //  logger.error(datas)
+export const findAllCategories = async (skip, limit, where, orderBy) => {
+  try {
+    const datas = await db.query.categoryService.findMany({
+      where,
+      limit,
+      offset: skip,
+      orderBy,
+    });
 
-        const [{ count: total }] = await db
-            .select({ count: sql`COUNT(*)` })
-            .from(categoryService)
-            .where(where ? where : undefined) // optional
+    const totalQuery = db.select({ count: count() }).from(categoryService);
+    if (where) totalQuery.where(where);
+    const [{ count: total }] = await totalQuery;
 
-        return { datas, total: Number(total) };
-    } catch (error) {
-        // logger.error(error)
-        // console.error(error);
-        throw new Error("Kesalahan mengambil seluruh data category services");
-    }
+    return { datas, total };
+  } catch (error) {
+    logger.error("GET / error: ", error.message);
+    throw new Error("Get All Categories Unsuccessfully");
+  }
 };
 
-// 2. Find by Name
-export const findServiceCatByName = async (name) => {
-    
-    try {
-
-        const data = await db.select()
-          .from(categoryService)
-          .where(eq(categoryService.name, name))
-          .limit(1);
-          if(data.length>0){
-            return data[0] || null;
-          }
-      
-    } catch (error) {
-        console.error(error);
-        throw new Error("Kesalahan mengambil data berdasarkan nama");
-    }
+export const findCategoryById = async (id, where) => {
+  try {
+    const data = await db.query.categoryService.findFirst({
+      where: eq(categoryService.id, id),
+      with: {
+        plans: {
+          where,
+          with: {
+            prices: true,
+            benefits: true,
+          },
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    logger.error("GET /:ID error: ", error);
+    throw new Error("Get Category By Id Unsuccessfully");
+  }
 };
 
-// 3. Find by ID with relations
-export const findServiceCatById = async (id) => {
-    
-    try {
-        const data = await db.query.categoryService.findFirst({
-            where: eq(categoryService.id, id),
-            with: {
-                plans: {
-                    with: {
-                        prices: true,
-                        benefits: true
-                    }
-                }
-            }
-        });
-        return data || null;
-    } catch (error) {
-        console.error("Error fetching Category by ID:", error);
-        throw new Error("Kesalahan mengambil data berdasarkan ID");
-    }
+export const findCategoryBySlug = async (slug, where) => {
+  try {
+    const data = await db.query.categoryService.findFirst({
+      where: eq(categoryService.slug, slug),
+      with: {
+        plans: {
+          where,
+          with: {
+            prices: true,
+            benefits: true,
+          },
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    logger.error("GET /:SLUG error: ", error);
+    throw new Error("Get Category By Slug Unsuccessfully");
+}
 };
 
-// 4. Find by Slug with optional where condition for plans
-export const findServiceCatBySlug = async (slug, whereCat = undefined) => {
-    //    return "TEst"
-    
-    try {
-        const data = await db.query.categoryService.findFirst({
-            where: eq(categoryService.slug, slug),
-            with: {
-                plans: {
-                   // where: whereCat,
-                   where: (whereCat)?whereCat:undefined,
-                    with: {
-                        prices: true,
-                        benefits: true
-                    }
-                }
-            }
-        });
-        return data || null;
-    } catch (error) {
-        console.error("Error fetching Category by Slug:", error);
-        throw new Error("Kesalahan mengambil data berdasarkan Slug");
-    }
+export const getCategoryByName = async (name) => {
+  try {
+    const data = await db.query.categoryService.findFirst({
+      where: eq(categoryService.name, name),
+    });
+    return data;
+  } catch (error) {
+    logger.error("GET /:NAME error: ", error);
+    throw new Error("Get Category By Name Unsuccessfully");
+  }
 };
 
-// 5. Insert Service Category
-export const insertServiceCat = async (data) => {
-    
-    try {
-        const id = uuidv7(); // Generate UUIDv7
-        
-        await db.insert(categoryService).values({
-            id, // Set ID secara manual
-            ...data
-        });
-        // Karena MySQL tidak support returning, kita return manual
-        return { id, ...data };
-    } catch (error) {
-        console.error(error);
-        throw new Error("Kesalahan dalam penambahan service category");
-    }
+export const insertCategory = async (data) => {
+  try {
+    const id = uuidv7();
+    await db.insert(categoryService).values({
+      id,
+      ...data,
+    });
+
+    return { id, ...data };
+  } catch (error) {
+    logger.error("POST / error: ", error);
+    throw new Error("Create Category Unsuccessfully");
+  }
 };
 
-// 6. Delete Service Category
-export const deleteServiceCat = async (id) => {
-    try {
-        await db.delete(categoryService).where(eq(categoryService.id, id));
-    } catch (error) {
-        console.error(error);
-        throw new Error("Kesalahan dalam penghapusan service category");
-    }
+export const deleteCategory = async (id) => {
+  try {
+    await db.delete(categoryService).where(eq(categoryService.id, id));
+  } catch (error) {
+    logger.error("DELETE /:ID error: ", error);
+    throw new Error("Delete Category Unsuccessfully");
+  }
 };
 
-// 7. Edit Service Category
-export const editServiceCat = async (id, data) => {
-   
-    try {
-
-        await db.update(categoryService).set(data).where(eq(categoryService.id, id));
-    } catch (error) {
-        console.error(error);
-        throw new Error("Kesalahan dalam mengubah service category");
-    }
+export const editCategory = async (id, data) => {
+  try {
+    await db
+      .update(categoryService)
+      .set(data)
+      .where(eq(categoryService.id, id));
+  } catch (error) {
+    logger.error("UPDATE /:ID error: ", error);
+    throw new Error("Update Category Unsuccessfully");
+  }
 };

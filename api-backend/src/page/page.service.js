@@ -14,7 +14,16 @@ import { findAllMetaTags } from "../meta/meta.repository.js";
 
 export const getAllPages = async (filters) => {
   try {
-    const { page, limit, search, orderBy, categoryId, createdAt } = filters;
+    let {
+      page = 1,
+      limit = 10,
+      search,
+      orderBy,
+      categoryId,
+      createdAt,
+    } = filters;
+
+    limit = Math.max(parseInt(limit) || 10, 1);
     const skip = (page - 1) * limit;
 
     const whereConditions = [];
@@ -146,7 +155,7 @@ export const getPageById = async (id, filters) => {
     return {
       data: {
         pages: selectedPage,
-        meta : [...datas],
+        meta: [...datas],
       },
       pagination: {
         total,

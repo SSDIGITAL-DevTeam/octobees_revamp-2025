@@ -2,30 +2,25 @@ import { db } from "../../drizzle/db.js";
 import { metaTag, pages } from "../../drizzle/schema.js";
 import { eq, sql, desc, asc, count } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
+import logger from "../../utils/logger.js";
 
 export const findAllPages = async (skip, limit, where, orderBy) => {
   try {
-    let baseQuery = db.select().from(pages);
-    // .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
-    // .leftJoin(user, eq(blog.userId, user.id))
-    if (where) baseQuery = baseQuery.where(where);
-    if (orderBy) baseQuery = baseQuery.orderBy(...orderBy);
+    const datas = await db.query.pages.findMany({
+      where,
+      limit,
+      offset: skip,
+      orderBy,
+    });
 
-    const datas = await baseQuery.limit(limit).offset(skip);
-
-    // console.log(datas)
     const totalQuery = db.select({ count: count() }).from(pages);
-    // .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
-    // .leftJoin(user, eq(blog.userId, user.id))
-
     if (where) totalQuery.where(where);
 
     const [{ count: total }] = await totalQuery;
-
     return { datas, total };
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan mengambil seluruh data page");
+    logger.error(error);
+    throw new Error("Get all pages unsuccessfully");
   }
 };
 
@@ -34,8 +29,8 @@ export const findPageBySlug = async (slug) => {
   try {
     const data = await db.query.pages.findFirst({
       where: eq(pages.slug, slug),
-    })
-    return data
+    });
+    return data;
   } catch (error) {
     console.error(error);
     throw new Error("Kesalahan mengambil data berdasarkan slug");
@@ -47,7 +42,7 @@ export const findPageById = async (id) => {
   try {
     const data = await db.query.pages.findFirst({
       where: eq(pages.id, id),
-    })
+    });
     // const data = await db
     //   .select()
     //   .from(pages)
@@ -65,29 +60,13 @@ export const findPageByTitle = async (page) => {
   try {
     const data = await db.query.pages.findFirst({
       where: eq(pages.page, page),
-    })
-    return data
+    });
+    return data;
   } catch (error) {
     console.error("Error fetching metaTag by TITLE:", error);
     throw new Error("Kesalahan mengambil data berdasarkan TITLE");
   }
 };
-
-// Insert New MetaTag
-// export const insertPage = async (data) => {
-//   const { page, key, value, content, slug } = data;
-//   try {
-//     await db.insert(metaTag).values({
-//       key,
-//       value,
-//       content,
-//       slug
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error('Kesalahan dalam penambahan meta');
-//   }
-// };
 
 export const insertPage = async (page, slug, categoryServiceId = null) => {
   try {
@@ -102,13 +81,12 @@ export const insertPage = async (page, slug, categoryServiceId = null) => {
   }
 };
 
-// Delete MetaTag by ID
 export const deletePage = async (id) => {
   try {
-    await db.delete(metaTag).where(eq(metaTag.id, id));
+    await db.delete(pages).where(eq(pages.categoryServiceId, id));
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam penghapusan meta");
+    logger.error("DELETE /:ID error: ", error.message);
+    throw new Error("Delete Page Unsuccessfully");
   }
 };
 
@@ -119,5 +97,14 @@ export const editPage = async (id, data) => {
   } catch (error) {
     console.error(error);
     throw new Error("Kesalahan dalam mengubah meta");
+  }
+};
+
+export const editPages = async (id, data) => {
+  try {
+    await db.update(pages).set(data).where(eq(pages.id, id));
+  } catch (error) {
+    logger.error("UPDATE / error: ",error.message);
+    throw new Error("Update Page Unsuccessfully");
   }
 };

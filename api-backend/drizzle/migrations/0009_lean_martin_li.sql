@@ -1,0 +1,3 @@
+ALTER TABLE `categoryservice` MODIFY COLUMN `status` enum('Draft','Active','NonActive') NOT NULL DEFAULT 'Draft';--> statement-breakpoint
+ALTER TABLE `pages` MODIFY COLUMN `categoryServiceId` varchar(191) NOT NULL;--> statement-breakpoint
+ALTER TABLE `pages` ADD CONSTRAINT `pages_categoryServiceId_categoryservice_id_fk` FOREIGN KEY (`categoryServiceId`) REFERENCES `categoryservice`(`id`) ON DELETE cascade ON UPDATE no action;

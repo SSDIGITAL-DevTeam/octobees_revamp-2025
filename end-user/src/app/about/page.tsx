@@ -6,6 +6,7 @@ import AssetImprovingAbout from '@/assets/about/svg/about.svg';
 import AssetHarvineAbout from '@/assets/about/png/asset-harvine-about.png';
 import Head from 'next/head';
 import { SectionClientBrand } from '@/app/about/_components';
+import { SectionLabel } from '../_components';
 
 type PageAboutType = {
   heading: string,
@@ -34,35 +35,32 @@ export default function PageAbout(): JSX.Element {
         <link rel="preload" href="/assets/webp/asset-caring-about.webp" as="image" />
       </Head>
       <main>
-        <header className='bg-[#F7E6E7]'>
-          <div className="flex flex-col items-center justify-center py-24 md:py-40 pt-36 md:pt-60 md:max-w-7xl md:mx-auto px-10 w-full gap-y-5">
-            <h1 className="text-primary font-bold text-4xl lg:text-6xl font-Josefin">About Us</h1>
-            <p className=" w-full lg:w-[60%] text-primary/70 lg:text-lg !leading-[150%] md:!leading-[170%] text-center">
-              We believe that entrepreneurs are the visionaries shaping world&apos;s future. They navigate through challenges and uncover opportunities that push the boundaries of what&apos;s possible. At <strong>Octobees</strong>, we
-              ensure that entrepreneurs stay focused on innovation and growth. By managing their digital presence and marketing strategies, we take care of the complexities, allowing them to focus on what matters most — growing their
-              business and achieving their goals.
+        <header className='bg-[#C20000]/10'>
+          <div className="flex flex-col md:flex-row items-center justify-between py-24 md:py-64 pt-36 md:pt-80 md:max-w-7xl md:mx-auto px-10 w-full gap-y-8 md:gap-y-5">
+            <h1 className="text-primary font-bold text-4xl lg:text-6xl font-heading">ABOUT US</h1>
+            <p className=" w-full lg:w-7/12 text-primary/90 lg:text-lg !leading-[150%] md:!leading-[170%] text-justify">
+              We believe that entrepreneurs are the visionaries shaping world&apos;s future. They navigate through challenges and uncover opportunities that push the boundaries of what&apos;s possible. At Octobees, we ensure that entrepreneurs stay focused on innovation and growth. By managing their digital presence and marketing strategies, we take care of the complexities, allowing them to focus on what matters most — growing their business and achieving their goals.
             </p>
           </div>
         </header>
 
+        <section className="w-full bg-primary">
+          <div className="md:py-6 py-4 ">
+            <SectionLabel side={"right"} />
+          </div>
+        </section>
+
         <section className="bg-white">
-          <div className="flex flex-col justify-center items-center lg:flex-row py-12 md:py-20 lg:pt-40 w-full md:max-w-7xl md:mx-auto px-10 lg:gap-x-14 xl:gap-x-14">
-            <div className="grid grid-cols-1 md:grid-cols-5 md:grid-rows-2 w-full gap-x-20 gap-y-14">
-              
-              <div className="md:col-span-3 space-y-7 md:space-y-5 order-1">
-                <h2 className="w-full text-3xl lg:text-4xl text-primary font-bold font-heading !leading-[130%] max-w-[80%] md:max-w-full">Improving our services and quality continuously</h2>
+          <div className="flex flex-col justify-center items-center lg:flex-row py-12 md:py-40 w-full md:max-w-7xl md:mx-auto px-10 lg:gap-x-14 xl:gap-x-14">
+            <div className="flex flex-col md:flex-row w-full gap-x-20 gap-y-14">
+              <div className="w-full flex justify-center items-center">
+                <Image src={AssetImprovingAbout} alt="Improving about" width={1920} height={1080} className="w-7/12 md:w-5/6" loading="lazy" />
+              </div>
+              <div className="space-y-5 md:space-y-5 md:max-w-[45%] flex flex-col justify-center items-center ">
+                <h2 className="w-full text-2xl lg:text-4xl text-primary font-bold font-heading !leading-[130%] md:max-w-full">Improving our services and quality continuously</h2>
                 <p className="w-full lg:text-lg text-justify lg:text-start text-gray-600 !leading-[150%]">
                   We are a team of dedicated professionals, always striving for growth — as individuals, as employees, as business partners, and as a company. At Octobees, we never stop searching for faster, more efficient, and higher-quality ways to deliver exceptional results for our clients. Improvement is in our DNA, and we are committed to evolving with every opportunity.
                 </p>
-              </div>
-
-              <div className="md:col-span-3 md:row-start-2 space-y-7 md:space-y-5 order-3 md:order-2">
-                <h2 className="w-full text-3xl lg:text-4xl font-bold text-primary font-heading !leading-[130%] max-w-[80%] md:max-w-full">Doing best practice in every project</h2>
-                <p className="w-full lg:text-lg text-justify lg:text-start text-gray-600 !leading-[150%]">We believe that excellence is not just a goal, but a habit that drives success for both our clients and our agency.</p>
-              </div>
-
-              <div className="w-full md:col-start-4 md:col-span-2 md:row-span-2 flex justify-center items-center lg:items-start lg:pt-20 order-2 md:order-3">
-                <Image src={AssetImprovingAbout} alt="Improving about" width={1920} height={1080} className="w-3/5 md:w-full" loading="lazy" />
               </div>
             </div>
           </div>

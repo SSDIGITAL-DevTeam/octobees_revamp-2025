@@ -2,6 +2,7 @@ import { db } from "../../drizzle/db.js";
 import { metaTag, pages } from "../../drizzle/schema.js";
 import { eq, sql, desc, asc, count } from "drizzle-orm";
 import { v7 as uuidv7 } from "uuid";
+import logger from "../../utils/logger.js";
 // Find All MetaTags with Pagination & Sorting
 export const findAllMetaTags = async (skip, limit, where, orderBy) => {
   try {
@@ -81,17 +82,12 @@ export const insertMeta = async (data) => {
 };
 
 // Insert New Page
-export const insertPage = async (name, slug, categoryServiceId) => {
+export const insertPage = async (data) => {
   try {
-    await db.insert(pages).values({
-      id: uuidv7(),
-      page: name,
-      slug,
-      categoryServiceId,
-    });
+    await db.insert(pages).values(data);
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam penambahan page");
+    logger.error("POST / error: ", error);
+    throw new Error("Create Page Unsuccessfully");
   }
 };
 

@@ -1,0 +1,2 @@
+ALTER TABLE `pages` MODIFY COLUMN `categoryServiceId` varchar(191);--> statement-breakpoint
+ALTER TABLE `metatag` ADD CONSTRAINT `metatag_slug_pages_slug_fk` FOREIGN KEY (`slug`) REFERENCES `pages`(`slug`) ON DELETE cascade ON UPDATE no action;

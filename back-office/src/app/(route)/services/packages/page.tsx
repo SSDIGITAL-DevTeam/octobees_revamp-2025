@@ -139,7 +139,7 @@ export default function DataPage() {
 
 
   return (
-    <main className="w-full flex flex-col gap-12">
+    <main className="w-full flex flex-col gap-12 pb-12">
       <Header title={"Service Package"} label={"Service Management"} />
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
         <div className="w-full flex justify-between items-center">

@@ -1,4 +1,4 @@
-import { DialogSubscription } from "@/components/layouts/Dialog";
+import { DialogSuccessSubscription } from "@/components/layouts/Dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -44,7 +44,7 @@ export default function FormSubscription({ slug }: { slug: string }): JSX.Elemen
                     Subscribe
                 </Button>
             </form>
-            <DialogSubscription open={isOpen} setOpen={setIsOpen} />
+            <DialogSuccessSubscription open={isOpen} setOpen={setIsOpen} />
 
         </>
     )

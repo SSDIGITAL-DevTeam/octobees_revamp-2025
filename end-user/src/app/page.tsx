@@ -8,9 +8,20 @@ import {
   SectionWhoWeHelp,
   SectionTestimonials
 } from "./_components";
+import { DialogSubscription } from "@/components/layouts/Dialog";
+import { useEffect, useState } from "react";
 
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setOpen(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <main>
       <FloatButton />
@@ -56,6 +67,8 @@ export default function Home() {
           <SectionTestimonials />
         </div>
       </section>
+
+      <DialogSubscription open={open} setOpen={setOpen} />
     </main>
   );
 }

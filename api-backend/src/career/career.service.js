@@ -29,7 +29,7 @@ export const getAllCareers = async (filters) => {
         like(career.status, keyword),
         like(career.email, keyword),
         like(career.phoneNumber, keyword),
-        like(career.position, keyword),
+        like(career.positionId, keyword),
       ];
       whereConditions.push(or(...searchFilters));
     }

@@ -50,6 +50,41 @@
       "when": 1749625680350,
       "tag": "0006_red_gwen_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1749651696603,
+      "tag": "0007_fair_vindicator",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1749654016747,
+      "tag": "0008_nasty_gideon",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1749657517140,
+      "tag": "0009_lean_martin_li",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1749657636265,
+      "tag": "0010_steady_magneto",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1749657723661,
+      "tag": "0011_shallow_captain_stacy",
+      "breakpoints": true
     }
   ]
 }
