@@ -33,17 +33,18 @@ export default function SectionWhoWeHelp() {
                 {
                     WhoWeHelpMap.map((data, i) => {
                         const isLast = i === WhoWeHelpMap.length - 1;
-                        return (<div className={`flex flex-col items-center w-full gap-4 lg:gap-y-8 justify-start ${isLast && "md:col-span-2 md:justify-center lg:col-span-1"}`}>
-                            <Image
-                                src={data.image}
-                                alt={`image-who-we-help-${i + 1}`}
-                                className="w-[80%] md:w-[90%] rounded-[30px] transition-all duration-500 hover:scale-[1.06]"
-                                loading="lazy"
-                            />
-                            <h2 className="text-center font-medium md:font-semibold text-base lg:text-xl w-full lg:w-[80%]">
-                                {data.title}
-                            </h2>
-                        </div>
+                        return (
+                            <div key={i} className={`flex flex-col items-center w-full gap-4 lg:gap-y-8 justify-start ${isLast && "md:col-span-2 md:justify-center lg:col-span-1"}`}>
+                                <Image
+                                    src={data.image}
+                                    alt={`image-who-we-help-${i + 1}`}
+                                    className="w-[80%] md:w-[90%] rounded-[30px] transition-all duration-500 hover:scale-[1.06]"
+                                    loading="lazy"
+                                />
+                                <h3 className="text-center font-medium md:font-semibold text-base lg:text-xl w-full lg:w-[80%]">
+                                    {data.title}
+                                </h3>
+                            </div>
                         )
                     })
                 }

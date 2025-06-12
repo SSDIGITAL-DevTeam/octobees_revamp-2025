@@ -104,16 +104,16 @@ const TableSubscription: React.FC<TableProps> = ({ subscriptions, setSort, sort,
       <TableBody>
         {subscriptions.map((sub, i) => (
           <TableRow key={i}>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-email-${i}`} className="p-2">
               {sub.email}
             </TableCell>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-source-${i}`} className="p-2">
               {sub.source}
             </TableCell>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-create-at-${i}`} className="p-2">
               {format(new Date(sub.createdAt), "dd MMMM yyyy HH:mm")}
             </TableCell>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-action-${i}`} className="p-2">
               {handleAction(sub.id)}
             </TableCell>
           </TableRow>

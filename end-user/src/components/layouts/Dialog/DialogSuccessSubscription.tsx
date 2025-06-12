@@ -23,9 +23,9 @@ export default function DialogSubscription({ open, setOpen }: Props): JSX.Elemen
                         <div className="bg-gray-200/50 rounded-2xl w-full flex justify-center items-center md:pb-12 pb-8">
                             <span className="text-center text-6xl sm:text-7xl md:text-8xl">📨</span>
                         </div>
-                        <h1 className="font-heading text-center font-semibold text-lg sm:text-xl md:text-2xl !leading-[140%] capitalize">
+                        <span className="font-heading text-center font-semibold text-lg sm:text-xl md:text-2xl !leading-[140%] capitalize">
                             Thank you for subscribing! 🎉
-                        </h1>
+                        </span>
                     </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-8 md:space-y-8 max-w-[90%] mx-auto flex flex-col items-center justify-center">

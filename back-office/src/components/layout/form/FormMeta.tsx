@@ -12,6 +12,7 @@ import axios from "axios";
 import { failedToast, successToast } from "@/utils/toast";
 import { useParams } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
+import { MetaTag } from "@/constrant/payload";
 
 
 const dataSchema = z.object({
@@ -22,7 +23,7 @@ const dataSchema = z.object({
 
 type DataSchema = z.infer<typeof dataSchema>;
 
-const FormMeta = ({ defaultValue }: { defaultValue?: any }) => {
+const FormMeta = ({ metatag }: { metatag?: MetaTag }) => {
     const form = useForm<DataSchema>({
         resolver: zodResolver(dataSchema),
         defaultValues: {
@@ -35,40 +36,35 @@ const FormMeta = ({ defaultValue }: { defaultValue?: any }) => {
     const { handleSubmit, control, reset, watch } = form;
 
     useEffect(() => {
-        if (defaultValue) {
-            reset(defaultValue);
+        if (metatag) {
+            reset({
+                key: metatag.key,
+                value: metatag.value,
+                content: metatag.content
+            });
         }
-    }, [defaultValue]);
+    }, [metatag]);
 
     const router = useRouter()
 
     const params = useParams();
-    const page = params?.slug as string;
+    const slug = params?.slug as string;
 
     const handleInput = handleSubmit(async (value) => {
-        console.log({...value, page});
-        if (!defaultValue) {
-            try {
-                const response = await axiosInstance.post(
-                    "/meta",
-                    { ...value, page }
-                );
-                successToast("Success", response.data.message);
-                router.push("/meta/" + page);
-            } catch (error: any) {
-                failedToast("Error", (error.response?.data?.error || error.response?.statusText || error.message || "Error processing data"));
-            }
-        } else {
-            try {
-                const response = await axiosInstance.patch(
-                    `/meta/${defaultValue.id}`,
-                    value
-                );
-                successToast("Success", response.data.message);
-                router.push("/meta/" + page);
-            } catch (error: any) {
-                failedToast("Error", (error.response?.data?.error || error.response?.statusText || error.message || "Error processing data"));
-            }
+        try {
+            const url = metatag ? `/meta/${metatag.id}` : `/meta`;
+            const method = metatag ? axiosInstance.patch : axiosInstance.post;
+            const values = metatag ? value : { ...value, page : slug };
+            const response = await method(url, values);
+            successToast(response.data.message);
+            router.push("/meta/" + slug);
+        } catch (error: any) {
+            failedToast(
+                error.response?.data?.error
+                || error.response?.statusText
+                || error.message
+                || "Error processing data"
+            );
         }
     }
     )
@@ -82,8 +78,9 @@ const FormMeta = ({ defaultValue }: { defaultValue?: any }) => {
                 </div>
                 <div className="w-full flex justify-between features-center mt-8 sm:mt-12">
                     <Button
-                        onClick={() => router.push("/meta/" + page)}
+                        onClick={() => router.push(`/meta/${slug}`)}
                         variant={"outline"}
+                        type="button"
                         className="h-14 px-7 rounded-full"
                     >
                         Back

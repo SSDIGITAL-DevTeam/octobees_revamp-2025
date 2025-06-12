@@ -1,4 +1,3 @@
-import { insertPage } from "../meta/meta.repository.js";
 import {
   findAllCategories,
   findCategoryById,
@@ -14,7 +13,7 @@ import { and, eq, or, like, desc, asc, gte } from "drizzle-orm";
 import dayjs from "dayjs";
 import slug from "slug";
 import { generateUniqueSlug } from "../../utils/generate-slug.js";
-import { deletePage, editPages } from "../page/page.repository.js";
+import { deletePageByCategoryId, editPages, insertPage } from "../page/page.repository.js";
 
 export const getAllCategories = async (filters) => {
   try {
@@ -29,7 +28,7 @@ export const getAllCategories = async (filters) => {
       whereConditions.push(
         eq(
           categoryService.status,
-          typeof status === "boolean" ? status : status === "true"
+          status
         )
       );
     if (search) {
@@ -153,7 +152,7 @@ export const removeCategory = async (id) => {
       throw new Error("Category with this ID not found");
     }
     await deleteCategory(id);
-    await deletePage(id)
+    await deletePageByCategoryId(id)
   } catch (error) {
     throw new Error(error.message);
   }

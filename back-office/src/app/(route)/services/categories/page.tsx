@@ -1,36 +1,34 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CirclePlus, Pencil, Search, Trash } from "lucide-react";
+import { CirclePlus, Search } from "lucide-react";
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
-import TableComponents from "@/components/partials/table/TableComponents";
+import { useEffect, useState } from "react";
 import Header from "@/components/layout/header/Header";
 import { axiosInstance } from "@/lib/axios";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
 import { useRouter, useSearchParams } from "next/navigation";
-
-
-type Pagination = {
-  currentPage: number;
-  perPage: number;
-  total: number;
-  totalPages: number;
-};
+import { TableCategory } from "@/components/partials/table";
+import { CategoryService, Pagination } from "@/constrant/payload";
+import { failedToast } from "@/utils/toast";
 
 type CategoryType = {
-  data: [];
+  data: CategoryService[];
   pagination: Pagination;
 };
 
 
 export default function DataPage() {
-  const [packages, setPackages] = useState<CategoryType | null>(null);
+  const [packages, setCategories] = useState<CategoryType>();
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [refetch, setRefetch] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [err, setErr] = useState<string | null>(null);
+  const [refetch, setRefetch] = useState<boolean>(false);
+  const [sort, setSort] = useState({
+    key: "createdAt",
+    direction: true
+  });
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -58,55 +56,19 @@ export default function DataPage() {
     }
   };
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/service-category", {
-          params: { limit: 10, page},
+          params: { limit: 10, page, search: searchQuery, orderBy: `${sort.key}:${sort.direction ? "desc" : "asc"}` },
         });
-        setPackages(response.data);
+        setCategories(response.data);
       } catch (error: any) {
-        setErr(error.response?.data?.error || error.response?.statusText || "Error fetching data");
+        failedToast(error.response?.data?.error || error.response?.statusText || "Error fetching data");
       }
     };
-
     fetchData();
-  }, [page, refetch]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      await axiosInstance.delete(`/service-category/${id}`);
-      setRefetch(prev => !prev)
-    } catch (error) {
-      console.error("Failed to delete category:", error);
-    }
-  };
-
-  const headings = ["Category Name", "Heading", "Description", "Status", "Action"];
-  const data = packages?.data.map((item: any) => ({
-    "Category Name": item.name,
-    "Heading": item.heading,
-    "Description": item.description,
-    "Status": item.status,
-    "Action": (
-      <div className="flex items-center gap-5">
-        <Link href={`/services/categories/edit?id=${item.id}`} className="text-blue-500">
-          <Pencil color="red" size={15} />
-        </Link>
-        <button onClick={() => handleDelete(item.id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
-      </div>
-    ),
-  }));
-
-  const filteredData = data?.filter((row: any) =>
-    headings.some((key) =>
-      String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  }, [page, refetch, searchQuery, sort]);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
@@ -123,7 +85,7 @@ export default function DataPage() {
               {isOpen && (
                 <input
                   type="text"
-                  placeholder={`Cari Sesuatu disini...`}
+                  placeholder={`Search something...`}
                   className="border rounded-lg px-3 py-2 focus:outline-none w-full min-w-64"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -149,7 +111,8 @@ export default function DataPage() {
           </div>
         </div>
 
-        <TableComponents headings={headings} data={filteredData || []} />
+        {/* <TableComponents headings={headings} data={filteredData || []} /> */}
+        <TableCategory categories={packages?.data || []} setSort={setSort} setRefetch={setRefetch} refetch={refetch} sort={sort}/>
         <PaginationComponents
           handleNext={handleNext}
           handlePrev={handlePrevious}

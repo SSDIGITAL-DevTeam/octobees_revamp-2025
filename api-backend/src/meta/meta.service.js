@@ -67,13 +67,11 @@ export const getMetaById = async (id, filters) => {
 
 export const createMeta = async (payload) => {
   try {
-    const validPage = await findPageBySlug(payload.page);
-    if (!validPage) {
-      throw new Error("Page tidak ditemukan");
+    const _meta = await findPageBySlug(payload.page);
+    if (!_meta) {
+      throw new Error("Category not found");
     }
-    // console.log(payload);
-    // console.log(validPage);
-    const data = await insertMeta({ ...payload, slug: validPage.slug });
+    const data = await insertMeta({ ...payload, slug: _meta.slug });
     return data;
   } catch (error) {
     throw new Error(error.message);

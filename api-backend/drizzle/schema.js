@@ -155,6 +155,8 @@ export const metaTag = mysqlTable("metatag", {
   slug: varchar("slug", { length: 191 })
   .notNull()
   .references(() => pages.slug, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const order = mysqlTable("order", {
@@ -205,7 +207,7 @@ export const career = mysqlTable("career", {
 
 export const subscription = mysqlTable("subscription", {
   id: int("id").primaryKey().autoincrement(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull(),
   source : varchar("source", { length: 255 }).notNull(),
   insight: varchar("insight", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

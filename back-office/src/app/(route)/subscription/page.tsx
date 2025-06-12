@@ -88,7 +88,7 @@ export default function DataPage() {
               {isOpen && (
                 <input
                   type="text"
-                  placeholder={`Cari Sesuatu disini...`}
+                  placeholder={`Search something...`}
                   className="border rounded-lg px-3 py-2 focus:outline-none w-full min-w-64"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

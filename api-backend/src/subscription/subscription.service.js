@@ -8,6 +8,7 @@ import {
 } from "./subscription.repository.js";
 import { subscription } from "../../drizzle/schema.js";
 import dayjs from "dayjs";
+import { verifyRecaptchaToken } from "../../utils/validateToken.js";
 
 export const getAllSubscriptions = async (filters) => {
   try {
@@ -17,7 +18,7 @@ export const getAllSubscriptions = async (filters) => {
     const skip = (page - 1) * limit;
 
     const whereConditions = [];
-  
+
     if (search) {
       const keyword = `%${search.toLowerCase()}%`;
       const searchFilters = [
@@ -63,7 +64,12 @@ export const getAllSubscriptions = async (filters) => {
         : asc(subscription[field]);
     });
 
-    const { datas, total } = await findAllSubscriptions(skip, limit, where, order);
+    const { datas, total } = await findAllSubscriptions(
+      skip,
+      limit,
+      where,
+      order
+    );
 
     const totalPages = Math.ceil(total / limit);
     return {
@@ -94,8 +100,8 @@ export const getSubscriptionById = async (id) => {
 
 export const createSubscription = async (payload) => {
   try {
-    const _subscription = await insertSubscription(payload);
-    return _subscription;
+    await verifyRecaptchaToken(payload.token);
+    await insertSubscription(payload);
   } catch (error) {
     throw new Error(error.message);
   }

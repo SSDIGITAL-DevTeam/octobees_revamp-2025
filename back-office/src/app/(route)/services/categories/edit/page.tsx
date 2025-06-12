@@ -1,13 +1,13 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/layout/header/Header";
-import { Suspense, lazy, useEffect, useState } from "react";
-import axios from "axios";
+import {  useEffect, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-const FormComponents = lazy(() => import("@/components/layout/form/FormCategory"));
+import { FormCategory } from "@/components/layout/form";
+import { failedToast } from "@/utils/toast";
 
 const EditPage = () => {
-  const [defaultValue, setDefaultValue] = useState();
+  const [category, setCategory] = useState();
   const searchParams = useSearchParams();
   const query = searchParams.get("id")
 
@@ -16,10 +16,12 @@ const EditPage = () => {
       try {
         if (!query) return;
         const resCategory = await axiosInstance.get(`/service-category/${query}`);
-        setDefaultValue(resCategory.data);
+        setCategory(resCategory.data);
 
       } catch (error) {
-        console.error(error);
+        failedToast(
+          "Failed to fetch category data. Please try again later."
+        )
       }
     };
     fetchData();
@@ -34,9 +36,7 @@ const EditPage = () => {
           <p>Edit Category Data</p>
         </div>
         <div className="w-full">
-          <Suspense fallback={<div>Loading...</div>}>
-            <FormComponents defaultValue={defaultValue} />
-          </Suspense>
+            <FormCategory category={category} />
         </div>
       </section>
     </main>

@@ -7,11 +7,10 @@ import AssetHarvineAbout from '@/assets/about/png/asset-harvine-about.png';
 import ImageAboutHero from "@/assets/about/webp/image-about-hero.webp"
 import ImageAboutHeroMobile from "@/assets/about/webp/image-about-hero-mobile.webp"
 import ImageAboutSection from "@/assets/about/webp/image-about-section.webp"
-import Head from 'next/head';
+// import Head from 'next/head';
 import { SectionClientBrand } from '@/app/about/_components';
 import { SectionLabel } from '../_components';
-import { Arrow } from 'iconsax-react';
-import { ArrowRight, MoveRight } from 'lucide-react';
+import { MoveRight } from 'lucide-react';
 import Link from 'next/link';
 
 type PageAboutType = {
@@ -37,9 +36,9 @@ const PageAboutMap: PageAboutType[] = [
 export default function PageAbout(): JSX.Element {
   return (
     <>
-      <Head>
+      {/* <Head>
         <link rel="preload" href="/assets/webp/asset-caring-about.webp" as="image" />
-      </Head>
+      </Head> */}
       <main>
         <header className='bg-[#C20000]/10 relative'>
           <div className="flex flex-col md:flex-row items-start h-[600px] lg:h-[800px]  w-full gap-y-8 md:gap-y-5">
@@ -117,7 +116,7 @@ export default function PageAbout(): JSX.Element {
         <section className="hidden bg-merah-700 py-20 flex-col md:flex-row gap-y-16 md:justify-center md:gap-44 w-full text-lg text-white">
           {
             PageAboutMap.map((data, i) => (
-              <div className="flex flex-col md:gap-3 gap-2 items-center justify-center">
+              <div key={i} className="flex flex-col md:gap-3 gap-2 items-center justify-center">
                 <h2 className="text-5xl md:text-6xl font-bold text-merah-200">{data.heading}</h2>
                 <p>{data.subheading}</p>
               </div>

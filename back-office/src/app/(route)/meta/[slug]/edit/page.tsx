@@ -7,9 +7,9 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const AddPage = () => {
-    const [defaultValue, setDefaultValue] = useState();
+    const [metatag, setMetatag] = useState();
     const params = useParams();
-    const pages = params?.slug
+    const slug = params?.slug
         .toString()
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -22,7 +22,7 @@ const AddPage = () => {
             try {
                 if (!query) return;
                 const response = await axiosInstance.get("/meta/" + query);
-                setDefaultValue(response.data);
+                setMetatag(response.data);
             } catch (error) {
                 console.error(error);
             }
@@ -32,14 +32,14 @@ const AddPage = () => {
 
     return (
         <main className="w-full flex flex-col gap-12 pb-12">
-            <Header title={`${pages} Meta Tag`} label={"Others"} />
+            <Header title={`${slug} Meta Tag`} label={"Others"} />
             <section className="flex flex-col gap-10 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
                 <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
-                    <h1 className="text-4xl font-semibold text-black">Edit {pages} Meta Tag</h1>
+                    <h1 className="text-4xl font-semibold text-black">Edit {slug} Meta Tag</h1>
                     <p>Edit meta tags</p>
                 </div>
                 <div className="w-full">
-                    <FormMeta defaultValue={defaultValue}/>
+                    <FormMeta metatag={metatag}/>
                 </div>
             </section>
         </main>

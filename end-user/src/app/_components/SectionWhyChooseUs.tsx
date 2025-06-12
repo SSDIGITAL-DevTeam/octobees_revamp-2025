@@ -41,9 +41,9 @@ export default function SectionWhyChooseUs() {
                                     loading="lazy"
                                 />
                                 <div className="flex flex-col gap-y-5 md:gap-y-6 justify-center w-full lg:w-1/3">
-                                    <h2 className="text-2xl font-heading !leading-[130%] lg:text-4xl w-full text-center md:text-left">
+                                    <h3 className="text-2xl font-heading !leading-[130%] lg:text-4xl w-full text-center md:text-left">
                                         {data.heading}
-                                    </h2>
+                                    </h3>
                                     <p className="text-sm md:text-base text-gray-600 lg:text-lg !leading-[140%] text-center md:text-left">
                                         {data.subheading}
                                     </p>

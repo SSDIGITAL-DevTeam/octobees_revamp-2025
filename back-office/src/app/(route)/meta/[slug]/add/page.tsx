@@ -1,5 +1,5 @@
 "use client"
-import FormMeta from "@/components/layout/form/FormMeta";
+import { FormMeta } from "@/components/layout/form";
 import Header from "@/components/layout/header/Header";
 import { useParams } from "next/navigation";
 

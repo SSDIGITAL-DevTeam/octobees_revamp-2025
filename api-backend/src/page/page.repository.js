@@ -24,7 +24,6 @@ export const findAllPages = async (skip, limit, where, orderBy) => {
   }
 };
 
-// Find Pages By Slug
 export const findPageBySlug = async (slug) => {
   try {
     const data = await db.query.pages.findFirst({
@@ -32,8 +31,8 @@ export const findPageBySlug = async (slug) => {
     });
     return data;
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan mengambil data berdasarkan slug");
+    logger.error("GET /:SLUG error: ",error);
+    throw new Error("Get Meta By Slug Unsuccessfully");
   }
 };
 
@@ -63,48 +62,51 @@ export const findPageByTitle = async (page) => {
     });
     return data;
   } catch (error) {
-    console.error("Error fetching metaTag by TITLE:", error);
-    throw new Error("Kesalahan mengambil data berdasarkan TITLE");
+    logger.error("GET /:TITLE error: ",error);
+    throw new Error("Get Page By Title Unsuccessfully");
   }
 };
 
-export const insertPage = async (page, slug, categoryServiceId = null) => {
+export const insertPage = async (data) => {
   try {
-    await db.insert(pages).values({
-      page,
-      slug,
-      categoryServiceId,
-    });
+    await db.insert(pages).values(data);
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam penambahan page");
+    logger.error("POST / error: ",error);
+    throw new Error("Create Page Unsuccessfully");
   }
 };
 
-export const deletePage = async (id) => {
+export const deletePageByCategoryId = async (id) => {
   try {
     await db.delete(pages).where(eq(pages.categoryServiceId, id));
   } catch (error) {
+    logger.error("DELETE /:CAT ID error: ", error.message);
+    throw new Error("Delete Page By Category Unsuccessfully");
+  }
+};
+export const deletePageById = async (id) => {
+  try {
+    await db.delete(pages).where(eq(pages.id, id));
+  } catch (error) {
     logger.error("DELETE /:ID error: ", error.message);
-    throw new Error("Delete Page Unsuccessfully");
+    throw new Error("Delete Page By Id Unsuccessfully");
   }
 };
 
-// Edit MetaTag by ID
 export const editPage = async (id, data) => {
   try {
-    await db.update(metaTag).set(data).where(eq(metaTag.id, id));
+    await db.update(pages).set(data).where(eq(pages.id, id));
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam mengubah meta");
+  logger.error("UPDATE / error: ",error.message);
+    throw new Error("Update Page By Id Unsuccessfully");
   }
 };
 
 export const editPages = async (id, data) => {
   try {
-    await db.update(pages).set(data).where(eq(pages.id, id));
+    await db.update(pages).set(data).where(eq(pages.categoryServiceId, id));
   } catch (error) {
     logger.error("UPDATE / error: ",error.message);
-    throw new Error("Update Page Unsuccessfully");
+    throw new Error("Update Page By Category Unsuccessfully");
   }
 };

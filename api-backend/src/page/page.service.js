@@ -4,13 +4,15 @@ import {
   findAllPages,
   findPageById,
   insertPage,
-  deletePage,
   editPage,
   findPageBySlug,
   findPageByTitle,
+  deletePageById,
 } from "./page.repository.js";
-import { and, asc, desc, eq, gte, like, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, is, like, or } from "drizzle-orm";
 import { findAllMetaTags } from "../meta/meta.repository.js";
+import slug from "slug";
+import { generateUniqueSlug } from "../../utils/generate-slug.js";
 
 export const getAllPages = async (filters) => {
   try {
@@ -90,7 +92,9 @@ export const getAllPages = async (filters) => {
 
 export const getPageById = async (id, filters) => {
   try {
-    const { page, limit, orderBy, search, createdAt } = filters;
+    let { page, limit, orderBy, search, createdAt } = filters;
+    limit = Math.max(parseInt(limit) || 10, 1);
+
     const skip = (page - 1) * limit;
 
     const whereConditions = [];
@@ -144,10 +148,9 @@ export const getPageById = async (id, filters) => {
       throw new Error("Page not found");
     }
 
-    whereConditions.push(eq(pages.id, selectedPage.id));
+    whereConditions.push(eq(metaTag.slug, selectedPage.slug));
 
     const where = whereConditions.length ? and(...whereConditions) : undefined;
-
     const { datas, total } = await findAllMetaTags(skip, limit, where, order);
 
     const totalPages = Math.ceil(total / limit);
@@ -172,27 +175,30 @@ export const getPageById = async (id, filters) => {
 export const createPage = async (payload) => {
   try {
     const { page } = payload;
-    const validPage = await findPageByTitle(page);
-    if (validPage) {
-      throw new Error("Page sudah ada");
+    const isPageExist = await findPageByTitle(page);
+    if (isPageExist) {
+      throw new Error("Page is already exist");
     }
 
-    const slug = page
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const baseSlug = slug(page);
+    const uniqueSlug = await generateUniqueSlug(baseSlug, pages, pages.slug);
 
-    const data = await insertPage(page, slug, null);
-    return data;
+    await insertPage({ page, slug: uniqueSlug });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-export const deletePageById = async (id) => {
+export const removePage = async (id) => {
   try {
-    await findPageById(id);
-    await deletePage(id);
+    let isPageExist = await findPageById(id);
+    if (!isPageExist) {
+      isPageExist = await findPageBySlug(id);
+    }
+    if (!isPageExist) {
+      throw new Error("Page not found");
+    }
+    await deletePageById(isPageExist.id);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -202,9 +208,16 @@ export const updatePage = async (id, payload) => {
   try {
     const data = await findPageById(id);
     if (!data) {
-      throw new Error("Page dengan Id tersebut tidak ditemukan");
+      throw new Error("Page with id not found");
     }
-    await editPage(id, payload);
+    const { page } = payload;
+    let uniqueSlug = data.slug;
+
+    if(page !== data.page){
+      const baseSlug = slug(page);
+      uniqueSlug = await generateUniqueSlug(baseSlug, pages, pages.slug);
+    }
+    await editPage(id, { page, slug: uniqueSlug });
   } catch (error) {
     throw new Error(error.message);
   }

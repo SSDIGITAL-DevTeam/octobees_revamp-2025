@@ -32,7 +32,7 @@ export default function SectionWhatWeDo() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 md:gap-x-2 xl:gap-x-7">
                 {
                     WhatWeDoMap.map((data, i) => (
-                        <div className="group flex flex-col items-center px-8 py-12 md:p-14 bg-white rounded-3xl gap-y-8 shadow-md transition-all duration-300 hover:shadow-primary/40 border-2">
+                        <div key={i} className="group flex flex-col items-center px-8 py-12 md:p-14 bg-white rounded-3xl gap-y-8 shadow-md transition-all duration-300 hover:shadow-primary/40 border-2">
                             <Image
                                 src={data.image}
                                 alt={`image-what-we-do-${i + 1}`}
@@ -41,9 +41,9 @@ export default function SectionWhatWeDo() {
                                 quality={100}
                             />
                             <div className="flex flex-col justify-center items-center gap-y-2 md:gap-y-4 w-full">
-                                <h1 className="font-heading font-semibold text-xl md:text-3xl lg:text-4xl">
+                                <h3 className="font-heading font-semibold text-xl md:text-3xl lg:text-4xl">
                                     {data.heading}
-                                </h1>
+                                </h3>
                                 <p className="text-sm text-gray-500 tracking-[0.2px] md:text-base text-center font-medium !leading-[140%]">
                                     {data.subheading}
                                 </p>

@@ -156,16 +156,16 @@ const TableBlog: React.FC<TableProps> = ({ blogs, setSort, sort, setRefetch, ref
         <TableBody>
           {blogs.map((blog, i) => (
             <TableRow key={i}>
-              <TableCell key={`data-${i}`} className="p-2">
+              <TableCell key={`data-title-${i}`} className="p-2">
                 {blog.title}
               </TableCell>
-              <TableCell key={`data-${i}`} className="p-2">
+              <TableCell key={`data-category-name-${i}`} className="p-2">
                 {blog.category.name}
               </TableCell>
-              <TableCell key={`data-${i}`} className="p-2">
+              <TableCell key={`data-status-${i}`} className="p-2">
                 {formatStatus(blog.status)}
               </TableCell>
-              <TableCell key={`data-${i}`} className="p-2">
+              <TableCell key={`data-action-${i}`} className="p-2">
                 {handleAction(blog.id)}
               </TableCell>
             </TableRow>

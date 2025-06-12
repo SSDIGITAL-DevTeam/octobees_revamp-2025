@@ -65,19 +65,12 @@ export const findMetaById = async (id) => {
   }
 };
 
-// Insert New MetaTag
 export const insertMeta = async (data) => {
-  const { page, key, value, content, slug } = data;
   try {
-    await db.insert(metaTag).values({
-      key,
-      value,
-      content,
-      slug,
-    });
+    await db.insert(metaTag).values(data);
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam penambahan meta");
+    logger.error("POST / error: ", error);
+    throw new Error("Create MetaTag Unsuccessfully");
   }
 };
 

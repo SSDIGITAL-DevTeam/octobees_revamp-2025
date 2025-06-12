@@ -80,10 +80,10 @@ const TablePage: React.FC<TableProps> = ({ pages, setSort, sort, setRefetch, ref
       <TableBody>
         {pages.map((page, i) => (
           <TableRow key={i}>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-page-${i}`} className="p-2">
               {page.page}
             </TableCell>
-            <TableCell key={`data-${i}`} className="p-2">
+            <TableCell key={`data-action-${i}`} className="p-2">
               {handleAction(page.slug)}
             </TableCell>
           </TableRow>

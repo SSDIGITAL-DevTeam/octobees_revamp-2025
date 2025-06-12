@@ -1,40 +1,32 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { CirclePlus, ListFilter, Pencil, Search, Trash } from "lucide-react";
+import { CirclePlus, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import TableComponents from "@/components/partials/table/TableComponents";
 import Header from "@/components/layout/header/Header";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
+import { MetaTag, Pages, Pagination } from "@/constrant/payload";
+import { failedToast } from "@/utils/toast";
+import { TableMetaTag } from "@/components/partials/table";
 
-type Pagination = {
-  currentPage: number;
-  perPage: number;
-  total: number;
-  totalPages: number;
-};
-
-type PackagesType = {
-  data: any;
-  pages: any;
-  pagination: Pagination;
-};
-
-
-export default function DataPage() {
+export default function PageMetaTag() {
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [meta, setMeta] = useState<PackagesType | null>(null);
   const [refetch, setRefecth] = useState<boolean>(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [meta, setMeta] = useState<MetaTag[]>([]);
+  const [pages, setPages] = useState<Pages>();
+  const [pagination, setPagination] = useState({ totalPages: 1 } as Pagination);
+  const [sort, setSort] = useState({
+    key: "createdAt",
+    direction: true
+  });
 
   const params = useParams();
-  const pages = params?.slug as string;
+  const slug = params?.slug as string;
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -51,7 +43,7 @@ export default function DataPage() {
   };
 
   const handleNext = () => {
-    if (meta && page < meta.pagination.totalPages) {
+    if (meta && page < pagination.totalPages) {
       handleChangePage(page + 1);
     }
   };
@@ -65,61 +57,27 @@ export default function DataPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!pages) return;
-        const meta = await axiosInstance.get(`/page/${pages}`, {
-          params: { limit: 10, page }
+        if (!slug) return;
+        const response = await axiosInstance.get(`/page/${slug}`, {
+          params: { limit: 10, page, orderBy: `${sort.key}:${sort.direction ? "desc" : "asc"}` },
         })
-        setMeta(meta.data)
+        setMeta(response.data.data.meta)
+        setPagination(response.data.pagination)
+        setPages(response.data.data.pages)
       } catch (error: any) {
-        setErr(error.response?.data?.error || error.response?.statusText || "Error fetching data");
+        failedToast(error.response?.data?.error || error.response?.statusText || "Error fetching data");
       }
     };
     fetchData();
-  }, [pages, page, refetch]);
-
-  // console.log(meta);
-
-  const handleDelete = async (id: string) => {
-    try {
-      await axiosInstance.delete(`/meta/${id}`);
-      setRefecth((prev) => !prev);
-    } catch (error) {
-      console.error("Failed to delete package:", error);
-    }
-  };
-
-  const headings = ["Key", "Value", "Content", "Action"];
-  const data = meta?.data.map((item: any) => ({
-    "Key": item.key,
-    "Value": item.value,
-    "Content": item.content,
-    "Action": (
-      <div className="flex items-center gap-5">
-        <Link href={`/meta/${pages}/edit?id=${item.id}`} className="text-blue-500">
-          <Pencil color="red" size={15} />
-        </Link>
-        <button onClick={() => handleDelete(item.id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
-      </div>
-    ),
-  }))
-
-  // const filteredData = data?.filter((row: any) =>
-  //   headings.some((key) =>
-  //     String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
-  //   )
-  // );
-
-  console.log(meta);
+  }, [slug, page, refetch, sort]);
 
   return (
     <main className="w-full flex flex-col gap-12">
       <Header title={"Meta Tag"} label={"Others"} />
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
         <div className="w-full flex justify-between items-center">
-          <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
-            <h1 className="text-4xl font-semibold text-black">{meta?.pages.page}</h1>
+          <div className="flex flex-col gap-4 text-sm text-gray-600 justify-start w-full">
+            <h1 className="text-4xl font-semibold text-black">{pages?.page}</h1>
             <p>showing all meta tags</p>
           </div>
 
@@ -128,7 +86,7 @@ export default function DataPage() {
               {isOpen && (
                 <input
                   type="text"
-                  placeholder={`Cari Sesuatu disini...`}
+                  placeholder={`Search something...`}
                   className="border rounded-lg px-3 py-2 focus:outline-none w-full min-w-64"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -141,7 +99,7 @@ export default function DataPage() {
               >
                 <Search size={23} />
               </Button>
-              <Link href={`/meta/${pages}/add`}>
+              <Link href={`/meta/${slug}/add`}>
                 <Button
                   variant={"addData"}
                   size={"sm"}
@@ -154,15 +112,15 @@ export default function DataPage() {
           </div>
         </div>
 
-        <TableComponents headings={headings} data={data || []} />
+        <TableMetaTag metatags={meta} refetch={refetch} setRefetch={setRefecth} setSort={setSort} sort={sort} slug={slug} />
 
         <PaginationComponents
           handleNext={handleNext}
           handlePrev={handlePrevious}
           page={page}
           setPage={handleChangePage}
-          totalPage={meta?.pagination.totalPages || 1}
-          totalData={meta?.pagination.total || 0}
+          totalPage={pagination.totalPages || 1}
+          totalData={pagination.total || 0}
         />
       </section>
     </main>

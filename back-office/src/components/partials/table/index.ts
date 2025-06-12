@@ -4,6 +4,8 @@ import TableBlog from "./TableBlog";
 import TableBlogCategory from "./TableBlogCategory";
 import TableSubscription from "./TableSubscription";
 import TablePage from "./TablePage";
+import TableCategory from "./TableCategory";
+import TableMetaTag from "./TableMetaTag";
 
 export {
     TableComponents,
@@ -11,5 +13,7 @@ export {
     TableBlog,
     TableBlogCategory,
     TableSubscription,
-    TablePage
+    TablePage,
+    TableCategory,
+    TableMetaTag
 }

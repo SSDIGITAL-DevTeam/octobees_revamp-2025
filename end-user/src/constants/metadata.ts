@@ -1,31 +1,112 @@
 const url = process.env.NEXT_PUBLIC_DOMAIN_URL;
 const metadataBase = new URL(url || "https://octobees.com");
 const defaultImage = `${metadataBase}assets/png/asset-logo-octobees.png`;
+const defaultAuthor = "Octobees";
+const defaultColor = "#ffffff";
+
 export type MetadataType = keyof typeof pageMetadata;
-export type MetadataProps = (typeof pageMetadata)[MetadataType];
+export type PageMetadataProps = (typeof pageMetadata)[MetadataType];
+export type DefaultMetadataProps = typeof defaultMetadata;
+
+export type MetadataProps = PageMetadataProps & DefaultMetadataProps;
+
+export const defaultMetadata = {
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+  },
+  authors: [{ name: `${defaultAuthor}`, url: `${metadataBase}` }],
+  creator: `${defaultAuthor}`,
+  publisher: `${defaultAuthor}`,
+
+  charset: "utf-8",
+
+  alternates: {
+    canonical: `${metadataBase}`,
+  },
+
+  icons: {
+    icon: defaultImage,
+    shortcut: defaultImage,
+    apple: defaultImage,
+    other: [
+      {
+        rel: defaultImage,
+        url: defaultImage,
+        color: "#5bbad5",
+      },
+    ],
+  },
+
+  applicationName: `${defaultAuthor}`,
+  generator: "Next.js",
+};
 
 export const pageMetadata = {
   home: {
     metadataBase,
-    title: "OCTOBEES | Branding-focused & marketing tech company",
-    description: "OCTOBEES is a Branding-focused & marketing tech company",
+    title: "OCTOBEES | Branding-focused & Marketing Tech Company",
+    description:
+      "OCTOBEES helps brands become top-of-mind and trusted by combining marketing technology with creative content and impactful campaigns.",
     keywords: [
-      "Digital Marketing",
+      "Digital Marketing Agency",
       "Marketing Automation",
       "Social Media Marketing",
-      "SEO",
+      "SEO Services",
+      "Branding Agency",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "Octobees | Octobees",
+      title: "OCTOBEES | Branding-focused & Marketing Tech Company",
       description:
-        "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
+        "OCTOBEES helps brands become top-of-mind and trusted by combining marketing technology with creative content and impactful campaigns.",
       url: `${metadataBase}`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "OCTOBEES | Branding-focused & Marketing Tech Company",
+      description:
+        "OCTOBEES helps brands become top-of-mind and trusted by combining marketing technology with creative content and impactful campaigns.",
+      site: `${metadataBase}`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
+
+  // home: {
+  //   metadataBase,
+  //   title: "OCTOBEES | Branding-focused & marketing tech company",
+  //   description: "OCTOBEES is a Branding-focused & marketing tech company",
+  //   keywords: [
+  //     "Digital Marketing",
+  //     "Marketing Automation",
+  //     "Social Media Marketing",
+  //     "SEO",
+  //   ],
+  //   icons: {
+  //     icon: defaultImage,
+  //   },
+  //   openGraph: {
+  //     title: "Octobees | Octobees",
+  //     description:
+  //       "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
+  //     url: `${metadataBase}`,
+  //     images: defaultImage,
+  //   },
+  // },
 
   plans: {
     metadataBase,
@@ -39,15 +120,33 @@ export const pageMetadata = {
       "Marketing Technology",
       "Business Marketing Packages",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "Plan Your Success with OCTOBEES",
+      title: "Plan Your Success with OCTOBEES | Martech Strategy & Packages",
       description:
         "Choose the right strategic plan for your business. OCTOBEES offers marketing and technology packages designed to help you scale.",
       url: `${metadataBase}/plans`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Plan Your Success with OCTOBEES | Martech Strategy & Packages",
+      description:
+        "Choose the right strategic plan for your business. OCTOBEES offers marketing and technology packages designed to help you scale.",
+      site: `${metadataBase}/plans`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -64,15 +163,33 @@ export const pageMetadata = {
       "Brand Building Articles",
       "Digital Marketing Trends",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
       title: "Martech Insights | Blog by OCTOBEES",
       description:
         "Explore expert-written articles on marketing tech, trends, strategies, and automation from the team at OCTOBEES.",
       url: `${metadataBase}/insights`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Martech Insights | Blog by OCTOBEES",
+      description:
+        "Explore expert-written articles on marketing tech, trends, strategies, and automation from the team at OCTOBEES.",
+      site: `${metadataBase}/insights`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -89,15 +206,33 @@ export const pageMetadata = {
       "Hiring Martech Experts",
       "Digital Marketing Careers",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "Careers at OCTOBEES",
+      title: "Careers at OCTOBEES | Join Our Martech & Creative Team",
       description:
         "We're hiring passionate marketers, technologists, and creatives. Grow your career with OCTOBEES.",
       url: `${metadataBase}/career`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Careers at OCTOBEES | Join Our Martech & Creative Team",
+      description:
+        "We're hiring passionate marketers, technologists, and creatives. Grow your career with OCTOBEES.",
+      site: `${metadataBase}/career`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -113,15 +248,33 @@ export const pageMetadata = {
       "Brand Strategy",
       "Digital Innovation",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "About OCTOBEES",
+      title: "About OCTOBEES | Marketing Technology for Brand Growth",
       description:
-        "Discover the story behind OCTOBEES – a marketing technology company dedicated to helping brands become top-of-mind and well-trusted.",
+        "Discover the story behind OCTOBEES - a marketing technology company dedicated to helping brands become top-of-mind and well-trusted.",
       url: `${metadataBase}/about`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "About OCTOBEES | Marketing Technology for Brand Growth",
+      description:
+        "Discover the story behind OCTOBEES - a marketing technology company dedicated to helping brands become top-of-mind and well-trusted.",
+      site: `${metadataBase}/about`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -138,15 +291,33 @@ export const pageMetadata = {
       "Business Inquiry",
       "Digital Marketing Contact",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "Contact OCTOBEES",
+      title: "Contact OCTOBEES | Let's Grow Together",
       description:
         "Connect with us to explore how OCTOBEES can help your brand grow through technology-driven marketing strategies.",
       url: `${metadataBase}/contact-us`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Contact OCTOBEES | Let's Grow Together",
+      description:
+        "Connect with us to explore how OCTOBEES can help your brand grow through technology-driven marketing strategies.",
+      site: `${metadataBase}/contact-us`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -154,7 +325,7 @@ export const pageMetadata = {
     metadataBase,
     title: "Thank You | OCTOBEES Has Received Your Message",
     description:
-      "Thank you for reaching out to OCTOBEES. We’ve received your message and will get back to you shortly.",
+      "Thank you for reaching out to OCTOBEES. We've received your message and will get back to you shortly.",
     keywords: [
       "Thank You Page",
       "Message Received",
@@ -166,11 +337,31 @@ export const pageMetadata = {
       icon: defaultImage,
     },
     openGraph: {
-      title: "Thank You | OCTOBEES",
+      title: "Thank You | OCTOBEES Has Received Your Message",
       description:
         "We appreciate your interest. Your message has been successfully received by the OCTOBEES team.",
       url: `${metadataBase}/thanks`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Thank You | OCTOBEES Has Received Your Message",
+      description:
+        "We appreciate your interest. Your message has been successfully received by the OCTOBEES team.",
+      site: `${metadataBase}/thanks`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 
@@ -187,15 +378,33 @@ export const pageMetadata = {
       "Marketing Technology for Business",
       "Octobees Sales Strategy",
     ],
-    icons: {
-      icon: defaultImage,
-    },
+
     openGraph: {
-      title: "Increase Your Sales | OCTOBEES",
+      title: "Increase Your Sales with OCTOBEES | Smart Martech Solutions",
       description:
         "Partner with OCTOBEES to boost your sales and brand presence using smart martech solutions.",
       url: `${metadataBase}/increase-my-sales`,
-      images: defaultImage,
+      siteName: `${defaultAuthor}`,
+      images: [
+        {
+          url: `${defaultImage}`,
+          width: 1200,
+          height: 630,
+          alt: "OCTOBEES Logo",
+        },
+      ],
+      type: "website",
+      locale: "id_ID",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Increase Your Sales with OCTOBEES | Smart Martech Solutions",
+      description:
+        "Partner with OCTOBEES to boost your sales and brand presence using smart martech solutions.",
+      site: `${metadataBase}/increase-my-sales`,
+      creator: `${defaultAuthor}`,
+      images: [`${defaultImage}`],
     },
   },
 };

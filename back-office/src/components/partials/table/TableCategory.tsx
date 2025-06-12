@@ -8,28 +8,28 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { ChevronDown, ChevronUp, Pencil, Trash } from "lucide-react";
-import { BlogCategory } from "@/constrant/payload";
+import { CategoryService } from "@/constrant/payload";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
 import { failedToast, successToast } from "@/utils/toast";
 
 interface TableProps {
-  blogCategories: BlogCategory[];
+  categories: CategoryService[];
   setSort: (sort: { key: string; direction: boolean }) => void;
   setRefetch: (refetch: boolean) => void;
   refetch: boolean;
   sort: { key: string; direction: boolean };
 }
 
-const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort, setRefetch, refetch }) => {
+const TableCategory: React.FC<TableProps> = ({ categories, setSort, sort, setRefetch, refetch }) => {
   const handleDelete = async (id: string) => {
     try {
-      await axiosInstance.delete(`/blog-category/${id}`);
-      successToast("Blog Category has been deleted");
+      await axiosInstance.delete(`/service-category/${id}`);
+      successToast("Category has been deleted");
       setRefetch(!refetch);
     } catch (error: any) {
       failedToast(
-        error.response?.data?.error || error.response?.statusText || "Error deleting blog category"
+        error.response?.data?.error || error.response?.statusText || "Error deleting category"
       );
     }
   };
@@ -44,7 +44,7 @@ const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort
   const handleAction = (id: string) => {
     return (
       <div className="flex items-center gap-5">
-        <Link href={`/blog/blog-category/edit?id=${id}`} className="text-blue-500">
+        <Link href={`/services/categories/edit?id=${id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
         <button onClick={() => handleDelete(id)} className="text-red-500">
@@ -54,25 +54,29 @@ const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort
     )
   }
 
-  const formatStatus = (status: boolean) => {
+  const formatStatus = (status: "Active" | "NonActive" | "Draft") => {
     return (
       <span
         className={`py-1 px-3 rounded-lg text-xs flex items-center gap-2 w-fit
-        ${status
+        ${status == "Active"
             ? "bg-green-100 text-green-700"
-            : "bg-red-100 text-red-700"
+            : status == "NonActive"
+              ? "bg-red-100 text-red-700"
+              : "bg-yellow-100 text-yellow-500"
           }
       `}
       >
         <span
           className={`h-2 w-2 rounded-full 
-            ${status
+            ${status == "Active"
               ? "bg-green-700"
-              : "bg-red-700"
+              : status == "NonActive"
+                ? "bg-red-700"
+                : "bg-yellow-500"
             }`
           }
         />
-        {status ? "Active" : "NonActive"}
+        {status}
       </span>
 
     )
@@ -82,6 +86,14 @@ const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort
     {
       key: "Category Name",
       value: "name"
+    },
+    {
+      key: "Heading",
+      value: "heading"
+    },
+    {
+      key: "Description",
+      value: "description"
     },
     {
       key: "Status",
@@ -117,16 +129,22 @@ const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort
       </TableHeader>
 
       <TableBody>
-        {blogCategories.map((blogcat, i) => (
+        {categories.map((cat, i) => (
           <TableRow key={i}>
             <TableCell key={`data-name-${i}`} className="p-2">
-              {blogcat.name}
+              {cat.name}
+            </TableCell>
+            <TableCell key={`data-heading-${i}`} className="p-2">
+              {cat.heading}
+            </TableCell>
+            <TableCell key={`data-description-${i}`} className="p-2">
+              {cat.description}
             </TableCell>
             <TableCell key={`data-status-${i}`} className="p-2">
-              {formatStatus(blogcat.status)}
+              {formatStatus(cat.status)}
             </TableCell>
-            <TableCell key={`data-action-${i}`} className="p-2">
-              {handleAction(blogcat.id)}
+            <TableCell key={`data-action-${i}`} className="p-2 w-24">
+              {handleAction(cat.id)}
             </TableCell>
           </TableRow>
         ))}
@@ -135,4 +153,4 @@ const TableBlogCategory: React.FC<TableProps> = ({ blogCategories, setSort, sort
   );
 };
 
-export default TableBlogCategory;
+export default TableCategory;

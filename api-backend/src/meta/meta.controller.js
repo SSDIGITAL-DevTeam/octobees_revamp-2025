@@ -9,7 +9,7 @@ import {
 import { z } from "zod";
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+const getall = async (req, res) => {
   try {
     let { page = 1, limit = 10, orderBy, search, slug } = req.query;
 
@@ -36,9 +36,9 @@ router.get("/", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+}
 
-router.get("/:id", async (req, res) => {
+const getid = async (req, res) => {
   try {
     let { page = 1, limit = 10, orderBy, search } = req.query;
 
@@ -66,9 +66,9 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+}
 
-router.post("/", async (req, res) => {
+const create = async (req, res) => {
   try {
     const { page, key, value, content } = req.body;
     if (!page || !key || !value || !content) {
@@ -79,9 +79,9 @@ router.post("/", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+}
 
-router.delete("/:id", async (req, res) => {
+const remove = async (req, res) => {
   try {
     const id = req.params.id;
     await removeMeta(id);
@@ -89,9 +89,9 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+}
 
-router.put("/:id", async (req, res) => {
+const put = async (req, res) => {
   try {
     const id = req.params.id;
     const { page, key, value, content } = req.body;
@@ -103,9 +103,9 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-});
+}
 
-router.patch("/:id", async (req, res) => {
+const patch =async (req, res) => {
   try {
     const id = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
@@ -116,6 +116,13 @@ router.patch("/:id", async (req, res) => {
   } catch (error) {
       res.status(400).json({ error: error.message });
   }
-});
+}
 
-export default router;
+export default {
+  getall,
+  getid,
+  create,
+  remove,
+  put,
+  patch
+};

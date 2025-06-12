@@ -56,8 +56,8 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const { email, source } = req.body;
-    if (!email || !source) {
+    const { email, source, token } = req.body;
+    if (!email || !source || !token) {
       throw new Error("Data is required");
     }
 

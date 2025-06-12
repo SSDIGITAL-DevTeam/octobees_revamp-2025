@@ -2,13 +2,20 @@ import {
   getAllPages,
   getPageById,
   createPage,
-  deletePageById,
   updatePage,
+  removePage,
 } from "./page.service.js";
 
 const getall = async (req, res) => {
   try {
-    let { page = 1, limit = 10, orderBy, search, categoryId, createdAt } = req.query;
+    let {
+      page = 1,
+      limit = 10,
+      orderBy,
+      search,
+      categoryId,
+      createdAt,
+    } = req.query;
 
     page = Math.max(parseInt(page) || 1, 1);
     limit = Math.max(parseInt(limit) || 10, 1);
@@ -29,14 +36,14 @@ const getall = async (req, res) => {
       orderBy: orderByParams,
       search,
       categoryId,
-      createdAt
+      createdAt,
     };
     const data = await getAllPages(filters);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 const getid = async (req, res) => {
   try {
@@ -60,37 +67,37 @@ const getid = async (req, res) => {
       limit,
       orderBy: orderByParams,
       search,
-      createdAt
+      createdAt,
     };
     const data = await getPageById(id, filters);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 const create = async (req, res) => {
   try {
-    const { page, key, value, content } = req.body;
-    if (!page || !key || !value || !content) {
+    const { page } = req.body;
+    if (!page) {
       throw new Error("Data is incomplete");
     }
     await createPage(req.body);
     res.status(201).json({ message: "Page created successfully" });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
-}
+};
 
 const remove = async (req, res) => {
   try {
     const id = req.params.id;
-    await deletePageById(id);
+    await removePage(id);
     res.status(200).json({ message: "Page deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 const put = async (req, res) => {
   try {
@@ -102,9 +109,9 @@ const put = async (req, res) => {
     await updatePage(id, req.body);
     res.status(200).json({ message: "Page updated successfully" });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
-}
+};
 
 const patch = async (req, res) => {
   try {
@@ -115,9 +122,9 @@ const patch = async (req, res) => {
     await updatePage(id, req.body);
     res.status(200).json({ message: "Page updated successfully" });
   } catch (error) {
-      res.status(400).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
-}
+};
 
 export default {
   getall,
@@ -125,5 +132,5 @@ export default {
   create,
   remove,
   put,
-  patch
+  patch,
 };

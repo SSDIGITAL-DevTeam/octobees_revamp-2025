@@ -12,7 +12,7 @@ import generateMetatag from "@/utils/generateMetadata";
 export async function generateMetadata() {
   const metaTag = pageMetadata.home
   const location = "home";
-  return await generateMetatag({ location, metaTag });
+  return await generateMetatag({ location, metaTag: metaTag });
 }
 
 export default function RootLayout({
