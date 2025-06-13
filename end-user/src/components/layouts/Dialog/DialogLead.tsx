@@ -154,7 +154,7 @@ export default function DialogLead(params: {
               : "bg-primary text-white hover:bg-primary/90"
               }`}
           >
-            {params.showPrices ? "Get this plan" : "Consul with us"}{" "}
+            {params.showPrices ? "Get this plan" : "Consult with us"}{" "}
             <TrendingUp size={20} />
           </Link>
         </DialogTrigger>

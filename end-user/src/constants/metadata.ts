@@ -1,6 +1,7 @@
-const url = process.env.NEXT_PUBLIC_DOMAIN_URL;
-const metadataBase = new URL(url || "https://octobees.com");
-const defaultImage = `${metadataBase}assets/png/asset-logo-octobees.png`;
+import { Metadata } from "next";
+
+const metadataBase = new URL("https://octobees.com");
+const defaultImage = `${metadataBase}/assets/png/asset-logo-octobees.png`;
 const defaultAuthor = "Octobees";
 const defaultColor = "#ffffff";
 
@@ -20,7 +21,7 @@ export const defaultMetadata = {
   creator: `${defaultAuthor}`,
   publisher: `${defaultAuthor}`,
 
-  charset: "utf-8",
+  // charset: "utf-8",
 
   alternates: {
     canonical: `${metadataBase}`,
@@ -85,28 +86,6 @@ export const pageMetadata = {
       images: [`${defaultImage}`],
     },
   },
-
-  // home: {
-  //   metadataBase,
-  //   title: "OCTOBEES | Branding-focused & marketing tech company",
-  //   description: "OCTOBEES is a Branding-focused & marketing tech company",
-  //   keywords: [
-  //     "Digital Marketing",
-  //     "Marketing Automation",
-  //     "Social Media Marketing",
-  //     "SEO",
-  //   ],
-  //   icons: {
-  //     icon: defaultImage,
-  //   },
-  //   openGraph: {
-  //     title: "Octobees | Octobees",
-  //     description:
-  //       "OCTOBEES is a branding-focused & marketing tech company. We focus to turn a brand to become top-of-mind and Well-Trusted Forever through various campaign method and content creation.",
-  //     url: `${metadataBase}`,
-  //     images: defaultImage,
-  //   },
-  // },
 
   plans: {
     metadataBase,
