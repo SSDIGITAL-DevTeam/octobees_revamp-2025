@@ -25,7 +25,9 @@ export default function Page() {
         params: {
           categoryId: categoryResponse.data.id,
           limit: 5,
-          page
+          page,
+          orderBy: "createdAt:desc",
+          status: "Published"
         }
       })
       setBlogs(blogResponse.data.data);

@@ -8,7 +8,7 @@ import {
     insertUser,
 } from './user.repository.js'
 import { user } from '../../drizzle/schema.js'
-import { and, eq, gte } from 'drizzle-orm'
+import { and, asc, desc, eq, gte } from 'drizzle-orm'
 import dayjs from 'dayjs'
 
 export const encryptPassword = async (password) => {
@@ -103,11 +103,11 @@ export const getAllUsers = async (filters) => {
 }
 export const getUserById = async (id) => {
     try {
-        const user = await findUserById(id)
-        if (!user) {
-            throw new Error('Role dengan Id tersebut tidak ditemukan')
+        const _user = await findUserById(id)
+        if (!_user) {
+            throw new Error('User is not found')
         }
-        return user
+        return _user
     } catch (error) {
         throw new Error(error.message)
     }
@@ -133,7 +133,10 @@ export const createUser = async (payload) => {
 
 export const deleteUserById = async (id) => {
     try {
-        await getUserById(id)
+        const _user = await getUserById(id)
+        if (!_user) {
+            throw new Error('User is not found')
+        }
         await deleteUser(id)
     } catch (error) {
         throw new Error(error.message)
@@ -143,19 +146,16 @@ export const deleteUserById = async (id) => {
 export const updateUser = async (id, payload) => {
     try {
         const { password, newPassword } = payload
-        const user = await findUserById(id)
-        if (!user) {
-            console.log(user.user)
+        const _user = await findUserById(id)
+        if (!_user) {
             throw new Error('User not found')
         }
-        // console.log(user)
+
         if (newPassword) {
-            const isPassword = await compare(password, user[0].user.password)
-            // console.log(newPassword)
+            const isPassword = await compare(password, _user.password)
             if (!isPassword) {
                 throw new Error('Password does not match')
             }
-            // console.log(newPassword)
             const hashPassword = await encryptPassword(newPassword)
             return await editUser(id, { ...payload, password: hashPassword })
         }

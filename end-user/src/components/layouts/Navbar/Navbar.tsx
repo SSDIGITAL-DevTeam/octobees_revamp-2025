@@ -10,6 +10,7 @@ import { ChevronDown } from 'lucide-react';
 import Logo from '@/components/partials/Logo/Logo';
 // import axios from 'axios'
 import { axiosInstance } from '@/lib/axios';
+import { CategoryService } from '@/constants/payload';
 
 export default function Navbar() {
   const [toggle, setToggle] = useState<boolean>(false);
@@ -21,7 +22,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [linkNav, setLinkNav] = useState([]);
+  const [linkNav, setLinkNav] = useState<CategoryService[]>([]);
 
 
   useEffect(() => {
@@ -37,12 +38,12 @@ export default function Navbar() {
       }
     }
     fetchPlan();
-  }, [pathname])
+  }, [])
 
 
-  const renderSubMenu = linkNav?.map((item: any) => ({
-    name: item?.name,
-    path: `/plans/${item?.slug}`
+  const renderSubMenu = linkNav?.map((item) => ({
+    name: item.name,
+    path: `/plans/${item.slug}`
   }))
 
   useEffect(() => {

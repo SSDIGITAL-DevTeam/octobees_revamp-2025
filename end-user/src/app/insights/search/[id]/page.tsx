@@ -22,7 +22,7 @@ export default function Page(): JSX.Element {
         const fetchData = async () => {
             const [blogResponse] = await Promise.all([
                 axiosInstance.get("/blog", {
-                    params: { search: blogSearch, limit: 10 }
+                    params: { search: blogSearch, limit: 10, status: "Published", page, orderBy: "createdAt:desc" }
                 }),
             ])
             setBlogs(blogResponse.data.data)

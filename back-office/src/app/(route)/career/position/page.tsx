@@ -1,8 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Download, Eye, Pencil, Plus, Search, Trash, Upload } from "lucide-react";
-import Link from "next/link";
+import {  Pencil, Plus, Search, Trash, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { TableCareer } from "@/components/partials/table";
 import Header from "@/components/layout/header/Header";

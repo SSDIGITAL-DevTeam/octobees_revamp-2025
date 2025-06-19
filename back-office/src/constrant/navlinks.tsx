@@ -3,6 +3,7 @@ import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase,
 const sidebarItems = [
   {
     group: "Dashboard",
+    name:"dashboard",
     data: [
       {
         title: "Overview",
@@ -13,6 +14,7 @@ const sidebarItems = [
   },
   {
     group: "Subscription Management",
+    name:"subscription",
     data: [
       {
         title: "Subscription",
@@ -23,6 +25,7 @@ const sidebarItems = [
   },
   {
     group: "User Management",
+    name:"user",
     data: [
       {
         title: "User",
@@ -33,6 +36,7 @@ const sidebarItems = [
   },
   {
     group: "Blog Management",
+    name:"blog",
     data: [
       {
         title: "Blogs",
@@ -48,6 +52,7 @@ const sidebarItems = [
   },
   {
     group: "Service Management",
+    name:"services",
     data: [
       {
         title: "Services Category",
@@ -63,21 +68,23 @@ const sidebarItems = [
   },
   {
     group: "Career Management",
+    name:"career",
     data: [
       {
         title: "Position",
-        url: "/position",
+        url: "/career/position",
         icon: Briefcase,
       },
       {
         title: "Applicants Data",
-        url: "/applicants-data",
+        url: "/career/applicants-data",
         icon: Folder,
       },
     ],
   },
   {
     group: "Others",
+    name:"meta",
     data: [
       {
         title: "Meta Tags",

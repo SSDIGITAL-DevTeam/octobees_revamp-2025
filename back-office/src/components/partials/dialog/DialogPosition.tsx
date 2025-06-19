@@ -36,6 +36,7 @@ export function DialogPosition({ children, data, refetch }: Props) {
 
     const submitPosition = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if(positionName === "") return
         try {
             if (data) {
                 await axiosInstance.put(`/position/${data.id}`, {

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { findUserByRefreshToken } from '../../role/role.repository.js';
+import { findUserByRefreshToken } from '../../user/user.repository.js';
 
 export const verifyRefreshToken = async (refreshToken) => {
     try {

@@ -33,7 +33,9 @@ export default function ArticleDetail({ params }: SlugInsightPageProps) {
           {
             params: {
               categoryId: blogsResponse.data.categoryId,
-              limit: 3
+              limit: 3,
+              orderBy: "createdAt:desc",
+              status: "Published"
             }
           }
         )

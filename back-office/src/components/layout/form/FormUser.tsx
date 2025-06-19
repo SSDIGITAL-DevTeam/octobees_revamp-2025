@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import CheckBoxField from "@/components/partials/form/CheckBoxField";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
-import axios from "axios";
 import { axiosInstance } from "@/lib/axios";
+import { User } from "@/constrant/payload";
 
 const dataSchema = z.object({
   name: z.string().nonempty(),
@@ -69,7 +69,7 @@ export const statusList = [
   },
 ];
 
-const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
+const FormUser = ({ user }: { user?: User }) => {
   const form = useForm<DataSchema>({
     resolver: zodResolver(dataSchema),
     defaultValues: {
@@ -85,17 +85,24 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   const { handleSubmit, control, reset } = form;
 
   useEffect(() => {
-    if (defaultValue) {
-      reset(defaultValue);
+    if (user) {
+      reset({
+        name: user.name || "",
+        email: user.email || "",
+        password: user.password || "",
+        status: user.status || "",
+        role: user.role || "",
+        features: user.features || [],
+      });
     }
-  }, [defaultValue]);
+  }, [user]);
   
   const router = useRouter();
   
   const handleInput = handleSubmit(async (value) => {
     try {
-      const url = defaultValue ? `/user/${defaultValue.id}` : `/user`;
-      const method = defaultValue ? axiosInstance.patch : axiosInstance.post;
+      const url = user ? `/user/${user.id}` : `/user`;
+      const method = user ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast(response.data.message);
       router.push("/user")
@@ -122,7 +129,7 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
             label="Password"
             type="password"
             name="password"
-            {...(defaultValue ? { disabled: true } : {})}
+            {...(user ? { disabled: true } : {})}
           />
           <RadioGroupField
             control={control}
@@ -161,4 +168,4 @@ const FormComponents = ({ defaultValue }: { defaultValue?: any }) => {
   );
 };
 
-export default FormComponents;
+export default FormUser;

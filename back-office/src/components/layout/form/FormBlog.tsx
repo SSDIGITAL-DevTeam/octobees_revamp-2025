@@ -66,7 +66,7 @@ const dataSchema = z.object({
 
 type DataSchema = z.infer<typeof dataSchema>;
 
-type FormBlogProps ={
+type FormBlogProps = {
     blog?: Blog;
     categories: BlogCategory[]
 }
@@ -113,7 +113,6 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 title: c.name
             }
         })
-
     const handleInput = handleSubmit(async (value) => {
         try {
             const token = sessionStorage.getItem("token");
@@ -144,7 +143,7 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            successToast( response.data.message);
+            successToast(response.data.message);
             router.push("/blog/blogs");
         } catch (error: any) {
             failedToast(

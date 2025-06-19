@@ -1,46 +1,42 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
-import { compare } from 'bcryptjs'
-import { editUser, findUserByEmail } from '../../user/user.repository.js'
+import { compare } from "bcryptjs";
+import { editUser, findUserByEmail } from "../../user/user.repository.js";
+import logger from "../../../utils/logger.js";
 
 export const loginUser = async (data) => {
-    try {
-        const { email, password: inputPassword } = data
-        
-        let validatedUser = await findUserByEmail(email)
-        
-        console.log("==========="+email)
-        if (!validatedUser || validatedUser.length === 0) {
-            throw new Error('Email not found')
-        }
+  try {
+    const { email, password: inputPassword } = data;
+    console.log(data);
 
-        const { password, id, name, role, features } = validatedUser
-        // console.log(validatedUser)
-        
-        
-        const payload = { id, name, role, email, features }
-        // console.log(payload)
-        const isPassword = await compare(inputPassword, password)
-        if (!isPassword) {
-            throw new Error('Password does not match')
-        }
+    let validatedUser = await findUserByEmail(email, "Active");
 
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '20s',
-        })
-        const refreshToken = jwt.sign(
-            payload,
-            process.env.REFRESH_TOKEN_SECRET,
-            {
-                expiresIn: '1d',
-            }
-        )
-
-        await editUser(id, { refreshToken })
-
-        return { accessToken, refreshToken }
-    } catch (error) {
-        //throw new Error("Tes")
-        throw new Error(error.message)
+    console.log("===========" + email);
+    if (!validatedUser) {
+      throw new Error("Email not found");
     }
-}
+
+    const { password, id, name, role, features } = validatedUser;
+
+    const payload = { id, name, role, email, features };
+
+    const isPassword = await compare(inputPassword, password);
+    if (!isPassword) {
+      throw new Error("Password does not match");
+    }
+
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "20s",
+    });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "1d",
+    });
+
+    await editUser(id, { refreshToken });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    logger.error(`POST /login error: ${error.message}`);
+    throw new Error(error.message);
+  }
+};

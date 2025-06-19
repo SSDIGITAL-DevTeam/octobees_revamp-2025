@@ -15,6 +15,7 @@ import { useAuthStore } from "@/app/store/login";
 import Image from "next/image";
 import loginImage from "@/asset/login/login-image.png"
 import { axiosInstance } from "@/lib/axios";
+import Link from "next/link";
 
 const dataSchema = z.object({
     email: z.string().email().nonempty(),
@@ -75,12 +76,12 @@ const FormMeta = () => {
 
                     </form>
                 </Form>
-                <button
-                    type="button"
+                <Link
+                    href="/auth/forgot-password"
                     className=" underline text-red-800 text-base self-start"
                 >
                     Forgot Password?
-                </button>
+                </Link>
                 <label className="text-gray-600 text-sm">© {new Date().getFullYear()} Octobees</label>
             </section>
             <section className="w-full max-w-[80%] h-[60vh]">

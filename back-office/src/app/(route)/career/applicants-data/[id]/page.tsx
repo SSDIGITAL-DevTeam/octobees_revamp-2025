@@ -7,7 +7,6 @@ import Header from "@/components/layout/header/Header";
 import { axiosInstance } from "@/lib/axios";
 import { Career } from "@/constrant/payload";
 import formatDate from "@/utils/utilsFormatDate";
-import Link from "next/link";
 import { failedToast, successToast } from "@/utils/toast";
 import { useRouter } from "next/navigation";
 
@@ -37,7 +36,7 @@ export default function PageApplicantDetail({ params }: any) {
     try {
       await axiosInstance.delete(`/career/${id}`);
       successToast("Applicant data deleted successfully");
-      router.push("/applicants-data");
+      router.push("/career/applicants-data");
     } catch (error) {
       failedToast("Failed to delete applicant data");
     }

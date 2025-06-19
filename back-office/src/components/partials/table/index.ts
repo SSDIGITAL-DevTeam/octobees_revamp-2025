@@ -6,6 +6,7 @@ import TableSubscription from "./TableSubscription";
 import TablePage from "./TablePage";
 import TableCategory from "./TableCategory";
 import TableMetaTag from "./TableMetaTag";
+import TableUser from "./TableUser";
 
 export {
     TableComponents,
@@ -15,5 +16,6 @@ export {
     TableSubscription,
     TablePage,
     TableCategory,
-    TableMetaTag
+    TableMetaTag,
+    TableUser
 }

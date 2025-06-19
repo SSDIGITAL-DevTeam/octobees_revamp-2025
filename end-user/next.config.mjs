@@ -11,20 +11,33 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'lightyellow-mandrill-246257.hostingersite.com',
-        port: '',
-        pathname: '/api/v1/end-user/**',
+        protocol: "https",
+        hostname: "lightyellow-mandrill-246257.hostingersite.com",
+        port: "",
+        pathname: "/api/v1/end-user/**",
       },
       {
-        protocol: 'http',
-        hostname: '192.168.100.25',
-        port: '3005',
-        pathname: '/uploads/**',
+        protocol: "http",
+        hostname: "192.168.100.25",
+        port: "3005",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.octobees.com",
+        pathname: "/**",
       },
     ],
-    domains: ['lightyellow-mandrill-246257.hostingersite.com', 'localhost','192.168.100.25'],
-
+    domains: [
+      "lightyellow-mandrill-246257.hostingersite.com",
+      "localhost",
+      "192.168.100.25",
+    ],
   },
 };
 

@@ -1,33 +1,24 @@
-//berkomunikasi dengan database
-//dapat menggunakan orm atau query raw
-//supaya untuk mengganti ORM tinggal ganti pada file ini aja kok
-
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import { user } from "../../drizzle/schema.js";
+import logger from "../../utils/logger.js";
 
 export const findAllUsers = async (skip, limit, where, orderBy) => {
   try {
     let baseQuery = db.select(user).from(user);
-    // .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
-    // .leftJoin(user, eq(blog.userId, user.id))
-
     if (where) baseQuery = baseQuery.where(where);
     if (orderBy) baseQuery = baseQuery.orderBy(...orderBy);
 
     const datas = await baseQuery.limit(limit).offset(skip);
 
     const totalQuery = db.select({ count: count() }).from(user);
-    // .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
-    // .leftJoin(user, eq(blog.userId, user.id))
-
     if (where) totalQuery.where(where);
 
     const [{ count: total }] = await totalQuery;
 
     return { datas, total };
   } catch (error) {
-    console.log("GET / error: ", error);
+    logger.error(`GET / error: ${error.message}`);
     throw new Error("Error fetching all users");
   }
 };
@@ -45,28 +36,19 @@ export const findUserById = async (id) => {
         features: true,
       },
       where: eq(user.id, id),
-    })
-    //   .select({
-    //     id: user.id,
-    //     name: user.name,
-    //     email: user.email,
-    //     password: user.password,
-    //     status: user.status,
-    //     role: user.role,
-    //     features: user.features,
-    //   })
-    //   .from(user)
-    //   .where(eq(user.id, id));
-    // const data = await baseQuery.limit(1);
-
+    });
     return data;
   } catch (error) {
-    console.log("GET /Id error: ", error);
+    logger.error(`GET by Id /:id error: ${error.message}`);
     throw new Error("Error fetching user by id");
   }
 };
 
-export const findUserByEmail = async (email) => {
+export const findUserByEmail = async (email, status = undefined) => {
+  let where = eq(user.email, email);
+  if (status !== undefined) {
+    where = and(where, eq(user.status, status));
+  }
   try {
     const selectedEmail = await db.query.user.findFirst({
       columns: {
@@ -77,34 +59,33 @@ export const findUserByEmail = async (email) => {
         role: true,
         features: true,
       },
-      where: eq(user.email, email),
-    })
+      where,
+    });
 
     return selectedEmail;
   } catch (error) {
-    console.error("GET by Email / error: ", error);
-    throw new Error("Error fetching user by email");
+    logger.error(`GET by Email / error: ${error.message}`);
+    throw new Error("Email not found | Unauthorized");
   }
 };
 
 export const findUserByRefreshToken = async (refreshToken) => {
   try {
-    const findRefreshToken = await db
-      .select({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        password: user.password,
-        role: user.role,
-        features: user.features,
-      })
-      .from(user)
-      .where(eq(user.refreshToken, refreshToken))
-      .limit(1);
+    const selectedUser = await db.query.user.findFirst({
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true,
+        features: true,
+      },
+      where: eq(user.refreshToken, refreshToken),
+    });
 
-    return findRefreshToken[0] || null;
+    return selectedUser;
   } catch (error) {
-    console.error("GET by Refresh Token / error: ", error);
+    logger.error(`GET by Refresh Token / error: ${error.message}`);
     throw new Error("Error fetching user by refresh token");
   }
 };
@@ -113,8 +94,8 @@ export const insertUser = async (data) => {
   try {
     await db.insert(user).values(data);
   } catch (error) {
-    console.error("POST / error: ", error);
-    throw new Error("Error creating user");
+    logger.error(`POST / error: ${error.message}`);
+    throw new Error("Create user unsuccessfully");
   }
 };
 
@@ -122,8 +103,8 @@ export const deleteUser = async (id) => {
   try {
     await db.delete(user).where(eq(user.id, id));
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan dalam penghapusan role");
+    logger.error(`DELETE /:id error: ${error.message}`);
+    throw new Error("Delete user unsuccessfully");
   }
 };
 
@@ -131,7 +112,7 @@ export const editUser = async (id, data) => {
   try {
     await db.update(user).set(data).where(eq(user.id, id));
   } catch (error) {
-    console.log(error);
+    logger.error(`UPDATE /:id error: ${error.message}`);
     throw new Error("Edit user unsuccessfully");
   }
 };

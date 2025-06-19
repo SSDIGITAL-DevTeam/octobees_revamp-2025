@@ -1,21 +1,26 @@
 // utils/mailer.js
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
+import logger from "./logger.js";
 
-const transporter = nodemailer.createTransport({
-  host: 'sandbox.smtp.mailtrap.io',
-  port: 2525,
+export const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
-    user: '79a044f319a464', // Ganti sesuai akun Mailtrap kamu
-    pass: '07ae0b0b200e9f',
+    user: process.env.USER_EMAIL,
+    pass: process.env.USER_PASSWORD,
   },
-})
+});
 
 export const sendResetEmail = async (to, link) => {
-  const mailOptions = {
-    from: '"Ryan Kusuma" <cihuy@example.com>',
-    to,
-    subject: 'Reset Your Password',
-    html: `
+  console.log({masuk : to, link});
+  try {
+    const mailOptions = {
+      from: `"${process.env.USER_EMAIL}" <${process.env.USER_EMAIL}>`,
+      to,
+      subject: "Reset Your Password",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
         <h2 style="color: #333;">Reset Your Password</h2>
         <p>Hello,</p>
@@ -30,7 +35,10 @@ export const sendResetEmail = async (to, link) => {
         <p><strong>Ryan Kusuma</strong><br>Administrator</p>
       </div>
     `,
+    };
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    logger.error(`Send Reset Password Email error: ${error.message}`);
   }
 
-  await transporter.sendMail(mailOptions)
-}
+};

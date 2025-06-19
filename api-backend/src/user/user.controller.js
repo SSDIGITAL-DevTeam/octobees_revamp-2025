@@ -6,13 +6,20 @@ import {
   getUserById,
   updateUser,
 } from "./user.service.js";
+import logger from "../../utils/logger.js";
 
 const router = express.Router();
 
-export const getAll = async (req, res) => {
+const getall = async (req, res) => {
   try {
-    // console.log("sdsdf")
-    let { page = 1, limit = 10, status,search, orderBy, createdAt } = req.query;
+    let {
+      page = 1,
+      limit = 10,
+      status,
+      search,
+      orderBy,
+      createdAt,
+    } = req.query;
 
     page = Math.max(parseInt(page) || 1, 1);
     limit = Math.max(parseInt(limit) || 10, 1);
@@ -25,28 +32,35 @@ export const getAll = async (req, res) => {
       });
     }
 
-    const filters = { page, limit, status, orderBy: orderByParams, search, createdAt };
+    const filters = {
+      page,
+      limit,
+      status,
+      orderBy: orderByParams,
+      search,
+      createdAt,
+    };
     const data = await getAllUsers(filters);
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET User / error: ${error.message}`);
     res.status(400).json(error);
   }
 };
 
-//Cari data berdasarkan ID
-export const getById = async (req, res) => {
+const getid = async (req, res) => {
   try {
     const id = req.params.id;
 
     const data = await getUserById(id);
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET User /:id error: ${error.message}`);
     res.status(400).json(error);
   }
 };
 
-//Tambah data
-export const create = async (req, res) => {
+const create = async (req, res) => {
   try {
     const { name, email, password, status, role } = req.body;
     if (!name || !email || !password || !status || !role) {
@@ -58,43 +72,41 @@ export const create = async (req, res) => {
     await createUser(payload);
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
+    logger.error(`POST / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
 
-//Hapus data
-export const remove = async (req, res) => {
+const remove = async (req, res) => {
   try {
     const id = req.params.id;
 
     await deleteUserById(id);
-    res.status(200).json({ message: "Berhasil Menghapus Role" });
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
+    logger.error(`DELETE /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
 
-//Ubah data - semua kolom harus terisi
-export const put = async (req, res) => {
+const put = async (req, res) => {
   try {
     const { name, email, password, status, role, features } = req.body;
 
     if (!name || !email || !password || !status || !role || !features) {
-      throw new Error("Data tidak lengkap");
+      throw new Error("Data is incomplete");
     }
 
     await updateUser(id, req.body);
-    res.status(200).json({ message: "Berhasil Mengubah Role" });
+    res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-//Ubah data - hanya kolom yang diisi
-export const update = async (req, res) => {
+const patch = async (req, res) => {
   try {
     const id = req.params.id;
-    //Buat sebuah kondisi ketika ada kolom yang tidak terisi
     if (!req.body || Object.keys(req.body).length === 0) {
       throw new Error("Nothing to update");
     }
@@ -105,4 +117,4 @@ export const update = async (req, res) => {
   }
 };
 
-// export default router;
+export default { getall, getid, create, remove, put, patch };

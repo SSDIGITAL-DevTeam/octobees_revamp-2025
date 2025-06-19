@@ -11,16 +11,11 @@ import { axiosInstance } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import PaginationComponents from "@/components/partials/pagination/Pagination";
 import { failedToast, successToast } from "@/utils/toast";
-
-type Pagination = {
-  currentPage: number;
-  perPage: number;
-  total: number;
-  totalPages: number;
-};
+import { TableUser } from "@/components/partials/table";
+import { Pagination, User } from "@/constrant/payload";
 
 type CategoryType = {
-  data: [];
+  data: User[];
   pagination: Pagination;
 };
 
@@ -29,9 +24,11 @@ export default function DataPage() {
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [err, setErr] = useState<string | null>(null);
   const [refetch, setRefetch] = useState<boolean>(false);
-
+  const [sort, setSort] = useState({
+    key: "createdAt",
+    direction: true
+  });
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -65,7 +62,7 @@ export default function DataPage() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/user", {
-          params: { limit: 10, page },
+          params: { limit: 10, page, search: searchQuery, orderBy: `${sort.key}:${sort.direction ? "desc" : "asc"}` },
         });
         setUsers(response.data);
       } catch (error: any) {
@@ -74,41 +71,7 @@ export default function DataPage() {
     };
 
     fetchData();
-  }, [page, refetch]);
-
-  const handleDelete = async (id: string) => {
-    try {
-      await axiosInstance.delete(`/user/${id}`);
-      successToast("User deleted successfully");
-      setRefetch(prev => !prev)
-    } catch (error) {
-      failedToast("Failed to delete user");
-    }
-  };
-
-  const headings = ["Name", "Email", "Role", "Status", "Action"];
-  const data = users?.data.map((item: any) => ({
-    Name: item.name,
-    Email: item.email,
-    Role: item.role,
-    Status: item.status,
-    Action: (
-      <div className="flex items-center gap-5">
-        <Link href={`/user/edit?id=${item.id}`} className="text-blue-500">
-          <Pencil color="red" size={15} />
-        </Link>
-        <button onClick={() => handleDelete(item.id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
-      </div>
-    ),
-  }));
-
-  const filteredData = data?.filter((row: any) =>
-    headings.some((key) =>
-      String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  }, [page, refetch, searchQuery, sort]);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
@@ -151,7 +114,8 @@ export default function DataPage() {
           </div>
         </div>
 
-        <TableComponents headings={headings} data={filteredData || []} />
+        {/* <TableComponents headings={headings} data={filteredData || []} /> */}
+        <TableUser refetch={refetch} setRefetch={setRefetch} users={users?.data || []} setSort={setSort} sort={sort} />
 
         <PaginationComponents
           handleNext={handleNext}
