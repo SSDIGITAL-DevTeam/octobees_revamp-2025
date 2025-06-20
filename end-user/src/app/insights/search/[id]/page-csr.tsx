@@ -87,8 +87,8 @@ export default function Page(): JSX.Element {
                     </section>
 
                     <aside className="w-full lg:w-1/3 flex flex-col gap-4 lg:gap-10">
-                        <InsightSearch handleSearch={handleSearch} setSearch={setSearch} />
-                        <InsightCategory />
+                        <InsightSearch />
+                        <InsightCategory categories={[]}/>
                     </aside>
                 </div>
                 <PaginationComponents

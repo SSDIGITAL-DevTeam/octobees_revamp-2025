@@ -62,7 +62,7 @@ import { ReactNode } from 'react';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const metaTag = pageMetadata.plans
-  const location = "plans";
+  const location = params.slug;
    try {
     return await generateMetatag({ location, metaTag });
   } catch (error) {

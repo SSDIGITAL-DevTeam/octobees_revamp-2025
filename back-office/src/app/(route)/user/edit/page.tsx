@@ -6,9 +6,7 @@ import { failedToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
 import { FormUser } from "@/components/layout/form";
 import { User } from "@/constrant/payload";
-import Link from "next/link";
 import { DialogChangePassword } from "@/components/partials/dialog/DialogChangePassword";
-import { set } from "date-fns";
 
 const EditPage = () => {
   const [user, setUser] = useState<User>();
@@ -27,7 +25,7 @@ const EditPage = () => {
       }
     };
     fetchData();
-  }, [query]);
+  }, [query, refetch]);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
@@ -38,9 +36,9 @@ const EditPage = () => {
             <h1 className="text-4xl font-semibold text-black">Edit User</h1>
             <p>Edit user data</p>
           </div>
-          {/* <DialogChangePassword refetch={setRefetch}>
-            <p className="w-fit text-lg font-semibold text-red-700 hover:underline hover:text-red-800">Change Password</p>
-          </DialogChangePassword> */}
+          <DialogChangePassword refetch={setRefetch}>
+            <button className="w-fit text-lg font-semibold text-red-700 hover:underline hover:text-red-800">Change Password</button>
+          </DialogChangePassword>
         </div>
         <div className="w-full">
           <FormUser user={user} />

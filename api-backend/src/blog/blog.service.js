@@ -24,6 +24,7 @@ import { blog, user } from "../../drizzle/schema.js";
 import { findBlogCatById } from "../blog-category/blog-category.repository.js";
 import slug from "slug";
 import { generateUniqueSlug } from "../../utils/generate-slug.js";
+// import { insertPage } from "../page/page.repository.js";
 
 export const getAllBlogs = async (filters) => {
   try {
@@ -137,6 +138,12 @@ export const createBlog = async (payload) => {
 
     const baseSlug = slug(payload.title);
     const uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
+
+    // await insertPage({
+    //       page: payload.title,
+    //       slug: uniqueSlug,
+    //       categoryServiceId: data.id,
+    //     });
 
     await insertBlog({ ...payload, slug : uniqueSlug });
   } catch (error) {

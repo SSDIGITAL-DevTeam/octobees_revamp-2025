@@ -9,9 +9,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { axiosInstance } from "@/lib/axios"
 import { failedToast, successToast } from "@/utils/toast"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,6 +16,9 @@ import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import InputField from "../form/InputField"
+import { Form } from "@/components/ui/form"
+import { useSearchParams } from "next/navigation"
+
 const dataSchema = z.object({
     password: z.string().nonempty(),
     newPassword: z.string().nonempty(),
@@ -46,19 +46,22 @@ export function DialogChangePassword({ children, refetch }: Props) {
     })
     const [open, setOpen] = useState<boolean>(false)
     const { control, reset, handleSubmit } = form
-
+    const searchParams = useSearchParams();
+    const [query] = useState<string>(searchParams.get("id") || "");
 
     const submitChangePassword = handleSubmit(async (value) => {
         try {
-            await axiosInstance.post("/user", {
-                
+            await axiosInstance.patch(`/user/${query}`, {
+                password: value.password,
+                newPassword: value.newPassword
             })
-            successToast("Position has been added")
-        } catch (error) {
-            failedToast("Failed to add position")
+            successToast("Password has been changed")
+        } catch (error:any) {
+            failedToast(error.response?.data?.error || error.response?.statusText || "failed to change password")
         } finally {
-            refetch(prev => !prev)
+            reset()
             setOpen(false)
+            refetch(prev => !prev)
         }
     }
     )
@@ -72,20 +75,17 @@ export function DialogChangePassword({ children, refetch }: Props) {
                     <DialogTitle>Change Password</DialogTitle>
                     <DialogDescription className="hidden">Change Password</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={submitChangePassword} className="space-y-6">
-                    <div className="space-y-4">
-                        <Label className="font-semibold">Position Name</Label>
-                        {/* <InputField control={}/> */}
-                    </div>
-                    <div className="space-y-4">
-                        <Label className="font-semibold">Position Name</Label>
-                        {/* <InputField control={}/> */}
-                    </div>
-                    <div className="w-full flex justify-end gap-2">
-                        <Button type="button" onClick={() => setOpen(false)} variant={"outline"} className="px-6 h-12 rounded-2xl">Cancel</Button>
-                        <Button type="submit" variant={"addData"} className={`px-6 h-12 rounded-2xl`}>Save</Button>
-                    </div>
-                </form>
+                <Form {...form}>
+                    <form onSubmit={submitChangePassword} className="space-y-6">
+                        <InputField type="password" control={control} label="Current Password" name="password" />
+                        <InputField type="password" control={control} label="New Password" name="newPassword" />
+                        <InputField type="password" control={control} label="Confirm New Password" name="confirmNewPassword" />
+                        <div className="w-full flex justify-end gap-2">
+                            <Button type="button" onClick={() => setOpen(false)} variant={"outline"} className="px-6 h-12 rounded-2xl">Cancel</Button>
+                            <Button type="submit" variant={"addData"} className={`px-6 h-12 rounded-2xl`}>Save</Button>
+                        </div>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     )

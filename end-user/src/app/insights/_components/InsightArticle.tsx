@@ -12,7 +12,14 @@ export default function InsightArticle({ blogs }: { blogs: Blog[] }) {
                 <article key={blog.id} className="py-3 lg:py-2">
                     <div className="flex flex-col md:flex-row gap-4 lg:gap-6">
                         <div className="w-full md:w-1/3">
-                            <Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`} alt={blog.title} className="w-full h-52 object-cover rounded-lg border-[1px] border-gray-300 shadow-sm" width={1920} height={1080} quality={100} />
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`}
+                                alt={blog.title}
+                                className="w-full h-52 object-cover rounded-lg border-[1px] border-gray-300 shadow-sm"
+                                width={1920}
+                                height={1080}
+                                quality={100}
+                            />
                         </div>
                         <div className="md:w-2/3 flex flex-col gap-2 justify-center">
                             <Link href={`/insights/${blog.slug}`} className={` text-lg md:text-xl lg:text-2xl font-bold text-primary hover:underline hover:underline-offset-3 font-heading !leading-[130%] duration-500 transition-all`}>{blog.title}</Link>

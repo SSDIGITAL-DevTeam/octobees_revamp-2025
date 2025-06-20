@@ -82,7 +82,7 @@ const FormUser = ({ user }: { user?: User }) => {
     },
   });
 
-  const { handleSubmit, control, reset } = form;
+  const { handleSubmit, control, reset, setValue } = form;
 
   useEffect(() => {
     if (user) {
@@ -96,9 +96,9 @@ const FormUser = ({ user }: { user?: User }) => {
       });
     }
   }, [user]);
-  
+
   const router = useRouter();
-  
+
   const handleInput = handleSubmit(async (value) => {
     try {
       const url = user ? `/user/${user.id}` : `/user`;
@@ -109,10 +109,10 @@ const FormUser = ({ user }: { user?: User }) => {
     } catch (error: any) {
       failedToast(
         error.response?.data?.error
-          || error.response?.statusText
-          || error.message
-          || "Error processing data"
-        );
+        || error.response?.statusText
+        || error.message
+        || "Error processing data"
+      );
     }
   });
 
@@ -124,13 +124,27 @@ const FormUser = ({ user }: { user?: User }) => {
           <InputField control={control} label="Person Name" name="name" />
           <InputField control={control} label="Email Address" name="email" />
           <InputField control={control} label="Role" name="role" />
-          <InputField
-            control={control}
-            label="Password"
-            type="password"
-            name="password"
-            {...(user ? { disabled: true } : {})}
-          />
+          {
+            user ? <>
+              <InputField
+                control={control}
+                label="Password"
+                type="password"
+                name="Disabled Password"
+                disabled
+              />
+              <input
+                type="hidden"
+                {...form.register("password")}
+              />
+            </>
+              : <InputField
+                control={control}
+                label="Password"
+                type="password"
+                name="password"
+              />}
+
           <RadioGroupField
             control={control}
             label="Status"

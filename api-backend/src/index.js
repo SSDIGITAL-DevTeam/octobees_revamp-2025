@@ -46,14 +46,6 @@ app.use(express.json());
 //     message: "Terlalu banyak permintaan, coba lagi.",
 // });
 
-// app.use(
-//   cors({
-//     origin: process.env.ORIGIN,
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
-
 const allowedOrigins = process.env.ORIGIN.split(",");
 app.use(
   cors({
@@ -85,19 +77,9 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use("/uploads", express.static(__dirname + "/../upload"));
 app.use("/api", routes);
-// app.use("/api/auth/refresh-token", refreshToken);
-// app.use("/api/auth/login", loginController);
-// app.use("/api/auth/logout", logoutController);
-// app.use("/api/v1/service-category", ServiceCatController);
-// app.use("/api/v1/plan", ServicePlanController);
-// app.use("/api/v1/order", OrderController);
-// app.use("/api/v1/role", RoleController);
-
-// app.use("/api/v1/meta", MetaController);
-// app.use("/api/v1/page", PageController);
-// app.use("/api/v1/order", OrderController);
-// app.use("/api/v1/blog-category", BlogCategoryController);
-// app.use("/api/v1/blog", upload.single("image"), BlogController);
+app.get("/", (req, res) => {
+  res.send("API Octobees is Running");
+});
 
 const server = app.listen(PORT, () => console.log(`Server Running On Port ${PORT}`));
 export default server;

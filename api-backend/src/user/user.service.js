@@ -145,23 +145,20 @@ export const deleteUserById = async (id) => {
 
 export const updateUser = async (id, payload) => {
     try {
-        const { password, newPassword } = payload
+        const { password, newPassword, ...rest } = payload
         const _user = await findUserById(id)
         if (!_user) {
             throw new Error('User not found')
         }
 
-        if (newPassword) {
-            const isPassword = await compare(password, _user.password)
-            if (!isPassword) {
-                throw new Error('Password does not match')
-            }
+        if (newPassword && password) {
+            const isMatch = await compare(password, _user.password)
+            if (!isMatch) throw new Error('Password does not match')
             const hashPassword = await encryptPassword(newPassword)
-            return await editUser(id, { ...payload, password: hashPassword })
+            return await editUser(id, { ...rest, password: hashPassword })
         }
 
-        const hashPassword = await encryptPassword(password)
-        return await editUser(id, { ...payload, password: hashPassword })
+        return await editUser(id, rest)
     } catch (error) {
         throw new Error(error.message)
     }
