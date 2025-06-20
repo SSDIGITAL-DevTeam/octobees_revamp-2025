@@ -1,80 +1,38 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { notFound} from "next/navigation";
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
-import PaginationComponents from "@/components/partials/Pagination/Pagination";
-import { InsightArticle, InsightCategory, InsightNotFound, InsightSearch } from "@/app/insights/_components";
-import { axiosInstance } from "@/lib/axios";
-import { Blog, Pagination } from "@/constants/payload";
-import { toast } from "@/hooks/use-toast";
+import { InsightArticle, InsightCategory, InsightNotFound, InsightPagination, InsightSearch } from "@/app/insights/_components";
+import { Blog, BlogCategory, Pagination } from "@/constants/payload";
+import { getAllCategories, getCategoryById, getInsightByCategory } from "@/services/insight.service";
 
-export default function Page() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [pagination, setPagination] = useState({ totalPages: 1 } as Pagination);
-  const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>("");
-  const [title, setTitle] = useState<string>("");
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const { id } = useParams()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-
-        const categoryResponse = await axiosInstance.get(`/blog-category/${id}`)
-        const blogResponse = await axiosInstance.get(`/blog`, {
-          params: {
-            categoryId: categoryResponse.data.id,
-            limit: 5,
-            page,
-            orderBy: "createdAt:desc",
-            status: "Published"
-          }
-        })
-        setBlogs(blogResponse.data.data);
-        setPagination(blogResponse.data.pagination);
-        setTitle(categoryResponse.data.name)
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Category not found",
-          variant: "destructive"
-        })
-        router.push("/insights")
-      }
-    }
-    fetchData();
-  }, [])
-
-  useEffect(() => {
-    const urlPage = Number(searchParams.get("page")) || 1;
-    setPage(urlPage);
-  }, [searchParams]);
-
-  const handleChangePage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-    setPage(newPage);
+type Props = {
+  params: {
+    id: string;
   };
-
-  const handleNext = () => {
-    if (blogs && page < pagination.totalPages) {
-      handleChangePage(page + 1);
-    }
+  searchParams: {
+    page?: string;
   };
+};
 
-  const handlePrevious = () => {
-    if (page > 1) {
-      handleChangePage(page - 1);
-    }
-  };
+export default async function InsightCategoryPage({searchParams, params} : Props) {
+  const page = Number(searchParams.page) || 1;
+  const id = params.id;
 
-  const handleSearch = (e: any) => {
-    e.preventDefault();
-    router.push(`/insights/search/${search}`);
+  let blogs: Blog[] = [];
+  let pagination: Pagination = { totalPages: 0, total: 0, currentPage: 0, perPage: 0 };
+  let title = "";
+  let categories: BlogCategory[] = [];
+
+  try {
+    const category = await getCategoryById(id);
+    const blog = await getInsightByCategory(category.id, 10, page);
+    const blog_category = await getAllCategories();
+
+    blogs = blog.data;
+    pagination = blog.pagination;
+    title = category.name;
+    categories = blog_category.data
+  } catch (error) {
+    return notFound();
   }
 
   return (
@@ -102,15 +60,12 @@ export default function Page() {
           </section>
 
           <aside className="w-full lg:w-1/3 flex flex-col gap-4 lg:gap-10">
-            <InsightSearch handleSearch={handleSearch} setSearch={setSearch} />
-            <InsightCategory />
+            <InsightSearch />
+            <InsightCategory categories={categories} id={id}/>
           </aside>
         </div>
-        <PaginationComponents
-          handleNext={handleNext}
-          handlePrev={handlePrevious}
+        <InsightPagination
           page={page}
-          setPage={handleChangePage}
           totalPage={pagination.totalPages || 1}
         />
       </section>

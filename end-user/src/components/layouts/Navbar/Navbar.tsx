@@ -8,7 +8,6 @@ import { NavLink, navLinks } from '@/constants/navlinks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import Logo from '@/components/partials/Logo/Logo';
-// import axios from 'axios'
 import { axiosInstance } from '@/lib/axios';
 import { CategoryService } from '@/constants/payload';
 
@@ -128,7 +127,7 @@ export default function Navbar() {
                         handleDropdownToggle(navlink.name);
                       }
                     }}
-                    className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path ? 'text-primary/80 font-semibold' : 'text-dark'} hover:bg-gray-500/5 hover:text-primary `}
+                    className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path || pathname.startsWith(`${navlink.path}/`) ? 'text-primary/80 font-semibold' : 'text-dark'} hover:bg-gray-500/5 hover:text-primary `}
                   >
                     {navlink.name}
                     {navlink.menus && <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? 'rotate-180' : ''}`} />}

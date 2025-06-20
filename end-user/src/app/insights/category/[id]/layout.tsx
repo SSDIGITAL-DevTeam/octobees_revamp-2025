@@ -1,8 +1,5 @@
-
-// import axios from 'axios';
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
-import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -62,8 +59,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div></div>}>
-      {children}
-    </Suspense>
+    <>{children}</>
   )
 }

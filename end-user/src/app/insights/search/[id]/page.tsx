@@ -1,64 +1,31 @@
-"use client";
-
-import React, { JSX, useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
-import PaginationComponents from "@/components/partials/Pagination/Pagination";
-import { InsightArticle, InsightCategory, InsightContent, InsightNotFound, InsightSearch } from "@/app/insights/_components";
-import { axiosInstance } from "@/lib/axios";
-import { Blog, Pagination } from "@/constants/payload";
+import { InsightArticle, InsightCategory, InsightNotFound, InsightPagination, InsightSearch } from "@/app/insights/_components";
+import { Blog, BlogCategory, Pagination } from "@/constants/payload";
+import { getAllCategories, getInsightBySearch } from "@/services/insight.service";
 
-export default function Page(): JSX.Element {
-    const [blogs, setBlogs] = useState<Blog[]>([]);
-    const [pagination, setPagination] = useState({ total: 0, totalPages: 0 } as Pagination);
-    const [page, setPage] = useState(1);
-    const [search, setSearch] = useState("");
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const { id } = useParams()
-    const blogSearch = decodeURIComponent(Array.isArray(id) ? id[0] : id)
+type Props = {
+  params: { id: string };
+  searchParams: { page?: string };
+};
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const [blogResponse] = await Promise.all([
-                axiosInstance.get("/blog", {
-                    params: { search: blogSearch, limit: 10, status: "Published", page, orderBy: "createdAt:desc" }
-                }),
-            ])
-            setBlogs(blogResponse.data.data)
-            setPagination(blogResponse.data.pagination)
-        }
-        fetchData();
-    }, [])
+export default async function SearchPage({ params, searchParams }: Props) {
+  const blogSearch = decodeURIComponent(params.id);
+  const page = Number(searchParams.page) || 1;
 
-    useEffect(() => {
-        const urlPage = Number(searchParams.get("page")) || 1;
-        setPage(urlPage);
-    }, [searchParams]);
+  let blogs: Blog[] = [];
+  let categories: BlogCategory[] = [];
+  let pagination: Pagination = { totalPages: 1, total: 0, currentPage: 0, perPage: 0 };
 
-    const handleChangePage = (newPage: number) => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.set("page", newPage.toString());
-        router.push(`?${params.toString()}`);
-        setPage(newPage);
-    };
-
-    const handleNext = () => {
-        if (blogs && page < pagination.totalPages) {
-            handleChangePage(page + 1);
-        }
-    };
-
-    const handlePrevious = () => {
-        if (page > 1) {
-            handleChangePage(page - 1);
-        }
-    };
-
-    const handleSearch = (e: any) => {
-        e.preventDefault();
-        router.push(`/insights/search/${search}`);
-    }
+  try {
+    const blog_response = await getInsightBySearch(blogSearch, 10, page);
+    const blog_category_response = await getAllCategories();
+    blogs = blog_response.data
+    pagination = blog_response.pagination;
+    categories = blog_category_response.data
+  } catch (error) {
+    return notFound();
+  }
 
     return (
         <main className="w-full py-24 pt-28 md:pt-44 lg:px-10 px-8 lg:max-w-7xl mx-auto relative">
@@ -73,8 +40,6 @@ export default function Page(): JSX.Element {
             </header>
             <div className="w-full border-b-[1.2px] border-gray-300" />
             <section className="flex flex-col overflow-x-auto lg:max-w-7xl mx-auto py-8">
-                {/* component main */}
-                {/* Main Content and Sidebar Layout */}
                 <div className="flex flex-col lg:flex-row gap-x-16 gap-y-10">
                     <section className="w-full lg:w-2/3">
                         {
@@ -87,16 +52,13 @@ export default function Page(): JSX.Element {
                     </section>
 
                     <aside className="w-full lg:w-1/3 flex flex-col gap-4 lg:gap-10">
-                        <InsightSearch handleSearch={handleSearch} setSearch={setSearch} />
-                        <InsightCategory />
+                        <InsightSearch />
+                        <InsightCategory categories={categories} />
                     </aside>
                 </div>
-                <PaginationComponents
-                    handleNext={handleNext}
-                    handlePrev={handlePrevious}
+                <InsightPagination
                     page={page}
-                    setPage={handleChangePage}
-                    totalPage={pagination.totalPages || 1}
+                    totalPage={pagination.totalPages}
                 />
             </section>
         </main>

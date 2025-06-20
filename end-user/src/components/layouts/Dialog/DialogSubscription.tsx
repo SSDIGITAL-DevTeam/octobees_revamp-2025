@@ -26,7 +26,7 @@ export default function DialogSubscription({ open, setOpen }: Props): JSX.Elemen
                 </div>
                 <DialogHeader className="px-5 lg:pl-8 space-y-3 lg:space-y-5 max-w-[90%] mx-auto lg:max-w-full pt-3 md:pt-0 pb-10">
                     <DialogTitle className="space-y-8 md:space-y-14 flex flex-col">
-                        <span className="font-heading text-center lg:text-left font-semibold text-primary text-2xl sm:text-3xl md:text-3xl lg:text-5xl !leading-[125%] capitalize">
+                        <span className="font-heading text-center lg:text-left font-semibold text-primary text-2xl sm:text-3xl md:text-3xl lg:text-5xl !leading-[115%] capitalize">
                             Subscribe once. Benefit forever.
                         </span>
                     </DialogTitle>

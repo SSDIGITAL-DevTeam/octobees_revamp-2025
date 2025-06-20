@@ -1,3 +1,4 @@
+"use client"
 import { DialogSuccessSubscription } from "@/components/layouts/Dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

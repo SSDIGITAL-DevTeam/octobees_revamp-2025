@@ -1,5 +1,3 @@
-"use client"
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   CircleUser
@@ -10,12 +8,11 @@ import ShareSocmedButton from "@/components/partials/Button/ButtonShareSocmed";
 import AdsCarousel from "@/app/insights/[slug]/_components/AdsCarousel";
 import { InsightArticle, InsightContent } from "@/app/insights/_components";
 import dayjs from "dayjs";
-import { axiosInstance } from "@/lib/axios";
 import { Blog } from "@/constants/payload";
-import { toast } from "@/hooks/use-toast";
 import ImageInsightContent from "@/assets/insights/webp/image-insights-subscription-content.webp";
 import FormSubscription from "./_components/FormSubscription";
-import { useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
+import { getInsightByCategory, getInsightBySlug } from "@/services/insight.service";
 
 type SlugInsightPageProps = {
   params: {
@@ -23,37 +20,17 @@ type SlugInsightPageProps = {
   }
 }
 
-export default function ArticleDetail({ params }: SlugInsightPageProps) {
-  const [blog, setBlog] = useState<Blog>();
-  const [relatedBlog, setRelatedBlog] = useState<Blog[]>([]);
-  const router = useRouter();
-  useEffect(() => {
-    const fetchBlogPosts = async () => {
-      try {
-        const blogsResponse = await axiosInstance.get(`/blog/${params.slug}`)
-        const relatedBlogResponse = await axiosInstance.get(`/blog`,
-          {
-            params: {
-              categoryId: blogsResponse.data.categoryId,
-              limit: 3,
-              orderBy: "createdAt:desc",
-              status: "Published"
-            }
-          }
-        )
-        setBlog(blogsResponse.data);
-        setRelatedBlog(relatedBlogResponse.data.data);
-      } catch (error: any) {
-        toast({
-          title: "Error",
-          description: "Blog not found",
-          variant: "destructive"
-        })
-        router.push("/insights")
-      }
-    }
-    fetchBlogPosts();
-  }, [])
+export default async function ArticleDetail({ params }: SlugInsightPageProps) {
+  let blog: Blog | null = null;
+  let relatedBlog: Blog[] = [];
+
+  try {
+    blog = await getInsightBySlug(params.slug);
+    const reponse = await getInsightByCategory(blog?.categoryId || "", 3);
+    relatedBlog = reponse.data;
+  } catch (error) {
+    return notFound();
+  }
 
   return (
     <main className="flex flex-col gap-10 lg:gap-20 md:max-w-7xl md:mx-auto md:min-h-screen py-20 pt-28 md:pt-44 px-5 md:px-10 lg:px-5 bg-white relative">
