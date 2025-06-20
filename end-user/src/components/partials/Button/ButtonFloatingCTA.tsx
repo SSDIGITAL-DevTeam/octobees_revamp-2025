@@ -4,7 +4,7 @@ import { JSX, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Rocket } from 'lucide-react';
 
-export default function FloatButton(): JSX.Element {
+export default function ButtonFloatingCTA(): JSX.Element {
   const [isVisible, setIsVisible] = useState(false);
   const [isFooterVisible, setIsFooterVisible] = useState(false);
 

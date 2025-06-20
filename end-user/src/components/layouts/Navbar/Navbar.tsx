@@ -21,7 +21,7 @@ export default function Navbar() {
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLLIElement>(null);
   const [linkNav, setLinkNav] = useState<CategoryService[]>([]);
 
 
@@ -117,9 +117,9 @@ export default function Navbar() {
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
             <div className={`${(pathname == "/increase-my-sales" || pathname.startsWith('/plans')) ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
-            <div className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
+            <ul className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
               {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
-                <div key={index} className="relative group rounded-full" ref={dropdownRef}>
+                <li key={index} className="relative group rounded-full" ref={dropdownRef}>
                   <Link
                     href={navlink.path || '#'}
                     onClick={(e) => {
@@ -160,9 +160,9 @@ export default function Navbar() {
                       )}
                     </AnimatePresence>
                   )}
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
             <div className="flex-grow" />
           </div>
         )}

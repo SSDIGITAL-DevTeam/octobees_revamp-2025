@@ -10,13 +10,20 @@ type Props = {
     name: string,
     label: string,
     className?: string,
-    wrapClassName?: string
+    wrapClassName?: string,
+    from?: string
 }
 
-export default function FieldPhoneNumber({ control, name, label, className, wrapClassName }: Props) {
+export default function FieldPhoneNumber({ control, name, label, className, wrapClassName, from }: Props) {
     const size = useWidth()
-    let height = "48px";
-    if (size && size >= 768) height = "56px"
+    let height = "56px";
+    if (size && size >= 768) {
+        if (from == "contact") {
+            height = "63px"
+        } else {
+            height = "56px"
+        }
+    }
     return (
         <FormField
             name={name}
@@ -29,7 +36,7 @@ export default function FieldPhoneNumber({ control, name, label, className, wrap
                             value={field.value}
                             placeholder={label}
                             onChange={field.onChange}
-                            inputClassName={`focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400 !flex !items-center !phone-input !text-sm md:!text-base !h-12 md:!h-14 !rounded-e-md w-full ${className}`}
+                            inputClassName={`focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400 !flex !items-center !phone-input !text-sm md:!text-base !h-14 md:!h-14 !rounded-e-md w-full ${className}`}
                             style={{
                                 '--react-international-phone-flag-width': '24px',
                                 '--react-international-phone-flag-height': '24px',

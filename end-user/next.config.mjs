@@ -33,11 +33,11 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    domains: [
-      "lightyellow-mandrill-246257.hostingersite.com",
-      "localhost",
-      "192.168.100.25",
-    ],
+    // domains: [
+    //   "lightyellow-mandrill-246257.hostingersite.com",
+    //   "localhost",
+    //   "192.168.100.25",
+    // ],
   },
 };
 

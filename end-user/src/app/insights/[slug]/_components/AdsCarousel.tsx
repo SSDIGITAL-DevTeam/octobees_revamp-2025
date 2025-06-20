@@ -41,12 +41,12 @@ const AdsCarousel = () : JSX.Element => {
             <div className="p-2">
               <div
                 id="bot-bot"
-                className="flex flex-col gap-6 lg:gap-8 min-h-[30vh] bg-primary/5 rounded-3xl p-2 py-10 lg:p-10"
+                className="flex flex-col gap-6 lg:gap-8 lg:min-h-[300px] bg-primary/5 rounded-3xl p-8 lg:p-10"
               >
-                 <h2 className="text-xl md:text-2xl lg:text-4xl capitalize max-w-[60%] lg:max-w-full text-primary font-bold line-clamp-2">
+                 <h2 className="text-xl md:text-2xl lg:text-4xl capitalize max-w-[80%] lg:max-w-full text-primary font-bold">
                   {data.title}
                 </h2>
-                <p className="lg:text-base text-sm text-gray-600 !leading-[150%]">
+                <p className="lg:text-base text-sm text-black/70 !leading-[140%]">
                   {data.desc}
                 </p>
                 <Link href="/contact-us" className="py-3 px-5 rounded-full bg-primary text-white w-fit font-semibold text-sm lg:text-base ">

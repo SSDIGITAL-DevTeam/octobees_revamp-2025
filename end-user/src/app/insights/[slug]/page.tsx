@@ -15,6 +15,7 @@ import { Blog } from "@/constants/payload";
 import { toast } from "@/hooks/use-toast";
 import ImageInsightContent from "@/assets/insights/webp/image-insights-subscription-content.webp";
 import FormSubscription from "./_components/FormSubscription";
+import { useRouter } from "next/navigation";
 
 type SlugInsightPageProps = {
   params: {
@@ -25,6 +26,7 @@ type SlugInsightPageProps = {
 export default function ArticleDetail({ params }: SlugInsightPageProps) {
   const [blog, setBlog] = useState<Blog>();
   const [relatedBlog, setRelatedBlog] = useState<Blog[]>([]);
+  const router = useRouter();
   useEffect(() => {
     const fetchBlogPosts = async () => {
       try {
@@ -44,9 +46,10 @@ export default function ArticleDetail({ params }: SlugInsightPageProps) {
       } catch (error: any) {
         toast({
           title: "Error",
-          description: error?.response?.data.error || error?.message || "Error fetching blog posts",
+          description: "Blog not found",
           variant: "destructive"
         })
+        router.push("/insights")
       }
     }
     fetchBlogPosts();
@@ -100,9 +103,9 @@ export default function ArticleDetail({ params }: SlugInsightPageProps) {
                 width={1920}
                 height={1080}
                 quality={100}
-                className="object-contain w-[60%] md:w-[25%] h-full rounded-3xl"
+                className="object-contain w-[40%] md:w-[25%] h-full rounded-3xl"
               />
-              <div className="space-y-5">
+              <div className="space-y-3 md:space-y-5">
                 <h2 className="text-2xl md:text-2xl lg:text-3xl text-black font-semibold text-center md:text-left">Never miss a thing.</h2>
                 <p className="text-gray-700 text-sm lg:text-base text-center md:text-left">Subscribe to get the latest updates, insights, and special offers</p>
                 <FormSubscription slug={blog.slug} />

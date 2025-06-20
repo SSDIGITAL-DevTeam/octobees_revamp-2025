@@ -22,29 +22,6 @@ import { useToast } from "@/hooks/use-toast";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Position } from "@/constants/payload";
 
-const dummyDataJobApply = [
-    {
-        value: "1",
-        name: "Frontend Developer"
-    },
-    {
-        value: "2",
-        name: "Backend Developer"
-    },
-    {
-        value: "3",
-        name: "Fullstack Developer"
-    },
-    {
-        value: "4",
-        name: "UI/UX Designer"
-    },
-    {
-        value: "5",
-        name: "Mobile Developer"
-    },
-]
-
 export default function FormCareer() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<boolean>(false);

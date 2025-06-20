@@ -1,16 +1,14 @@
 'use client';
-
 import { JSX } from 'react';
 import Link from 'next/link';
-import LogoLight from '@/components/partials/Logo/LogoLight';
-
-import { Instagram, Call } from 'iconsax-react';
+import LogoFooter from '@/components/partials/Logo/LogoFooter';
 import { FormSubscription } from '@/components/partials/Form';
+import { Call, Instagram } from 'iconsax-react';
 
-const listSocmed = [
+const ListFooterSocmed = [
   {
     name: 'Instagram',
-    link: 'https://www.instagram.com/octobees.id/',
+    link: 'https://www.instagram.com/octobees.id',
     icon: <Instagram variant="Bold" className='w-5 h-5 lg:w-8 lg:h-8' />
   },
   {
@@ -20,7 +18,7 @@ const listSocmed = [
   },
   {
     name: 'LinkedIn',
-    link: 'https://www.linkedin.com/company/octobees/',
+    link: 'https://www.linkedin.com/company/octobees',
     icon: <svg className='w-5 h-5 lg:w-10 lg:h-10' viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M15.1667 24.5H10.5V10.5H15.1667V12.8333C16.1614 11.5678 17.6699 10.8133 19.2792 10.7765C22.1732 10.7926 24.5084 13.1476 24.5 16.0417V24.5H19.8333V16.625C19.6467 15.3214 18.5287 14.3542 17.2118 14.357C16.6358 14.3752 16.0921 14.6274 15.7062 15.0554C15.3202 15.4834 15.1254 16.0502 15.1667 16.625V24.5ZM8.16667 24.5H3.5V10.5H8.16667V24.5ZM5.83333 8.16667C4.54467 8.16667 3.5 7.122 3.5 5.83333C3.5 4.54467 4.54467 3.5 5.83333 3.5C7.122 3.5 8.16667 4.54467 8.16667 5.83333C8.16667 6.45217 7.92083 7.04566 7.48325 7.48325C7.04566 7.92083 6.45217 8.16667 5.83333 8.16667Z"
@@ -32,30 +30,39 @@ const listSocmed = [
 
 export default function Footer(): JSX.Element {
   return (
-    <footer className="bg-[#121212] py-16 px-5 space-y-12" id="footer">
-      <div className="flex flex-col md:flex-row sm:container items-center justify-between gap-y-14">
-
-        <div className="flex flex-col gap-y-6 items-center md:items-start w-full">
-          <LogoLight />
-          <p className="text-light text-base text-center md:text-left md:w-[30%] ">Your personal digital sales assistant & The ultimate sales ecosystem</p>
-          <div className="flex flex-row gap-x-3 items-end">
-            {
-              listSocmed.map((socmed, index) => (
-                <Link key={index} href={socmed.link} className="text-light" target="_blank" rel="noopener noreferrer">
+      <footer className="bg-[#121212] py-16 px-5 space-y-12" id="footer" aria-label="Site Footer">
+        <div className="flex flex-col md:flex-row sm:container items-center justify-between gap-y-14">
+          <div className="flex flex-col gap-y-6 items-center md:items-start w-full">
+            <LogoFooter />
+            <h2 className="sr-only">Footer Octobees</h2>
+            <p className="text-light text-base text-center md:text-left md:w-[30%]">
+              Your personal digital sales assistant & The ultimate sales ecosystem
+            </p>
+            <nav className="flex gap-x-3 items-center" aria-label="Social media links">
+              {ListFooterSocmed.map((socmed, index) => (
+                <Link
+                  key={index}
+                  href={socmed.link}
+                  className="text-light"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={socmed.name || `Social media link ${index + 1}`}
+                >
                   {socmed.icon}
                 </Link>
-              ))
-            }
+              ))}
+            </nav>
+          </div>
+          <div className="flex flex-col gap-y-5 md:w-[50%] w-[80%]">
+            <h3 className="text-light text-base text-center md:text-left">
+              Stay updated! Subscribe to our newsletter for the latest news, insights, and exclusive offers
+            </h3>
+            <FormSubscription className="p-2" source="footer" />
           </div>
         </div>
-
-        <div className='flex flex-col gap-y-5 md:w-[50%] w-[80%]'>
-          <p className='text-light text-base text-center md:text-left'>Stay updated! Subscribe to our newsletter for the latest news, insights, and exclusive offers</p>
-          <FormSubscription className="p-2" source="footer" />
-        </div>
-
-      </div>
-      <p className="w-full mx-auto text-xs lg:text-sm text-light text-center">Copyright © 2023 - {new Date().getFullYear()} Octobees. All rights reserved</p>
-    </footer>
+        <p className="w-full mx-auto text-xs lg:text-sm text-light text-center">
+          Copyright &copy; 2023 - {new Date().getFullYear()} Octobees. All rights reserved
+        </p>
+      </footer>
   );
 }

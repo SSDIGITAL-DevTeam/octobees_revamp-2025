@@ -7,6 +7,7 @@ import PaginationComponents from "@/components/partials/Pagination/Pagination";
 import { InsightArticle, InsightCategory, InsightNotFound, InsightSearch } from "@/app/insights/_components";
 import { axiosInstance } from "@/lib/axios";
 import { Blog, Pagination } from "@/constants/payload";
+import { toast } from "@/hooks/use-toast";
 
 export default function Page() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -20,19 +21,29 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const categoryResponse = await axiosInstance.get(`/blog-category/${id}`)
-      const blogResponse = await axiosInstance.get(`/blog`, {
-        params: {
-          categoryId: categoryResponse.data.id,
-          limit: 5,
-          page,
-          orderBy: "createdAt:desc",
-          status: "Published"
-        }
-      })
-      setBlogs(blogResponse.data.data);
-      setPagination(blogResponse.data.pagination);
-      setTitle(categoryResponse.data.name)
+      try {
+
+        const categoryResponse = await axiosInstance.get(`/blog-category/${id}`)
+        const blogResponse = await axiosInstance.get(`/blog`, {
+          params: {
+            categoryId: categoryResponse.data.id,
+            limit: 5,
+            page,
+            orderBy: "createdAt:desc",
+            status: "Published"
+          }
+        })
+        setBlogs(blogResponse.data.data);
+        setPagination(blogResponse.data.pagination);
+        setTitle(categoryResponse.data.name)
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Category not found",
+          variant: "destructive"
+        })
+        router.push("/insights")
+      }
     }
     fetchData();
   }, [])
@@ -85,7 +96,7 @@ export default function Page() {
               (blogs.length > 0) ? (
                 <InsightArticle blogs={blogs} />
               ) : (
-                <InsightNotFound/>
+                <InsightNotFound />
               )
             }
           </section>
@@ -95,13 +106,13 @@ export default function Page() {
             <InsightCategory />
           </aside>
         </div>
-          <PaginationComponents
-            handleNext={handleNext}
-            handlePrev={handlePrevious}
-            page={page}
-            setPage={handleChangePage}
-            totalPage={pagination.totalPages || 1}
-          />
+        <PaginationComponents
+          handleNext={handleNext}
+          handlePrev={handlePrevious}
+          page={page}
+          setPage={handleChangePage}
+          totalPage={pagination.totalPages || 1}
+        />
       </section>
     </main>
   );

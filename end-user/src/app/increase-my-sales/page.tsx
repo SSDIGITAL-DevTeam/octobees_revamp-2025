@@ -9,9 +9,10 @@ import GridServices from "./_components/GridServices";
 import { task, pointIcon, slides, CreativeDesign } from "@/constants/increase"
 import ImageSection from "./_components/ImageSection";
 import EmblaCarousel from "./_components/EmblaCarousel";
-import ContactUs from "../contact-us/_components/ContactUsPage";
 import GetStartedButton from "./_components/GetStartedButton";
 import Script from "next/script";
+import FormContact from "@/components/partials/Form/FormContactOld";
+import HeaderContactUs from "../contact-us/_components/HeaderContactUs";
 
 export default function IncreaseMySales() {
     return (
@@ -171,8 +172,10 @@ export default function IncreaseMySales() {
                     </div>
                 </section>
 
-                <section id="contact" className="-scroll-mt-40 scroll-smooth">
-                    <ContactUs />
+                <section id="contact" className="-scroll-mt-28 scroll-smooth">
+                    <div className="flex flex-col overflow-x-hidden bg-[#F7E6E7]">
+                        <HeaderContactUs source="Increase My Sales"/>
+                    </div>
                 </section>
             </main>
         </>

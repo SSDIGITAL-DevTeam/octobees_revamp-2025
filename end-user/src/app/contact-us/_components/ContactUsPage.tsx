@@ -3,35 +3,20 @@
 import React, { JSX } from 'react';
 import Link from 'next/link';
 import { Instagram } from 'iconsax-react';
-import FormContact from '@/components/partials/Form/FormContact';
+import HeaderContactUs from './HeaderContactUs';
 
 export default function ContactUs(): JSX.Element {
   return (
     <main className="">
-      <header className="flex flex-col overflow-x-hidden py-[50px] lg:pt-[80px] bg-[#F7E6E7]">
-        <div className="container flex flex-col items-center justify-center py-20 md:px-10">
-          <div className="flex flex-col w-full gap-y-10 items-center justify-center">
-            <div className="flex flex-col text-center gap-y-7 w-full max-w-[36rem]">
-              <div className="flex flex-col text-center gap-y-3">
-                <h2 className="font-body font-semibold text-secondary md:text-lg tracking-wider">
-                  Octobees <span className="text-dark">• Contact Us</span>
-                </h2>
-                <h1 className="font-heading font-medium text-dark text-4xl md:text-6xl">Contact Us</h1>
-              </div>
-              <p className="">Get in touch and ask us anything - we&apos;ll answer it all.</p>
-            </div>
-            <FormContact />
-          </div>
-        </div>
+      <header className="flex flex-col overflow-x-hidden pt-[50px] lg:pt-[80px] bg-[#F7E6E7]">
+        <HeaderContactUs source="Contact Us" />
       </header>
 
-      <section className="flex flex-col overflow-x-hidden bg-white py-10">
-        <div className="container flex flex-col items-center justify-center py-12 md:px-10">
-          <div className="flex flex-col w-full gap-y-2 items-center justify-center">
-            <div className="flex flex-col text-center gap-y-6 w-full max-w-[39rem]">
-              <h1 className="font-heading font-medium text-dark text-4xl md:text-5xl !leading-[120%] max-w-3xl">Get in touch with <br /><span>OCTOBEES</span></h1>
-            </div>
-            <div className="mt-3 lg:mt-12 flex flex-col lg:flex-row gap-y-6 lg:gap-y-0 gap-x-0 lg:gap-x-7 w-full h-full">
+      <section className="flex flex-col overflow-x-hidden bg-white py-12 px-5 md:px-10">
+        <div className="container flex flex-col items-center justify-center md:px-10">
+          <div className="flex flex-col w-full gap-y-12 items-center justify-center">
+            <h2 className="mx-auto text-center font-heading font-medium text-dark text-4xl md:text-5xl !leading-[120%] max-w-3xl">Get in touch with <br /><span>OCTOBEES</span></h2>
+            <div className="flex flex-col lg:flex-row gap-y-6 lg:gap-y-0 gap-x-0 lg:gap-x-7 w-full h-full">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.08034143237!2d110.37561977500494!3d-7.781306292238363!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a59dbf019ad81%3A0xca53b0e8ddae01df!2sArtech%20Space%20Coworking%20Yogyakarta!5e0!3m2!1sen!2sid!4v1747214702412!5m2!1sen!2sid"
                 className="w-full min-h-[420px] lg:max-h-[520px] rounded-3xl border-0"
@@ -49,9 +34,9 @@ export default function ContactUs(): JSX.Element {
                       OCTOBEES Yogyakarta Office
                       <span className='inline-block text-white/70 text-base mt-4 !leading-[150%]'>
                         Artech Space Building, 4th Floor, Cambridge.
-                      Jl. Sagan Kidul No.14, Terban, Kec. Gondokusuman, Kota Yogyakarta,
-                      Daerah Istimewa Yogyakarta 55223, Indonesia</span>
-                        </span>
+                        Jl. Sagan Kidul No.14, Terban, Kec. Gondokusuman, Kota Yogyakarta,
+                        Daerah Istimewa Yogyakarta 55223, Indonesia</span>
+                    </span>
                   </Link>
                   <div className="flex flex-col gap-y-2">
                     <h3 className="text-base text-gray-300">Regional Partner</h3>

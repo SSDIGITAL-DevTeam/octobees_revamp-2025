@@ -28,8 +28,8 @@ export default function InsightCard({ data }: InsightCardProps) {
 
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 from-10% via-black/40 via-80% to-transparent text-white flex flex-col justify-between gap-5 p-5 lg:p-12">
                 <div className='flex flex-col justify-start gap-2 lg:gap-3'>
-                    <span> {data.user.name} • {dayjs(data.createdAt).format("MMMM D, YYYY")}</span>
-                    <h2 className="text-xl lg:text-4xl font-semibold !leading-[130%] line-clamp-3 font-heading md:max-w-[500px]">
+                    <span className='text-sm lg:text-base'> {data.user.name} • {dayjs(data.createdAt).format("MMMM D, YYYY")}</span>
+                    <h2 className="text-lg sm:text-xl lg:text-4xl font-semibold !leading-[130%] line-clamp-3 font-heading md:max-w-[500px]">
                         {data.title}
                     </h2>
                     <InsightContent content={data.content} className='line-clamp-2 lg:text-base text-sm text-white/80 md:max-w-[500px]' />

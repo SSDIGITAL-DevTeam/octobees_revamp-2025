@@ -29,10 +29,10 @@ const CarouselRunning: React.FC<Props> = ({ side = "right", slides }) => {
     <div className="w-full mx-auto relative">
             <div className="bg-transparent h-full w-full absolute z-10" />
             <div className="overflow-hidden" ref={emblaRef}>
-                <div className={`flex -ml-4 ${side === "left" ? "flex-row-reverse" : ""}`}>
+                <ul className={`flex -ml-4 ${side === "left" ? "flex-row-reverse" : ""}`}>
                     {slides.map((d, i) => {
                         return (
-                            <div
+                            <li
                                 key={i}
                                 className="flex-none w-fit lg:w-[30%] min-w-0 pl-7 transform-gpu"
                             >
@@ -48,11 +48,11 @@ const CarouselRunning: React.FC<Props> = ({ side = "right", slides }) => {
                                         className="object-contain h-fit w-full self-center"
                                     />
                                 )}
-                            </div>
+                            </li>
                         );
                     })}
 
-                </div>
+                </ul>
             </div>
         </div>
   )

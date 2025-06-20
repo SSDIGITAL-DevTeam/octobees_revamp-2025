@@ -49,7 +49,7 @@ export default function FormSubscription({ className, source, setOpen }: { class
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     placeholder="Enter your email address"
-                    className="px-3 md:px-4 text-sm md:text-base border-none focus-visible:ring-0 h-fit placeholder:text-sm placeholder:text-gray-600" />
+                    className="px-3 md:px-4 text-sm md:text-base border-none focus-visible:ring-0 h-fit placeholder:text-sm placeholder:text-gray-600 shadow-none" />
                 <Button
                     type="submit" 
                     disabled={isLoading}

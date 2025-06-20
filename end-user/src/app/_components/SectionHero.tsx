@@ -9,20 +9,21 @@ export default function SectionHero() {
   return (
     <>
       <div className="bg-primary/20 rounded-full overflow-x-hidden h-[70%] w-[60%] absolute top-0 md:top-40 right-0 lg:right-0 blur-[90px] z-[50]" />
-      <div className="container flex flex-col gap-8 md:gap-10 justify-center items-center md:items-start">
-        <h1 className="font-semibold text-gray-500 text-sm lg:text-2xl flex flex-col gap-2 lg:gap-4 text-center md:text-left">
+      <div className="container flex flex-col gap-6 md:gap-10 justify-center items-center md:items-start">
+        <h1 id="hero-title" className="font-semibold text-gray-500 text-sm lg:text-2xl flex flex-col gap-2 lg:gap-4 text-center md:text-left">
           WE ARE
-          <span className="!leading-[130%] font-bold font-heading text-[2.4rem] md:text-5xl lg:text-6xl text-black text-center md:text-left">
+          <span className="!leading-[110%] md:leading-[150%] font-bold font-heading text-[2.9rem] md:text-5xl lg:text-6xl text-black text-center md:text-left">
             Your <span className="text-primary"> Revenue <br />Growth</span> Partner
           </span>
         </h1>
         <div className="w-full flex flex-col items-center md:items-start gap-y-4">
-          <span className="text-xs lg:text-lg text-gray-500 !leading-[130%] text-center md:text-left">
+          <span className="text-xs lg:text-lg text-black/60 !leading-[130%] text-center md:text-left">
             TRUSTED BY GROWING COMPANIES
           </span>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4">
+          <ul aria-label="Trusted companies" className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4">
+            <span className="sr-only text-[1px]">Trusted brands</span>
             {brandHome.map((brand, index) => (
-              <div key={index} className="p-1">
+              <li key={index} className="p-1">
                 <Link
                   href={brand.web || "#"}
                   target="_blank"
@@ -37,15 +38,16 @@ export default function SectionHero() {
                     className="object-contain w-16 md:24 lg:w-28"
                   />
                 </Link>
-              </div>
+              </li>
             ))}
             <p className="text-primary font-semibold text-base md:text-lg">40+ Companies</p>
-          </div>
+          </ul>
         </div>
 
         <Link
           href="/increase-my-sales"
-          className="w-full md:w-auto"
+          className="w-full md:w-auto z-[52]"
+          aria-label="Go to Increase My Sales page"
         >
           <Button variant={"increasesales"} size={"normal"} className="hover:scale-105 duration-500 transition-all">
             Increase My Sales<TrendingUp />
@@ -56,7 +58,7 @@ export default function SectionHero() {
       <div className="flex items-center justify-end w-full">
         <Image
           src={HeroSectionImage.src}
-          alt="Asset Banner Hero"
+          alt="Illustration of business growth and sales strategy"
           width={1000}
           height={1000}
           className="rounded-xl md:rounded-[2rem] z-[52] w-full h-full object-contain"

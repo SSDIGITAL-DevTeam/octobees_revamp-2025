@@ -10,7 +10,7 @@ import {
 } from "./_components";
 import { DialogSubscription } from "@/components/layouts/Dialog";
 import { useEffect, useState } from "react";
-
+import { ButtonFloatingCTA } from "@/components/partials/Button";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -24,12 +24,12 @@ export default function Home() {
 
   return (
     <main>
-      <FloatButton />
+      <ButtonFloatingCTA />
 
-      <header className="bg-white">
-        <div className="flex flex-col md:flex-row gap-y-16 lg:min-h-screen py-24 md:py-32 pt-36 md:pt-52 lg:py-0 relative md:max-w-7xl md:mx-auto px-5">
+      <header className="bg-white" role="banner">
+        <section aria-labelledby="hero-title" className="flex flex-col md:flex-row gap-y-16 lg:min-h-screen py-16 pt-32 md:py-32  md:pt-52 lg:py-0 relative md:max-w-7xl md:mx-auto px-5">
           <SectionHero />
-        </div>
+        </section>
       </header>
 
       <section className="w-full bg-primary lg:absolute lg:-bottom-0 z-[50]">
