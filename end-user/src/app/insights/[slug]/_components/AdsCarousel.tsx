@@ -34,7 +34,7 @@ const AdsCarousel = () : JSX.Element => {
   ];
 
   return (
-    <Carousel className="max-w-[90%] lg:max-w-[70%] mx-auto">
+    <Carousel className="max-w-[90%] md:max-w-[80%] lg:max-w-[60%] mx-auto">
       <CarouselContent className="-ml-1">
         {carouselData.map((data : CarouselType, index) => (
           <CarouselItem key={index} className="pl-1 max-w-full lg:max-w-[90%]">
@@ -43,7 +43,7 @@ const AdsCarousel = () : JSX.Element => {
                 id="bot-bot"
                 className="flex flex-col gap-6 lg:gap-8 lg:min-h-[300px] bg-primary/5 rounded-3xl p-8 lg:p-10"
               >
-                 <h2 className="text-xl md:text-2xl lg:text-4xl capitalize max-w-[80%] lg:max-w-full text-primary font-bold">
+                 <h2 className="text-xl md:text-2xl lg:text-3xl capitalize max-w-[80%] lg:max-w-full text-primary font-bold">
                   {data.title}
                 </h2>
                 <p className="lg:text-base text-sm text-black/70 !leading-[140%]">

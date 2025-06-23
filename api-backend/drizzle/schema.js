@@ -156,7 +156,7 @@ export const metaTag = mysqlTable("metatag", {
   content: varchar("content", { length: 191 }).notNull(),
   slug: varchar("slug", { length: 191 })
   .notNull()
-  .references(() => pages.slug, { onDelete: "cascade" }),
+  .references(() => pages.slug, { onDelete: "cascade", onUpdate: "cascade" }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -268,23 +268,6 @@ export const benefitRelations = relations(benefit, ({ one }) => ({
 export const roleRelations = relations(role, ({ many }) => ({
   blogs: many(blog, { relationName: "BlogToRole" }),
 }));
-
-// export const blogRelations = relations(blog, ({ one }) => ({
-// 	category: one(blogCategory, {
-// 		relationName: 'BlogToBlogCategory',
-// 		fields: [blog.categoryId],
-// 		references: [blogCategory.id]
-// 	}),
-// 	role: one(role, {
-// 		relationName: 'BlogToRole',
-// 		fields: [blog.roleId],
-// 		references: [role.id]
-// 	})
-// }));
-
-// export const blogCategoryRelations = relations(blogCategory, ({ many }) => ({
-// 	blogs: many(blog, { relationName: 'BlogToBlogCategory' })
-// }));
 
 export const pagesRelations = relations(pages, ({ many, one }) => ({
   meta: many(metaTag, { relationName: "MetaTagToPages" }),

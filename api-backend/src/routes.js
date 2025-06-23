@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from 'express-rate-limit'
 
 import order from "./order/_order.route.js";
 import user from "./user/_user.route.js";
@@ -16,18 +17,31 @@ import plan from "./service-plan/_service-plan.route.js";
 import meta from "./meta/_meta.route.js"
 import forgot from "./auth/forgot-password/forgot-password.controller.js"
 import reset_password from "./auth/reset-password/reset-password.controller.js"
+import logger from "../utils/logger.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: "Too many requests, please try again after 15 minutes",
+    handler: (req, res, next) => {
+      logger.error(`Rate limit exceeded for IP: ${req.ip} → ${req.originalUrl}`);
+        res.status(429).json({
+            error: "Too many requests, please try again after 15 minutes",
+        });
+    }
+});
 
 const router = express.Router();
 
 //Auth Routes
 router.use("/auth/refresh-token", refreshToken);
-router.use("/auth/login", login);
-router.use("/auth/logout", logout);
-router.use("/auth/forgot-password", forgot);
-router.use("/auth/reset-password", reset_password);
+router.use("/auth/login",limiter, login);
+router.use("/auth/logout",limiter, logout);
+router.use("/auth/forgot-password", limiter, forgot);
+router.use("/auth/reset-password", limiter, reset_password);
 
 // API Routes
 router.use("/v1/page", page.endUser);

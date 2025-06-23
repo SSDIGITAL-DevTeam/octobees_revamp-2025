@@ -37,42 +37,41 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
       <BackArticleButton />
       {
         blog && (
-          <div className="container lg:max-w-4xl mx-auto flex flex-col gap-8 lg:gap-12">
-            {/* Category */}
-            <p className="text-center w-fit mx-auto bg-gray-200/80 text-xs lg:text-sm capitalize rounded-3xl font-medium py-2 px-4 text-gray-800 flex items-center gap-2 shadow-sm max-w-[90%]">
-              {blog.category.name}
-            </p>
-            {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-semibold text-primary text-center md:text-left !leading-[130%] font-heading">
-              {blog.title}
-            </h1>
-            <div className="space-y-3 md:space-y-5">
-              {/* Author */}
-              <div className="flex items-center bg-white w-full lg:gap-4 gap-3">
-                <CircleUser className="text-primary w-6 h-6 md:w-9 md:h-9" />
-                <div className="flex flex-col justify-center lg:gap-[3px] gap-[2px] h-full">
-                  <p className="text-sm lg:text-base capitalize font-medium text-gray-800">
-                    {blog.user.name}
-                  </p>
-                  <p className="font-normal text-xs lg:text-sm text-gray-400">{dayjs(blog.createdAt).format("DD MMMM YYYY")}</p>
+          <div className="container lg:max-w-3xl mx-auto flex flex-col gap-8 lg:gap-y-12">
+            <div className="space-y-6 w-full">
+
+              <p className="text-center w-fit mx-auto bg-gray-200/80 text-xs lg:text-sm capitalize rounded-3xl font-medium py-2 px-4 text-gray-800 flex items-center gap-2 shadow-sm max-w-[90%]">
+                {blog.category.name}
+              </p>
+              <h1 className="text-3xl md:text-4xl font-semibold text-primary text-center md:text-left !leading-[140%] font-heading">
+                {blog.title}
+              </h1>
+              <div className="space-y-3 md:space-y-5">
+                <div className="flex items-center bg-white w-full gap-3 lg:gap-4">
+                  <CircleUser className="text-primary w-6 h-6 md:w-8 md:h-8" />
+                  <div className="flex flex-col justify-center lg:gap-[1px] gap-[2px] h-full">
+                    <p className="text-sm lg:text-base capitalize font-medium text-gray-800">
+                      {blog.user.name}
+                    </p>
+                    <p className="font-normal text-xs lg:text-sm text-gray-400">{dayjs(blog.createdAt).format("DD MMMM YYYY")}</p>
+                  </div>
+                </div>
+                <div className="py-2 md:py-3 border-y-[1px] border-gray-300 flex items-center justify-end">
+                  <ShareSocmedButton title={blog.title} slug={params.slug} />
                 </div>
               </div>
-              <div className="py-2 md:py-3 border-y-[1px] border-gray-300 flex items-center justify-end">
-                <ShareSocmedButton title={blog.title} slug={params.slug} />
+              <div className="w-full rounded-xl overflow-hidden shadow-lg">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`}
+                  alt={`image-${blog.title}`}
+                  width={1920}
+                  height={1080}
+                  quality={100}
+                  className="object-contain w-full"
+                />
               </div>
             </div>
-
-            <div className="w-full rounded-xl overflow-hidden shadow-lg">
-              <Image
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`}
-                alt={`image-${blog.title}`}
-                width={1920}
-                height={1080}
-                quality={100}
-                className="object-contain w-full"
-              />
-            </div>
-            <InsightContent content={blog.content} className="!leading-[150%] text-sm lg:text-lg text-gray-700 body-parser space-y-3 md:space-y-4" />
+            <InsightContent content={blog.content} className="!leading-[150%] text-gray-700 body-parser space-y-3 md:space-y-4" />
             <div className="flex flex-col md:flex-row justify-center items-center gap-x-16 rounded-3xl bg-red-50/90 shadow-sm p-8">
               <Image
                 src={ImageInsightContent}

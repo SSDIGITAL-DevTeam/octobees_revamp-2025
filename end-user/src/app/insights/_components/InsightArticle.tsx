@@ -22,7 +22,7 @@ export default function InsightArticle({ blogs }: { blogs: Blog[] }) {
                             />
                         </div>
                         <div className="md:w-2/3 flex flex-col gap-2 justify-center">
-                            <Link href={`/insights/${blog.slug}`} className={` text-lg md:text-xl lg:text-2xl font-bold text-primary hover:underline hover:underline-offset-3 font-heading !leading-[130%] duration-500 transition-all`}>{blog.title}</Link>
+                            <Link href={`/insights/${blog.slug}`} className={`text-lg md:text-xl lg:text-2xl font-bold text-primary hover:underline hover:underline-offset-3 font-heading !leading-[140%] duration-500 transition-all`}>{blog.title}</Link>
                             <p className="order-2 md:order-1 flex lg:items-center gap-1 md:gap-2 justify-start text-xs lg:text-base text-gray-500">
                                 <span>{blog.user.name ?? "Anonymous"}</span>
                                 {" • "}

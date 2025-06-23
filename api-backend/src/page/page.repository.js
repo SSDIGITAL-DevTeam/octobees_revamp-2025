@@ -30,7 +30,7 @@ export const findPageBySlug = async (slug) => {
     });
     return data;
   } catch (error) {
-    logger.error("GET PAGE /:SLUG error: ",error);
+    logger.error(`GET PAGE /:SLUG error: ${error.message}`);
     throw new Error("Get Meta By Slug Unsuccessfully");
   }
 };
@@ -43,7 +43,7 @@ export const findPageById = async (id) => {
 
     return data;
   } catch (error) {
-    logger.error("GET PAGE /:ID error: ",error);
+    logger.error(`GET PAGE /:ID error: ${error.message}`);
     throw new Error("Get Page By Id Unsuccessfully");
   }
 };
@@ -54,7 +54,7 @@ export const findPageByTitle = async (page) => {
     });
     return data;
   } catch (error) {
-    logger.error("GET PAGE /:TITLE error: ",error);
+    logger.error(`GET PAGE /:TITLE error: ${error.message}`);
     throw new Error("Get Page By Title Unsuccessfully");
   }
 };
@@ -63,7 +63,7 @@ export const insertPage = async (data) => {
   try {
     await db.insert(pages).values(data);
   } catch (error) {
-    logger.error("POST PAGE / error: ",error);
+    logger.error(`POST PAGE / error: ${error.message}`);
     throw new Error("Create Page Unsuccessfully");
   }
 };
@@ -72,7 +72,7 @@ export const deletePageByCategoryId = async (id) => {
   try {
     await db.delete(pages).where(eq(pages.categoryServiceId, id));
   } catch (error) {
-    logger.error("DELETE PAGE /:CAT-ID error: ", error.message);
+    logger.error(`DELETE PAGE /:CATEGORY-ID error: ${error.message}`);
     throw new Error("Delete Page By Category Unsuccessfully");
   }
 };
@@ -80,7 +80,7 @@ export const deletePageByBlogId = async (id) => {
   try {
     await db.delete(pages).where(eq(pages.blogId, id));
   } catch (error) {
-    logger.error("DELETE PAGE /:BLOG-ID error: ", error.message);
+    logger.error(`DELETE PAGE /:BLOG-ID error: ${error.message}`);
     throw new Error("Delete Page By Blog Unsuccessfully");
   }
 };
@@ -88,7 +88,7 @@ export const deletePageById = async (id) => {
   try {
     await db.delete(pages).where(eq(pages.id, id));
   } catch (error) {
-    logger.error("DELETE PAGE /:ID error: ", error.message);
+    logger.error(`DELETE PAGE /:ID error: ${error.message}`);
     throw new Error("Delete Page By Id Unsuccessfully");
   }
 };
@@ -97,7 +97,7 @@ export const editPage = async (id, data) => {
   try {
     await db.update(pages).set(data).where(eq(pages.id, id));
   } catch (error) {
-  logger.error("UPDATE PAGE /:ID error: ",error.message);
+  logger.error(`UPDATE PAGE /:ID error: ${error.message}`);
     throw new Error("Update Page By Id Unsuccessfully");
   }
 };
@@ -106,7 +106,7 @@ export const editPageByCategory = async (id, data) => {
   try {
     await db.update(pages).set(data).where(eq(pages.categoryServiceId, id));
   } catch (error) {
-    logger.error("UPDATE PAGE /:CAT-ID error: ",error.message);
+    logger.error(`UPDATE PAGE /:CATEGORY-ID error: ${error.message}`);
     throw new Error("Update Page By Category Unsuccessfully");
   }
 };
@@ -114,7 +114,7 @@ export const editPageByBlog = async (id, data) => {
   try {
     await db.update(pages).set(data).where(eq(pages.blogId, id));
   } catch (error) {
-    logger.error("UPDATE PAGE /:BLOG-ID error: ",error.message);
+    logger.error(`UPDATE PAGE /:BLOG-ID error: ${error.message}`);
     throw new Error("Update Page By Blog Unsuccessfully");
   }
 };

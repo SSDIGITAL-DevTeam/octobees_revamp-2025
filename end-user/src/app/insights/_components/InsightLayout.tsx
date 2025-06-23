@@ -10,7 +10,7 @@ type Props = {
   };
 };
 
-export default async function InsightLayout({ searchParams }: Props) : Promise<JSX.Element> {
+export default async function InsightLayout({ searchParams }: Props): Promise<JSX.Element> {
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
   let blogs: Blog[] = []
@@ -44,16 +44,19 @@ export default async function InsightLayout({ searchParams }: Props) : Promise<J
         ) : null
       }
 
-      <div className="flex flex-col lg:flex-row gap-x-16 gap-y-10">
-        <div className="w-full lg:w-2/3">
-          {blogs.length === 0 ? <InsightNotFound /> : <InsightArticle blogs={slicedBlogs} />}
-        </div>
-        <aside className="w-full lg:w-1/3 flex flex-col gap-4 lg:gap-10">
-          <InsightSearch />
-          <InsightCategory categories={categories} />
-        </aside>
-      </div>
-
+      {
+        blogs.length > 2 && (
+          <div className="flex flex-col lg:flex-row gap-x-16 gap-y-10">
+            <div className="w-full lg:w-2/3">
+              {blogs.length === 0 ? <InsightNotFound /> : <InsightArticle blogs={slicedBlogs} />}
+            </div>
+            <aside className="w-full lg:w-1/3 flex flex-col gap-4 lg:gap-10">
+              <InsightSearch />
+              <InsightCategory categories={categories} />
+            </aside>
+          </div>
+        )
+      }
       <InsightPagination
         page={page}
         totalPage={pagination.totalPages || 1}
