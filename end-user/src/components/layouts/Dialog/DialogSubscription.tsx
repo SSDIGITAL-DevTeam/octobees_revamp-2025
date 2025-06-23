@@ -24,7 +24,7 @@ export default function DialogSubscription({ open, setOpen }: Props): JSX.Elemen
                 <div className="w-full lg:w-[48%] h-fit py-6 lg:py-0 lg:h-full bg-[#F5F5F5] flex items-center justify-center">
                     <Image src={ImageSubscriptionDialog} alt="image-subscription-dialog" width={1920} height={1080} quality={100} className="w-[70%] md:w-[60%] lg:w-full" />
                 </div>
-                <DialogHeader className="px-5 lg:pl-8 space-y-3 lg:space-y-5 max-w-[90%] mx-auto lg:max-w-full pt-3 md:pt-0 pb-10">
+                <DialogHeader className="px-8 space-y-3 lg:space-y-5 max-w-[90%] mx-auto lg:max-w-full pt-3 md:pt-0 pb-10">
                     <DialogTitle className="space-y-8 md:space-y-14 flex flex-col">
                         <span className="font-heading text-center lg:text-left font-semibold text-primary text-2xl sm:text-3xl md:text-3xl lg:text-5xl !leading-[115%] capitalize">
                             Subscribe once. Benefit forever.

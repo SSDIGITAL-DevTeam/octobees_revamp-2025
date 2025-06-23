@@ -12,6 +12,7 @@ import { axiosInstance } from "@/lib/axios";
 import { failedToast, successToast } from "@/utils/toast";
 import { format } from "date-fns"
 import DialogSubscription from "../dialog/DialogSubscription";
+import { DeleteDialog } from "../dialog/DialogDelete";
 
 interface TableProps {
   subscriptions: Subscription[];
@@ -41,7 +42,7 @@ const TableSubscription: React.FC<TableProps> = ({ subscriptions, setSort, sort,
     }
   }
 
-  const selectedSubscription = (id : number) => {
+  const selectedSubscription = (id: number) => {
     return subscriptions.find(sub => sub.id === id) || {} as Subscription;
   }
 
@@ -52,9 +53,11 @@ const TableSubscription: React.FC<TableProps> = ({ subscriptions, setSort, sort,
         <DialogSubscription refetch={setRefetch} subscription={subscription}>
           <Eye color="red" size={15} />
         </DialogSubscription>
-        <button onClick={() => handleDelete(id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
+        <DeleteDialog deleteFunc={() => handleDelete(id)}>
+          <button className="text-red-500">
+            <Trash color="red" size={15} />
+          </button>
+        </DeleteDialog>
       </div>
     )
   }

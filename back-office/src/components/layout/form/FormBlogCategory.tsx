@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
 import { BlogCategory } from "@/constrant/payload";
+import Loading from "../wrapper/Loading";
 
 const dataSchema = z.object({
   name: z.string().nonempty(),
@@ -40,6 +41,8 @@ export default function FormBlogCategory({ categories }: { categories?: BlogCate
       status: "true"
     },
   });
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { handleSubmit, control, reset } = form;
   const router = useRouter()
 
@@ -53,6 +56,7 @@ export default function FormBlogCategory({ categories }: { categories?: BlogCate
   }, [categories]);
 
   const handleInput = handleSubmit(async (value) => {
+    setIsLoading(true);
     try {
       const url = categories ? `/blog-category/${categories.id}` : `/blog-category`;
       const method = categories ? axiosInstance.patch : axiosInstance.post;
@@ -66,11 +70,14 @@ export default function FormBlogCategory({ categories }: { categories?: BlogCate
         || error.message
         || "Error processing data"
       );
+    }finally{
+      setIsLoading(false);
     }
   });
 
   return (
     <Form {...form}>
+      <Loading isLoading={isLoading} />
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Category Name" name="name" />

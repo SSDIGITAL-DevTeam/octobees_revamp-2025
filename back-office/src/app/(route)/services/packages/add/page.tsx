@@ -1,19 +1,19 @@
 "use client"
-import FormComponents from "@/components/layout/form/FormPackage";
+import FormPackage from "@/components/layout/form/FormPackage";
 import Header from "@/components/layout/header/Header";
+import { CategoryService } from "@/constrant/payload";
 import { axiosInstance } from "@/lib/axios";
-import axios from "axios";
 import React, { useEffect } from "react";
 
-export default function AddPage() : JSX.Element {
+export default function AddPage(): JSX.Element {
 
-  const [data, setData] = React.useState<any>([]);
+  const [categories, setCategories] = React.useState<CategoryService[]>([]);
   useEffect(() => {
     const fetchCategory = async () => {
-      const res = await axiosInstance.get(
+      const response = await axiosInstance.get(
         "/service-category"
       );
-      setData(res.data.data);
+      setCategories(response.data.data);
     };
     fetchCategory();
   }, []);
@@ -27,9 +27,7 @@ export default function AddPage() : JSX.Element {
           <p>Input new package data</p>
         </div>
         <div className="w-full">
-        
-          <FormComponents data={data}/>
-      
+          <FormPackage categories={categories} />
         </div>
       </section>
     </main>

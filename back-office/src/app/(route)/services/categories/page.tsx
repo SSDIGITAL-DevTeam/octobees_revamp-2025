@@ -111,7 +111,6 @@ export default function DataPage() {
           </div>
         </div>
 
-        {/* <TableComponents headings={headings} data={filteredData || []} /> */}
         <TableCategory categories={packages?.data || []} setSort={setSort} setRefetch={setRefetch} refetch={refetch} sort={sort}/>
         <PaginationComponents
           handleNext={handleNext}

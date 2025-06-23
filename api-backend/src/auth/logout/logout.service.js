@@ -10,7 +10,6 @@ export const deleteRefreshToken = async (refreshToken) => {
         await editUser(id, { refreshToken: null })
         return true
     } catch (error) {
-        console.log(error)
         throw new Error(error.message)
     }
 }

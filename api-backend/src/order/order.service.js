@@ -1,12 +1,11 @@
 import {
-  findAllServiceCats,
-  findServiceCatById,
-  insertServiceCat,
-  deleteServiceCat,
-  editServiceCat,
+  findAllOrders,
+  findOrderById,
+  insertOrder,
 } from "./order.repository.js";
-
-// findServiceCatByName,
+import { order as orderLead } from "../../drizzle/schema.js";
+import dayjs from "dayjs";
+import { and, asc, desc, gte, like, or } from "drizzle-orm";
 
 {
   /**
@@ -26,22 +25,95 @@ import {
       **/
 }
 
-export const getAllServiceCat = async (filters) => {
-
+export const getAllOrders = async (filters) => {
   try {
-    const data = await findAllServiceCats();
+    let { page = 1, limit = 10, search, orderBy, createdAt, date } = filters;
 
-    return data;
+    limit = Math.max(parseInt(limit) || 10, 1);
+    const skip = (page - 1) * limit;
+
+    const whereConditions = [];
+
+    if (search) {
+      const keyword = `%${search.toLowerCase()}%`;
+      const searchFilters = [
+        like(orderLead.amount, keyword),
+        like(orderLead.bussiness, keyword),
+        like(orderLead.categoryId, keyword),
+        like(orderLead.date, keyword),
+        like(orderLead.email, keyword),
+        like(orderLead.idPlan, keyword),
+        like(orderLead.message, keyword),
+        like(orderLead.name, keyword),
+        like(orderLead.phoneNumber, keyword),
+        like(orderLead.time, keyword),
+      ];
+      whereConditions.push(or(...searchFilters));
+    }
+    if (date) {
+      const searchFilters = [
+        like(orderLead.date, `%${date.toLowerCase()}%`),
+      ];
+      whereConditions.push(or(...searchFilters));
+    }
+    if (createdAt) {
+      let dateFrom;
+      const now = dayjs();
+
+      switch (createdAt) {
+        case "today":
+          dateFrom = now.startOf("day").toDate();
+          break;
+        case "week":
+          dateFrom = now.startOf("week").toDate();
+          break;
+        case "month":
+          dateFrom = now.startOf("month").toDate();
+          break;
+        case "year":
+          dateFrom = now.startOf("year").toDate();
+          break;
+        default:
+          dateFrom = null;
+      }
+
+      if (dateFrom) {
+        whereConditions.push(gte(orderLead.createdAt, dateFrom));
+      }
+    }
+
+    const where = whereConditions.length ? and(...whereConditions) : undefined;
+
+    const order = (orderBy || []).map((item) => {
+      const field = Object.keys(item)[0];
+      const direction = item[field];
+      return direction === "desc"
+        ? desc(orderLead[field])
+        : asc(orderLead[field]);
+    });
+
+    const { datas, total } = await findAllOrders(skip, limit, where, order);
+
+    const totalPages = Math.ceil(total / limit);
+    return {
+      data: datas,
+      pagination: {
+        total,
+        totalPages,
+        currentPage: page,
+        perPage: limit,
+      },
+    };
   } catch (error) {
-    throw new Error("Gagal Mengambil Seluruh Data Order");
+    throw new Error(error.message);
   }
 };
 
-export const getServiceCatById = async (id) => {
+export const getOrderById = async (id) => {
   try {
-    let data = await findServiceCatById(id);
+    let data = await findOrderById(id);
     if (!data) {
-      throw new Error("Order tersebut tidak ditemukan");
+      throw new Error("Order is not found");
     }
     return data;
   } catch (error) {
@@ -49,33 +121,10 @@ export const getServiceCatById = async (id) => {
   }
 };
 
-export const createServiceCat = async (payload) => {
+export const createOrder = async (payload) => {
   try {
-    const newAmount = parseFloat(payload.amount.replace(/[^\d]/g, ""));
-    const data = await insertServiceCat({...payload, amount: newAmount});
+    const data = await insertOrder(payload);
     return data;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-export const deleteServiceCatById = async (id) => {
-  try {
-    await findServiceCatById(id);
-    await deleteServiceCat(id);
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-export const updateServiceCat = async (id, payload) => {
-  try {
-    const data = await findServiceCatById(id);
-    if (!data) {
-      throw new Error("Order dengan Id tersebut tidak ditemukan");
-    }
-    const newAmount = parseFloat(payload.amount.replace(/[^\d]/g, ""));
-    await editServiceCat(id, {...payload, amount:newAmount});
   } catch (error) {
     throw new Error(error.message);
   }

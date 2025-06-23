@@ -24,6 +24,7 @@ import { blog, user } from "../../drizzle/schema.js";
 import { findBlogCatById } from "../blog-category/blog-category.repository.js";
 import slug from "slug";
 import { generateUniqueSlug } from "../../utils/generate-slug.js";
+import { deletePageByBlogId, editPageByBlog, insertPage } from "../page/page.repository.js";
 // import { insertPage } from "../page/page.repository.js";
 
 export const getAllBlogs = async (filters) => {
@@ -38,7 +39,6 @@ export const getAllBlogs = async (filters) => {
       categoryId,
       createdAt,
     } = filters;
-    // console.log(filters)
 
     const skip = (page - 1) * limit;
 
@@ -100,7 +100,6 @@ export const getAllBlogs = async (filters) => {
     const { datas, total } = await findAllBlogs(skip, limit, where, order);
 
     const totalPages = Math.ceil(total / limit);
-    // console.log({ datas, total, totalPages })
     return {
       data: datas,
       pagination: {
@@ -115,9 +114,10 @@ export const getAllBlogs = async (filters) => {
   }
 };
 
-export const getBlogById = async (id) => {
+export const getBlogById = async (id, status) => {
   try {
-    const blog = (await findBlogById(id)) || (await findBlogBySlug(id));
+    const blog = (await findBlogById(id, status)) || (await findBlogBySlug(id, status));
+    if(!blog) throw new Error("Blog not found")
     return blog;
   } catch (error) {
     throw new Error(error.message);
@@ -130,7 +130,6 @@ export const createBlog = async (payload) => {
     if (existingBlog) {
       throw new Error("Title already exists");
     }
-
     const existingCategory = await findBlogCatById(payload.categoryId);
     if (!existingCategory) {
       throw new Error("Category not found");
@@ -139,13 +138,13 @@ export const createBlog = async (payload) => {
     const baseSlug = slug(payload.title);
     const uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
 
-    // await insertPage({
-    //       page: payload.title,
-    //       slug: uniqueSlug,
-    //       categoryServiceId: data.id,
-    //     });
-
-    await insertBlog({ ...payload, slug : uniqueSlug });
+    const response = await insertBlog({ ...payload, slug: uniqueSlug });
+    await insertPage({
+      page: payload.title,
+      slug: uniqueSlug,
+      blogId: response.id,
+      source : "blog",
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -162,6 +161,7 @@ export const deleteBlogById = async (id) => {
       fs.unlinkSync(imagePath);
     }
     await deleteBlog(id);
+    await deletePageByBlogId(id);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -204,12 +204,18 @@ export const updateBlog = async (id, payload) => {
     }
 
     let uniqueSlug = _blog.slug;
-    if(payload.title !== _blog.title){
+    if (payload.title !== _blog.title) {
       const baseSlug = slug(payload.title);
       uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
     }
 
-    await editBlog(id, { ...payload, favorite: newFavorite, slug: uniqueSlug });
+    await editBlog(id, { ...payload, favorite: newFavorite, slug: uniqueSlug, updatedAt: new Date() });
+    await editPageByBlog(id, {
+      page: payload.title,
+      slug: uniqueSlug,
+      source: "blog",
+      updatedAt: new Date(),
+    });
   } catch (error) {
     throw new Error(error.message);
   }

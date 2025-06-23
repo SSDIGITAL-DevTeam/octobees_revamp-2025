@@ -19,7 +19,6 @@ const AddPage = () => {
     fetchCategory();
   }, []);
 
-  // console.log(data);
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">

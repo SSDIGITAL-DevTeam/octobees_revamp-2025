@@ -77,9 +77,8 @@ export default function FormContact({source} : {source: string}): JSX.Element {
         }
       });
       router.push(`/thanks/${pathname.slice(1)}`);
-      console.log(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
+      console.error(`Process is ${response.data.result}, to add row ${response.data.row} in sheet ${response.data.data}`);
     } catch (error: any) {
-      console.log(error)
       console.error(`Process is ${error.result}, with message :  ${error.error}`);
     } finally {
       setIsSubmitting(false);

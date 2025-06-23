@@ -1,13 +1,11 @@
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import { blog, blogCategory } from "../../drizzle/schema.js";
 import logger from "../../utils/logger.js";
 
 export const findAllBlogCats = async (skip, limit, where, orderBy) => {
   try {
-    let baseQuery = db
-    .select(blogCategory)
-    .from(blogCategory);
+    let baseQuery = db.select(blogCategory).from(blogCategory);
     if (where) baseQuery = baseQuery.where(where);
     if (orderBy) baseQuery = baseQuery.orderBy(...orderBy);
 
@@ -17,10 +15,9 @@ export const findAllBlogCats = async (skip, limit, where, orderBy) => {
     if (where) totalQuery.where(where);
     const [{ count: total }] = await totalQuery;
     return { datas, total };
-
   } catch (error) {
-    logger.error("GET / error: ", error);
-    throw new Error("Error fetching all blog categories");
+    logger.error(`GET BLOG-CATEGORY / error: ${error.message}`);
+    throw new Error("Get all blog categories unsuccessfully");
   }
 };
 
@@ -35,56 +32,52 @@ export const findBlogCatByName = async (name) => {
     const datas = await baseQuery;
     return datas[0];
   } catch (error) {
-    logger.error("GET /:NAME error: ", error);
-    throw new Error("Error fetching all blog categories by title");
+    logger.error(`GET BLOG-CATEGORY /:NAME error: ${error.message}`);
+    throw new Error("Get blog category by name unsuccessfully");
   }
 };
 
-export const findBlogCatById = async (where) => {
+export const findBlogCatById = async (id, status) => {
+  let where = eq(blogCategory.id, id);
+  if (status !== undefined) {
+    where = and(where, eq(blogCategory.status, status));
+  }
   try {
-    let baseQuery = db
-      .select(
-        blogCategory
-      )
-      .from(blogCategory)
-      .where(where)
-      .limit(1);
-
-    const datas = await baseQuery;
-    return datas[0];
+    const data = await db.query.blogCategory.findFirst({
+      where,
+    });
+    return data;
   } catch (error) {
-    logger.error("GET /:ID error: ", error);
-    throw new Error("Error fetching all blog categories");
+    logger.error(`GET BLOG-CATEGORY /:ID error: ${error.message}`);
+    throw new Error("Get blog category by id unsuccessfully");
   }
 };
 
-export const findBlogCatBySlug = async (id, status) => {
+export const findBlogCatBySlug = async (slug, status) => {
   try {
     let baseQuery = db
       .select(blogCategory)
       .from(blogCategory)
-      .where(eq(blogCategory.slug, id))
+      .where(eq(blogCategory.slug, slug))
       .limit(1);
 
     if (status) baseQuery = baseQuery.where(eq(blogCategory.status, status));
 
     const datas = await baseQuery;
-    
+
     return datas[0];
   } catch (error) {
-    logger.error("GET /:SLUG error: ", error);
-    throw new Error("Error fetching all blog categories");
+    logger.error(`GET BLOG-CATEGORY /:SLUG error: ${error.message}`);
+    throw new Error("Get blog category by slug unsuccessfully");
   }
 };
 
 export const insertBlogCat = async (data) => {
   try {
-    // logger.error("insertBlogCat data: ", data);
-
     await db.insert(blogCategory).values(data);
   } catch (error) {
-    console.error("POST / error: ", error);
-    throw new Error("Error inserting blog category");
+    logger.error(`POST BLOG-CATEGORY / error: ${error.message}`);
+    throw new Error("Insert blog category unsuccessfully");
   }
 };
 
@@ -92,7 +85,7 @@ export const deleteBlogCat = async (id) => {
   try {
     await db.delete(blogCategory).where(eq(blogCategory.id, id));
   } catch (error) {
-    logger.error("DELETE / error: ", error);
+    logger.error(`DELETE BLOG-CATEGORY /:ID error: ${error.message}`);
     throw new Error("Delete blog category unsuccessfully");
   }
 };
@@ -101,7 +94,7 @@ export const editBlogCat = async (id, data) => {
   try {
     await db.update(blogCategory).set(data).where(eq(blogCategory.id, id));
   } catch (error) {
-    logger.error("UPDATE / error: ", error);
+    logger.error(`UPDATE BLOG-CATEGORY /:ID error: ${error.message}`);
     throw new Error("Change blog category unsuccessfully");
   }
 };

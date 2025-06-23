@@ -1,5 +1,6 @@
 import express from 'express'
 import { deleteRefreshToken } from './logout.service.js';
+import logger from '../../../utils/logger.js';
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router.delete("/", async (req, res) => {
         res.clearCookie("refreshToken");
         res.sendStatus(200)
     } catch (error) {
-        console.log(error);
+        logger.error(`DELETE LOGOUT / error: ${error.message}`);
         res.sendStatus(Number(error.message))
     }
 })

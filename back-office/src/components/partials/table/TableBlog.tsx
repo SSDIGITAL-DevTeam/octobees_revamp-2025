@@ -12,6 +12,7 @@ import { Blog } from "@/constrant/payload";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
 import { failedToast, successToast } from "@/utils/toast";
+import { DeleteDialog } from "../dialog/DialogDelete";
 
 interface TableProps {
   blogs: Blog[];
@@ -42,7 +43,7 @@ const TableBlog: React.FC<TableProps> = ({ blogs, setSort, sort, setRefetch, ref
   }
 
   const handleAction = (id: string) => {
-    return(
+    return (
       <div className="flex items-center gap-5">
         {/* <button
           onClick={() =>
@@ -60,9 +61,11 @@ const TableBlog: React.FC<TableProps> = ({ blogs, setSort, sort, setRefetch, ref
         <Link href={`/blog/blogs/edit?id=${id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
+        <DeleteDialog deleteFunc={() => handleDelete(id)}>
+          <button className="text-red-500">
+            <Trash color="red" size={15} />
+          </button>
+        </DeleteDialog>
       </div>
     )
   }
@@ -131,47 +134,47 @@ const TableBlog: React.FC<TableProps> = ({ blogs, setSort, sort, setRefetch, ref
   ];
 
   return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {headers.map((header, i) => (
-              <TableHead
-                key={i}
-                onClick={() => handleSort(header.value, !sort.direction)}
-                className="cursor-pointer select-none text-red-900 hover:text-red-700"
-              >
-                {header.key}
-                <span className="ml-1 inline-block">
-                  { sort?.key === header.value && sort?.direction === true ? (
-                    <ChevronUp size={10} />
-                  ) : (
-                    <ChevronDown size={10} />
-                  )}
-                </span>
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {blogs.map((blog, i) => (
-            <TableRow key={i}>
-              <TableCell key={`data-title-${i}`} className="p-2">
-                {blog.title}
-              </TableCell>
-              <TableCell key={`data-category-name-${i}`} className="p-2">
-                {blog.category.name}
-              </TableCell>
-              <TableCell key={`data-status-${i}`} className="p-2">
-                {formatStatus(blog.status)}
-              </TableCell>
-              <TableCell key={`data-action-${i}`} className="p-2">
-                {handleAction(blog.id)}
-              </TableCell>
-            </TableRow>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {headers.map((header, i) => (
+            <TableHead
+              key={i}
+              onClick={() => handleSort(header.value, !sort.direction)}
+              className="cursor-pointer select-none text-red-900 hover:text-red-700"
+            >
+              {header.key}
+              <span className="ml-1 inline-block">
+                {sort?.key === header.value && sort?.direction === true ? (
+                  <ChevronUp size={10} />
+                ) : (
+                  <ChevronDown size={10} />
+                )}
+              </span>
+            </TableHead>
           ))}
-        </TableBody>
-      </Table>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        {blogs.map((blog, i) => (
+          <TableRow key={i}>
+            <TableCell key={`data-title-${i}`} className="p-2">
+              {blog.title}
+            </TableCell>
+            <TableCell key={`data-category-name-${i}`} className="p-2">
+              {blog.category.name}
+            </TableCell>
+            <TableCell key={`data-status-${i}`} className="p-2">
+              {formatStatus(blog.status)}
+            </TableCell>
+            <TableCell key={`data-action-${i}`} className="p-2">
+              {handleAction(blog.id)}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 

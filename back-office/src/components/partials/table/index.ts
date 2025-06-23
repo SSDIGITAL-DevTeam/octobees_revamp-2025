@@ -1,4 +1,4 @@
-import TableComponents from "./TableComponents";
+import TablePackage from "./TablePackage";
 import TableCareer from "./TableCareer";
 import TableBlog from "./TableBlog";
 import TableBlogCategory from "./TableBlogCategory";
@@ -7,9 +7,10 @@ import TablePage from "./TablePage";
 import TableCategory from "./TableCategory";
 import TableMetaTag from "./TableMetaTag";
 import TableUser from "./TableUser";
+import TablePosition from "./TablePosition";
 
 export {
-    TableComponents,
+    TablePackage,
     TableCareer,
     TableBlog,
     TableBlogCategory,
@@ -17,5 +18,6 @@ export {
     TablePage,
     TableCategory,
     TableMetaTag,
-    TableUser
+    TableUser,
+    TablePosition
 }

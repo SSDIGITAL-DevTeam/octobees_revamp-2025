@@ -75,7 +75,7 @@ const create = async (req, res) => {
       throw new Error("All fields is required");
     }
     await createMeta(req.body);
-    res.status(200).json({ message: "Inserting Meta Successfully" });
+    res.status(201).json({ message: "Inserting Meta Successfully" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

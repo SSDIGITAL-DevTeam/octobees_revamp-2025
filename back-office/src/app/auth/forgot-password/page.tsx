@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,6 +11,7 @@ import Image from "next/image";
 import { axiosInstance } from "@/lib/axios";
 import loginImage from '@/asset/login/login-image.png'
 import { toast } from "sonner";
+import { failedToast, successToast } from "@/utils/toast";
 
 const dataSchema = z.object({
     email: z.string().email().nonempty(),
@@ -19,6 +20,7 @@ const dataSchema = z.object({
 type DataSchema = z.infer<typeof dataSchema>;
 
 const LoginPage = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const form = useForm<DataSchema>({
         resolver: zodResolver(dataSchema),
         defaultValues: {
@@ -27,20 +29,18 @@ const LoginPage = () => {
     });
     const { handleSubmit, control, reset } = form;
     const handleInput = handleSubmit(async (value) => {
+        setIsLoading(true);
         try {
             await axiosInstance.post(
                 `${process.env.NEXT_PUBLIC_AUTH_API_URL}/forgot-password`,
                 value
             );
-            toast.success(<p className="text-base font-semibold text-green-900">Password reset link has been sent to your email</p>, {
-                duration: 4000,
-            });
+            successToast("Please check your email to reset your password");
         } catch (error: any) {
-            toast.error(<p className="text-base font-semibold text-red-900">{error.response?.data?.error || error.response?.statusText || "Error processing data"}</p>, {
-                duration: 4000,
-            })
+            failedToast(error.response?.data?.error || error.response?.statusText || error.message || "Error processing data");
         }
         finally {
+            setIsLoading(false);
             reset();
         }
     })
@@ -60,8 +60,9 @@ const LoginPage = () => {
                         <div className="flex flex-col gap-4 md:gap-4 w-full">
                             <InputField control={control} label="Email Address" name="email" className="w-full" />
                             <Button
+                                disabled={isLoading}
                                 type="submit"
-                                className=" bg-red-700 hover:bg-red-800 text-white font-semibold h-14 w-full rounded-xl"
+                                className={`${isLoading && "pointer-events-none bg-red-900"} bg-red-700 hover:bg-red-800 text-white font-semibold h-14 w-full rounded-xl`}
                             >
                                 Reset Password
                             </Button>

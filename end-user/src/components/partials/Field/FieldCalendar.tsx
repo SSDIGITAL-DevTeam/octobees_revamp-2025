@@ -37,16 +37,8 @@ const FieldCalendar = ({
                 initialFocus
                 className="w-fit"
               />
-              <p className="w-full flex justify-center items-center mt-1">
-                {field.value ? (
-                  format(field.value, "PPP")
-                ) : (
-                  <span>Pick a date</span>
-                )}
-              </p>
             </div>
           </FormControl>
-          <FormMessage />
         </FormItem>
       )}
     />

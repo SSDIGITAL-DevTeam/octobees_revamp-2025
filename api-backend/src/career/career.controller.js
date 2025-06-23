@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {
   getAllCareers,
   getCareerById,
@@ -42,7 +43,7 @@ const getall = async (req, res) => {
 
     res.status(200).json(data);
   } catch (error) {
-    console.error("GET / error:", error);
+    logger.error(`GET / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -55,7 +56,7 @@ const getid = async (req, res) => {
     const data = await getCareerById(id, filters);
     res.status(200).json(data);
   } catch (error) {
-    console.error("GET /:id error:", error);
+    logger.error(`GET /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -83,9 +84,9 @@ const create = async (req, res) => {
     };
     await createCareer(payload);
 
-    res.status(200).json({ message: "Career created successfully" });
+    res.status(201).json({ message: "Career created successfully" });
   } catch (error) {
-    console.error("POST / error:", error);
+    logger.error(`POST / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -96,7 +97,7 @@ const remove = async (req, res) => {
     await removeCareer(id);
     res.status(200).json({ message: "Career deleted successfully" });
   } catch (error) {
-    console.error("DELETE /:id error:", error);
+    logger.error(`DELETE /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -124,7 +125,7 @@ const put = async (req, res) => {
     await updateCareer(id, payload);
     res.status(200).json({ message: "Career Updated Successfully" });
   } catch (error) {
-    console.error("PUT /:id error:", error);
+    logger.error("PUT /:id error:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -144,7 +145,7 @@ const patch = async (req, res) => {
     await updateCareer(id, payload);
     res.status(200).json({ message: "Career Updated Successfully" });
   } catch (error) {
-    console.error("PATCH /:id error:", error);
+    logger.error("PATCH /:id error:", error);
     res.status(400).json({ error: error.message });
   }
 };

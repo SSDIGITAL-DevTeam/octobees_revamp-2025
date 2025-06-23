@@ -30,8 +30,7 @@ const ImageField = ({
     defaultImage,
 }: InputFieldProps) => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-    
-    // ⬇️ Set hanya jika defaultImage ada
+
     useEffect(() => {
         if (defaultImage) {
             setPreviewUrl(defaultImage);
@@ -64,8 +63,8 @@ const ImageField = ({
                             }}
                         />
                     </FormControl>
-                    <FormMessage />
-
+                    {/* <FormMessage /> */}
+                    <FormMessage/>
                     {previewUrl ? (
                         <Image
                             src={previewUrl}

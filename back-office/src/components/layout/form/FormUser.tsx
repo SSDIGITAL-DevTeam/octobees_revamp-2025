@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +13,7 @@ import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
 import { User } from "@/constrant/payload";
+import Loading from "../wrapper/Loading";
 
 const dataSchema = z.object({
   name: z.string().nonempty(),
@@ -27,7 +28,7 @@ const dataSchema = z.object({
 
 type DataSchema = z.infer<typeof dataSchema>;
 
-export const features = [
+const features = [
   {
     id: "user",
     label: "Manage User",
@@ -54,22 +55,8 @@ export const features = [
   },
 ] as const;
 
-export const statusList = [
-  {
-    value: "Active",
-    title: "Active",
-  },
-  {
-    value: "NonActive",
-    title: "Non Active",
-  },
-  {
-    value: "Draft",
-    title: "Draft",
-  },
-];
-
 const FormUser = ({ user }: { user?: User }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<DataSchema>({
     resolver: zodResolver(dataSchema),
     defaultValues: {
@@ -82,7 +69,7 @@ const FormUser = ({ user }: { user?: User }) => {
     },
   });
 
-  const { handleSubmit, control, reset, setValue } = form;
+  const { handleSubmit, control, reset } = form;
 
   useEffect(() => {
     if (user) {
@@ -100,6 +87,7 @@ const FormUser = ({ user }: { user?: User }) => {
   const router = useRouter();
 
   const handleInput = handleSubmit(async (value) => {
+    setIsLoading(true)
     try {
       const url = user ? `/user/${user.id}` : `/user`;
       const method = user ? axiosInstance.patch : axiosInstance.post;
@@ -113,12 +101,23 @@ const FormUser = ({ user }: { user?: User }) => {
         || error.message
         || "Error processing data"
       );
+    }finally{
+      setIsLoading(false)
     }
   });
+  
+  const baseStatusList = [
+    { value: "Active", title: "Active" },
+  ];
+
+  const statusList = user
+    ? [...baseStatusList, { value: "NonActive", title: "Non Active" }]
+    : [...baseStatusList, { value: "Draft", title: "Draft" }]
 
 
   return (
     <Form {...form}>
+      <Loading isLoading={isLoading} />
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
           <InputField control={control} label="Person Name" name="name" />
@@ -153,7 +152,7 @@ const FormUser = ({ user }: { user?: User }) => {
           />
           <CheckBoxField
             control={control}
-            features={features}
+            features={[...features]}
             name="features"
             label="Features"
           />

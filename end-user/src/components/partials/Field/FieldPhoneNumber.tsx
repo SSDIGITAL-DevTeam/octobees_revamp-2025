@@ -20,7 +20,10 @@ export default function FieldPhoneNumber({ control, name, label, className, wrap
     if (size && size >= 768) {
         if (from == "contact") {
             height = "63px"
-        } else {
+        // } else if (from == "plan") {
+        //     height = "48px"
+        }
+        else {
             height = "56px"
         }
     }

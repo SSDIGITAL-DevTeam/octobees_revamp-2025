@@ -42,10 +42,9 @@ const RadioField = ({
       render={({ field }) => (
         <FormItem className={`w-full ${className}`}>
           <FormControl>
-            <div className="flex flex-wrap lg:flex-col w-full gap-2 justify-center items-center">
+            <div className="flex w-full gap-2">
               {list.map((time, i) => {
                 const isDisabled = disabledTimes.includes(time);
-
                 return (
                   <button
                     key={i}
@@ -68,8 +67,7 @@ const RadioField = ({
               })}
             </div>
           </FormControl>
-          <FormDescription className="w-full text-center pt-5">Pick a Hour</FormDescription>
-          <FormMessage className="text-center"/>
+          <FormDescription className="sr-only">Pick a Hour</FormDescription>
         </FormItem>
       )}
     />

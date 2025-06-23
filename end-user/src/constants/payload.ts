@@ -27,6 +27,8 @@ export type PlanService = {
   options: string;
   descriptions: string;
   categoryId: string;
+  prices: Price[],
+  benefits: Benefit[]
 }
 
 export type CategoryService = {
@@ -36,6 +38,7 @@ export type CategoryService = {
   description: string;
   status: 'Draft' | 'Active' | 'NonActive';
   slug: string;
+  plans : PlanService[]
 }
 
 export type Price = {
@@ -122,6 +125,7 @@ export type Order = {
   phoneNumber: string;
   idPlan: string;
   time: string;
+  currency: 'IDR' | 'SGR' | 'MYR';
 }
 
 export type Career = {

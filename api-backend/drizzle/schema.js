@@ -140,7 +140,9 @@ export const pages = mysqlTable("pages", {
     .$defaultFn(() => uuidv7()),
   page: varchar("page", { length: 191 }).notNull(),
   slug: varchar("slug", { length: 191 }).notNull().unique(),
-  categoryServiceId: varchar("categoryServiceId", { length: 191 }).unique(),
+  source: varchar("source", { length: 191 }).notNull().default("none"),
+  categoryServiceId: varchar("categoryServiceId", { length: 191 }).default(null),
+  blogId: varchar("blogId", { length: 191 }).default(null), //tambahan 
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -164,6 +166,7 @@ export const order = mysqlTable("order", {
     .primaryKey()
     .$defaultFn(() => uuidv7()),
   amount: double("amount").notNull(),
+  currency: mysqlEnum("currency", ["IDR", "SGD", "MYR"]).default("IDR").notNull(),
   bussiness: varchar("bussiness", { length: 191 }).notNull(),
   categoryId: varchar("categoryId", { length: 191 }).notNull(),
   date: varchar("date", { length: 191 }).notNull(),
@@ -195,7 +198,7 @@ export const career = mysqlTable("career", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   phoneNumber: varchar("phoneNumber", { length: 255 }).notNull(),
   positionId: int("positionId").references(() => position.id, {
-    onDelete: "restrict",
+    onDelete: "cascade",
   }),
   resume: text("resume").notNull(),
   portfolio: varchar("portfolio", { length: 255 }).notNull(),
@@ -215,7 +218,6 @@ export const subscription = mysqlTable("subscription", {
 });
 
 // Relations
-
 export const positionRelations = relations(position, ({ many }) => ({
   careers: many(career),
 }));
@@ -290,6 +292,11 @@ export const pagesRelations = relations(pages, ({ many, one }) => ({
     relationName: "CategoryServiceToPages",
     fields: [pages.categoryServiceId],
     references: [categoryService.id],
+  }),
+   blog: one(blog, {
+    relationName: "BlogToPages",
+    fields: [pages.blogId],
+    references: [blog.id],
   }),
 }));
 

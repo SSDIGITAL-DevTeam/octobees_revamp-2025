@@ -12,13 +12,13 @@ const HeaderComponents = ({ plans, title, desc }: ParamsType): JSX.Element => {
     <header className="flex flex-col overflow-x-hidden pt-[160px] pb-[60px] lg:pt-[160px] lg:pb-[90px] bg-[#F7E6E7] min-h-[75vh] lg:min-h-[80vh] items-center justify-center">
       <div className="flex flex-col items-center justify-center text-justify lg:text-center w-full gap-y-5 px-10">
         <div className="flex flex-col items-center justify-center text-center gap-y-5">
-          <h2 className="font-body font-semibold text-secondary text-xs md:text-base tracking-wider">
+          <p className="font-body font-semibold text-secondary text-xs md:text-base tracking-wider">
             {plans &&
               <span>
                 Octobees • Plans<span className="text-black">{" • "}{plans}</span>
               </span>
             }
-          </h2>
+          </p>
           <h1 className="font-heading font-medium text-dark text-4xl md:text-6xl w-full max-w-[45rem] !leading-[120%]">
             {title}
           </h1>

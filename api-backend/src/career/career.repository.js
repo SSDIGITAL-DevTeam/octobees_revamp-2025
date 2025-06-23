@@ -27,7 +27,7 @@ export const findAllCareers = async (skip, limit, where, orderBy) => {
 
     return { datas, total };
   } catch (error) {
-    logger.error("GET / error: ", error);
+    logger.error(`GET / error: ${error.message}`);
     throw new Error("Get All Career Unsuccessfully");
   }
 };
@@ -47,7 +47,7 @@ export const findCareerById = async (id) => {
     });
     return data;
   } catch (error) {
-    logger.error("GET /:id error: ", error);
+    logger.error(`GET /:id error: ${error.message}`);
     throw new Error("Get Career By ID Unsuccessfully");
   }
 };
@@ -56,7 +56,7 @@ export const insertCareer = async (data) => {
   try {
     await db.insert(career).values(data);
   } catch (error) {
-    logger.error("POST / error: ", error);
+    logger.error(`POST / error: ${error.message}`);
     throw new Error("Insert Career Unsuccessfully");
   }
 };
@@ -65,7 +65,7 @@ export const deleteCareer = async (id) => {
   try {
     await db.delete(career).where(eq(career.id, id));
   } catch (error) {
-    logger.error(error);
+    logger.error(`DELETE /:id error: ${error.message}`);
     throw new Error("Delete Career unsuccessfully");
   }
 };
@@ -74,7 +74,7 @@ export const editCareer = async (id, data) => {
   try {
     await db.update(career).set(data).where(eq(career.id, id));
   } catch (error) {
-    logger.error(error);
+    logger.error(`UPDATE /:id error: ${error.message}`);
     throw new Error("Update Career unsuccessfully");
   }
 };

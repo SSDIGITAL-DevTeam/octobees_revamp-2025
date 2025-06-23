@@ -23,7 +23,7 @@ type Radio = {
   value: string;
 }
 
-const RadioGroupField = ({ control, name, label, data, defaultChecked }: CheckBoxFieldProps) => {
+const RadioGroupField = ({ control, name,  data }: CheckBoxFieldProps) => {
   return (
     <FormField
       control={control}
@@ -38,7 +38,6 @@ const RadioGroupField = ({ control, name, label, data, defaultChecked }: CheckBo
             <RadioGroup
               onValueChange={field.onChange}
               value={field.value}
-              // defaultValue={defaultChecked}
               className="flex flex-col space-y-1"
             >
               {

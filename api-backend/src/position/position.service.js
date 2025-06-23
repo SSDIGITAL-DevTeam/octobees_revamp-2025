@@ -124,6 +124,13 @@ export const updatePosition = async (id, payload) => {
       throw new Error("Position is not found");
     }
 
+    if(data.name && data.name !== payload.name) {
+      const isNameExist = await findPositionByName(payload.name);
+      if (isNameExist) {
+        throw new Error("Position name already exist");
+      }
+    }
+
     const updatePayload = { ...payload };
 
     return await editPosition(id, updatePayload);

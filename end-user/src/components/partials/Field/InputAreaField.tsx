@@ -19,7 +19,7 @@ const InputAreaField = ({ control, name, label, className }: InputFieldProps) =>
         <FormItem>
           <FormControl>
             <Textarea {...field} placeholder={label}
-              className={` py-2 px-4 text-black text-base md:text-lg w-full ${className}`} />
+              className={` py-2 px-4 text-black text-base md:text-lg w-full placeholder:sm md:placeholder:text-base ${className}`} />
           </FormControl>
           <FormMessage />
         </FormItem>

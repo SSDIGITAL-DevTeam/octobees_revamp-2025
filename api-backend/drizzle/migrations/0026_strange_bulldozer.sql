@@ -1,0 +1,1 @@
+ALTER TABLE `pages` ADD `source` varchar(191) DEFAULT 'service' NOT NULL;

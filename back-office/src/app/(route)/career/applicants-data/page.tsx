@@ -23,6 +23,8 @@ export default function PageCareer() {
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [refetch, setRefetch] = useState<boolean>(false);
+  const [sort, setSort] = useState({ key: "createdAt", direction: true });
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -55,7 +57,7 @@ export default function PageCareer() {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/career", {
-          params: { limit: 10, page },
+          params: { limit: 10, page, search: searchQuery, orderBy: `${sort.key}:${sort.direction ? "desc" : "asc"}` },
         });
         setCareer(response.data);
       } catch (error: any) {
@@ -64,29 +66,7 @@ export default function PageCareer() {
     };
 
     fetchData();
-  }, [page]);
-
-  const headings = ["Name", "Email", "Position Applied", "Submitted At", "Resume/CV", "Action"];
-  const data = career?.data.map((item) => ({
-    "Name": item.name,
-    "Email": item.email,
-    "Position Applied": item.position.name,
-    "Submitted At": item.createdAt,
-    "Resume/CV": <button className="flex items-center gap-2 font-semibold text-red-800" onClick={() => window.open(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/resume/${item.resume}`, "_blank")}>
-      <Download size={15} /><span>Download Resume/CV</span>
-    </button>,
-    "Action": (
-      <Link href={`/applicants-data/${item.id}`} className="text-red-800 flex items-center gap-2 font-semibold">
-        <Eye size={15} /> <span>See Details</span>
-      </Link>
-    ),
-  }));
-
-  const filteredData = data?.filter((row: any) =>
-    headings.some((key) =>
-      String(row[key]).toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  }, [page, searchQuery, sort, refetch]);
 
   return (
     <main className="w-full flex flex-col gap-12">
@@ -130,7 +110,7 @@ export default function PageCareer() {
           </div>
         </div>
 
-        <TableCareer headings={headings} data={filteredData || []} />
+        <TableCareer careers={career?.data || []} refetch={refetch} setRefetch={setRefetch} setSort={setSort} sort={sort} />
 
         <PaginationComponents
           handleNext={handleNext}

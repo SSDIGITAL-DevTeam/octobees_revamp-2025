@@ -9,19 +9,20 @@ const router = express.Router()
 router.post('/', async (req, res) => {
     try {
         const { token, newPassword } = req.body
+
         const decoded = jwt.verify(token, process.env.RESET_TOKEN_SECRET)
 
         const user = await findUserById(decoded.id)
-        // console.log(user)
+
         if (!user) {
-            return res.status(404).json({ error: 'User not found' })
+            throw new Error('User not found')
         }
         const hashed = await encryptPassword(newPassword)
         await editUser(user.id, {password : hashed})
 
         res.status(201).json({ message: 'Password updated successfully' })
     } catch (error) {
-        logger.error(`POST /reset-password error: ${error.message}`)
+        logger.error(`POST RESET-PASSWORD / error: ${error.message}`)
         return res.status(400).json({ error: 'Invalid or expired token' })
     }
 })

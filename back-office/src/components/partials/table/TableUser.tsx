@@ -12,6 +12,7 @@ import { User } from "@/constrant/payload";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
 import { failedToast, successToast } from "@/utils/toast";
+import { DeleteDialog } from "../dialog/DialogDelete";
 
 interface TableProps {
   users: User[];
@@ -47,9 +48,11 @@ const TableUser: React.FC<TableProps> = ({ users, setSort, sort, setRefetch, ref
         <Link href={`/user/edit?id=${id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
+        <DeleteDialog deleteFunc={() => handleDelete(id)}>
+          <button className="text-red-500">
+            <Trash color="red" size={15} />
+          </button>
+        </DeleteDialog>
       </div>
     )
   }

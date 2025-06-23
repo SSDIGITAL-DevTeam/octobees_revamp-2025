@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { axiosInstance } from "@/lib/axios";
 import loginImage from '@/asset/login/login-image.png'
-import { toast } from "sonner";
+import { failedToast, successToast } from "@/utils/toast";
 
 const dataSchema = z.object({
     token: z.string().nonempty(),
@@ -58,16 +58,10 @@ const ResetPasswordPage = () => {
                     newPassword: value.newPassword
                 }
             );
-            toast.success(
-                <p className="text-base font-semibold text-green-700">Password reset successfully</p>, {
-                duration: 4000,
-            });
-                router.push("/auth/login");
+            successToast(response.data.message);
+            router.push("/auth/login");
         } catch (error: any) {
-            toast.error(
-                <p className="text-base font-semibold text-red-700">{error.response?.data?.error || error.response?.statusText || "Error processing data"}</p>, {
-                duration: 4000,
-            })
+            failedToast(error.response?.data?.error || error.response?.statusText || "Error processing data");
         }
         finally {
             setIsLoading(false);

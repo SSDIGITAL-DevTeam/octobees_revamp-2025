@@ -1,9 +1,7 @@
-import { Metadata } from "next";
-
 const metadataBase = new URL("https://octobees.com");
-const defaultImage = `${metadataBase}/assets/png/asset-logo-octobees.png`;
+const defaultImage = `${metadataBase}assets/png/asset-logo-octobees.png`;
+const defaultOgImage = `${metadataBase}assets/png/asset-logo-opengraph-octobees.png`;
 const defaultAuthor = "Octobees";
-const defaultColor = "#ffffff";
 
 export type MetadataType = keyof typeof pageMetadata;
 export type PageMetadataProps = (typeof pageMetadata)[MetadataType];
@@ -18,14 +16,8 @@ export const defaultMetadata = {
     nocache: false,
   },
   authors: [{ name: `${defaultAuthor}`, url: `${metadataBase}` }],
-  creator: `${defaultAuthor}`,
-  publisher: `${defaultAuthor}`,
-
-  // charset: "utf-8",
-
-  alternates: {
-    canonical: `${metadataBase}`,
-  },
+  creator: defaultAuthor,
+  publisher: defaultAuthor,
 
   icons: {
     icon: defaultImage,
@@ -40,7 +32,7 @@ export const defaultMetadata = {
     ],
   },
 
-  applicationName: `${defaultAuthor}`,
+  applicationName: defaultAuthor,
   generator: "Next.js",
 };
 
@@ -63,10 +55,10 @@ export const pageMetadata = {
       description:
         "OCTOBEES helps brands become top-of-mind and trusted by combining marketing technology with creative content and impactful campaigns.",
       url: `${metadataBase}`,
-      siteName: `${defaultAuthor}`,
+      siteName: defaultAuthor,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -76,14 +68,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "OCTOBEES | Branding-focused & Marketing Tech Company",
       description:
         "OCTOBEES helps brands become top-of-mind and trusted by combining marketing technology with creative content and impactful campaigns.",
-      site: `${metadataBase}`,
-      creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      site:(metadataBase).toString() ,
+      creator: defaultAuthor,
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -108,7 +104,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -118,14 +114,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/plans`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Plan Your Success with OCTOBEES | Martech Strategy & Packages",
       description:
         "Choose the right strategic plan for your business. OCTOBEES offers marketing and technology packages designed to help you scale.",
-      site: `${metadataBase}/plans`,
+      site:(`${metadataBase}/plans`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -151,7 +151,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -161,14 +161,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/insights`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Martech Insights | Blog by OCTOBEES",
       description:
         "Explore expert-written articles on marketing tech, trends, strategies, and automation from the team at OCTOBEES.",
-      site: `${metadataBase}/insights`,
+      site:(`${metadataBase}/insights`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -194,7 +198,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -204,14 +208,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/career`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Careers at OCTOBEES | Join Our Martech & Creative Team",
       description:
         "We're hiring passionate marketers, technologists, and creatives. Grow your career with OCTOBEES.",
-      site: `${metadataBase}/career`,
+      site:(`${metadataBase}/career`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -236,7 +244,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -246,14 +254,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/about`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "About OCTOBEES | Marketing Technology for Brand Growth",
       description:
         "Discover the story behind OCTOBEES - a marketing technology company dedicated to helping brands become top-of-mind and well-trusted.",
-      site: `${metadataBase}/about`,
+      site:(`${metadataBase}/about`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -279,7 +291,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -289,14 +301,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/contact-us`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Contact OCTOBEES | Let's Grow Together",
       description:
         "Connect with us to explore how OCTOBEES can help your brand grow through technology-driven marketing strategies.",
-      site: `${metadataBase}/contact-us`,
+      site:(`${metadataBase}/contact-us`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -323,7 +339,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -333,14 +349,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/thanks`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Thank You | OCTOBEES Has Received Your Message",
       description:
         "We appreciate your interest. Your message has been successfully received by the OCTOBEES team.",
-      site: `${metadataBase}/thanks`,
+      site:(`${metadataBase}/thanks`).toString() ,
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 
@@ -366,7 +386,7 @@ export const pageMetadata = {
       siteName: `${defaultAuthor}`,
       images: [
         {
-          url: `${defaultImage}`,
+          url: defaultOgImage,
           width: 1200,
           height: 630,
           alt: "OCTOBEES Logo",
@@ -376,14 +396,18 @@ export const pageMetadata = {
       locale: "id_ID",
     },
 
+    alternates: {
+      canonical: `${metadataBase}/increase-my-sales`,
+    },
+
     twitter: {
       card: "summary_large_image",
       title: "Increase Your Sales with OCTOBEES | Smart Martech Solutions",
       description:
         "Partner with OCTOBEES to boost your sales and brand presence using smart martech solutions.",
-      site: `${metadataBase}/increase-my-sales`,
+      site: (`${metadataBase}/increase-my-sales`).toString(),
       creator: `${defaultAuthor}`,
-      images: [`${defaultImage}`],
+      images: [{url:defaultOgImage, alt:"OCTOBEES Logo"}],
     },
   },
 };

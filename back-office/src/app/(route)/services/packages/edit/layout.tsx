@@ -11,12 +11,3 @@ return(
   </Suspense>
 )
 }
-// const EditPageWrapper = () => {
-//   return (
-//     <Suspense fallback={<div></div>}>
-//       <EditPage />
-//     </Suspense>
-//   );
-// };
-
-// export default EditPageWrapper;

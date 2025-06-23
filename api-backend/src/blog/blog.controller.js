@@ -14,7 +14,7 @@ const getall = async (req, res) => {
     const data = await getAllBlogs(filters);
     res.status(200).json(data);
   } catch (error) {
-    logger.error("GET / error:", error);
+    logger.error(`GET / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -22,10 +22,11 @@ const getall = async (req, res) => {
 const getid = async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await getBlogById(id);
+    const { status } = req.query;
+    const data = await getBlogById(id, status);
     res.status(200).json(data);
   } catch (error) {
-    logger.error("GET /:id error:", error);
+    logger.error(`GET /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -63,7 +64,7 @@ const create = async (req, res) => {
 
     res.status(201).json({ message: "Blog created successfully" });
   } catch (error) {
-    logger.error("POST / error:", error);
+    logger.error(`POST / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -74,7 +75,7 @@ const remove = async (req, res) => {
     await deleteBlogById(id);
     res.status(200).json({ message: "Delete Blog Successfully" });
   } catch (error) {
-    logger.error("DELETE /:id error:", error);
+    logger.error(`DELETE /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -82,24 +83,28 @@ const remove = async (req, res) => {
 const put = async (req, res) => {
   try {
     const id = req.params.id;
-    const { title, content, status, favorite, categoryId } = req.body;
+    const { title, content, status, favorite, categoryId, userId } = req.body;
 
-    // Validasi manual basic
+    if (!req.file || !req.file.filename) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+
     if (
-      !title ||
-      !content ||
-      !status ||
-      favorite === undefined ||
-      !categoryId
+      !title?.trim() ||
+      !content?.trim() ||
+      !status?.trim() ||
+      categoryId === undefined ||
+      userId === undefined ||
+      favorite === undefined
     ) {
-      throw new Error("All fields are required");
+      return res.status(400).json({ error: "All fields are required" });
     }
 
     const isFavorite = favorite === "true";
     await updateBlog(id, { ...payload, favorite: isFavorite });
     res.status(200).json({ message: "Blog edited successfully" });
   } catch (error) {
-    logger.error("PUT /:id error:", error);
+    logger.error(`PUT /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -123,7 +128,7 @@ const patch = async (req, res) => {
 
     res.status(200).json({ message: "Blog edited successfully" });
   } catch (error) {
-    logger.error("PATCH /:id error:", error);
+    logger.error(`PATCH /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };

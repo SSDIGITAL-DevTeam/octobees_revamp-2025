@@ -7,108 +7,130 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Download, Eye, Pencil, Trash } from "lucide-react";
+import { Career } from "@/constrant/payload";
+import Link from "next/link";
+import { axiosInstance } from "@/lib/axios";
+import { failedToast, successToast } from "@/utils/toast";
+import { DialogPosition } from "../dialog/DialogPosition";
+import formatDate from "@/utils/utilsFormatDate";
 
 interface TableProps {
-  headings: string[];
-  data: any;
+  careers: Career[];
+  setSort: (sort: { key: string; direction: boolean }) => void;
+  setRefetch: (refetch: boolean) => void;
+  refetch: boolean;
+  sort: { key: string; direction: boolean };
 }
 
-const TableCareer: React.FC<TableProps> = ({ headings, data }) => {
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
-
-  const sortedData = [...data].sort((a, b) => {
-    if (!sortConfig) return 0; // Jika tidak ada sorting, kembalikan data asli
-
-    const { key, direction } = sortConfig;
-    const valueA = a[key];
-    const valueB = b[key];
-
-    if (typeof valueA === "number" && typeof valueB === "number") {
-      return direction === "asc" ? valueA - valueB : valueB - valueA;
+const TableCategory: React.FC<TableProps> = ({ careers, setSort, sort, setRefetch, refetch }) => {
+  const handleDelete = async (id: string) => {
+    try {
+      await axiosInstance.delete(`/career/${id}`);
+      successToast("Applicant data has been deleted");
+      setRefetch(!refetch);
+    } catch (error: any) {
+      failedToast(
+        error.response?.data?.error || error.response?.statusText || "Error deleting apllicant data"
+      );
     }
-
-    return direction === "asc"
-      ? String(valueA).localeCompare(String(valueB))
-      : String(valueB).localeCompare(String(valueA));
-  });
-
-  const handleSort = (key: string) => {
-    setSortConfig((prev) =>
-      prev?.key === key
-        ? { key, direction: prev.direction === "asc" ? "desc" : "asc" }
-        : { key, direction: "asc" }
-    );
   };
 
-  const checkStatus = (status: string | boolean) => {
-    return (
-      <span
-        className={`py-1 px-3 rounded-lg text-xs flex items-center gap-2 w-fit
-        ${status === "Active" || status === "Published" || status == true
-            ? "bg-green-100 text-green-700"
-            : status === "NonActive" || status == "Takedown" || status == false
-              ? "bg-red-100 text-red-700"
-              : "bg-yellow-100 text-yellow-700"
-          }
-      `}
-      >
-        <span
-          className={`h-2 w-2 rounded-full ${status === "Active" || status === "Published" || status == true
-            ? "bg-green-700"
-            : status === "NonActive" || status == "Takedown" || status == false
-              ? "bg-red-700"
-              : "bg-yellow-700"
-            }`}
-        />
-        {typeof status === "string" ? status : status ? "Active" : "NonActive"}
-      </span>
+  const handleSort = (key: string, direction: boolean) => {
+    if (key !== "action") {
+      setSort({ key, direction });
+      setRefetch(!refetch);
+    }
+  }
 
+  const handleAction = (id: string) => {
+    return (
+      <div className="min-w-32">
+      <Link href={`/career/applicants-data/${id}`} className="text-red-800 flex items-center gap-2 font-semibold">
+        <Eye size={15} /> <span>See Details</span>
+      </Link>
+      </div>
     )
   }
 
+  const headers = [
+    {
+      key: "Name",
+      value: "name"
+    },
+    {
+      key: "Email",
+      value: "email"
+    },
+    {
+      key: "Position",
+      value: "positionId"
+    },
+    {
+      key: "Submitted At",
+      value: "createdAt"
+    },
+    {
+      key: "Resume/CV",
+      value: "resume"
+    },
+    {
+      key: "Action",
+      value: "action"
+    }
+  ];
+
   return (
-    <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {headings.map((heading) => (
-              <TableHead
-                key={heading}
-                onClick={() => handleSort(heading)}
-                className="cursor-pointer select-none hover:text-red-700"
-              >
-                {heading}{" "}
-                {sortConfig?.key === heading && (
-                  <span className="ml-1 inline-block">
-                    {sortConfig.direction === "asc" ? (
-                      <ChevronUp size={10} />
-                    ) : (
-                      <ChevronDown size={10} />
-                    )}
-                  </span>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {headers.map((header, i) => (
+            <TableHead
+              key={i}
+              onClick={() => handleSort(header.value, !sort.direction)}
+              className="cursor-pointer select-none text-red-900 hover:text-red-700"
+            >
+              {header.key}
+              <span className="ml-1 inline-block">
+                {sort?.key === header.value && sort?.direction === true ? (
+                  <ChevronUp size={10} />
+                ) : (
+                  <ChevronDown size={10} />
                 )}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedData.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {headings.map((key) => (
-                <TableCell key={`${rowIndex}-${key}`} className="p-2">
-                  {key == "Status" ? checkStatus(row[key]) : row[key]}
-                </TableCell>
-              ))}
-            </TableRow>
+              </span>
+            </TableHead>
           ))}
-        </TableBody>
-      </Table>
-    </>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        {careers.map((career, i) => (
+          <TableRow key={i}>
+            <TableCell key={`data-name-${i}`} className="p-2">
+              {career.name}
+            </TableCell>
+            <TableCell key={`data-email-${i}`} className="p-2">
+              {career.email}
+            </TableCell>
+            <TableCell key={`data-position-${i}`} className="p-2">
+              {career.position.name}
+            </TableCell>
+            <TableCell key={`data-submitted-at-${i}`} className="p-2">
+              {formatDate(career.createdAt)}
+            </TableCell>
+            <TableCell key={`data-submitted-at-${i}`} className="p-2">
+              <button className="flex items-center gap-2 font-semibold text-red-800" onClick={() => window.open(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/resume/${career.resume}`, "_blank")}>
+                <Download size={15} /><span>Download Resume/CV</span>
+              </button>
+            </TableCell>
+            <TableCell key={`data-action-${i}`} className="p-2 w-24">
+              {handleAction(career.id)}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 
-export default TableCareer;
+export default TableCategory;

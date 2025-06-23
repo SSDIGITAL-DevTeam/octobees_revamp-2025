@@ -7,11 +7,9 @@ import logger from "../../../utils/logger.js";
 export const loginUser = async (data) => {
   try {
     const { email, password: inputPassword } = data;
-    console.log(data);
 
     let validatedUser = await findUserByEmail(email, "Active");
 
-    console.log("===========" + email);
     if (!validatedUser) {
       throw new Error("Email not found");
     }
@@ -36,7 +34,6 @@ export const loginUser = async (data) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
-    logger.error(`POST /login error: ${error.message}`);
     throw new Error(error.message);
   }
 };

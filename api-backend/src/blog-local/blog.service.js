@@ -34,7 +34,6 @@ export const getAllBlogs = async (filters) => {
       categoryId,
       createdAt,
     } = filters;
-    // console.log(filters)
 
     const skip = (page - 1) * limit;
 
@@ -96,7 +95,6 @@ export const getAllBlogs = async (filters) => {
     const { datas, total } = await findAllBlogs(skip, limit, where, order);
 
     const totalPages = Math.ceil(total / limit);
-    // console.log({ datas, total, totalPages })
     return {
       data: datas,
       pagination: {
@@ -131,11 +129,9 @@ export const createBlog = async (payload) => {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-    // console.log(payload.status)
     await insertBlog({ ...payload, slug });
   } catch (error) {
-    console.error("POST / error:", error);
-    throw new Error(error.message || "Error inserting blog");
+    throw new Error(error.message);
   }
 };
 
@@ -151,21 +147,20 @@ export const deleteBlogById = async (id) => {
     }
     await deleteBlog(id);
   } catch (error) {
-    console.log(error);
     throw new Error(error.message);
   }
 };
 
 export const updateQueue = async (id, payload) => {
   try {
-    console.log(payload, id);
+
     const queue = await findBlogById(id);
     if (!queue) {
       throw new Error("Blog not found");
     }
 
     const { image, favorite } = payload;
-    console.log(queue);
+
     if (image) {
       const imagePath = path.join(__dirname, "../../upload", queue.image);
       if (fs.existsSync(imagePath)) {
@@ -178,12 +173,11 @@ export const updateQueue = async (id, payload) => {
     if (typeof favorite === "string") {
       newFavorite = favorite === "true";
     }
-    // console.log({newFavorite});
 
     const response = await findAllBlogs(0, 10, eq(blog.favorite, true), [
       desc(blog.createdAt),
     ]);
-    // console.log(queue)
+
     if (queue.blog.status !== "Published" && newFavorite === true) {
       throw new Error("Blog must be published first");
     }

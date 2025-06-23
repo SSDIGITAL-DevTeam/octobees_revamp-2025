@@ -1,3 +1,4 @@
+import logger from "../../utils/logger.js";
 import {
   getAllPositions,
   getPositionById,
@@ -42,7 +43,7 @@ const getall = async (req, res) => {
 
     res.status(200).json(data);
   } catch (error) {
-    console.error("GET / error:", error);
+    logger.error(`GET POSITION / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -55,7 +56,7 @@ const getid = async (req, res) => {
     const data = await getPositionById(id, filters);
     res.status(200).json(data);
   } catch (error) {
-    console.error("GET /:id error:", error);
+    logger.error(`GET POSITION /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -71,9 +72,9 @@ const create = async (req, res) => {
     };
     await createPosition(payload);
 
-    res.status(200).json({ message: "Position created successfully" });
+    res.status(201).json({ message: "Position created successfully" });
   } catch (error) {
-    console.error("POST / error:", error);
+    logger.error(`POST POSITION / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -84,7 +85,7 @@ const remove = async (req, res) => {
     await removePosition(id);
     res.status(200).json({ message: "Position deleted successfully" });
   } catch (error) {
-    console.error("DELETE /:id error:", error);
+    logger.error(`DELETE POSITION /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -105,7 +106,7 @@ const put = async (req, res) => {
     await updatePosition(id, payload);
     res.status(200).json({ message: "Position Updated Successfully" });
   } catch (error) {
-    console.error("PUT /:id error:", error);
+    logger.error(`PUT POSITION /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -125,7 +126,7 @@ const patch = async (req, res) => {
     await updatePosition(id, payload);
     res.status(200).json({ message: "Position Updated Successfully" });
   } catch (error) {
-    console.error("PATCH /:id error:", error);
+    logger.error(`PATCH POSITION /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };

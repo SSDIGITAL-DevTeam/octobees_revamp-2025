@@ -93,21 +93,8 @@ export const getAllBlogCat = async (filters) => {
 export const getBlogCatById = async (id, filters) => {
   try {
     const { status } = filters;
-    const whereConditions = [];
 
-    if (status !== undefined)
-      whereConditions.push(
-        eq(
-          blogCategory.status,
-          typeof status === "boolean" ? status : status === "true"
-        )
-      );
-
-    whereConditions.push(eq(blogCategory.id, id));
-
-    const where = whereConditions.length ? and(...whereConditions) : undefined;
-
-    let data = await findBlogCatById(where);
+    let data = await findBlogCatById(id, status);
     if (!data) {
       data = await findBlogCatBySlug(id, status);
     }
@@ -147,7 +134,7 @@ export const createBlogCat = async (payload) => {
 
 export const deleteBlogCatById = async (id) => {
   try {
-    const isBlogCatExist = await findBlogCatById(eq(blogCategory.id, id));
+    const isBlogCatExist = await findBlogCatById(id);
     if (!isBlogCatExist) {
       throw new Error("Blog Category is not found");
     }
@@ -159,10 +146,18 @@ export const deleteBlogCatById = async (id) => {
 
 export const updateBlogCat = async (id, payload) => {
   try {
-    const blogcat = await findBlogCatById(eq(blogCategory.id, id));
+    const blogcat = await findBlogCatById(id);
     if (!blogcat) {
       throw new Error("Blog Category is not found");
     }
+    
+    if (payload.name && payload.name !== blogcat.name) {
+      const isNameExist = await findBlogCatByName(payload.name);
+      if (isNameExist) {
+        throw new Error("Category with this name already exists");
+      }
+    }
+
     let uniqueSlug = blogcat.slug;
     if (payload.name !== blogcat.name) {
       const baseSlug = slug(payload.name);

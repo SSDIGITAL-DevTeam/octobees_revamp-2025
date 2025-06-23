@@ -8,12 +8,16 @@ import {
   editCategory,
 } from "./service-category.repository.js";
 
-import { categoryService, planService } from "../../drizzle/schema.js";
+import { categoryService } from "../../drizzle/schema.js";
 import { and, eq, or, like, desc, asc, gte } from "drizzle-orm";
 import dayjs from "dayjs";
 import slug from "slug";
 import { generateUniqueSlug } from "../../utils/generate-slug.js";
-import { deletePageByCategoryId, editPages, insertPage } from "../page/page.repository.js";
+import {
+  deletePageByCategoryId,
+  editPageByCategory,
+  insertPage,
+} from "../page/page.repository.js";
 
 export const getAllCategories = async (filters) => {
   try {
@@ -25,12 +29,8 @@ export const getAllCategories = async (filters) => {
     const whereConditions = [];
 
     if (status !== undefined)
-      whereConditions.push(
-        eq(
-          categoryService.status,
-          status
-        )
-      );
+      whereConditions.push(eq(categoryService.status, status));
+
     if (search) {
       const keyword = `%${search.toLowerCase()}%`;
       const searchFilters = [
@@ -98,17 +98,9 @@ export const getAllCategories = async (filters) => {
 export const getCategoryById = async (id, filters) => {
   try {
     const { status } = filters;
-    const whereConditions = [];
-
-    if (status) {
-      whereConditions.push(eq(planService.status, status));
-    }
-
-    const where =
-      whereConditions.length > 0 ? and(...whereConditions) : undefined;
     let data =
-      (await findCategoryById(id, where)) ||
-      (await findCategoryBySlug(id, where));
+      (await findCategoryById(id, status)) ||
+      (await findCategoryBySlug(id, status));
     if (!data) {
       throw new Error("Category with this ID not found");
     }
@@ -138,6 +130,7 @@ export const createCategory = async (payload) => {
       page: payload.name,
       slug: uniqueSlug,
       categoryServiceId: data.id,
+      source: "service",
     });
     return data;
   } catch (error) {
@@ -152,7 +145,7 @@ export const removeCategory = async (id) => {
       throw new Error("Category with this ID not found");
     }
     await deleteCategory(id);
-    await deletePageByCategoryId(id)
+    await deletePageByCategoryId(id);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -179,10 +172,16 @@ export const updateCategory = async (id, payload) => {
       );
     }
 
-    await editCategory(id, { ...payload, slug: uniqueSlug });
-    await editPages(id, {
+    await editCategory(id, {
+      ...payload,
+      slug: uniqueSlug,
+      updatedAt: new Date(),
+    });
+    await editPageByCategory(id, {
       page: payload.name,
       slug: uniqueSlug,
+      source: "service",
+      updatedAt: new Date(),
     });
   } catch (error) {
     throw new Error(error.message);

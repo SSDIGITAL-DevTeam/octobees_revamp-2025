@@ -19,7 +19,7 @@ export const findAllPositions = async (skip, limit, where, orderBy) => {
 
     return { datas, total };
   } catch (error) {
-    logger.error("GET / error: ", error);
+    logger.error(`GET / error: ${error.message}`);
     throw new Error("Get All Position Unsuccessfully");
   }
 };
@@ -31,7 +31,7 @@ export const findPositionById = async (id) => {
     });
     return data;
   } catch (error) {
-    logger.error("GET /:id error: ", error);
+    logger.error(`GET /:id error: ${error.message}`);
     throw new Error("Get Position By ID Unsuccessfully");
   }
 };
@@ -43,7 +43,7 @@ export const findPositionByName = async (name) => {
     });
     return data;
   } catch (error) {
-    logger.error("GET /:id error: ", error);
+    logger.error(`GET /:name error: ${error.message}`);
     throw new Error("Get Position By Name Unsuccessfully");
   }
 };
@@ -52,7 +52,7 @@ export const insertPosition = async (data) => {
   try {
     await db.insert(position).values(data);
   } catch (error) {
-    logger.error("POST / error: ", error);
+    logger.error(`POST / error: ${error.message}`);
     throw new Error("Insert Position Unsuccessfully");
   }
 };
@@ -61,7 +61,7 @@ export const deletePosition = async (id) => {
   try {
     await db.delete(position).where(eq(position.id, id));
   } catch (error) {
-    logger.error(error);
+    logger.error(`DELETE /:id error: ${error.message}`);
     throw new Error("Delete Position unsuccessfully");
   }
 };
@@ -70,7 +70,7 @@ export const editPosition = async (id, data) => {
   try {
     await db.update(position).set(data).where(eq(position.id, id));
   } catch (error) {
-    logger.error(error);
+    logger.error(`UPDATE /:id error: ${error.message}`);
     throw new Error("Update Position unsuccessfully");
   }
 };

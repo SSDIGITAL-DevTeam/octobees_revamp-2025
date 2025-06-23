@@ -23,8 +23,8 @@ const AddPage = () => {
                 if (!query) return;
                 const response = await axiosInstance.get("/meta/" + query);
                 setMetatag(response.data);
-            } catch (error) {
-                console.error(error);
+            } catch (error : any) {
+                console.error(error.message);
             }
         };
         fetchData();

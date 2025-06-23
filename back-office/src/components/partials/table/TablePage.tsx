@@ -49,6 +49,10 @@ const TablePage: React.FC<TableProps> = ({ pages, setSort, sort, setRefetch, ref
       value: "page"
     },
     {
+      key: "Source",
+      value: "source"
+    },
+    {
       key: "Action",
       value: "action"
     }
@@ -82,6 +86,9 @@ const TablePage: React.FC<TableProps> = ({ pages, setSort, sort, setRefetch, ref
           <TableRow key={i}>
             <TableCell key={`data-page-${i}`} className="p-2">
               {page.page}
+            </TableCell>
+            <TableCell key={`data-source-${i}`} className="p-2">
+              {page.blogId ? "Blog" : page.categoryServiceId ? "Category Service" : "Page"}
             </TableCell>
             <TableCell key={`data-action-${i}`} className="p-2">
               {handleAction(page.slug)}

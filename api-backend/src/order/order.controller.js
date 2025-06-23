@@ -1,18 +1,16 @@
-import express from "express";
-import {
-  getAllServiceCat,
-  getServiceCatById,
-  createServiceCat,
-  deleteServiceCatById,
-  updateServiceCat,
-} from "./order.service.js";
-import { z } from "zod";
-const router = express.Router();
-//Ambil semua data
-  router.get("/", async (req, res) => {
+import { getAllOrders, getOrderById, createOrder } from "./order.service.js";
+import logger from "../../utils/logger.js";
 
+const getall = async (req, res) => {
   try {
-    let { page = 1, limit = 10, status, orderBy, search } = req.query;
+    let {
+      page = 1,
+      limit = 10,
+      orderBy,
+      search,
+      date,
+      createdAt,
+    } = req.query;
 
     page = Math.max(parseInt(page) || 1, 1);
     limit = Math.max(parseInt(limit) || 10, 1);
@@ -25,25 +23,34 @@ const router = express.Router();
       });
     }
 
-    const filters = { page, limit, status, orderBy: orderByParams, search };
-    const data = await getAllServiceCat(filters);
+    const filters = {
+      page,
+      limit,
+      orderBy: orderByParams,
+      search,
+      date,
+      createdAt,
+    };
+    const data = await getAllOrders(filters);
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET ORDER / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
-});
+};
 
-//Cari data berdasarkan ID
-router.get("/:id", async (req, res) => {
+const getid = async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await getServiceCatById(id);
+    const data = await getOrderById(id);
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET ORDER /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
-});
-{/**
+};
+{
+  /**
   name: 'Ryan Kusuma',
   email: 'ryan@gmail.com',
   phoneNumber: '+624567567',
@@ -54,10 +61,10 @@ router.get("/:id", async (req, res) => {
   plan: '73028bab-de00-4ed4-b248-b913d1dcb494',
   category: '1a4e5b76-cea0-4fdb-b4d9-d6f0be63e08e',
   amount: 'Rp 620000'
-  
-  */}
+  */
+}
 
-router.post("/", async (req, res) => {
+const create = async (req, res) => {
   try {
     const {
       name,
@@ -68,36 +75,35 @@ router.post("/", async (req, res) => {
       date,
       time,
       amount,
+      currency,
       categoryId,
       idPlan,
     } = req.body;
     if (
-      !name || 
+      !name ||
       !amount ||
+      !currency ||
       !bussiness ||
       !categoryId ||
       !date ||
       !email ||
-      !message || 
-      !phoneNumber || 
-      !idPlan || 
+      !message ||
+      !phoneNumber ||
+      !idPlan ||
       !time
     ) {
-      throw new Error("Data tidak lengkap");
+      throw new Error("Data is not complete");
     }
-    await createServiceCat(req.body);
-    res.status(200).json({ message: "Berhasil Menambahkan Order" });
+    await createOrder(req.body);
+    res.status(201).json({ message: "Order created successfully" });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({
-        error: `${error.errors[0].message} - pada kolom ${error.errors[0].path[0]}`,
-      });
-    } else {
-      res.status(400).json({ error: error.message });
-    }
+    logger.error(`POST ORDER / error: ${error.message}`);
+    res.status(400).json({ error: error.message });
   }
-});
+};
 
-
-
-export default router;
+export default {
+  getall,
+  getid,
+  create,
+};

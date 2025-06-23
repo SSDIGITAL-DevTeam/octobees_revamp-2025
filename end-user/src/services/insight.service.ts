@@ -41,7 +41,11 @@ const getCategoryById = async (id: string) => {
 };
 
 const getInsightBySlug = async (slug: string) => {
-  const response = await axiosInstance.get(`/blog/${slug}`);
+  const response = await axiosInstance.get(`/blog/${slug}`,{
+    params: {
+      status: "Published",
+    },
+  });
   return response.data as Blog;
 };
 

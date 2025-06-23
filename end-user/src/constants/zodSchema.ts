@@ -4,7 +4,11 @@ import { isValidPhoneNumber } from "libphonenumber-js";
 export const contactSchema = z.object({
   name: z.string().nonempty(),
   email: z.string().email().nonempty(),
-  phoneNumber: z.string().nonempty().default("+62"),
+  phoneNumber: z
+    .string()
+    .refine((val) => isValidPhoneNumber(val), {
+      message: "Please enter a valid phone number",
+    }),
   bussiness: z.string().nonempty(),
   message: z.string().nonempty(),
   date: z.date(),

@@ -1,15 +1,22 @@
+import logger from "../../utils/logger.js";
 import {
-  getAllServicePlan,
-  getServiceCatById,
-  createServiceCat,
-  deleteServiceCatById,
-  updateServiceCat,
+  getAllPlans,
+  getPlanById,
+  createPlan,
+  removePlan,
+  updatePlan,
 } from "./service-plan.service.js";
-import { z } from "zod";
 
-export const getAllServicePlans = async (req, res) => {
+const getall = async (req, res) => {
   try {
-    let { page = 1, limit = 10, search, orderBy, status } = req.query;
+    let {
+      page = 1,
+      limit = 10,
+      status,
+      orderBy,
+      search,
+      createdAt,
+    } = req.query;
 
     page = Math.max(parseInt(page) || 1, 1);
     limit = Math.max(parseInt(limit) || 10, 1);
@@ -22,130 +29,139 @@ export const getAllServicePlans = async (req, res) => {
       });
     }
 
-    const filters = { page, limit, orderBy: orderByParams, search, status };
-    const data = await getAllServicePlan(filters);
+    const filters = {
+      page,
+      limit,
+      orderBy: orderByParams,
+      search,
+      status,
+      createdAt,
+    };
+    const data = await getAllPlans(filters);
 
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
 
-export const getServicePlanById = async (req, res) => {
+const getid = async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await getServiceCatById(id);
+    const { status } = req.query;
+    const filters = { status };
+    const data = await getPlanById(id, filters);
     res.status(200).json(data);
   } catch (error) {
+    logger.error(`GET /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
 
-export const createServicePlan = async (req, res) => {
+const create = async (req, res) => {
   try {
     const {
       name,
       type,
-      prices,
+      showPrice,
+      status,
       options,
       descriptions,
-      benefits,
       categoryId,
-      status,
+      prices,
+      benefits,
     } = req.body;
 
     if (
       !name ||
       !type ||
+      showPrice == undefined ||
       !options ||
       !descriptions ||
       !categoryId ||
-      !status
+      !status ||
+      prices.length == 0 ||
+      Array.isArray(benefits) == false
     ) {
-      throw new Error("Data tidak lengkap");
+      throw new Error("Data is incomplete");
     }
 
-    await createServiceCat(req.body);
-    res.status(200).json({ message: "Berhasil Menambahkan Service Plan" });
+    await createPlan(req.body);
+    res.status(201).json({ message: "Package created successfully" });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({
-        error: `${error.errors[0].message} - pada kolom ${error.errors[0].path[0]}`,
-      });
-    } else {
-      res.status(400).json({ error: error.message });
-    }
-  }
-};
-
-export const deleteServicePlan = async (req, res) => {
-  try {
-    const id = req.params.id;
-    await deleteServiceCatById(id);
-    res.status(200).json({ message: "Berhasil Menghapus Service Plan" });
-  } catch (error) {
+    logger.error(`POST / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
 
-export const updateServicePlan = async (req, res) => {
+const remove = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await removePlan(id);
+    res.status(200).json({ message: "Package deleted successfully" });
+  } catch (error) {
+    logger.error(`DELETE /:id error: ${error.message}`);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const put = async (req, res) => {
   try {
     const id = req.params.id;
     const {
       name,
       type,
       showPrice,
-      prices,
+      status,
       options,
       descriptions,
-      benefits,
       categoryId,
-      status,
+      prices,
+      benefits,
     } = req.body;
 
     if (
       !name ||
       !type ||
-      !showPrice ||
-      !prices ||
+      showPrice == undefined ||
       !options ||
       !descriptions ||
-      !benefits ||
       !categoryId ||
-      !status
+      !status ||
+      prices.length == 0 ||
+      Array.isArray(benefits) == false
     ) {
-      throw new Error("Data tidak lengkap");
+      throw new Error("Data is incomplete");
     }
 
-    await updateServiceCat(id, req.body);
-    res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
+    await updatePlan(id, req.body);
+    res.status(200).json({ message: "Package updated successfully" });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({
-        error: `${error.errors[0].message} - pada kolom ${error.errors[0].path[0]}`,
-      });
-    } else {
-      res.status(400).json({ error: error.message });
-    }
+    logger.error(`PUT /:id error: ${error.message}`);
+    res.status(400).json({ error: error.message });
   }
 };
 
-export const patchServicePlan = async (req, res) => {
+const patch = async (req, res) => {
   try {
     const id = req.params.id;
     if (!req.body || Object.keys(req.body).length === 0) {
-      throw new Error("Tidak Ada data yang akan diubah");
+      throw new Error("Nothing to update");
     }
 
-    await updateServiceCat(id, req.body);
-    res.status(200).json({ message: "Berhasil Mengubah Service Plan" });
+    await updatePlan(id, req.body);
+    res.status(200).json({ message: "Package updated successfully" });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({
-        error: `${error.errors[0].message} - pada kolom ${error.errors[0].path[0]}`,
-      });
-    } else {
-      res.status(400).json({ error: error.message });
-    }
+    res.status(400).json({ error: error.message });
   }
+};
+
+export default {
+  getall,
+  getid,
+  create,
+  remove,
+  put,
+  patch,
 };

@@ -1,9 +1,8 @@
 import { db } from "../../drizzle/db.js";
 import { metaTag, pages } from "../../drizzle/schema.js";
-import { eq, sql, desc, asc, count } from "drizzle-orm";
-import { v7 as uuidv7 } from "uuid";
+import { eq, count } from "drizzle-orm";
 import logger from "../../utils/logger.js";
-// Find All MetaTags with Pagination & Sorting
+
 export const findAllMetaTags = async (skip, limit, where, orderBy) => {
   try {
     let baseQuery = db
@@ -29,11 +28,11 @@ export const findAllMetaTags = async (skip, limit, where, orderBy) => {
 
     return { datas, total };
   } catch (error) {
-    throw new Error("Get All MetaTag Unsuccessfully");
+    logger.error(`GET META / error: ${error.message}`);
+    throw new Error("Get All Meta Tags Unsuccessfully");
   }
 };
 
-// Find Pages By Slug
 export const findPagesBySlug = async (slug) => {
   try {
     const data = await db.query.metaTag.findFirst({
@@ -41,11 +40,11 @@ export const findPagesBySlug = async (slug) => {
     })
     return data
   } catch (error) {
+    logger.error(`GET META /:SLUG error: ${error.message}`);
     throw new Error("Get Meta By Slug Unsuccessfully");
   }
 };
 
-// Find MetaTag By ID
 export const findMetaById = async (id) => {
   try {
     const data = await db
@@ -58,10 +57,10 @@ export const findMetaById = async (id) => {
       .where(eq(metaTag.id, id))
       .limit(1);
 
-    return data[0] || null;
+    return data[0];
   } catch (error) {
-    console.error("Error fetching metaTag by ID:", error);
-    throw new Error("Kesalahan mengambil data berdasarkan ID");
+    logger.error(`GET META /:ID error: ${error.message}`);
+    throw new Error("Get Meta By ID Unsuccessfully");
   }
 };
 
@@ -69,37 +68,35 @@ export const insertMeta = async (data) => {
   try {
     await db.insert(metaTag).values(data);
   } catch (error) {
-    logger.error("POST / error: ", error);
+    logger.error("POST META / error: ", error);
     throw new Error("Create MetaTag Unsuccessfully");
   }
 };
 
-// Insert New Page
+
 export const insertPage = async (data) => {
   try {
     await db.insert(pages).values(data);
   } catch (error) {
-    logger.error("POST / error: ", error);
+    logger.error("POST PAGE / error: ", error);
     throw new Error("Create Page Unsuccessfully");
   }
 };
 
-// Delete MetaTag by ID
 export const deleteMeta = async (id) => {
   try {
     await db.delete(metaTag).where(eq(metaTag.id, id));
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam penghapusan meta");
+    logger.error(`DELETE META /:ID error: ${error.message}`);
+    throw new Error("Delete MetaTag Unsuccessfully");
   }
 };
 
-// Edit MetaTag by ID
 export const editMeta = async (id, data) => {
   try {
     await db.update(metaTag).set(data).where(eq(metaTag.id, id));
   } catch (error) {
-    console.error(error);
-    throw new Error("Kesalahan dalam mengubah meta");
+    logger.error(`UPDATE META /:ID error: ${error.message}`);
+    throw new Error("Update MetaTag Unsuccessfully");
   }
 };

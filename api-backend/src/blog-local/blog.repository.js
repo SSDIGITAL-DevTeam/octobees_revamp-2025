@@ -5,11 +5,10 @@
 import { db } from '../../drizzle/db.js'
 import { blog, blogCategory, user } from '../../drizzle/schema.js'
 import { eq, count } from 'drizzle-orm'
+import logger from '../../utils/logger.js'
 
 export const findAllBlogs = async (skip, limit, where, orderBy) => {
-   
     try {
-      
         let baseQuery = db
             .select({
                 blog: blog,
@@ -31,7 +30,6 @@ export const findAllBlogs = async (skip, limit, where, orderBy) => {
           
         const datas = await baseQuery.limit(limit).offset(skip)
         
-        // console.log(datas)
         const totalQuery = db
             .select({ count: count() })
             .from(blog)
@@ -44,8 +42,8 @@ export const findAllBlogs = async (skip, limit, where, orderBy) => {
 
         return { datas, total }
     } catch (error) {
-        console.log('GET / error: ', error)
-        throw new Error('Error fetching all blogs')
+        logger.error(`GET BLOG / error: ${error.message}`)
+        throw new Error('Get All Blogs Unsuccessfully')
     }
 }
 
@@ -72,11 +70,11 @@ export const findBlogById = async (blogId) => {
 
         return selectedBlog[0] || null
     } catch (error) {
-        console.error('GET by ID / error: ', error)
-        throw new Error('Error fetching blog by ID')
+        logger.error(`GET BLOG /:ID error: ${error.message}`)
+        throw new Error('Get blog by ID unsuccessfully')
     }
 }
-export const findBlogBySlug = async (blogId) => {
+export const findBlogBySlug = async (slug) => {
     try {
         const selectedBlog = await db
             .select({
@@ -94,13 +92,13 @@ export const findBlogBySlug = async (blogId) => {
             .from(blog)
             .leftJoin(blogCategory, eq(blog.categoryId, blogCategory.id))
             .leftJoin(user, eq(blog.userId, user.id))
-            .where(eq(blog.slug, blogId))
+            .where(eq(blog.slug, slug))
             .limit(1)
 
         return selectedBlog[0] || null
     } catch (error) {
-        console.error('GET by ID / error: ', error)
-        throw new Error('Error fetching blog by ID')
+        logger.error(`GET BLOG /:SLUG error: ${error.message}`)
+        throw new Error('Get blog by slug unsuccessfully')
     }
 }
 
@@ -114,8 +112,8 @@ export const findBlogByTitle = async (title) => {
 
         return result[0] || null
     } catch (error) {
-        console.error('GET by Title / error: ', error)
-        throw new Error('Error fetching blog by title')
+        logger.error(`GET BLOG /:TITLE error: ${error.message}`)
+        throw new Error('Get blog by title unsuccessfully')
     }
 }
 
@@ -123,8 +121,8 @@ export const insertBlog = async (data) => {
     try {
         await db.insert(blog).values(data)
     } catch (error) {
-        console.error('POST / error: ', error)
-        throw new Error('Error inserting blog')
+        logger.error(`POST BLOG / error: ${error.message}`)
+        throw new Error('Insert blog unsuccessfully')
     }
 }
 
@@ -132,8 +130,8 @@ export const deleteBlog = async (id) => {
     try {
         await db.delete(blog).where(eq(blog.id, id))
     } catch (error) {
-        console.error('DELETE / error: ', error)
-        throw new Error('Error deleting blog')
+        logger.error(`DELETE BLOG /:ID error: ${error.message}`)
+        throw new Error('Delete blog unsuccessfully')
     }
 }
 
@@ -141,7 +139,7 @@ export const editQueue = async (id, data) => {
     try {
         await db.update(blog).set(data).where(eq(blog.id, id))
     } catch (error) {
-        console.log(error)
-        throw new Error('Blog edit unsuccessfully')
+        logger.error(`UPDATE BLOG /:ID error: ${error.message}`)
+        throw new Error('Update blog queue unsuccessfully')
     }
 }

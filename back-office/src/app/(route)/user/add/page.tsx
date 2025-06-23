@@ -1,4 +1,4 @@
-import FormComponents from "@/components/layout/form/FormComponents";
+import { FormUser } from "@/components/layout/form";
 import Header from "@/components/layout/header/Header";
 
 const AddPage = () => {
@@ -11,7 +11,7 @@ const AddPage = () => {
           <p>Input new user data</p>
         </div>
         <div className="w-full">
-          <FormComponents />
+          <FormUser />
         </div>
       </section>
     </main>

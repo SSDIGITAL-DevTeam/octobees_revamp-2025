@@ -14,7 +14,8 @@ export const transporter = nodemailer.createTransport({
 });
 
 export const sendResetEmail = async (to, link) => {
-  console.log({masuk : to, link});
+  logger.info(`Sending reset password email to ${to}`);
+  logger.info(`Reset password link: ${link}`);
   try {
     const mailOptions = {
       from: `"${process.env.USER_EMAIL}" <${process.env.USER_EMAIL}>`,
@@ -38,7 +39,7 @@ export const sendResetEmail = async (to, link) => {
     };
     await transporter.sendMail(mailOptions);
   } catch (error) {
-    logger.error(`Send Reset Password Email error: ${error.message}`);
+    throw new Error(error.message);
   }
 
 };

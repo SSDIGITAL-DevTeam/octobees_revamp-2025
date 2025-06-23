@@ -1,7 +1,7 @@
 "use client"
 
+import Loading from "@/components/layout/wrapper/Loading"
 import { Button } from "@/components/ui/button"
-// import FormComponents from "@/components/layout/form/FormCategory"
 import {
     Dialog,
     DialogContent,
@@ -13,14 +13,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Position } from "@/constrant/payload"
 import { axiosInstance } from "@/lib/axios"
 import { failedToast, successToast } from "@/utils/toast"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { useState } from "react"
 
 type Props = {
     children: React.ReactNode,
-    refetch: Dispatch<SetStateAction<boolean>>
+    setRefetch: (fetch: boolean) => void,
+    refetch: boolean
     data?: {
         id: number,
         name: string,
@@ -29,14 +29,16 @@ type Props = {
     type?: string
 }
 
-export function DialogPosition({ children, data, refetch }: Props) {
+export function DialogPosition({ children, data, refetch, setRefetch }: Props) {
     const [open, setOpen] = useState<boolean>(false)
     const [positionName, setPositionName] = useState<string>(data ? data.name : "")
     const [positionStatus, setPositionStatus] = useState<boolean>(data ? data.status === "Active" : false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const submitPosition = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if(positionName === "") return
+        if (positionName === "") return
+        setIsLoading(true)
         try {
             if (data) {
                 await axiosInstance.put(`/position/${data.id}`, {
@@ -52,11 +54,13 @@ export function DialogPosition({ children, data, refetch }: Props) {
                 setPositionStatus(false)
                 successToast("Position has been added")
             }
-        } catch (error) {
-            failedToast("Failed to add position")
+        } catch (error: any) {
+            failedToast(
+                error.response?.data?.error || error.response?.statusText || "Error adding position")
         } finally {
-            refetch(prev => !prev)
+            setRefetch(!refetch)
             setOpen(false)
+            setIsLoading(false)
         }
     }
     return (
@@ -65,6 +69,7 @@ export function DialogPosition({ children, data, refetch }: Props) {
                 {children}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[40vw] gap-8">
+                <Loading isLoading={isLoading} />
                 <DialogHeader>
                     <DialogTitle>{data ? "Edit Position" : "Add Position"}</DialogTitle>
                     <DialogDescription className="hidden">Category</DialogDescription>

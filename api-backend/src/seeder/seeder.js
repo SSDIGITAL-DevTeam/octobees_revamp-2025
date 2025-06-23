@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { createUser } from "../user/user.service.js";
 import { createPage } from "../page/page.service.js";
+import logger from "../../utils/logger.js";
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ async function seed() {
     await Promise.all(pages.map((page) => createPage({ page: page.trim() })));
 
   } catch (error) {
-    console.error("Error saat seeding:", error);
+    logger.error(`SEEDER error: ${error.message}`);
   } finally {
     process.exit(0);
   }

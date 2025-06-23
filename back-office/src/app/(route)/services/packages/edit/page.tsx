@@ -4,11 +4,13 @@ import Header from "@/components/layout/header/Header";
 import { Suspense, lazy, useEffect, useState } from "react";
 import axios from "axios";
 import { axiosInstance } from "@/lib/axios";
-const FormComponents = lazy(() => import("@/components/layout/form/FormPackage"));
+import { FormPackage } from "@/components/layout/form";
+import { CategoryService, PlanService } from "@/constrant/payload";
+import { toast } from "sonner";
 
 const EditPage = () => {
-  const [category, setCategory] = useState();
-  const [defaultValue, setDefaultValue] = useState(null);
+  const [categories, setCategories] = useState<CategoryService[]>([]);
+  const [pack, setPackage] = useState<PlanService>();
   const searchParams = useSearchParams();
   const query = searchParams.get("id")
 
@@ -20,11 +22,11 @@ const EditPage = () => {
           axiosInstance.get("/service-category"),
           axiosInstance.get(`/plan/${query}`)
         ]);
-        setCategory(resCategory.data.data);
-        setDefaultValue(resPlan.data);
+        setCategories(resCategory.data.data);
+        setPackage(resPlan.data);
 
       } catch (error) {
-        console.error(error);
+        toast.error("Error fetching data");
       }
     };
     fetchData();
@@ -39,13 +41,7 @@ const EditPage = () => {
           <p>Edit package data</p>
         </div>
         <div className="w-full">
-          {defaultValue !==null &&
-          //  <Suspense fallback={<div>Loading...</div>}>
-              <FormComponents data={category} defaultValue={defaultValue} />
-            // </Suspense>
-          }
-         
-          {/* {JSON.stringify(defaultValue)} */}
+            <FormPackage categories={categories} pack={pack} />
         </div>
       </section>
     </main>

@@ -35,7 +35,12 @@ export default function FormCareer() {
     useEffect(() => {
         const fetchPositions = async () => {
             try {
-                const response = await axiosInstance.get("/position");
+                const response = await axiosInstance.get("/position",{
+                    params: {
+                        limit: 20,
+                        status: "Active"
+                    }
+                });
                 setPositions(response.data.data);
             } catch (error) {
                 toast({

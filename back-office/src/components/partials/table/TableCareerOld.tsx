@@ -14,7 +14,7 @@ interface TableProps {
   data: any;
 }
 
-const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
+const TableCareer: React.FC<TableProps> = ({ headings, data }) => {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "asc" | "desc";
@@ -106,12 +106,9 @@ const TableComponents: React.FC<TableProps> = ({ headings, data }) => {
             </TableRow>
           ))}
         </TableBody>
-
-
       </Table>
-
     </>
   );
 };
 
-export default TableComponents;
+export default TableCareer;

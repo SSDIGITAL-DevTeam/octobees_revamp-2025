@@ -1,0 +1,1 @@
+ALTER TABLE `order` MODIFY COLUMN `currency` enum('IDR','SGD','MYR') NOT NULL DEFAULT 'IDR';

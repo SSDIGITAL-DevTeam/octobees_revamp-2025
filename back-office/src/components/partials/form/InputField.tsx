@@ -42,7 +42,7 @@ const InputField = ({
             {name}
           </FormLabel>
           <FormControl className="w-full">
-            <div className="w-full h-full relative">
+            <div className="w-full relative">
               <Input
                 {...field}
                 placeholder={label}
@@ -61,7 +61,7 @@ const InputField = ({
               )}
             </div>
           </FormControl>
-          <FormMessage />
+          <FormMessage/>
         </FormItem>
       )}
     />

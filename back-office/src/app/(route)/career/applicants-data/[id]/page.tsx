@@ -114,7 +114,7 @@ export default function PageApplicantDetail({ params }: any) {
         </div>
 
 
-        <div className="grid grid-cols-5 grid-rows-3 gap-x-4 gap-y-14 w-full">
+        <div className="grid grid-cols-5 grid-rows-3 gap-x-4 gap-y-10 w-full">
           {
             applicantDetailMap.map((item, index) => {
               const isLink = item.label === "Portfolio or Linkedin URL";
@@ -122,7 +122,7 @@ export default function PageApplicantDetail({ params }: any) {
               if (isLink) {
                 return (
                   <div key={index} className="space-y-2 col-span-2">
-                    <h2 className="text-xl font-semibold text-red-900">{item.label}</h2>
+                    <h2 className="text-base font-semibold text-red-900">{item.label}</h2>
                     <a href={item.value || "#"} target="_blank" className="underline text-blue-700">
                       {item.value}
                     </a>
@@ -132,14 +132,14 @@ export default function PageApplicantDetail({ params }: any) {
               else if (isNote) {
                 return (
                   <div key={index} className="space-y-2 col-span-5 row-start-3">
-                    <h2 className="text-xl font-semibold text-red-900">{item.label}</h2>
+                    <h2 className="text-base font-semibold text-red-900">{item.label}</h2>
                     <p>{item.value} </p>
                   </div>
                 )
               }
               return (
                 <div key={index} className="space-y-2">
-                  <h2 className="text-xl font-semibold text-red-900">{item.label}</h2>
+                  <h2 className="text-base font-semibold text-red-900">{item.label}</h2>
                   <p>{item.value} </p>
                 </div>
               )

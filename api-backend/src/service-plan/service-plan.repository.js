@@ -1,173 +1,144 @@
-import { eq ,sql} from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
-import { planService, categoryService, price, benefit } from "../../drizzle/schema.js";
-import { v7 as uuidv7 } from 'uuid';
-// Ambil semua service plans dengan pagination & filter
-export const findAllServicePlans = async (skip, limit, order, where) => {
+import {
+  planService,
+  categoryService,
+  price,
+  benefit,
+} from "../../drizzle/schema.js";
+import { v7 as uuidv7 } from "uuid";
+import logger from "../../utils/logger.js";
 
+export const findAllPlans = async (skip, limit, where, orderBy) => {
   try {
-    // Main query with joins
-
-    // const datasQuery = db
-    //   .select()
-    //   .from(planService)
-    //   .where(where ? where : undefined) // optional
-    //     // .orderBy(
-    //     //     ...Object.entries(orderBy).map(([key, value]) =>
-    //     //     value === 'asc' ? asc(planService[key]) : desc(planService[key])
-    //     //     )
-    //     // )
-
-    //   .leftJoin(categoryService, eq(planService.categoryId, categoryService.id))
-    //   .leftJoin(price, eq(planService.id, price.idPlan))
-    //   .leftJoin(benefit, eq(planService.id, benefit.idPlan))
-    //   .offset(skip)
-    //   .limit(limit);
-
-    const datasQuery = await db.query.planService.findMany({
-      where: where ? where : undefined,
+    const datas = await db.query.planService.findMany({
+      where,
       with: {
         category: true,
         prices: true,
-        benefits: true
+        benefits: true,
       },
       limit: limit,
-      offset: skip
-    })
-      
-    // Apply ordering if provided
-  
-    const datas = await datasQuery;
-    
-    const [{ count: total }] = await db
-    .select({ count: sql`COUNT(*)` })
-    .from(planService)
-    .where(where ? where : undefined) // optional
-
-   //.where(where ? where : undefined) // optional
-    // Get total count
-
-    return { datas, total: Number(total) };
- 
-
-
-  } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan mengambil seluruh data plan servis");
-  }
-};
-
-// Cari plan service berdasarkan nama
-export const findServiceCatByName = async (name) => {
-  try {
-    const data = await db.query.planService.findFirst({
-      where: (planService, { eq }) => eq(planService.name, name),
-      with: {
-        prices: true,
-        benefits: {
-          columns: {
-            value: true
-          }
-        }
-      }
+      offset: skip,
+      orderBy,
     });
-    return data || null;
+
+    const totalQuery = db.select({ count: count() }).from(planService);
+    if (where) totalQuery.where(where);
+    const [{ count: total }] = await totalQuery;
+
+    return { datas, total };
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan mengambil data berdasarkan nama");
+    logger.error(`GET / error: ${error.message}`);
+    throw new Error("Get All Plan Unsuccessfully");
   }
 };
 
-// Cari plan service berdasarkan ID
-export const findServiceCatById = async (id) => {
+export const findPlanByName = async (name) => {
   try {
     const data = await db.query.planService.findFirst({
-      where: (planService, { eq }) => eq(planService.id, id),
+      where: eq(planService.name, name),
       with: {
         category: {
           columns: {
-            name: true
-          }
+            name: true,
+          },
         },
         prices: true,
         benefits: {
           columns: {
-            value: true
-          }
-        }
-      }
+            value: true,
+          },
+        },
+      },
     });
-
-    return data || null;
+    return data;
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan mengambil data berdasarkan ID");
+    logger.error(`GET /:NAME error: ${error.message}`);
+    throw new Error("Get Plan By Name Unsuccessfully");
+  }
+};
+export const findPlanById = async (id) => {
+  try {
+    const data = await db.query.planService.findFirst({
+      where: eq(planService.id, id),
+      with: {
+        category: {
+          columns: {
+            name: true,
+          },
+        },
+        prices: true,
+        benefits: {
+          columns: {
+            value: true,
+          },
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    logger.error(`GET /:ID error: ${error.message}`);
+    throw new Error("Get Plan By Id Unsuccessfully");
   }
 };
 
-// Tambahkan plan service baru
-export const insertServiceCat = async (data) => {
-
+export const insertPlan = async (data) => {
   try {
     await db.transaction(async (tx) => {
-    
-      const { prices, benefits, ...planData } = data;
+      const { prices, benefits, ...rest } = data;
 
-      let idPlan = uuidv7()
- 
-      const newPlanService = await tx.insert(planService).values(
-        {
-          id:idPlan, // Set ID secara manual
-          ...planData
-        }
-      );
-   
+      let idPlan = uuidv7();
+
+      await tx.insert(planService).values({
+        id: idPlan,
+        ...rest,
+      });
+
       if (prices) {
-        await tx.insert(price).values(prices.map(price => ({
-          ...price,
-          id:uuidv7(),
-
-          idPlan: idPlan
-        })));
+        await tx.insert(price).values(
+          prices.map((price) => ({
+            ...price,
+            id: uuidv7(),
+            idPlan,
+          }))
+        );
       }
-     
+
       if (benefits) {
-        await tx.insert(benefit).values(benefits.map(benefit => ({
-          ...benefit, 
-          id:uuidv7(),
-          idPlan: idPlan
-        })));
+        await tx.insert(benefit).values(
+          benefits.map((benefit) => ({
+            ...benefit,
+            id: uuidv7(),
+            idPlan,
+          }))
+        );
       }
     });
 
     return data;
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan dalam penambahan service plan");
+    logger.error(`POST / error: ${error.message}`);
+    throw new Error("Create Plan Unsuccessfully");
   }
 };
 
-// Hapus plan service berdasarkan ID
-export const deleteServiceCat = async (id) => {
-
+export const deletePlan = async (id) => {
   try {
-    await db.delete(price).where(eq(price.idPlan, id));
-  
-    await db.delete(benefit).where(eq(benefit.idPlan, id));
-    await db.delete(planService).where(eq(planService.id, id));
+    await db.transaction(async (tx) => {
+      await tx.delete(price).where(eq(price.idPlan, id));
+      await tx.delete(benefit).where(eq(benefit.idPlan, id));
+      await tx.delete(planService).where(eq(planService.id, id));
+    });
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan dalam penghapusan service plan");
+    logger.error(`DELETE /:ID error: ${error.message}`);
+    throw new Error("Delete Plan Unsuccessfully");
   }
 };
 
-// Edit plan service
-export const editServiceCat = async (id, data) => {
-
+export const editPlan = async (id, data) => {
   try {
- 
     const { prices, benefits, ...planData } = data;
-
     await db.delete(price).where(eq(price.idPlan, id));
     await db.delete(benefit).where(eq(benefit.idPlan, id));
     await db.update(planService).set(planData).where(eq(planService.id, id));
@@ -176,23 +147,23 @@ export const editServiceCat = async (id, data) => {
         prices.map((p) => ({
           ...p,
           idPlan: id,
-          id:uuidv7()
+          id: uuidv7(),
         }))
       );
-    }   
+    }
 
     if (benefits && benefits.length) {
       await db.insert(benefit).values(
         benefits.map((b) => ({
           ...b,
           idPlan: id,
-          id:uuidv7()
+          id: uuidv7(),
         }))
       );
     }
-    return data
+    return data;
   } catch (error) {
-    console.log(error);
-    throw new Error("Kesalahan dalam mengubah service plan");
+    logger.error(`UPDATE /:ID error: ${error.message}`);
+    throw new Error("Update Plan Unsuccessfully");
   }
 };

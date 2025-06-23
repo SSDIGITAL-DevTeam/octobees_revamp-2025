@@ -28,12 +28,14 @@ export default function Navbar() {
     const fetchPlan = async () => {
       try {
         const response = await axiosInstance.get('/service-category',{
-          params : {status : "Active"}
+          params : {
+            status : "Active"
+          }
         });
         setLinkNav(response.data.data);
       }
-      catch (e) {
-        console.log(e)
+      catch (error : any) {
+        console.error(error.message)
       }
     }
     fetchPlan();

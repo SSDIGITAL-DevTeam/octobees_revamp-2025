@@ -12,6 +12,7 @@ import { CategoryService } from "@/constrant/payload";
 import Link from "next/link";
 import { axiosInstance } from "@/lib/axios";
 import { failedToast, successToast } from "@/utils/toast";
+import { DeleteDialog } from "../dialog/DialogDelete";
 
 interface TableProps {
   categories: CategoryService[];
@@ -47,9 +48,11 @@ const TableCategory: React.FC<TableProps> = ({ categories, setSort, sort, setRef
         <Link href={`/services/categories/edit?id=${id}`} className="text-blue-500">
           <Pencil color="red" size={15} />
         </Link>
-        <button onClick={() => handleDelete(id)} className="text-red-500">
-          <Trash color="red" size={15} />
-        </button>
+        <DeleteDialog deleteFunc={() => handleDelete(id)}>
+          <button className="text-red-500">
+            <Trash color="red" size={15} />
+          </button>
+        </DeleteDialog>
       </div>
     )
   }

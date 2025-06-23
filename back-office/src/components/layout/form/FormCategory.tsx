@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,11 +11,9 @@ import { useRouter } from "next/navigation";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
 import { axiosInstance } from "@/lib/axios";
-import { Textarea } from "@/components/ui/textarea";
-import { Controller } from "react-hook-form";
 import { CategoryService } from "@/constrant/payload";
-import { enumStatusCategory } from "@/constrant/enum";
 import InputAreaField from "@/components/partials/form/InputAreaField";
+import Loading from "../wrapper/Loading";
 
 const dataSchema = z.object({
   name: z.string().nonempty(),
@@ -32,11 +30,13 @@ const FormCategory = ({ category }: { category?: CategoryService }) => {
     defaultValues: {
       name: "",
       status: "",
-      heading:"",
-      description:""
+      heading: "",
+      description: ""
     },
   });
-  const { handleSubmit, control, reset, watch } = form;
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { handleSubmit, control, reset } = form;
 
   useEffect(() => {
     if (category) {
@@ -52,27 +52,41 @@ const FormCategory = ({ category }: { category?: CategoryService }) => {
   const router = useRouter()
 
   const handleInput = handleSubmit(async (value) => {
+    setIsLoading(true)
     try {
       const url = category ? `/service-category/${category.id}` : `/service-category`;
       const method = category ? axiosInstance.patch : axiosInstance.post;
       const response = await method(url, value);
       successToast(response.data.message);
-     router.push("/services/categories");
+      router.push("/services/categories");
     } catch (error: any) {
       failedToast(
         error.response?.data?.error
-          || error.response?.statusText
-          || error.message
-          || "Error processing data"
-        );
+        || error.response?.statusText
+        || error.message
+        || "Error processing data"
+      );
+    }finally{
+      setIsLoading(false)
     }
   });
 
+  const baseStatusList = [
+    { value: "Active", title: "Active" },
+  ];
+
+  const statusList = category
+    ? [...baseStatusList, { value: "NonActive", title: "Non Active" }]
+    : [...baseStatusList, { value: "Draft", title: "Draft" }]
+
+
+
   return (
     <Form {...form}>
+            <Loading isLoading={isLoading} />
       <form onSubmit={handleInput}>
         <div className="md:grid md:grid-cols-2 flex flex-col gap-4 md:gap-8 w-full">
-          
+
           <InputField control={control} label="Category Name" name="name" />
           <InputField control={control} label="Heading" name="heading" />
           <InputAreaField control={control} label="Description" name="description" />
@@ -80,7 +94,7 @@ const FormCategory = ({ category }: { category?: CategoryService }) => {
             control={control}
             label="Category Status"
             name="status"
-            data={enumStatusCategory}
+            data={statusList}
           />
         </div>
         <div className="w-full flex justify-between features-center mt-8 sm:mt-12">

@@ -1,4 +1,4 @@
-import FormComponents from "@/components/layout/form/FormBlogCategory";
+import { FormBlogCategory } from "@/components/layout/form";
 import Header from "@/components/layout/header/Header";
 
 const AddPage = () => {
@@ -11,7 +11,7 @@ const AddPage = () => {
           <p>Input new category data</p>
         </div>
         <div className="w-full">
-          <FormComponents />
+          <FormBlogCategory />
         </div>
       </section>
     </main>

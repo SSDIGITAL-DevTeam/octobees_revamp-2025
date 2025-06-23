@@ -7,6 +7,7 @@ import {
     updateQueue,
 } from './blog.service.js'
 import { parseBlogQuery } from '../../utils/parseBlogQuery.js'
+import logger from '../../utils/logger.js'
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
         const data = await getAllBlogs(filters)
         res.status(200).json(data)
     } catch (error) {
-        console.error('GET / error:', error)
+        logger.error(`GET BLOG / error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })
@@ -27,13 +28,12 @@ router.get('/:id', async (req, res) => {
         const data = await getBlogById(id)
         res.status(200).json(data)
     } catch (error) {
-        console.error('GET /:id error:', error)
+        logger.error(`GET BLOG /:ID error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })
 
 router.post('/', async (req, res) => {
- 
     try {
         const { title, content, status, favorite, categoryId, userId } =
             req.body
@@ -42,7 +42,6 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Image is required' })
         }
        
-        
         if (
             !title?.trim() ||
             !content?.trim() ||
@@ -53,7 +52,6 @@ router.post('/', async (req, res) => {
         ) {
             return res.status(400).json({ error: 'All fields are required' })
         }
-        // return res.status(201).json({ message: userId })
 
         const blogData = {
             title: title.trim(),
@@ -69,7 +67,7 @@ router.post('/', async (req, res) => {
 
         res.status(201).json({ message: 'Blog created successfully' })
     } catch (error) {
-        console.error('POST / error:', error)
+        logger.error(`POST BLOG / error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })
@@ -78,39 +76,44 @@ router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id
         await deleteBlogById(id)
-
         res.status(200).json({ message: 'Delete Blog Successfully' })
     } catch (error) {
+        logger.error(`DELETE BLOG /:ID error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })
 
-//Ubah data - semua kolom harus terisi
 router.put('/:id', async (req, res) => {
     try {
         const id = req.params.id
-        const { title, content, status, favorite, categoryId } = req.body
 
-        // Validasi manual basic
+        const { title, content, status, favorite, categoryId, userId } =
+            req.body
+           
+        if (!req.file || !req.file.filename) {
+            return res.status(400).json({ error: 'Image is required' })
+        }
+       
         if (
-            !title ||
-            !content ||
-            !status ||
-            favorite === undefined ||
-            !categoryId
+            !title?.trim() ||
+            !content?.trim() ||
+            !status?.trim() ||
+            categoryId === undefined ||
+            userId === undefined ||
+            favorite === undefined
         ) {
-            throw new Error('Semua field wajib diisi')
+            return res.status(400).json({ error: 'All fields are required' })
         }
 
         const isFavorite = favorite === 'true'
         await updateQueue(id, { ...payload, favorite: isFavorite })
-        res.status(200).json({ message: 'Berhasil Mengubah Blog' })
+        res.status(200).json({ message: 'Blog edited successfully' })
     } catch (error) {
+        logger.error(`PUT BLOG /:ID error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })
 
-//Ubah data - hanya kolom yang diisi
 router.patch('/:id', async (req, res) => {
     try {
         const id = req.params.id
@@ -119,7 +122,6 @@ router.patch('/:id', async (req, res) => {
             throw new Error('Nothing to update')
         }
 
-        // console.log(req.body)
         const payload = { ...req.body }
 
         if (req.file) {
@@ -131,6 +133,7 @@ router.patch('/:id', async (req, res) => {
 
         res.status(200).json({ message: 'Blog edited successfully' })
     } catch (error) {
+        logger.error(`PATCH BLOG /:ID error: ${error.message}`)
         res.status(400).json({ error: error.message })
     }
 })

@@ -18,6 +18,7 @@ import { z } from "zod"
 import InputField from "../form/InputField"
 import { Form } from "@/components/ui/form"
 import { useSearchParams } from "next/navigation"
+import Loading from "@/components/layout/wrapper/Loading"
 
 const dataSchema = z.object({
     password: z.string().nonempty(),
@@ -45,23 +46,26 @@ export function DialogChangePassword({ children, refetch }: Props) {
         resolver: zodResolver(dataSchema),
     })
     const [open, setOpen] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const { control, reset, handleSubmit } = form
     const searchParams = useSearchParams();
     const [query] = useState<string>(searchParams.get("id") || "");
 
     const submitChangePassword = handleSubmit(async (value) => {
+        setIsLoading(true)
         try {
             await axiosInstance.patch(`/user/${query}`, {
                 password: value.password,
                 newPassword: value.newPassword
             })
             successToast("Password has been changed")
-        } catch (error:any) {
-            failedToast(error.response?.data?.error || error.response?.statusText || "failed to change password")
-        } finally {
             reset()
             setOpen(false)
             refetch(prev => !prev)
+        } catch (error: any) {
+            failedToast(error.response?.data?.error || error.response?.statusText || "failed to change password")
+        } finally {
+            setIsLoading(false)
         }
     }
     )
@@ -71,6 +75,7 @@ export function DialogChangePassword({ children, refetch }: Props) {
                 {children}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[40vw] gap-8">
+                <Loading isLoading={isLoading} />
                 <DialogHeader>
                     <DialogTitle>Change Password</DialogTitle>
                     <DialogDescription className="hidden">Change Password</DialogDescription>

@@ -27,6 +27,9 @@ export type PlanService = {
   options: string;
   descriptions: string;
   categoryId: string;
+  category: CategoryService;
+  prices: Price[];
+  benefits: Benefit[];
 }
 
 export type CategoryService = {
@@ -99,6 +102,7 @@ export type Pages = {
   id: string;
   page: string;
   slug: string;
+  blogId?: string | null;
   categoryServiceId?: string | null;
 }
 

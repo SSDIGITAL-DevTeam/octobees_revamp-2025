@@ -25,7 +25,7 @@ const getall = async (req, res) => {
     const data = await getAllCategories(filters);
     res.status(200).json(data);
   } catch (error) {
-    logger.error("GET / error:", error.message);
+    logger.error(`GET CATEGORY / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -38,7 +38,7 @@ const getid = async (req, res) => {
     const data = await getCategoryById(id, filters);
     res.status(200).json(data);
   } catch (error) {
-    logger.error("GET /:id error:", error.message);
+    logger.error(`GET CATEGORY /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -52,7 +52,7 @@ const create = async (req, res) => {
     await createCategory(req.body);
     res.status(201).json({ message: "Category created successfully" });
   } catch (error) {
-    logger.error("POST / error:", error.message);
+    logger.error(`POST CATEGORY / error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -63,7 +63,7 @@ const remove = async (req, res) => {
     await removeCategory(id);
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {
-    logger.error("DELETE /:id error:", error.message);
+    logger.error(`DELETE CATEGORY /:id error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -78,7 +78,7 @@ const put = async (req, res) => {
     await updateCategory(id, req.body);
     res.status(200).json({ message: "Category updated successfully" });
   } catch (error) {
-    logger.error("PUT /:id error:", error.message);
+    logger.error(`PUT CATEGORY /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };
@@ -92,7 +92,7 @@ const patch = async (req, res) => {
     await updateCategory(id, req.body);
     res.status(200).json({ message: "Category updated successfully" });
   } catch (error) {
-    logger.error("PATCH /:id error:", error.message);
+    logger.error(`PATCH CATEGORY /:ID error: ${error.message}`);
     res.status(400).json({ error: error.message });
   }
 };

@@ -49,7 +49,7 @@ const generateMetatag = async ({
     const authors = getValue("authors") || metadata.authors;
     const creator = getValue("creator") || metadata.creator;
     const publisher = getValue("publisher") || metadata.publisher;
-    const canonical = getValue("canonical") || metadata.alternates.canonical;
+    const canonical = getValue("canonical") || metaTag.alternates.canonical;
 
     const ogTitle = getValue("og:title") || metaTag.openGraph.title;
     const ogDescription =
@@ -67,7 +67,7 @@ const generateMetatag = async ({
     const twitterSite = getValue("twitter:site") || metaTag.twitter.site;
     const twitterCreator =
       getValue("twitter:creator") || metaTag.twitter.creator;
-    const twitterImageRaw = getValue("twitter:images");
+    const twitterImage = getValue("twitter:images") || metaTag.twitter.images;
 
     const applicationName =
       getValue("application-name") || metadata.applicationName;
@@ -75,9 +75,6 @@ const generateMetatag = async ({
     const keywords = keywordsRaw
       ? keywordsRaw.split(",").map((item: string) => item.trim())
       : metaTag.keywords;
-    const twitterImage = twitterImageRaw
-      ? twitterImageRaw.split(",").map((item: string) => item.trim())
-      : metaTag.twitter.images;
 
     return {
       robots,
@@ -98,7 +95,7 @@ const generateMetatag = async ({
       applicationName,
       generator: metadata.generator,
 
-      metadataBase: metaTag.metadataBase,
+      metadataBase: new URL(metaTag.metadataBase),
       title,
       description,
       keywords,

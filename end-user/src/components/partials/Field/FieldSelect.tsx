@@ -25,17 +25,15 @@ type InputFieldProps = {
     control: Control<any>;
     className?: string;
     label: string
-    datas: data[]
+    datas: Data[]
 };
 
-type data = {
+type Data = {
     value: string,
     name: string
 }
 
 export default function FieldSelect({ control, label, name, className, datas }: InputFieldProps) {
-    // const [selectCountry, setSelectCountry] = React.useState<string>("ID");
-
     return (
         <FormField
             control={control}
@@ -45,7 +43,6 @@ export default function FieldSelect({ control, label, name, className, datas }: 
                     <Select
                         onValueChange={(value) => {
                             field.onChange(value);
-                            // setSelectCountry(value);
                         }}
                         value={field.value}
                     >
@@ -67,7 +64,10 @@ export default function FieldSelect({ control, label, name, className, datas }: 
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <FormMessage />
+                    {
+                        name !== "time" &&
+                        <FormMessage />
+                    }
                 </FormItem>
             )}
         />

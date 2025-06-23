@@ -1,62 +1,49 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/partials/form/InputField";
-// import InputAreaField from "@/components/partials/form/InputAreaField";
 import { useRouter } from "next/navigation";
-// import axios from "axios";
 import RadioGroupField from "@/components/partials/form/RadioGroupField";
 import { failedToast, successToast } from "@/utils/toast";
-// import TinyEditor from "@/components/partials/form/BlogField";
 import BlogField from "@/components/partials/form/BlogField";
 import SelectField from "@/components/partials/form/SelectField";
 import ImageField from "@/components/partials/form/ImageField";
 import { useAuthStore } from "@/app/store/login";
-// import { withAuth } from "@/hoc/withAuth";
 import { axiosInstance } from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
 import { Blog, BlogCategory } from "@/constrant/payload";
-
-const blogStatus = [
-    "Published",
-    "Takedown",
-    "Draft",
-] as const;
-
-const statusList = [
-    {
-        title: "Published",
-        value: "Published",
-    },
-    {
-        title: "Takedown",
-        value: "Takedown",
-    },
-    {
-        title: "Draft",
-        value: "Draft",
-    }
-]
+import Loading from "../wrapper/Loading";
 
 const dataSchema = z.object({
     title: z.string().nonempty("Title is required"),
-    image: z
-        .any()
-        .refine(
-            (file) => {
-                if (!file) return true; // Boleh kosong
-                if (typeof file === "string") return true; // Nama file lama
-                if (file instanceof File) return true; // File baru
-                return false;
-            },
-            { message: "Image must be a file" }
-        )
-        .optional(),
+    // image: z
+    //     .any()
+    //     .refine(
+    //         (file) => {
+    //             if (!file) return true;
+    //             if (typeof file === "string") return true;
+    //             if (file instanceof File) return true;
+    //             return false;
+    //         },
+    //         { message: "Image must be a file" }
+    //     )
+    //     .optional(),
+    image: z.preprocess(
+        (val) => {
+            if (typeof val === "string") return val; // image lama (sudah ada)
+            return val instanceof File ? val : undefined; // file baru
+        },
+        z.union([
+            z.string(),
+            z.instanceof(File, { message: "Image is required" }),
+        ])
+    ),
+
     content: z.string().nonempty("Content is required"),
     status: z.string(),
     favorite: z.boolean(),
@@ -84,6 +71,8 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             categoryId: "",
         },
     });
+
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { handleSubmit, control, reset } = form;
 
     const [imageFile, setImageFile] = React.useState<File | null>(null);
@@ -114,6 +103,7 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             }
         })
     const handleInput = handleSubmit(async (value) => {
+        setIsLoading(true);
         try {
             const token = sessionStorage.getItem("token");
             if (!token) {
@@ -152,11 +142,31 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 error.message ||
                 "Error processing data"
             );
+        }finally{
+            setIsLoading(false);
         }
     });
 
+    const baseStatusList = [
+        {
+            title: "Published",
+            value: "Published",
+        },
+    ];
+
+    const statusList = blog
+        ? [...baseStatusList, {
+            title: "Takedown",
+            value: "Takedown",
+        },]
+        : [...baseStatusList, {
+            title: "Draft",
+            value: "Draft",
+        }]
+
     return (
         <Form {...form}>
+            <Loading isLoading={isLoading} />
             <form onSubmit={handleInput}>
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
                     <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
