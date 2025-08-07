@@ -1,7 +1,7 @@
 [build]
+  base = "end-user"
+  publish = "end-user/.next"
   command = "npm run build"
-  publish = ".next"
 
-[functions]
-  directory = "netlify/functions"
-
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
