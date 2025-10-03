@@ -95,7 +95,14 @@ export type Blog = {
     id: string;
     name: string;
     slug: string;
-  }
+  },
+  metas?: {
+    key: string;
+    value: string;
+    content?: string | null;
+    metaableId?: string;
+    metaableType?: string;
+  }[]
 }
 
 export type Pages = {

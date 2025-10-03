@@ -303,3 +303,15 @@ export const orderRelations = relations(order, ({ one }) => ({
     references: [planService.id],
   }),
 }));
+
+
+export const metas = mysqlTable('metas', {
+  id: int('id').autoincrement().primaryKey(),
+  key: varchar('key', { length: 255 }).notNull(),
+  value: varchar('value', { length: 255 }).notNull(),
+  content: text('content'),
+  metaableId: varchar('metaable_id', { length: 36 }).notNull(), // UUID of target
+  metaableType: varchar('metaable_type', { length: 50 }).notNull(), // e.g., 'blog'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});  

@@ -1,1 +1,0 @@
-ALTER TABLE `order` ADD `currency` enum('IDR','SGR','MYR') DEFAULT 'IDR' NOT NULL;

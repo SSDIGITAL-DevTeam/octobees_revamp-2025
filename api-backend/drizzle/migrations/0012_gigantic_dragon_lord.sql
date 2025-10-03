@@ -1,1 +1,0 @@
-ALTER TABLE `subscription` DROP INDEX `subscription_email_unique`;

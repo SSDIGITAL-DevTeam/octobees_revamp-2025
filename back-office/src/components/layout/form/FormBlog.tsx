@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/ui/form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,6 +13,7 @@ import { failedToast, successToast } from "@/utils/toast";
 import BlogField from "@/components/partials/form/BlogField";
 import SelectField from "@/components/partials/form/SelectField";
 import ImageField from "@/components/partials/form/ImageField";
+import SEOFormSection from "@/components/partials/form/SEOFormSection";
 import { useAuthStore } from "@/app/store/login";
 import { axiosInstance } from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
@@ -77,6 +78,12 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
 
     const [imageFile, setImageFile] = React.useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = React.useState<string>("");
+    const previewObjectUrlRef = useRef<string | null>(null);
+    const [seo, setSeo] = React.useState<{ title: string; keyword: string; description: string }>({
+        title: "",
+        keyword: "",
+        description: "",
+    });
     const id = useAuthStore((state) => state.id);
 
 
@@ -91,8 +98,43 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 categoryId: blog.categoryId || "",
             });
             setPreviewUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`);
+            const findMetaContent = (value: string) =>
+                blog?.metas?.find((meta: any) => meta.value === value)?.content || "";
+            setSeo({
+                title: findMetaContent("title") || blog.title || "",
+                keyword:
+                    findMetaContent("keyword") ||
+                    findMetaContent("keywords") ||
+                    blog.category?.name ||
+                    "",
+                description: findMetaContent("description") || blog.content?.slice(0, 160) || "",
+            });
         }
+        return () => {
+            if (previewObjectUrlRef.current) {
+                URL.revokeObjectURL(previewObjectUrlRef.current);
+                previewObjectUrlRef.current = null;
+            }
+        };
     }, [blog]);
+
+    useEffect(() => {
+        return () => {
+            if (previewObjectUrlRef.current) {
+                URL.revokeObjectURL(previewObjectUrlRef.current);
+            }
+        };
+    }, []);
+
+    const handleImageSelect = (file: File) => {
+        setImageFile(file);
+        if (previewObjectUrlRef.current) {
+            URL.revokeObjectURL(previewObjectUrlRef.current);
+        }
+        const objectUrl = URL.createObjectURL(file);
+        previewObjectUrlRef.current = objectUrl;
+        setPreviewUrl(objectUrl);
+    };
 
     const router = useRouter()
     const blogCategory = categories
@@ -102,6 +144,39 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 title: c.name
             }
         })
+    const buildMetaPayload = (metaData: { title: string; keyword: string; description: string }) => {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+        const resolvedPreview = previewUrl && previewUrl.startsWith("http") ? previewUrl : "";
+        const ogImage = blog?.image
+            ? `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`
+            : resolvedPreview;
+
+        const entries = [
+            { key: "name", value: "title", content: metaData.title },
+            { key: "name", value: "description", content: metaData.description },
+            { key: "name", value: "keyword", content: metaData.keyword },
+            { key: "property", value: "og:title", content: metaData.title },
+            { key: "property", value: "og:description", content: metaData.description },
+            { key: "property", value: "og:type", content: "article" },
+            { key: "name", value: "twitter:title", content: metaData.title },
+            { key: "name", value: "twitter:description", content: metaData.description },
+            { key: "name", value: "twitter:card", content: "summary_large_image" },
+        ];
+
+        if (blog?.slug && baseUrl) {
+            const detailUrl = `${baseUrl}/blog/${blog.slug}`;
+            entries.push({ key: "property", value: "og:url", content: detailUrl });
+            entries.push({ key: "name", value: "twitter:url", content: detailUrl });
+        }
+
+        if (ogImage) {
+            entries.push({ key: "property", value: "og:image", content: ogImage });
+            entries.push({ key: "name", value: "twitter:image", content: ogImage });
+        }
+
+        return entries;
+    };
+
     const handleInput = handleSubmit(async (value) => {
         setIsLoading(true);
         try {
@@ -115,6 +190,34 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             if (decoded?.id) {
                 userId = decoded?.id;
             }
+            const trimmedTitle = seo.title.trim();
+            const trimmedKeyword = seo.keyword.trim();
+            const trimmedDescription = seo.description.trim();
+
+            if (!trimmedTitle || !trimmedKeyword || !trimmedDescription) {
+                failedToast("SEO title, keyword, and description are required");
+                setIsLoading(false);
+                return;
+            }
+
+            if (trimmedTitle.length > 60) {
+                failedToast("SEO title must be 60 characters or fewer");
+                setIsLoading(false);
+                return;
+            }
+
+            if (trimmedKeyword.length > 70) {
+                failedToast("SEO keyword must be 70 characters or fewer");
+                setIsLoading(false);
+                return;
+            }
+
+            if (trimmedDescription.length > 160) {
+                failedToast("SEO description must be 160 characters or fewer");
+                setIsLoading(false);
+                return;
+            }
+
             const formData = new FormData();
             formData.append("title", value.title);
             formData.append("content", value.content);
@@ -125,6 +228,12 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             if (imageFile) {
                 formData.append("image", imageFile);
             }
+            const metaPayload = buildMetaPayload({
+                title: trimmedTitle,
+                keyword: trimmedKeyword,
+                description: trimmedDescription,
+            });
+            formData.append("seo", JSON.stringify(metaPayload));
             const url = blog
                 ? `/blog/${blog.id}`
                 : `/blog`;
@@ -170,10 +279,17 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             <form onSubmit={handleInput}>
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
                     <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
-                    <ImageField defaultImage={previewUrl} setImageFile={setImageFile} control={control} label="Add Cover Image" name="image" />
+                    <ImageField defaultImage={previewUrl} setImageFile={handleImageSelect} control={control} label="Add Cover Image" name="image" />
                     <InputField control={control} label="Add Title" name="title" />
                     <RadioGroupField control={control} name="status" label="Status" data={statusList} />
                     <BlogField control={control} name="content" label="blog Content" />
+                    {/* SEO Section */}
+                    <SEOFormSection
+                        title={seo.title}
+                        keyword={seo.keyword}
+                        description={seo.description}
+                        onChange={(v) => setSeo((s) => ({ ...s, ...v }))}
+                    />
                 </div>
                 <div className="w-full flex justify-between features-center mt-8 sm:mt-12">
                     <Button

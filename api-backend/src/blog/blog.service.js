@@ -1,12 +1,9 @@
 //functionya re-usable
 
 import {
-  deleteBlog,
-  editBlog,
   findAllBlogs,
   findBlogByTitle,
   findBlogById,
-  insertBlog,
   findBlogBySlug,
 } from "./blog.repository.js";
 import dayjs from "dayjs";
@@ -21,10 +18,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { asc, desc, ilike, and, or, eq, like, sql, gte } from "drizzle-orm";
 import { blog, user } from "../../drizzle/schema.js";
+import { db } from "../../drizzle/db.js";
 import { findBlogCatById } from "../blog-category/blog-category.repository.js";
 import slug from "slug";
 import { generateUniqueSlug } from "../../utils/generate-slug.js";
-import { deletePageByBlogId, editPageByBlog, insertPage } from "../page/page.repository.js";
+import {
+  replaceBlogMetas,
+  deleteBlogMetas,
+  getBlogMetas,
+} from "../metas/metas.repository.js";
+import { v7 as uuidv7 } from "uuid";
 // import { insertPage } from "../page/page.repository.js";
 
 export const getAllBlogs = async (filters) => {
@@ -116,9 +119,42 @@ export const getAllBlogs = async (filters) => {
 
 export const getBlogById = async (id, status) => {
   try {
-    const blog = (await findBlogById(id, status)) || (await findBlogBySlug(id, status));
-    if(!blog) throw new Error("Blog not found")
-    return blog;
+    const data = (await findBlogById(id, status)) || (await findBlogBySlug(id, status));
+    if (!data) throw new Error("Blog not found");
+
+    const metas = await getBlogMetas(data.id);
+    const metaMap = new Map(
+      metas
+        .filter((item) => item.value)
+        .map((item) => [item.value, item])
+    );
+
+    const ensureMeta = (value, content, key = "name") => {
+      if (metaMap.has(value) || !content) return;
+      const entry = {
+        key,
+        value,
+        content,
+        metaableId: data.id,
+        metaableType: "blog",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      metas.push(entry);
+      metaMap.set(value, entry);
+    };
+
+    const truncatedDescription = data.content?.slice(0, 160)?.trim();
+    ensureMeta("description", truncatedDescription);
+
+    if (!metaMap.has("keyword") && !metaMap.has("keywords")) {
+      const keywordFallback = [data.category?.name]
+        .filter(Boolean)
+        .join(", ");
+      ensureMeta("keyword", keywordFallback);
+    }
+
+    return { ...data, metas };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -138,12 +174,15 @@ export const createBlog = async (payload) => {
     const baseSlug = slug(payload.title);
     const uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
 
-    const response = await insertBlog({ ...payload, slug: uniqueSlug });
-    await insertPage({
-      page: payload.title,
-      slug: uniqueSlug,
-      blogId: response.id,
-      source : "blog",
+    const { seo: metaEntries, ...blogPayload } = payload;
+
+    await db.transaction(async (tx) => {
+      const blogId = uuidv7();
+      await tx.insert(blog).values({ id: blogId, ...blogPayload, slug: uniqueSlug });
+
+      if (Array.isArray(metaEntries) && metaEntries.length > 0) {
+        await replaceBlogMetas(blogId, metaEntries, tx);
+      }
     });
   } catch (error) {
     throw new Error(error.message);
@@ -156,12 +195,16 @@ export const deleteBlogById = async (id) => {
     if (_blog == null) {
       throw new Error("Blog with that ID not found");
     }
-    const imagePath = path.join(__dirname, "../../upload", _blog.image);
-    if (fs.existsSync(imagePath)) {
+    const imagePath = _blog.image ? path.join(__dirname, "../../upload", _blog.image) : null;
+
+    await db.transaction(async (tx) => {
+      await tx.delete(blog).where(eq(blog.id, id));
+      await deleteBlogMetas(id, tx);
+    });
+
+    if (imagePath && fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     }
-    await deleteBlog(id);
-    await deletePageByBlogId(id);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -175,11 +218,9 @@ export const updateBlog = async (id, payload) => {
     }
 
     const { image, favorite } = payload;
+    let oldImagePath = null;
     if (image) {
-      const imagePath = path.join(__dirname, "../../upload", _blog.image);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
+      oldImagePath = path.join(__dirname, "../../upload", _blog.image);
     }
 
     let newFavorite = favorite;
@@ -209,13 +250,24 @@ export const updateBlog = async (id, payload) => {
       uniqueSlug = await generateUniqueSlug(baseSlug, blog, blog.slug);
     }
 
-    await editBlog(id, { ...payload, favorite: newFavorite, slug: uniqueSlug, updatedAt: new Date() });
-    await editPageByBlog(id, {
-      page: payload.title,
-      slug: uniqueSlug,
-      source: "blog",
-      updatedAt: new Date(),
+    const { seo: metaEntries, ...blogPayload } = payload;
+
+    const cleanedPayload = Object.fromEntries(
+      Object.entries({ ...blogPayload, favorite: newFavorite, slug: uniqueSlug, updatedAt: new Date() })
+        .filter(([, value]) => value !== undefined)
+    );
+
+    await db.transaction(async (tx) => {
+      await tx.update(blog).set(cleanedPayload).where(eq(blog.id, id));
+
+      if (Array.isArray(metaEntries)) {
+        await replaceBlogMetas(id, metaEntries, tx);
+      }
     });
+
+    if (oldImagePath && fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath);
+    }
   } catch (error) {
     throw new Error(error.message);
   }

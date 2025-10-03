@@ -2,6 +2,7 @@ import Image from "next/image";
 import {
   CircleUser
 } from "lucide-react";
+import type { Metadata } from "next";
 
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
 import ShareSocmedButton from "@/components/partials/Button/ButtonShareSocmed";
@@ -17,6 +18,102 @@ import { getInsightByCategory, getInsightBySlug } from "@/services/insight.servi
 type SlugInsightPageProps = {
   params: {
     slug: string
+  }
+}
+
+const stripHtml = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+const buildAbsoluteUrl = (path: string) => {
+  const baseSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  if (!path) return baseSiteUrl ? `${baseSiteUrl}/default-og.png` : "/default-og.png";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (baseSiteUrl) {
+    const normalized = path.startsWith("/") ? path : `/${path}`;
+    return `${baseSiteUrl}${normalized}`;
+  }
+  return path.startsWith("/") ? path : `/${path}`;
+};
+
+const buildUploadUrl = (imagePath?: string | null) => {
+  if (!imagePath) return null;
+  const uploadBase = process.env.NEXT_PUBLIC_BASE_URL;
+  if (!uploadBase) return null;
+  return `${uploadBase}/uploads/${imagePath}`;
+};
+
+const getMetaContent = (blog: Blog | null, value: string, fallbacks: string[] = []) => {
+  const metas = blog?.metas ?? [];
+  const primary = metas.find((meta) => meta.value === value)?.content?.trim();
+  if (primary) return primary;
+  for (const fallback of fallbacks) {
+    const alt = metas.find((meta) => meta.value === fallback)?.content?.trim();
+    if (alt) return alt;
+  }
+  return "";
+};
+
+export async function generateMetadata({ params }: SlugInsightPageProps): Promise<Metadata> {
+  try {
+    const blog = await getInsightBySlug(params.slug);
+    if (!blog) {
+      return {
+        title: "Insights Blog",
+        description: "Stay updated with the latest insights from our blog.",
+      };
+    }
+
+    const rawTitle = getMetaContent(blog, "title") || blog.title || "Insights Blog";
+    const rawDescription =
+      getMetaContent(blog, "description") ||
+      (blog.content ? stripHtml(blog.content).slice(0, 160) : "");
+    const description = rawDescription || "Stay updated with the latest insights from our blog.";
+    const keywordString =
+      getMetaContent(blog, "keyword", ["keywords"]) ||
+      blog.category?.name ||
+      "";
+    const keywords = keywordString
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    const ogImageMeta =
+      getMetaContent(blog, "og:image") ||
+      getMetaContent(blog, "twitter:image") ||
+      buildUploadUrl(blog.image) ||
+      "/default-og.png";
+
+    const ogImage = buildAbsoluteUrl(ogImageMeta);
+    const pageUrlBase = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+    const pageUrl = pageUrlBase ? `${pageUrlBase.replace(/\/$/, "")}/insights/${params.slug}` : undefined;
+
+    return {
+      title: rawTitle,
+      description,
+      keywords: keywords.length ? keywords : undefined,
+      openGraph: {
+        title: rawTitle,
+        description,
+        type: "article",
+        url: pageUrl,
+        images: [
+          {
+            url: ogImage,
+            alt: rawTitle,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: rawTitle,
+        description,
+        images: [ogImage],
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Insights Blog",
+      description: "Stay updated with the latest insights from our blog.",
+    };
   }
 }
 

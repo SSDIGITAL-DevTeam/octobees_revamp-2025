@@ -1,1 +1,0 @@
-ALTER TABLE `blog` MODIFY COLUMN `status` enum('Published','Takedown','Draft') NOT NULL;
