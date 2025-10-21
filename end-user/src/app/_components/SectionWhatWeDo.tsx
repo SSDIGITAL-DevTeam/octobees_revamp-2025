@@ -27,7 +27,7 @@ const WhatWeDoMap: SectionWhatWeDoType[] = [
 
 export default function SectionWhatWeDo() {
     return (
-        <div className="space-y-10 md:space-y-16 w-full">
+        <div className="mt-8 md:mt-12">
             <SectionTitle heading="Flexible services for every stage of your business" subheading="what we do" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 md:gap-x-2 xl:gap-x-7">
                 {

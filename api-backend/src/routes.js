@@ -18,28 +18,29 @@ import meta from "./meta/_meta.route.js"
 import forgot from "./auth/forgot-password/forgot-password.controller.js"
 import reset_password from "./auth/reset-password/reset-password.controller.js"
 import logger from "../utils/logger.js";
+import affiliate from "./affiliate/_affiliate.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: "Too many requests, please try again after 15 minutes",
-    handler: (req, res, next) => {
-      logger.error(`Rate limit exceeded for IP: ${req.ip} → ${req.originalUrl}`);
-        res.status(429).json({
-            error: "Too many requests, please try again after 15 minutes",
-        });
-    }
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests, please try again after 15 minutes",
+  handler: (req, res, next) => {
+    logger.error(`Rate limit exceeded for IP: ${req.ip} → ${req.originalUrl}`);
+    res.status(429).json({
+      error: "Too many requests, please try again after 15 minutes",
+    });
+  }
 });
 
 const router = express.Router();
 
 //Auth Routes
 router.use("/auth/refresh-token", refreshToken);
-router.use("/auth/login",limiter, login);
-router.use("/auth/logout",limiter, logout);
+router.use("/auth/login", limiter, login);
+router.use("/auth/logout", limiter, logout);
 router.use("/auth/forgot-password", limiter, forgot);
 router.use("/auth/reset-password", limiter, reset_password);
 
@@ -55,6 +56,7 @@ router.use("/v1/service-category", category.endUser);
 router.use("/v1/user", user.endUser);
 router.use("/v1/plan", plan.endUser);
 router.use("/v1/order", order.endUser);
+router.use("/v1/affiliate", affiliate.endUser);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {
@@ -70,6 +72,7 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/service-category", category.backOffice);
   backOfficeRouter.use("/plan", plan.backOffice);
   backOfficeRouter.use("/order", order.backOffice);
+  backOfficeRouter.use("/affiliate", affiliate.backOffice);
   backOfficeRouter(req, res, next);
 });
 

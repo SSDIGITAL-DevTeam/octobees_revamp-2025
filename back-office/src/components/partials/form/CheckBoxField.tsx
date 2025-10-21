@@ -114,24 +114,25 @@ const CheckBoxField = ({ control, features, name, label }: CheckboxProps) => {
       name={name}
       control={control}
       render={({ field }) => {
-        const allIds = features.map((item) => item.id);
-        const isAllSelected = field.value?.length === allIds.length;
+        const selectedValues = Array.isArray(field.value) ? field.value : []
+        const allIds = features.map((item) => item.id)
+        const isAllSelected = selectedValues.length > 0 && selectedValues.length === allIds.length
 
         const handleSelectAll = (checked: boolean) => {
           if (checked) {
-            field.onChange(allIds);
+            field.onChange(allIds)
           } else {
-            field.onChange([]);
+            field.onChange([])
           }
-        };
+        }
 
         const handleSingleCheck = (checked: boolean, id: string) => {
           if (checked) {
-            field.onChange([...field.value, id]);
+            field.onChange([...selectedValues, id])
           } else {
-            field.onChange(field.value?.filter((value: string) => value !== id));
+            field.onChange(selectedValues.filter((value: string) => value !== id))
           }
-        };
+        }
 
         return (
           <FormItem>
@@ -146,7 +147,7 @@ const CheckBoxField = ({ control, features, name, label }: CheckboxProps) => {
               <FormControl>
                 <Checkbox
                   checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
+                  onCheckedChange={(checked) => handleSelectAll(checked === true)}
                 />
               </FormControl>
               <FormLabel className="text-sm font-medium">Select All</FormLabel>
@@ -160,9 +161,9 @@ const CheckBoxField = ({ control, features, name, label }: CheckboxProps) => {
               >
                 <FormControl>
                   <Checkbox
-                    checked={field.value?.includes(item.id)}
-                    onCheckedChange={(checked: boolean) =>
-                      handleSingleCheck(checked, item.id)
+                    checked={selectedValues.includes(item.id)}
+                    onCheckedChange={(checked) =>
+                      handleSingleCheck(checked === true, item.id)
                     }
                   />
                 </FormControl>

@@ -3,6 +3,7 @@ import FloatButton from "@/components/partials/FloatButton/FloatButton";
 import {
   SectionWhatWeDo,
   SectionHero,
+  SectionAffiliateCTA,
   SectionLabel,
   SectionWhyChooseUs,
   SectionWhoWeHelp,
@@ -33,20 +34,20 @@ export default function Home() {
       </header>
 
       <section className="w-full bg-primary lg:absolute lg:-bottom-0 z-[50]">
-        <div className="md:py-6 py-4 ">
+        <div className="py-4 md:py-6">
           <SectionLabel />
         </div>
       </section>
 
-      <section className="bg-tertiary">
-        <div className="py-12 md:py-20 w-full md:max-w-7xl md:mx-auto px-5">
-          <SectionWhatWeDo />
+      <section className="bg-white overflow-hidden">
+        <div className="pt-12 md:pt-20 pb-0 w-full md:max-w-7xl md:mx-auto px-5">
+          <SectionAffiliateCTA />
         </div>
       </section>
 
-      <section className="bg-light">
-        <div className="py-12 md:py-20 w-full md:max-w-7xl md:mx-auto px-5">
-          <SectionWhoWeHelp />
+      <section className="bg-tertiary">
+        <div className="pt-8 md:pt-12 pb-12 md:pb-20 w-full md:max-w-7xl md:mx-auto px-5">
+          <SectionWhatWeDo />
         </div>
       </section>
 

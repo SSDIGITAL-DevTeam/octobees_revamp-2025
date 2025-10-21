@@ -12,22 +12,27 @@ import {
   int,
 } from "drizzle-orm/mysql-core";
 import { v4 as uuidv7 } from "uuid";
+
 // Enums
 export const userStatusEnum = mysqlEnum("status", [
   "Draft",
   "Active",
   "NonActive",
 ]);
+
 export const blogStatusEnum = mysqlEnum("status", [
   "Published",
   "Takedown",
   "Draft",
 ]);
+
 export const careerStatusEnum = mysqlEnum("status", [
   "Rejected",
   "Review",
   "Accepted",
 ]);
+
+export const affiliateStatusEnum = mysqlEnum("status", ["pending", "approved", "rejected"]);
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 })
@@ -155,8 +160,8 @@ export const metaTag = mysqlTable("metatag", {
   value: varchar("value", { length: 191 }).notNull(),
   content: varchar("content", { length: 191 }).notNull(),
   slug: varchar("slug", { length: 191 })
-  .notNull()
-  .references(() => pages.slug, { onDelete: "cascade", onUpdate: "cascade" }),
+    .notNull()
+    .references(() => pages.slug, { onDelete: "cascade", onUpdate: "cascade" }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
@@ -192,8 +197,8 @@ export const position = mysqlTable("position", {
 
 export const career = mysqlTable("career", {
   id: varchar("id", { length: 36 })
-  .primaryKey()
-  .$defaultFn(() => uuidv7()),
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   phoneNumber: varchar("phoneNumber", { length: 255 }).notNull(),
@@ -211,7 +216,7 @@ export const career = mysqlTable("career", {
 export const subscription = mysqlTable("subscription", {
   id: int("id").primaryKey().autoincrement(),
   email: varchar("email", { length: 255 }).notNull(),
-  source : varchar("source", { length: 255 }).notNull(),
+  source: varchar("source", { length: 255 }).notNull(),
   insight: varchar("insight", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -276,7 +281,7 @@ export const pagesRelations = relations(pages, ({ many, one }) => ({
     fields: [pages.categoryServiceId],
     references: [categoryService.id],
   }),
-   blog: one(blog, {
+  blog: one(blog, {
     relationName: "BlogToPages",
     fields: [pages.blogId],
     references: [blog.id],
@@ -314,4 +319,27 @@ export const metas = mysqlTable('metas', {
   metaableType: varchar('metaable_type', { length: 50 }).notNull(), // e.g., 'blog'
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});  
+});
+
+export const affiliateApplication = mysqlTable("affiliate_application", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  fullName: varchar("full_name", { length: 191 }).notNull(),
+  email: varchar("email", { length: 191 }).notNull(),
+  countryCode: varchar("country_code", { length: 8 }),
+  phone: varchar("phone", { length: 32 }),
+  phoneE164: varchar("phone_e164", { length: 32 }),
+  country: varchar("country", { length: 120 }).notNull(),
+  govOrBusinessId: varchar("gov_or_business_id", { length: 191 }),
+  strategy: text("strategy").notNull(),
+  portfolioLinks: text("portfolio_links"),
+  motivation: text("motivation"),
+  otherPrograms: text("other_programs"),
+  status: affiliateStatusEnum.notNull().default("pending"),
+  notes: text("notes"),
+  reviewedAt: datetime("reviewed_at"),
+  reviewerId: varchar("reviewer_id", { length: 36 }),
+  ipAddress: varchar("ip_address", { length: 64 }),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});

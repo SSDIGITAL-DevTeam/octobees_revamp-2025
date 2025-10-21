@@ -18,10 +18,15 @@ import { LogoutDialog } from '@/components/partials/dialog/LogoutDialog';
 import { sidebarItems } from "@/constrant/navlinks";
 
 
-export function Sidebarcomponents({ features }: { features: string[] }) {
+type SidebarComponentsProps = {
+  features?: string[] | null
+}
+
+export function Sidebarcomponents({ features }: SidebarComponentsProps) {
   const pathname = usePathname()
+  const featureList = Array.isArray(features) ? features : []
   const allowedSidebarItems = sidebarItems.filter(
-    (item) => item.name === "dashboard" || features.includes(item.name)
+    (item) => item.name === "dashboard" || featureList.includes(item.name)
   );
 
   return (

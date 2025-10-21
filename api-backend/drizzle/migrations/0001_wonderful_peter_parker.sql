@@ -1,0 +1,23 @@
+CREATE TABLE `affiliate_application` (
+	`id` varchar(36) NOT NULL,
+	`full_name` varchar(191) NOT NULL,
+	`email` varchar(191) NOT NULL,
+	`country_code` varchar(8),
+	`phone` varchar(32),
+	`phone_e164` varchar(32),
+	`country` varchar(120) NOT NULL,
+	`gov_or_business_id` varchar(191),
+	`strategy` text NOT NULL,
+	`portfolio_links` text,
+	`motivation` text,
+	`other_programs` text,
+	`status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+	`notes` text,
+	`reviewed_at` datetime,
+	`reviewer_id` varchar(36),
+	`ip_address` varchar(64),
+	`user_agent` text,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `affiliate_application_id` PRIMARY KEY(`id`)
+);

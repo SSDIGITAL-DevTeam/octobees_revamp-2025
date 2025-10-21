@@ -1,0 +1,22 @@
+PORT=8080
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASS=YourStrongPwd!
+DB_NAME=klinigma
+
+ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:3002
+
+ACCESS_TOKEN_SECRET=supersecretkey123
+REFRESH_TOKEN_SECRET=supersecretkey123
+RESET_TOKEN_SECRET=supersecretkey123
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=7d
+
+BASE_URL=http://localhost:3002
+
+# SUPER ADMIN CRED
+# ADMIN_NAME=Super Admin
+# ADMIN_EMAIL=admin@local.dev
+# ADMIN_PASS=Admin123!

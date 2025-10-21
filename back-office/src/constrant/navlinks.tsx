@@ -20,6 +20,11 @@ const sidebarItems = [
         title: "Subscription",
         url: "/subscription",
         icon: MailCheck,
+      },
+      {
+        title: "Affiliate Program",
+        url: "/affiliate-program",
+        icon: MailCheck,
       }
     ],
   },

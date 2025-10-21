@@ -8,6 +8,7 @@ import TableCategory from "./TableCategory";
 import TableMetaTag from "./TableMetaTag";
 import TableUser from "./TableUser";
 import TablePosition from "./TablePosition";
+import AffiliateTable from "./affiliate-table";
 
 export {
     TablePackage,
@@ -19,5 +20,6 @@ export {
     TableCategory,
     TableMetaTag,
     TableUser,
-    TablePosition
+    TablePosition,
+    AffiliateTable
 }
