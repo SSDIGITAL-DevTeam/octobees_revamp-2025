@@ -1,0 +1,10 @@
+deployment:
+  tasks:
+    - export HOME=$HOME
+    - node -v && npm -v
+    - echo "== API =="
+    - cd api-backend && npm ci && npm run build || true
+    - echo "== Back-Office =="
+    - cd ../back-office && npm ci && npm run build
+    - echo "== End-User =="
+    - cd ../end-user && npm ci && npm run build
