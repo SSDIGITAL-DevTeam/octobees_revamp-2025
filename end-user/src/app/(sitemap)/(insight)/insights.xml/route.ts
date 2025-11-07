@@ -12,7 +12,7 @@ export const runtime = "nodejs";
 export async function GET(req: Request) {
   // ambil origin dari request
   const { origin } = new URL(req.url);
-  const insights = (await safeJsonFetch(`${API_URL}/insights`)) as
+  const insights = (await safeJsonFetch(`${API_URL}/blog`)) as
     | Array<{ slug: string; updated_at?: string }>
     | null;
 

@@ -14,7 +14,6 @@ export async function GET(req: Request) {
     { loc: `${origin}/plans.xml`, lastmod: fmtDate() },
     { loc: `${origin}/insights.xml`, lastmod: fmtDate() },
     { loc: `${origin}/insight/category.xml`, lastmod: fmtDate() },
-    { loc: `${origin}/insight/search.xml`, lastmod: fmtDate() },
   ];
 
   const body = sitemaps
