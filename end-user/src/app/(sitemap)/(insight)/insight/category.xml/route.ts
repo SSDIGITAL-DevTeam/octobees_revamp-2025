@@ -24,7 +24,7 @@ export async function GET(req: Request) {
       // di service-mu kategori diakses pakai id, jadi kita pakai id
       return `
   <url>
-    <loc>${origin}/insights/category/${c.id}</loc>
+    <loc>${origin}/insights/category/${c.slug}</loc>
     ${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ""}
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
