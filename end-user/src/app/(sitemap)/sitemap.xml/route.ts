@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   const sitemaps = [
     { loc: `${origin}/pages.xml`, lastmod: fmtDate() },
     { loc: `${origin}/plans.xml`, lastmod: fmtDate() },
-    { loc: `${origin}/insight.xml`, lastmod: fmtDate() },
+    { loc: `${origin}/insights.xml`, lastmod: fmtDate() },
     { loc: `${origin}/insight/category.xml`, lastmod: fmtDate() },
     { loc: `${origin}/insight/search.xml`, lastmod: fmtDate() },
   ];
