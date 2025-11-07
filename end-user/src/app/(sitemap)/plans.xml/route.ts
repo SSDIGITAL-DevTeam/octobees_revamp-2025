@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   // ambil origin dari request
   const { origin } = new URL(req.url);
   // sesuaikan endpoint ini dengan backend kamu
-  const plans = (await safeJsonFetch(`${API_URL}/plans`)) as
+  const plans = (await safeJsonFetch(`${API_URL}/service-category`)) as
     | Array<{ slug: string; updated_at?: string }>
     | null;
 

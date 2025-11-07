@@ -1,29 +1,66 @@
-// src/app/(sitemap)/(insight)/insight.xml/route.ts
-import {
-  API_URL,
-  safeJsonFetch,
-  fmtDate,
-  buildUrlsetXML,
-  xmlHeaders,
-} from "@/lib/sitemap";
+// src/app/insights.xml/route.ts
+import { API_BASE, wrapUrlset, xmlHeaders } from "@/lib/sitemap";
 
 export const runtime = "nodejs";
 
+// helper untuk ambil semua halaman /blog
+async function fetchAllBlogs(origin: string) {
+  const perPage = 50; // lebih besar dari 10 biar cepat
+  let page = 1;
+  let done = false;
+  const all: any[] = [];
+
+  while (!done) {
+    const url = new URL(`${API_BASE}/blog`);
+    url.searchParams.set("status", "Published");
+    url.searchParams.set("limit", String(perPage));
+    url.searchParams.set("orderBy", "createdAt:desc");
+    url.searchParams.set("page", String(page));
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) break;
+
+    const json = await res.json();
+
+    // bentuknya sesuai service-mu: { data: Blog[], pagination: {...} }
+    const data = Array.isArray(json?.data) ? json.data : [];
+    const pagination = json?.pagination;
+
+    all.push(...data);
+
+    // cek apakah masih ada halaman berikutnya
+    if (
+      !pagination ||
+      !pagination.totalPages ||
+      page >= pagination.totalPages
+    ) {
+      done = true;
+    } else {
+      page += 1;
+    }
+  }
+
+  return all;
+}
+
 export async function GET(req: Request) {
-  // ambil origin dari request
-  const { origin } = new URL(req.url);
-  const insights = (await safeJsonFetch(`${API_URL}/blog`)) as
-    | Array<{ slug: string; updated_at?: string }>
-    | null;
+  const { origin } = new URL(req.url); // biar otomatis local/deploy
 
-  const list = Array.isArray(insights) ? insights : [];
+  const blogs = await fetchAllBlogs(origin);
 
-  const urls = list.map((item) => ({
-    loc: `${origin}/insights/${item.slug}`,
-    lastmod: fmtDate(item.updated_at),
-    changefreq: "weekly" as const,
-    priority: 0.8,
-  }));
+  const urls = blogs
+    .map((b: any) => {
+      const lastmod = b.updatedAt || b.updated_at || b.createdAt || b.created_at;
+      return `
+  <url>
+    <loc>${origin}/insights/${b.slug}</loc>
+    ${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ""}
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    })
+    .join("");
 
-  return new Response(buildUrlsetXML(urls), xmlHeaders());
+  const xml = wrapUrlset(urls);
+  return new Response(xml, xmlHeaders());
 }

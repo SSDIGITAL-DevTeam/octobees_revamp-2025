@@ -69,6 +69,22 @@ ${body}
 </sitemapindex>`;
 }
 
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  "http://localhost:8080"; // ganti sesuai backendmu
+
+export function nowISO() {
+  return new Date().toISOString();
+}
+
+export function wrapUrlset(urls: string) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+}
+
 export function xmlHeaders() {
   return {
     headers: {
