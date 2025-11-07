@@ -1,32 +1,37 @@
-// src/app/(sitemap)/(insight)/insight/category.xml/route.ts
-import {
-  API_URL,
-  safeJsonFetch,
-  fmtDate,
-  buildUrlsetXML,
-  xmlHeaders,
-} from "@/lib/sitemap";
+// src/app/insight/category.xml/route.ts
+import { API_BASE, wrapUrlset, xmlHeaders } from "@/lib/sitemap";
 
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  // ambil origin dari request
   const { origin } = new URL(req.url);
-  const categories = (await safeJsonFetch(`${API_URL}/blog/category`)) as
-    | Array<{ id: string | number; slug?: string; updated_at?: string }>
-    | null;
 
-  const list = Array.isArray(categories) ? categories : [];
+  const url = new URL(`${API_BASE}/blog-category`);
+  url.searchParams.set("status", "true");
 
-  const urls = list.map((cat) => {
-    const seg = cat.slug ?? cat.id;
-    return {
-      loc: `${origin}/insights/category/${seg}`,
-      lastmod: fmtDate(cat.updated_at),
-      changefreq: "weekly" as const,
-      priority: 0.5,
-    };
-  });
+  const res = await fetch(url, { cache: "no-store" });
 
-  return new Response(buildUrlsetXML(urls), xmlHeaders());
+  let categories: any[] = [];
+  if (res.ok) {
+    const json = await res.json();
+    categories = Array.isArray(json?.data) ? json.data : [];
+  }
+
+  const urls = categories
+    .map((c: any) => {
+      const lastmod =
+        c.updatedAt || c.updated_at || c.createdAt || c.created_at;
+      // di service-mu kategori diakses pakai id, jadi kita pakai id
+      return `
+  <url>
+    <loc>${origin}/insights/category/${c.id}</loc>
+    ${lastmod ? `<lastmod>${new Date(lastmod).toISOString()}</lastmod>` : ""}
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>`;
+    })
+    .join("");
+
+  const xml = wrapUrlset(urls);
+  return new Response(xml, xmlHeaders());
 }
