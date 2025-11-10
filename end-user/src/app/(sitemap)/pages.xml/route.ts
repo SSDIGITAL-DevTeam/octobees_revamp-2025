@@ -13,6 +13,7 @@ export async function GET(req: Request) {
     "/insight",
     "/increase-my-sales",
     "/seminar",
+    "/affiliate"
   ].map((p) => ({
     loc: `${origin}${p}`,
     lastmod: fmtDate(),

@@ -82,11 +82,10 @@ export default function SectionHero() {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => setAffiliateOpen(true)}
             aria-label="Open affiliate application form"
             className="w-full md:w-auto"
           >
-            Join Our Affiliate Program
+            <Link href="/affiliate">Join Our Affiliate Program</Link>
           </Button>
         </div>
       </div>
