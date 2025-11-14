@@ -1,52 +1,10 @@
+"use client";
+
 import Link from "next/link";
+
 import Topbar from "@/components/layout/Topbar";
-import Badge, { BadgeVariant } from "@/components/ui/Badge";
-
-type LeadStatus = "Proposal Sent" | "Follow-up" | "Lead Created";
-
-type LeadDetail = {
-  name: string;
-  email: string;
-  phone: string;
-  serviceType: string;
-  projectValue: string;
-  amount: string;
-  status: LeadStatus;
-  remark: string;
-  lastUpdate: string;
-};
-
-const statusVariant: Record<LeadStatus, BadgeVariant> = {
-  "Proposal Sent": "proposal_sent",
-  "Follow-up": "follow_up",
-  "Lead Created": "lead_created",
-};
-
-const leadDetails: Record<string, LeadDetail> = {
-  "pt-tech-solution": {
-    name: "PT Tech Solution",
-    email: "john@gmail.com",
-    phone: "+62 3234-2345-232",
-    serviceType: "Web Development",
-    projectValue: "IDR 45,000,000",
-    amount: "IDR 5,000,000",
-    status: "Follow-up",
-    remark: "Initial contact made",
-    lastUpdate: "Oct 15, 2025",
-  },
-};
-
-const fallbackLead: LeadDetail = {
-  name: "PT Tech Solutions",
-  email: "john@gmail.com",
-  phone: "+62 534-2960-0495",
-  serviceType: "Web Development",
-  projectValue: "IDR 45,000,000",
-  amount: "IDR 5,000,000",
-  status: "Proposal Sent",
-  remark: "Initial contact made",
-  lastUpdate: "Oct 12, 2025",
-};
+import Badge from "@/components/ui/Badge";
+import { useLeadDetail, useLeadStatusVariant } from "@/hooks/useLeads";
 
 type LeadDetailPageProps = {
   params: {
@@ -55,7 +13,8 @@ type LeadDetailPageProps = {
 };
 
 const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
-  const lead = leadDetails[params.id] ?? fallbackLead;
+  const lead = useLeadDetail(params.id);
+  const getStatusVariant = useLeadStatusVariant();
 
   return (
     <div className="space-y-6">
@@ -134,7 +93,10 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
           <div>
             <p className="text-sm text-slate-500">Status</p>
             <p className="mt-2">
-              <Badge category="status" variant={statusVariant[lead.status]}>
+              <Badge
+                category="status"
+                variant={getStatusVariant(lead.status)}
+              >
                 {lead.status}
               </Badge>
             </p>

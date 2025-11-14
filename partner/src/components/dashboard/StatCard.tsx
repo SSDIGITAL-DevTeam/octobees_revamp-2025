@@ -50,7 +50,6 @@ const StatCard = ({
         )}
       </div>
 
-      {/* ICON – pojok kiri bawah, sedikit terpotong */}
       <Image
         src={images}
         alt={title}

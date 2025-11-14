@@ -1,76 +1,15 @@
+"use client";
+
+import Link from "next/link";
+
 import Topbar from "@/components/layout/Topbar";
-import Badge, { BadgeVariant } from "@/components/ui/Badge";
-import Link from "next/dist/client/link";
-
-type LeadStatus = "Proposal Sent" | "Follow-up" | "Lead Created";
-
-type Lead = {
-  name: string;
-  email: string;
-  phone: string;
-  serviceType: string;
-  status: LeadStatus;
-  remark: string;
-};
-
-const leads: Lead[] = [
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Proposal Sent",
-    remark: "Initial contact made",
-  },
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Follow-up",
-    remark: "Initial contact made",
-  },
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Lead Created",
-    remark: "Initial contact made",
-  },
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Lead Created",
-    remark: "Initial contact made",
-  },
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Lead Created",
-    remark: "Initial contact made",
-  },
-  {
-    name: "PT Tech Solutions",
-    email: "john@gmail.com",
-    phone: "+62-534-2960-0495",
-    serviceType: "Web Development",
-    status: "Lead Created",
-    remark: "Initial contact made",
-  },
-];
-
-const statusVariant: Record<LeadStatus, BadgeVariant> = {
-  "Proposal Sent": "proposal_sent",
-  "Follow-up": "follow_up",
-  "Lead Created": "lead_created",
-};
+import Badge from "@/components/ui/Badge";
+import { useLeadStatusVariant, useLeads } from "@/hooks/useLeads";
 
 const MyLeadsPage = () => {
+  const leads = useLeads();
+  const getStatusVariant = useLeadStatusVariant();
+
   return (
     <div className="space-y-6">
       <Topbar title="My Leads" />
@@ -137,27 +76,27 @@ const MyLeadsPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-900">
-              {leads.map((lead, index) => (
-                <tr key={`${lead.email}-${index}`}>
+              {leads.map((lead) => (
+                <tr key={lead.id}>
                   <td className="py-4 font-semibold">{lead.name}</td>
                   <td className="py-4">{lead.email}</td>
                   <td className="py-4">{lead.phone}</td>
                   <td className="py-4">{lead.serviceType}</td>
                   <td className="py-4">
-                    <Badge category="status" variant={statusVariant[lead.status]}>
+                    <Badge
+                      category="status"
+                      variant={getStatusVariant(lead.status)}
+                    >
                       {lead.status}
                     </Badge>
                   </td>
                   <td className="py-4 text-slate-600">{lead.remark}</td>
                   <td className="py-4 text-right">
-                    <Link href={`/my-leads/${index}`} className="mr-4">
-                    
-                    <button
-                      type="button"
+                    <Link
+                      href={`/my-leads/${lead.id}`}
                       className="text-sm font-semibold text-[#E30613] hover:text-[#b1050f]"
                     >
                       View Detail
-                    </button>
                     </Link>
                   </td>
                 </tr>

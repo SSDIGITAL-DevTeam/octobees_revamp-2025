@@ -1,30 +1,11 @@
+"use client";
+
 import Badge from "@/components/ui/Badge";
-
-type Service = {
-  name: string;
-  commission: string;
-  description: string;
-};
-
-const services: Service[] = [
-  {
-    name: "Web Development",
-    commission: "15%",
-    description: "Custom website & web application development",
-  },
-  {
-    name: "Marketing Automation",
-    commission: "12%",
-    description: "Workflow setup, CRM integration, and optimization",
-  },
-  {
-    name: "Cloud Migration",
-    commission: "18%",
-    description: "Full assessment and migration to scalable cloud infra",
-  },
-];
+import { useAvailableServices } from "@/hooks/useDashboardData";
 
 const AvailableServicesTable = () => {
+  const services = useAvailableServices();
+
   return (
     <section className="rounded-2xl bg-white p-6 shadow-card">
       <div className="mb-6">
@@ -45,7 +26,7 @@ const AvailableServicesTable = () => {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {services.map((service) => (
-              <tr key={service.name} className="align-top">
+              <tr key={service.id} className="align-top">
                 <td className="py-4 text-sm font-semibold text-slate-900">
                   {service.name}
                 </td>

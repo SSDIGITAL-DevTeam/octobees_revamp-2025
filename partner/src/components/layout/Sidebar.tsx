@@ -6,7 +6,7 @@ import { LayoutDashboard, Users, Wallet, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 
 const navigation = [
-  { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
+  { label: "Overview", icon: LayoutDashboard, href: "/overview" },
   { label: "My Leads", icon: Users, href: "/my-leads" },
   { label: "My Commissions", icon: Wallet, href: "/my-commissions" },
   { label: "My Profile", icon: UserIcon, href: "/my-profile" },

@@ -1,39 +1,15 @@
-import Badge, { BadgeVariant } from "@/components/ui/Badge";
+"use client";
 
-type Commission = {
-  date: string;
-  service: string;
-  amount: string;
-  status: "Paid" | "Pending Transfer";
-};
-
-const history: Commission[] = [
-  {
-    date: "10 Nov 2025",
-    service: "Web Development - PT Lintas",
-    amount: "IDR 12.000.000",
-    status: "Paid",
-  },
-  {
-    date: "06 Nov 2025",
-    service: "Marketing Automation - Luminate SG",
-    amount: "IDR 8.500.000",
-    status: "Pending Transfer",
-  },
-  {
-    date: "02 Nov 2025",
-    service: "Cloud Migration - Archipelago Group",
-    amount: "IDR 6.000.000",
-    status: "Paid",
-  },
-];
-
-const statusVariant: Record<Commission["status"], BadgeVariant> = {
-  Paid: "paid",
-  "Pending Transfer": "unpaid",
-};
+import Badge from "@/components/ui/Badge";
+import {
+  useCommissionHistory,
+  useCommissionStatusVariant,
+} from "@/hooks/useDashboardData";
 
 const CommissionHistoryTable = () => {
+  const history = useCommissionHistory();
+  const getStatusVariant = useCommissionStatusVariant();
+
   return (
     <section className="rounded-2xl bg-white p-6 shadow-card">
       <div className="mb-6 flex items-center justify-between">
@@ -62,7 +38,7 @@ const CommissionHistoryTable = () => {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {history.map((item) => (
-              <tr key={`${item.date}-${item.service}`}>
+              <tr key={item.id}>
                 <td className="py-4 font-semibold text-slate-900">
                   {item.date}
                 </td>
@@ -71,7 +47,10 @@ const CommissionHistoryTable = () => {
                   {item.amount}
                 </td>
                 <td className="py-4">
-                  <Badge category="payment" variant={statusVariant[item.status]}>
+                  <Badge
+                    category="payment"
+                    variant={getStatusVariant(item.status)}
+                  >
                     {item.status}
                   </Badge>
                 </td>
