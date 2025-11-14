@@ -124,7 +124,7 @@ export default function PageAbout(): JSX.Element {
           }
         </section>
 
-        <section className="bg-white hidden">
+        <section className="bg-white">
           <div className="space-y-8 py-12 md:py-20 w-full md:max-w-7xl md:mx-auto px-10">
             <SectionClientBrand />
             <p className="text-center w-full font-semibold text-lg text-primary">And many more</p>
