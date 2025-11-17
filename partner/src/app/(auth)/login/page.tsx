@@ -30,7 +30,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <div className="mx-auto flex w-full max-w-6xl items-stretch gap-10 px-10 py-10">
+  <div className="mx-auto flex h-[calc(100vh-80px)] w-full max-w-6xl gap-10 px-10 py-10">
         {/* KIRI: form login */}
         <div className="flex w-full max-w-md flex-col justify-center">
           {/* Logo */}
@@ -120,18 +120,18 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* KANAN: gambar background hanya di sisi kanan */}
-        <div className="hidden lg:flex flex-1 items-center justify-end">
-          <div className="relative h-full max-h-[640px] w-full max-w-[520px] rounded-[32px] overflow-hidden">
-            <Image
-              src="/assets/auth/login.png"
-              alt="Login Illustration"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
+        {/* KANAN: panel gambar, jarak 40px dari atas/kanan/bawah */}
+        <div className="hidden lg:flex flex-1">
+  <div className="relative h-full w-full rounded-[32px] overflow-hidden">
+    <Image
+      src="/assets/auth/login.png"
+      alt="Login Illustration"
+      fill
+      className="object-cover"
+      priority
+    />
+  </div>
+</div>
       </div>
     </div>
   );

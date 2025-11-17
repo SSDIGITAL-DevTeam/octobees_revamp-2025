@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import Topbar from "@/components/layout/Topbar";
+import EditLeadModal from "@/components/modals/EditLeadModal";
 import Badge from "@/components/ui/Badge";
 import { useLeadDetail, useLeadStatusVariant } from "@/hooks/useLeads";
 
@@ -15,6 +17,17 @@ type LeadDetailPageProps = {
 const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
   const lead = useLeadDetail(params.id);
   const getStatusVariant = useLeadStatusVariant();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleUpdateLead = async (payload: {
+    name: string;
+    email: string;
+    phone: string;
+    serviceType?: string;
+  }) => {
+    console.info("Updated lead payload", payload);
+    setIsEditModalOpen(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -42,6 +55,7 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
+              onClick={() => setIsEditModalOpen(true)}
               className="inline-flex items-center justify-center rounded-full border border-transparent bg-[#FFC72C] px-5 py-3 text-sm font-semibold text-[#4B0005] transition hover:bg-[#f3b40b]"
             >
               Edit Lead
@@ -118,6 +132,17 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
           </div>
         </div>
       </section>
+      <EditLeadModal
+        open={isEditModalOpen}
+        lead={{
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          serviceType: lead.serviceType,
+        }}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleUpdateLead}
+      />
     </div>
   );
 };

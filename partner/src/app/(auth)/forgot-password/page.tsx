@@ -68,20 +68,14 @@ const ForgotPasswordPage = () => {
       </Link>
 
       <div className="flex items-center gap-3 text-[#E30613]">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="h-10 w-10"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 6V3m0 3c-2.21 0-4 1.79-4 4 0 1.54.87 2.87 2.14 3.56-.46.3-.88.68-1.24 1.12C7.81 17.18 9.21 19 11 19h2c1.79 0 3.19-1.82 2.1-3.32-.36-.44-.78-.82-1.24-1.12C15.13 12.87 16 11.54 16 10c0-2.21-1.79-4-4-4Z"
-          />
-        </svg>
+        <Image
+          src="/assets/icons/octobees-icon.svg"
+          alt="Octobees Icon"
+          width={40}
+          height={40}
+          className="object-contain"
+          priority
+        />
         <p className="text-2xl font-semibold tracking-wide">OCTOBEES</p>
       </div>
 
@@ -197,7 +191,9 @@ const ForgotPasswordPage = () => {
         <h1 className="text-xl font-semibold text-slate-900">
           Password Has Been Changed
         </h1>
-        <p className="text-sm text-slate-500">Please return to the login page</p>
+        <p className="text-sm text-slate-500">
+          Please return to the login page
+        </p>
       </div>
 
       <div className="mt-8 space-y-5">
@@ -212,9 +208,9 @@ const ForgotPasswordPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col gap-12 px-6 py-10 lg:flex-row lg:items-center lg:gap-16">
-        <div className="w-full max-w-md rounded-[32px] bg-white px-8 py-10 shadow-lg">
+    <div className="flex min-h-screen bg-white">
+      <div className="mx-auto flex h-[calc(100vh-80px)] w-full max-w-6xl gap-10 px-6 py-10 lg:px-10">
+        <div className="flex w-full max-w-md flex-col justify-center">
           {renderHeader()}
 
           {step === "request" && renderRequestForm()}
@@ -226,14 +222,16 @@ const ForgotPasswordPage = () => {
           </div>
         </div>
 
-        <div className="relative hidden flex-1 overflow-hidden rounded-[32px] lg:mr-10 lg:mt-10 lg:mb-10 lg:block">
-          <Image
-            src="/assets/auth/login.png"
-            alt="Octobees forgot password visual"
-            fill
-            priority
-            className="object-cover"
-          />
+        <div className="hidden flex-1 lg:flex">
+          <div className="relative h-full w-full overflow-hidden rounded-[32px]">
+            <Image
+              src="/assets/auth/login.png"
+              alt="Octobees forgot password visual"
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
     </div>

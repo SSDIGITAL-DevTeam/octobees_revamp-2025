@@ -1,14 +1,59 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 
 import Topbar from "@/components/layout/Topbar";
+import AddLeadModal from "@/components/modals/AddLeadModal";
+import SelectServiceModal, {
+  type ServiceOption,
+} from "@/components/modals/SelectServiceModal";
 import Badge from "@/components/ui/Badge";
 import { useLeadStatusVariant, useLeads } from "@/hooks/useLeads";
+
+const serviceOptions: ServiceOption[] = [
+  { id: "web_dev", label: "Web Development, 15% Commission" },
+  { id: "digital_marketing", label: "Digital Marketing, 10% Commission" },
+  { id: "ads_campaign", label: "Ads Campaign, 10% Commission" },
+];
 
 const MyLeadsPage = () => {
   const leads = useLeads();
   const getStatusVariant = useLeadStatusVariant();
+  const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
+  const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  );
+
+  const selectedServiceLabel = useMemo(() => {
+    return (
+      serviceOptions.find((service) => service.id === selectedServiceId)
+        ?.label ?? ""
+    );
+  }, [selectedServiceId]);
+
+  const handleOpenSelect = () => {
+    setIsSelectModalOpen(true);
+  };
+
+  const handleCloseSelect = () => setIsSelectModalOpen(false);
+  const handleCloseAddLead = () => setIsAddLeadModalOpen(false);
+
+  const handleServiceConfirm = (serviceId: string) => {
+    setSelectedServiceId(serviceId);
+    setIsSelectModalOpen(false);
+    setIsAddLeadModalOpen(true);
+  };
+
+  const handleCreateLead = async (payload: {
+    name: string;
+    email: string;
+    phone: string;
+  }) => {
+    console.info("Create lead payload", payload, selectedServiceId);
+    setIsAddLeadModalOpen(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -55,6 +100,7 @@ const MyLeadsPage = () => {
 
           <button
             type="button"
+            onClick={handleOpenSelect}
             className="inline-flex items-center justify-center rounded-full bg-[#E30613] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#b1050f]"
           >
             Add New Lead
@@ -105,6 +151,20 @@ const MyLeadsPage = () => {
           </table>
         </div>
       </section>
+      <SelectServiceModal
+        open={isSelectModalOpen}
+        services={serviceOptions}
+        selectedServiceId={selectedServiceId}
+        onClose={handleCloseSelect}
+        onConfirm={handleServiceConfirm}
+        onSelectionChange={(serviceId) => setSelectedServiceId(serviceId)}
+      />
+      <AddLeadModal
+        open={isAddLeadModalOpen}
+        serviceName={selectedServiceLabel.split(",")[0]}
+        onClose={handleCloseAddLead}
+        onSubmit={handleCreateLead}
+      />
     </div>
   );
 };
