@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     "/about",
     "/career",
     "/contact-us",
-    "/insight",
+    "/insights",
     "/increase-my-sales",
     "/seminar",
     "/affiliate"
