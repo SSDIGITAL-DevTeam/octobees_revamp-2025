@@ -5,7 +5,13 @@ import { FormSubscription } from "@/components/partials/Form";
 
 export default function SubscriptionHeader() {
   return (
-    <header className="relative isolate overflow-hidden rounded-[40px] bg-[#7a0008] shadow-2xl">
+    // FULL-BLEED HERO (tanpa rounded & tanpa shadow)
+    <header
+      className="
+        relative isolate w-screen -ml-[50vw] left-1/2 
+        overflow-hidden bg-[#7a0008]
+      "
+    >
       {/* background image + gradient */}
       <div className="absolute inset-0">
         <Image
@@ -18,7 +24,7 @@ export default function SubscriptionHeader() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#6f0007]/95 via-[#7a0008]/88 to-[#6f0007]/75" />
       </div>
 
-      {/* content */}
+      {/* content (tetap dibatasi max-w biar rapi) */}
       <div className="relative mx-auto flex max-w-6xl flex-col gap-10 px-6 py-10 md:px-10 md:py-14 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
         {/* LEFT: copy */}
         <div className="flex-1 max-w-xl space-y-5 text-white">
@@ -26,7 +32,7 @@ export default function SubscriptionHeader() {
             Stay in the know with
           </p>
           <h2 className="font-heading text-3xl font-semibold leading-tight md:text-[40px] md:leading-[1.1]">
-            <span className="italic font-medium">The Most Updated</span>{" "}
+            <span className="italic font-medium">The Most Updated</span>
             <br />
             Tech News Around the World
           </h2>
