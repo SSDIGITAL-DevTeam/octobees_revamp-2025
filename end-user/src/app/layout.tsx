@@ -40,6 +40,12 @@ export default function RootLayout({
       />
 
       <html lang="en">
+        <head>
+          <meta
+            name="google-site-verification"
+            content="Om6R9r0thAlgOsy4-m-eBbYWAa8LTyxpeOTqnlTyNqc"
+          />
+        </head>
         <body className="font-body">
           {/* GTM noscript */}
           <noscript
