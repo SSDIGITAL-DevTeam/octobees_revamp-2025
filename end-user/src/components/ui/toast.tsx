@@ -4,8 +4,6 @@ import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
-import { CheckCircle, AlertCircle, XCircle, Info } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 
 const ToastProvider = ToastPrimitives.Provider
@@ -25,13 +23,6 @@ const ToastViewport = React.forwardRef<
 ))
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
-
-const variantIcons = {
-  success: <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />,
-  destructive: <XCircle className="h-5 w-5 text-red-600 mt-0.5" />,
-  danger: <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />,
-  default: <Info className="h-5 w-5 text-gray-500 mt-0.5" />,
-}
 
 const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",

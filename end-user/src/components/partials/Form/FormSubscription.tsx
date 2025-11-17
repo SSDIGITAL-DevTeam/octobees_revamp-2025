@@ -26,6 +26,7 @@ export default function FormSubscription({ className, source, setOpen }: { class
             if (response.status === 201) {
                 setEmail("");
                 setIsOpen(true);
+                setOpen?.(false);
             }
         } catch (error) {
             toast({
@@ -34,7 +35,6 @@ export default function FormSubscription({ className, source, setOpen }: { class
                 variant: "danger"
             })
         }finally{
-            // if(setOpen) setOpen(false);
             setIsLoading(false);
         }
     };

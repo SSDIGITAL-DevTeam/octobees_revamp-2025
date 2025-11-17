@@ -15,7 +15,7 @@ const labelTitle = [
 
 const labelMap = labelTitle.map((title, index) => {
   return (
-    <div className="flex gap-x-5 text-white w-full">
+    <div className="flex gap-x-5 text-white w-full" key={`label-${index}`}>
       <Image
         src={LogoOctobees.src}
         alt={`label-image-${index + 1}`}

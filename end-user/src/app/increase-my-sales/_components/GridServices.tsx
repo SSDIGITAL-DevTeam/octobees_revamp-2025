@@ -4,7 +4,6 @@ import AdsImage02 from '@/assets/increase/webp/ads2.webp'
 import AdsImage03 from '@/assets/increase/webp/ads3.webp'
 import AdsImage04 from '@/assets/increase/webp/ads4.webp'
 import AdsImage05 from '@/assets/increase/webp/ads5.webp'
-import { Record } from 'iconsax-react'
 import Image, { StaticImageData } from 'next/image'
 
 const adsImages = [

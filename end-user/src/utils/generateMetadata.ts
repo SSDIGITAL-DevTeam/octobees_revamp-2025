@@ -51,18 +51,6 @@ type OpenGraphImages =
 
 type TwitterImages = string | string[] | Array<{ url: string }>;
 
-const TRACKING_PARAMS = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_term",
-  "utm_content",
-  "gclid",
-  "fbclid",
-  "msclkid",
-  "ref",
-];
-
 const normalizeBase = (value?: string) =>
   (value || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL).replace(
     /\/$/,
