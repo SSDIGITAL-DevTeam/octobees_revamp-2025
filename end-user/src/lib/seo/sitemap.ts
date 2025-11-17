@@ -2,9 +2,21 @@ import { Blog, BlogCategory, CategoryService } from "@/constants/payload";
 import path from "node:path";
 import { promises as fs } from "node:fs";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://www.octobees.com";
+const DEFAULT_SITE_URL = "https://www.octobees.com";
+
+const SITE_URL = (() => {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return DEFAULT_SITE_URL;
+  try {
+    const candidate = new URL(raw);
+    if (!candidate.hostname) {
+      return DEFAULT_SITE_URL;
+    }
+    return candidate.origin;
+  } catch {
+    return DEFAULT_SITE_URL;
+  }
+})();
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 const DEFAULT_LASTMOD = new Date().toISOString();
@@ -50,7 +62,11 @@ const PROJECT_ROOT = path.join(process.cwd());
 const toAbsoluteUrl = (slug: string) => {
   if (!slug) return SITE_URL;
   const normalized = slug.startsWith("/") ? slug : `/${slug}`;
-  return `${SITE_URL}${normalized}`.replace(/(?<!:)\/{2,}/g, "/").replace("https:/", "https://");
+  try {
+    return new URL(normalized, SITE_URL).href;
+  } catch {
+    return `${SITE_URL}${normalized}`.replace(/(?<!:)\/{2,}/g, "/").replace("https:/", "https://");
+  }
 };
 
 const toIsoString = (value?: string | Date | null) => {
