@@ -21,7 +21,6 @@ export default function SubscriptionHeader() {
           className="h-full w-full object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#6f0007]/95 via-[#7a0008]/88 to-[#6f0007]/75" />
       </div>
 
       {/* content (tetap dibatasi max-w biar rapi) */}
