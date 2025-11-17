@@ -6,7 +6,7 @@ const DEFAULT_SITE_URL = "https://www.octobees.com";
 
 const SITE_URL = (() => {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!raw) return DEFAULT_SITE_URL;
+  if (!raw) return DEFAULT_SITE_URL; 
   try {
     const candidate = new URL(raw);
     if (!candidate.hostname) {
