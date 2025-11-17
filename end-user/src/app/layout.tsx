@@ -3,15 +3,24 @@ import Navbar from "@/components/layouts/Navbar/Navbar";
 import Footer from "@/components/layouts/Footer/Footer";
 import Script from "next/script";
 import React from "react";
-import generateMetatag from "@/utils/generateMetadata";
+import { generateMetadata as buildMetadata } from "@/utils/generateMetadata";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import { pageMetadata } from "@/constants/metadata";
+import OrganizationSchema from "@/app/seo/schema/OrganizationSchema";
 
 export async function generateMetadata() {
-  const metaTag = pageMetadata.home
-  const location = "home";
-  return await generateMetatag({ location, metaTag: metaTag });
+  const meta = pageMetadata.home;
+  return buildMetadata({
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    path: "/",
+    locale: meta.openGraph.locale,
+    openGraphOverride: meta.openGraph,
+    twitterOverride: meta.twitter,
+    cmsPath: "home",
+  });
 }
 
 export default function RootLayout({
@@ -36,6 +45,7 @@ export default function RootLayout({
               __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W453F787" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
             }}
           ></noscript>
+          <OrganizationSchema />
           <Navbar />
           <Providers>
             <>{children}</>

@@ -1,17 +1,34 @@
-import {
-  PageMetadataProps,
-  defaultMetadata as metadata,
-} from "@/constants/metadata";
 import { MetaTag } from "@/constants/payload";
 import { axiosInstance } from "@/lib/axios";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
-type generateMetadataProps = {
-  location: string;
-  metaTag: PageMetadataProps;
+const DEFAULT_BASE_URL = "https://www.octobees.com";
+const DEFAULT_IMAGE = `${DEFAULT_BASE_URL}/assets/png/asset-logo-opengraph-octobees.png`;
+
+type GenerateMetadataArgs = {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  path: string;
+  canonicalBaseUrl?: string;
+  noindex?: boolean;
+  locale?: string;
+  openGraphOverride?: Partial<Metadata["openGraph"]>;
+  twitterOverride?: Partial<Metadata["twitter"]>;
+  cmsPath?: string;
 };
 
-type OgTypeType =
+type CmsOverrides = {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  canonical?: string;
+  robots?: Metadata["robots"];
+  openGraph?: Metadata["openGraph"];
+  twitter?: Metadata["twitter"];
+};
+
+type OpenGraphType =
   | "website"
   | "article"
   | "book"
@@ -27,104 +44,226 @@ type OgTypeType =
 
 type TwitterCardType = "summary_large_image" | "summary" | "player" | "app";
 
-const generateMetatag = async ({
-  location,
-  metaTag,
-}: generateMetadataProps): Promise<Metadata> => {
+type OpenGraphImages =
+  | string
+  | string[]
+  | Array<{ url: string; width?: number; height?: number; alt?: string }>;
+
+type TwitterImages = string | string[] | Array<{ url: string }>;
+
+const TRACKING_PARAMS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "gclid",
+  "fbclid",
+  "msclkid",
+  "ref",
+];
+
+const normalizeBase = (value?: string) =>
+  (value || process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_BASE_URL).replace(
+    /\/$/,
+    "",
+  );
+
+const normalizePath = (value: string) => {
+  if (!value || value === "/") return "/";
+  const leading = value.startsWith("/") ? value : `/${value}`;
+  return leading.replace(/\/{2,}/g, "/").replace(/\/$/, "");
+};
+
+const parseRobots = (value?: string): Metadata["robots"] | undefined => {
+  if (!value) return undefined;
+  const tokens = value
+    .split(",")
+    .map((token) => token.trim().toLowerCase())
+    .filter(Boolean);
+
+  return {
+    index: !tokens.includes("noindex"),
+    follow: !tokens.includes("nofollow"),
+  };
+};
+
+const fetchCmsOverrides = async (
+  cmsPath?: string,
+): Promise<CmsOverrides | null> => {
+  if (!cmsPath) return null;
   try {
-    const res = await axiosInstance.get(`/page/${location}`, { timeout: 5000 });
-    const meta = res?.data?.data?.meta as MetaTag[];
-    if (meta.length === 0) return { ...metadata, ...metaTag };
+    const response = await axiosInstance.get(`/page/${cmsPath}`, {
+      timeout: 5000,
+    });
+    const meta = response?.data?.data?.meta as MetaTag[] | undefined;
+    if (!meta?.length) return null;
 
     const getValue = (key: string) =>
-      meta.find((item) => item.value === key)?.content?.trim() || "";
+      meta.find((item) => item.value === key)?.content?.trim();
 
-    const title = getValue("title") || metaTag.title;
-    const description = getValue("description") || metaTag.description;
-    const keywordsRaw = getValue("keywords");
-    const icons = getValue("icon") || metadata.icons.icon;
-    const shortcutIcon = getValue("shortcut:icon") || metadata.icons.shortcut;
-    const appleIcon = getValue("apple:icon") || metadata.icons.apple;
-    const robots = getValue("robot") || metadata.robots;
-    const authors = getValue("authors") || metadata.authors;
-    const creator = getValue("creator") || metadata.creator;
-    const publisher = getValue("publisher") || metadata.publisher;
-    const canonical = getValue("canonical") || metaTag.alternates.canonical;
+    const keywordsValue = getValue("keywords");
+    const keywords = keywordsValue
+      ? keywordsValue.split(",").map((item) => item.trim()).filter(Boolean)
+      : undefined;
 
-    const ogTitle = getValue("og:title") || metaTag.openGraph.title;
-    const ogDescription =
-      getValue("og:description") || metaTag.openGraph.description;
-    const ogUrl = getValue("og:url") || metaTag.openGraph.url;
-    const ogSiteName = getValue("og:site_name") || metaTag.openGraph.siteName;
-    const ogImages = getValue("og:images") || metaTag.openGraph.images;
-    const ogType = getValue("og:type") || metaTag.openGraph.type;
-    const ogLocale = getValue("og:locale") || metaTag.openGraph.locale;
-
-    const twitterCard = getValue("twitter:card") || metaTag.twitter.card;
-    const twitterTitle = getValue("twitter:title") || metaTag.twitter.title;
-    const twitterDescription =
-      getValue("twitter:description") || metaTag.twitter.description;
-    const twitterSite = getValue("twitter:site") || metaTag.twitter.site;
-    const twitterCreator =
-      getValue("twitter:creator") || metaTag.twitter.creator;
-    const twitterImage = getValue("twitter:images") || metaTag.twitter.images;
-
-    const applicationName =
-      getValue("application-name") || metadata.applicationName;
-
-    const keywords = keywordsRaw
-      ? keywordsRaw.split(",").map((item: string) => item.trim())
-      : metaTag.keywords;
+    const ogImages = getValue("og:images");
+    const twitterImages = getValue("twitter:images");
 
     return {
-      robots,
-      authors: Array.isArray(authors) ? authors : metadata.authors,
-      creator,
-      publisher,
-      alternates: {
-        canonical: canonical,
-      },
-
-      icons: {
-        icon: icons,
-        shortcut: shortcutIcon,
-        apple: appleIcon,
-        other: metadata.icons.other,
-      },
-
-      applicationName,
-      generator: metadata.generator,
-
-      metadataBase: new URL(metaTag.metadataBase),
-      title,
-      description,
+      title: getValue("title"),
+      description: getValue("description"),
       keywords,
-
+      canonical: getValue("canonical"),
+      robots: parseRobots(getValue("robot")),
       openGraph: {
-        title: ogTitle,
-        description: ogDescription,
-        images: ogImages,
-        url: ogUrl,
-        siteName: ogSiteName,
-        type: ogType as OgTypeType,
-        locale: ogLocale,
+        title: getValue("og:title"),
+        description: getValue("og:description"),
+        url: getValue("og:url"),
+        siteName: getValue("og:site_name"),
+        locale: getValue("og:locale"),
+        type: (getValue("og:type") as OpenGraphType) ?? "website",
+        images: ogImages || undefined,
       },
-
       twitter: {
-        card: twitterCard as TwitterCardType,
-        title: twitterTitle,
-        description: twitterDescription,
-        site: twitterSite,
-        creator: twitterCreator,
-        images: twitterImage,
+        card: (getValue("twitter:card") ?? "summary_large_image") as TwitterCardType,
+        title: getValue("twitter:title"),
+        description: getValue("twitter:description"),
+        site: getValue("twitter:site"),
+        creator: getValue("twitter:creator"),
+        images: twitterImages || undefined,
       },
     };
-  } catch (error: any) {
-    return {
-      ...metadata,
-      ...metaTag,
-    };
+  } catch {
+    return null;
   }
 };
 
-export default generateMetatag;
+export async function generateMetadata({
+  title,
+  description,
+  keywords,
+  path,
+  canonicalBaseUrl,
+  noindex,
+  locale = "en-US",
+  openGraphOverride,
+  twitterOverride,
+  cmsPath,
+}: GenerateMetadataArgs): Promise<Metadata> {
+  const base = normalizeBase(canonicalBaseUrl);
+  const normalizedPath = normalizePath(path);
+  const canonical =
+    normalizedPath === "/" ? base : `${base}${normalizedPath}`.replace(
+        /(?<!:)\/{2,}/g,
+        "/",
+      );
+
+  const cmsOverrides = await fetchCmsOverrides(
+    cmsPath ?? (normalizedPath.replace(/^\//, "") || "home"),
+  );
+  const resolvedTitle = cmsOverrides?.title || title;
+  const resolvedDescription = cmsOverrides?.description || description;
+  const resolvedKeywords = cmsOverrides?.keywords || keywords;
+
+  const robots: Metadata["robots"] =
+    noindex === true
+      ? { index: false, follow: true, nocache: true }
+      : cmsOverrides?.robots || { index: true, follow: true };
+
+  const ogImages: OpenGraphImages =
+    (cmsOverrides?.openGraph?.images as OpenGraphImages | undefined) ||
+    (openGraphOverride?.images as OpenGraphImages | undefined) ||
+    [
+      {
+        url: DEFAULT_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: resolvedTitle ?? "Octobees",
+      },
+    ];
+
+  const cmsOgType = (cmsOverrides?.openGraph as Record<string, unknown> | undefined)?.type as
+    | OpenGraphType
+    | undefined;
+  const overrideOgType = (openGraphOverride as Record<string, unknown> | undefined)?.type as
+    | OpenGraphType
+    | undefined;
+
+  const og = {
+    url: cmsOverrides?.openGraph?.url || openGraphOverride?.url || canonical,
+    siteName:
+      cmsOverrides?.openGraph?.siteName ||
+      openGraphOverride?.siteName ||
+      "Octobees",
+    title:
+      cmsOverrides?.openGraph?.title ||
+      openGraphOverride?.title ||
+      resolvedTitle ||
+      "Octobees",
+    description:
+      cmsOverrides?.openGraph?.description ||
+      openGraphOverride?.description ||
+      resolvedDescription,
+    locale:
+      cmsOverrides?.openGraph?.locale ||
+      openGraphOverride?.locale ||
+      locale ||
+      "en-US",
+    type: cmsOgType || overrideOgType || "website",
+    images: ogImages,
+  } as NonNullable<Metadata["openGraph"]>;
+
+  const cmsTwitter = cmsOverrides?.twitter as Record<string, unknown> | undefined;
+  const overrideTwitter = twitterOverride as Record<string, unknown> | undefined;
+
+  const twitterImages: TwitterImages =
+    (cmsTwitter as Record<string, unknown> | undefined)?.images ||
+    (overrideTwitter as Record<string, unknown> | undefined)?.images ||
+    (Array.isArray(ogImages)
+      ? (ogImages as any)[0]?.url || DEFAULT_IMAGE
+      : ogImages) ||
+    DEFAULT_IMAGE;
+
+  const twitterMeta = {
+    card:
+      (cmsTwitter?.card as TwitterCardType | undefined) ||
+        (overrideTwitter?.card as TwitterCardType | undefined) ||
+        "summary_large_image",
+    title:
+      (cmsTwitter?.title as string | undefined) ||
+      (overrideTwitter?.title as string | undefined) ||
+      resolvedTitle ||
+      "Octobees",
+    description:
+      (cmsTwitter?.description as string | undefined) ||
+      (overrideTwitter?.description as string | undefined) ||
+      resolvedDescription,
+    site:
+      (cmsTwitter?.site as string | undefined) ||
+      (overrideTwitter?.site as string | undefined),
+    creator:
+      (cmsTwitter?.creator as string | undefined) ||
+      (overrideTwitter?.creator as string | undefined),
+    images: twitterImages,
+  } satisfies Record<string, unknown>;
+
+  return {
+    metadataBase: new URL(base),
+    title: resolvedTitle,
+    description: resolvedDescription,
+    keywords: resolvedKeywords,
+    robots,
+    alternates: {
+      canonical,
+      languages: {
+        "x-default": canonical,
+        [og.locale || locale]: canonical,
+      },
+    },
+    openGraph: og,
+    twitter: twitterMeta as Metadata["twitter"],
+  };
+}
+
+export default generateMetadata;

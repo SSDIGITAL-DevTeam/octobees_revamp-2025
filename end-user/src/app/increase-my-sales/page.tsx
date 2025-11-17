@@ -13,8 +13,19 @@ import GetStartedButton from "./_components/GetStartedButton";
 import Script from "next/script";
 import FormContact from "@/components/partials/Form/FormContactOld";
 import HeaderContactUs from "../contact-us/_components/HeaderContactUs";
+import FAQSchema from "@/app/seo/schema/FAQSchema";
 
 export default function IncreaseMySales() {
+    const faqs = [
+        {
+            question: "How quickly can Octobees launch a growth campaign?",
+            answer: "Discovery to launch typically takes 2–3 weeks depending on asset readiness and ad platform approvals.",
+        },
+        {
+            question: "Do you provide a dedicated team?",
+            answer: "Yes, every engagement receives a strategist, media buyer, creative lead, and marketing technologist from our in-house digital squad.",
+        },
+    ];
     return (
         <>
             <Script id="fb-pixel" strategy="afterInteractive">
@@ -39,6 +50,7 @@ export default function IncreaseMySales() {
             </noscript>
 
             <main>
+                <FAQSchema items={faqs} />
                 <header className="px-8 flex flex-col md:flex-row items-center justify-center gap-16 md:gap-0 bg-white lg:min-h-screen md:max-w-7xl md:mx-auto pt-32 lg:pt-[100px]">
                     <div className="container flex flex-col gap-6 justify-center items-center md:items-start">
                         <span className="font-semibold text-primary text-sm lg:text-lg flex gap-2 items-center justify-center lg:gap-4 text-center rounded-full py-2 px-4 border border-gray-300 shadow-sm tracking-wide">
