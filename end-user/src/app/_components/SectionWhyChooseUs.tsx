@@ -11,7 +11,7 @@ type SectionWhyChooseUsType ={
     image: StaticImageData
 }
 
-const whyChooseUsMap = [
+const whyChooseUsMap: SectionWhyChooseUsType[] = [
     {
         heading: "Agency that know your business",
         subheading: "We take a proactive approach to help you make best marketing financial decisions to grow revenue.",

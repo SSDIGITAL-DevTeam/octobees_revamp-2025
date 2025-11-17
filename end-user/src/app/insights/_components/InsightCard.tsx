@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, UserCircle2 } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { InsightContent } from '@/app/insights/_components';
 import { Blog } from '@/constants/payload';
 import dayjs from 'dayjs';

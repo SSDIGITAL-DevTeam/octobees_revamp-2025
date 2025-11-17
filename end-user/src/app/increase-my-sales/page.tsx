@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { brandHome } from "@/constants/brands";
@@ -11,7 +12,6 @@ import ImageSection from "./_components/ImageSection";
 import EmblaCarousel from "./_components/EmblaCarousel";
 import GetStartedButton from "./_components/GetStartedButton";
 import Script from "next/script";
-import FormContact from "@/components/partials/Form/FormContactOld";
 import HeaderContactUs from "../contact-us/_components/HeaderContactUs";
 import FAQSchema from "@/app/seo/schema/FAQSchema";
 
@@ -45,8 +45,13 @@ export default function IncreaseMySales() {
 
             {/* Fallback if JS disabled */}
             <noscript>
-                <img height="1" width="1" style={{ display: 'none' }}
-                    src="https://www.facebook.com/tr?id=2123659238113302&ev=PageView&noscript=1" />
+                <img
+                    height="1"
+                    width="1"
+                    style={{ display: 'none' }}
+                    src="https://www.facebook.com/tr?id=2123659238113302&ev=PageView&noscript=1"
+                    alt="Facebook pixel tracking"
+                />
             </noscript>
 
             <main>
