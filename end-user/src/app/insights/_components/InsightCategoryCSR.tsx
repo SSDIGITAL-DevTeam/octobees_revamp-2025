@@ -4,7 +4,7 @@ import { axiosInstance } from "@/lib/axios";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function InsightCategory() {
     const [categories, setCategories] = useState<BlogCategory[]>([]);

@@ -1,36 +1,21 @@
-// src/app/sitemap.xml/route.ts
-import { fmtDate, xmlHeaders } from "@/lib/sitemap"; // kalau kamu pakai helper tadi
-// kalau belum ada, nanti aku tulis versi tanpa helper juga di bawah
+import {
+  getChildSitemapUrl,
+  renderSitemapIndex,
+  SITEMAP_ENDPOINTS,
+  xmlHeaders,
+} from "@/lib/seo/sitemap";
 
 export const runtime = "nodejs";
+export const revalidate = 3600;
 
-export async function GET(req: Request) {
-  // ambil origin dari request
-  const { origin } = new URL(req.url);
+export async function GET() {
+  const now = new Date().toISOString();
+  const xml = renderSitemapIndex(
+    SITEMAP_ENDPOINTS.map((slug) => ({
+      loc: getChildSitemapUrl(slug),
+      lastmod: now,
+    })),
+  );
 
-  // di sini kamu tinggal daftar semua sub-sitemap yang kamu punya
-  const sitemaps = [
-    { loc: `${origin}/pages.xml`, lastmod: fmtDate() },
-    { loc: `${origin}/plans.xml`, lastmod: fmtDate() },
-    { loc: `${origin}/insights.xml`, lastmod: fmtDate() },
-    { loc: `${origin}/insight/category.xml`, lastmod: fmtDate() },
-  ];
-
-  const body = sitemaps
-    .map(
-      (s) => `
-  <sitemap>
-    <loc>${s.loc}</loc>
-    <lastmod>${s.lastmod}</lastmod>
-  </sitemap>`
-    )
-    .join("");
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${body}
-</sitemapindex>`;
-
-  return new Response(xml, xmlHeaders());
+  return new Response(xml, { headers: xmlHeaders() });
 }

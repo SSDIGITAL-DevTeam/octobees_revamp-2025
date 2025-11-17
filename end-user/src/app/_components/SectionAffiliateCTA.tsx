@@ -1,31 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import AffiliateModal from "@/components/modals/AffiliateModal";
-import AffiliateSuccessModal from "@/components/modals/AffiliateSuccessModal";
 import AffiliatePNG from "@/assets/homepage/png/affiliate-cta.png";
-import {
-  submitAffiliateApplication,
-  type AffiliatePayload,
-} from "@/services/affiliate.service";
-import router from "next/router";
 import Link from "next/link";
 
-function getErrorMessage(err: unknown) {
-  if (err instanceof Error) return err.message;
-  if (typeof err === "string") return err;
-  try {
-    return JSON.stringify(err);
-  } catch {
-    return "Unknown error";
-  }
-}
-
 export default function SectionAffiliateCTA() {
-  const [openForm, setOpenForm] = useState(false);
-  const [openSuccess, setOpenSuccess] = useState(false);
 
   return (
     <>

@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2025-11-17T07:43:44.126Z",
+  "nodes": [
+    {
+      "url": "https://www.octobees.com/about",
+      "outgoing": [
+        "https://www.octobees.com/contact-us",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/career",
+      "outgoing": [
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/contact-us",
+      "outgoing": [
+        "https://www.octobees.com/mailto:contact@octobees.com",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 5
+    },
+    {
+      "url": "https://www.octobees.com/insights",
+      "outgoing": [
+        "https://www.octobees.com/contact-us",
+        "https://www.octobees.com/insights/jasa-fb-ads-terbaik-raih-penjualan-maksimal-dengan-iklan",
+        "https://www.octobees.com/insights/revolusi-bisnis-pentingnya-ai-untuk-umkm-manfaat-nyatanya",
+        "https://www.octobees.com/insights/ai-seo-vs-traditional-seo-mengapa-ranking-1-di-google-tidak-lagi-menjamin-penjualan",
+        "https://www.octobees.com/insights/category/technology",
+        "https://www.octobees.com/insights/category/marketing-1",
+        "https://www.octobees.com/insights/category/sem",
+        "https://www.octobees.com/insights/category/agi",
+        "https://www.octobees.com/insights/category/artificial-intelligence-ai",
+        "https://www.octobees.com/insights/category/our-works",
+        "https://www.octobees.com/insights/category/tech",
+        "https://www.octobees.com/insights/category/marketing-strategies",
+        "https://www.octobees.com/insights/category/seo",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/increase-my-sales",
+      "outgoing": [
+        "https://www.octobees.com/#contact",
+        "https://www.octobees.com/#our-team",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/seminar",
+      "outgoing": [],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/affiliate",
+      "outgoing": [
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/plans/all-round",
+      "outgoing": [
+        "https://www.octobees.com/#confirm-dialog",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/plans/website",
+      "outgoing": [
+        "https://www.octobees.com/#confirm-dialog",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/plans/ads-campaign",
+      "outgoing": [
+        "https://www.octobees.com/#confirm-dialog",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/plans/social-media-management",
+      "outgoing": [
+        "https://www.octobees.com/#confirm-dialog",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/plans/digital-squad-as-a-service-new",
+      "outgoing": [
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 0
+    },
+    {
+      "url": "https://www.octobees.com/insights/jasa-fb-ads-terbaik-raih-penjualan-maksimal-dengan-iklan",
+      "outgoing": [
+        "https://www.octobees.com/contact-us",
+        "https://www.octobees.com/insights/jasa-fb-ads-terbaik-raih-penjualan-maksimal-dengan-iklan",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 2
+    },
+    {
+      "url": "https://www.octobees.com/insights/revolusi-bisnis-pentingnya-ai-untuk-umkm-manfaat-nyatanya",
+      "outgoing": [
+        "https://www.octobees.com/insights/revolusi-bisnis-pentingnya-ai-untuk-umkm-manfaat-nyatanya",
+        "https://www.octobees.com/contact-us",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 2
+    },
+    {
+      "url": "https://www.octobees.com/insights/ai-seo-vs-traditional-seo-mengapa-ranking-1-di-google-tidak-lagi-menjamin-penjualan",
+      "outgoing": [
+        "https://www.octobees.com/insights/ai-seo-vs-traditional-seo-mengapa-ranking-1-di-google-tidak-lagi-menjamin-penjualan",
+        "https://www.octobees.com/contact-us",
+        "https://www.octobees.com/tel:+6289515216251"
+      ],
+      "inbound": 2
+    }
+  ],
+  "orphaned": [
+    "https://www.octobees.com/about",
+    "https://www.octobees.com/career",
+    "https://www.octobees.com/insights",
+    "https://www.octobees.com/increase-my-sales",
+    "https://www.octobees.com/seminar",
+    "https://www.octobees.com/affiliate",
+    "https://www.octobees.com/plans/all-round",
+    "https://www.octobees.com/plans/website",
+    "https://www.octobees.com/plans/ads-campaign",
+    "https://www.octobees.com/plans/social-media-management",
+    "https://www.octobees.com/plans/digital-squad-as-a-service-new"
+  ]
+}

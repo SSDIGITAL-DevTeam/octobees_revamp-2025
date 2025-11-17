@@ -1,25 +1,31 @@
 import Image from "next/image";
-import {
-  CircleUser
-} from "lucide-react";
+import { CircleUser } from "lucide-react";
 import type { Metadata } from "next";
 
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
 import ShareSocmedButton from "@/components/partials/Button/ButtonShareSocmed";
 import AdsCarousel from "@/app/insights/[slug]/_components/AdsCarousel";
-import { InsightArticle, InsightContent } from "@/app/insights/_components";
+import { InsightContent } from "@/app/insights/_components";
 import dayjs from "dayjs";
 import { Blog } from "@/constants/payload";
 import ImageInsightContent from "@/assets/insights/webp/image-insights-subscription-content.webp";
 import FormSubscription from "./_components/FormSubscription";
 import { notFound } from "next/navigation";
 import { getInsightByCategory, getInsightBySlug } from "@/services/insight.service";
+import Breadcrumbs from "@/components/navigation/Breadcrumbs";
+import ArticleSchema from "@/app/seo/schema/ArticleSchema";
+import BreadcrumbSchema from "@/app/seo/schema/BreadcrumbSchema";
+import RelatedArticles from "./_components/RelatedArticles";
+import RelatedServices from "./_components/RelatedServices";
+import { generateMetadata as buildMetadata } from "@/utils/generateMetadata";
 
 type SlugInsightPageProps = {
   params: {
     slug: string
   }
 }
+
+export const revalidate = 1800;
 
 const stripHtml = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
@@ -53,24 +59,28 @@ const getMetaContent = (blog: Blog | null, value: string, fallbacks: string[] = 
 };
 
 export async function generateMetadata({ params }: SlugInsightPageProps): Promise<Metadata> {
+  const fallback = {
+    title: "Insights Blog",
+    description: "Stay updated with the latest insights from our blog.",
+  };
+
   try {
     const blog = await getInsightBySlug(params.slug);
     if (!blog) {
-      return {
-        title: "Insights Blog",
-        description: "Stay updated with the latest insights from our blog.",
-      };
+      return buildMetadata({
+        ...fallback,
+        path: `/insights/${params.slug}`,
+        cmsPath: params.slug,
+      });
     }
 
-    const rawTitle = getMetaContent(blog, "title") || blog.title || "Insights Blog";
+    const rawTitle = getMetaContent(blog, "title") || blog.title || fallback.title;
     const rawDescription =
       getMetaContent(blog, "description") ||
       (blog.content ? stripHtml(blog.content).slice(0, 160) : "");
-    const description = rawDescription || "Stay updated with the latest insights from our blog.";
+    const description = rawDescription || fallback.description;
     const keywordString =
-      getMetaContent(blog, "keyword", ["keywords"]) ||
-      blog.category?.name ||
-      "";
+      getMetaContent(blog, "keyword", ["keywords"]) || blog.category?.name || "";
     const keywords = keywordString
       .split(",")
       .map((item) => item.trim())
@@ -83,18 +93,17 @@ export async function generateMetadata({ params }: SlugInsightPageProps): Promis
       "/default-og.png";
 
     const ogImage = buildAbsoluteUrl(ogImageMeta);
-    const pageUrlBase = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-    const pageUrl = pageUrlBase ? `${pageUrlBase.replace(/\/$/, "")}/insights/${params.slug}` : undefined;
 
-    return {
+    return buildMetadata({
       title: rawTitle,
       description,
-      keywords: keywords.length ? keywords : undefined,
-      openGraph: {
+      keywords,
+      path: `/insights/${params.slug}`,
+      locale: "en-US",
+      openGraphOverride: {
         title: rawTitle,
         description,
         type: "article",
-        url: pageUrl,
         images: [
           {
             url: ogImage,
@@ -102,18 +111,20 @@ export async function generateMetadata({ params }: SlugInsightPageProps): Promis
           },
         ],
       },
-      twitter: {
+      twitterOverride: {
         card: "summary_large_image",
         title: rawTitle,
         description,
         images: [ogImage],
       },
-    };
-  } catch (error) {
-    return {
-      title: "Insights Blog",
-      description: "Stay updated with the latest insights from our blog.",
-    };
+      cmsPath: params.slug,
+    });
+  } catch {
+    return buildMetadata({
+      ...fallback,
+      path: `/insights/${params.slug}`,
+      cmsPath: params.slug,
+    });
   }
 }
 
@@ -123,18 +134,52 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
 
   try {
     blog = await getInsightBySlug(params.slug);
-    const reponse = await getInsightByCategory(blog?.categoryId || "", 3);
-    relatedBlog = reponse.data;
+    const response = await getInsightByCategory(blog?.categoryId || "", 3);
+    relatedBlog = response.data;
   } catch (error) {
     return notFound();
   }
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    "https://www.octobees.com";
+  const breadcrumbSegments = blog
+    ? [
+        { label: "Insights", href: "/insights" },
+        {
+          label: blog.category.name,
+          href: `/insights/category/${blog.category.slug}`,
+        },
+        { label: blog.title },
+      ]
+    : [{ label: "Insights", href: "/insights" }];
+
   return (
     <main className="flex flex-col gap-10 lg:gap-20 md:max-w-7xl md:mx-auto md:min-h-screen py-20 pt-28 md:pt-44 px-5 md:px-10 lg:px-5 bg-white relative">
+      {blog && (
+        <>
+          <ArticleSchema article={blog} />
+          <BreadcrumbSchema
+            items={[
+              { name: "Home", item: siteUrl },
+              { name: "Insights", item: `${siteUrl}/insights` },
+              {
+                name: blog.category.name,
+                item: `${siteUrl}/insights/category/${blog.category.slug}`,
+              },
+              {
+                name: blog.title,
+                item: `${siteUrl}/insights/${blog.slug}`,
+              },
+            ]}
+          />
+        </>
+      )}
       <BackArticleButton />
       {
         blog && (
           <div className="container lg:max-w-3xl mx-auto flex flex-col gap-8 lg:gap-y-12">
+            <Breadcrumbs segments={breadcrumbSegments} />
             <div className="space-y-6 w-full">
 
               <p className="text-center w-fit mx-auto bg-gray-200/80 text-xs lg:text-sm capitalize rounded-3xl font-medium py-2 px-4 text-gray-800 flex items-center gap-2 shadow-sm max-w-[90%]">
@@ -169,6 +214,7 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
               </div>
             </div>
             <InsightContent content={blog.content} className="!leading-[150%] text-gray-700 body-parser space-y-3 md:space-y-4" />
+            <RelatedServices categorySlug={blog.category.slug} />
             <div className="flex flex-col md:flex-row justify-center items-center gap-x-16 rounded-3xl bg-red-50/90 shadow-sm p-8">
               <Image
                 src={ImageInsightContent}
@@ -184,10 +230,7 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
                 <FormSubscription slug={blog.slug} />
               </div>
             </div>
-            <div className="w-full space-y-4 md:space-y-10">
-              <h2 className="font-heading text-2xl md:text-2xl lg:text-3xl text-primary font-semibold">Related Post</h2>
-              <InsightArticle blogs={relatedBlog} />
-            </div>
+            <RelatedArticles articles={relatedBlog} currentSlug={params.slug} />
           </div>
         )
       }

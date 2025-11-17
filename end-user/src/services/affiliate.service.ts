@@ -19,7 +19,12 @@ export async function submitAffiliateApplication(p: AffiliatePayload) {
     });
     if (!res.ok) {
         let msg = "Failed to submit application";
-        try { const j = await res.json(); msg = j?.error || j?.message || msg; } catch { }
+        try {
+            const j = await res.json();
+            msg = j?.error || j?.message || msg;
+        } catch (error) {
+            console.warn("[affiliate] unable to parse error response", error);
+        }
         throw new Error(msg);
     }
     return res.json();

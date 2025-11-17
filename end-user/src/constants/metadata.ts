@@ -1,4 +1,4 @@
-const metadataBase = new URL("https://octobees.com");
+const metadataBase = new URL("https://www.octobees.com");
 const defaultImage = `${metadataBase}assets/png/asset-logo-octobees.png`;
 const defaultOgImage = `${metadataBase}assets/png/asset-logo-opengraph-octobees.png`;
 const defaultAuthor = "Octobees";

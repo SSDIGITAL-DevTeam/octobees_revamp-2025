@@ -1,4 +1,3 @@
-"use client";
 import FloatButton from "@/components/partials/FloatButton/FloatButton";
 import {
   SectionWhatWeDo,
@@ -9,20 +8,12 @@ import {
   SectionWhoWeHelp,
   SectionTestimonials
 } from "./_components";
-import { DialogSubscription } from "@/components/layouts/Dialog";
-import { useEffect, useState } from "react";
 import { ButtonFloatingCTA } from "@/components/partials/Button";
+import DialogSubscriptionAutoOpen from "./_components/DialogSubscriptionAutoOpen";
+
+export const revalidate = 3600;
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setOpen(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <main>
       <ButtonFloatingCTA />
@@ -69,7 +60,7 @@ export default function Home() {
         </div>
       </section>
 
-      <DialogSubscription open={open} setOpen={setOpen} />
+      <DialogSubscriptionAutoOpen />
     </main>
   );
 }
