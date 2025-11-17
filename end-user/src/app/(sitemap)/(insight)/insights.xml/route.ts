@@ -48,6 +48,13 @@ export async function GET(req: Request) {
 
   const blogs = await fetchAllBlogs(origin);
 
+  const indexUrl = `
+  <url>
+    <loc>${origin}/insights</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`;
+
   const urls = blogs
     .map((b: any) => {
       const lastmod = b.updatedAt || b.updated_at || b.createdAt || b.created_at;
