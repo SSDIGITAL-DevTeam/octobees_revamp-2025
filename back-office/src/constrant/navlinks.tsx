@@ -1,4 +1,6 @@
-import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash, MailCheck } from "lucide-react"
+import { url } from "inspector"
+import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash, MailCheck, File, User, DollarSign, UserCheck} from "lucide-react"
+import { title } from "process"
 
 const sidebarItems = [
   {
@@ -9,22 +11,6 @@ const sidebarItems = [
         title: "Overview",
         url: "/dashboard",
         icon: ChartPie,
-      }
-    ],
-  },
-  {
-    group: "Subscription Management",
-    name:"subscription",
-    data: [
-      {
-        title: "Subscription",
-        url: "/subscription",
-        icon: MailCheck,
-      },
-      {
-        title: "Affiliate Program",
-        url: "/affiliate-program",
-        icon: MailCheck,
       }
     ],
   },
@@ -47,11 +33,6 @@ const sidebarItems = [
         title: "Blogs",
         url: "/blog/blogs",
         icon: NotebookPen,
-      },
-      {
-        title: "Blog Category",
-        url: "/blog/blog-category",
-        icon: NotebookTabs,
       }
     ],
   },
@@ -72,6 +53,32 @@ const sidebarItems = [
     ],
   },
   {
+    group: "Partnership Program",
+    name:"services",
+    data: [
+      {
+        title: "Partnership Dashboard",
+        url: "/partnership/dashboard",
+        icon: UserCheck,
+      },
+      {
+        title: "Leads Management",
+        url: "/partnership/leads-management",
+        icon: File,
+      },
+      {
+        title: "Partners",
+        url: "/partnership/partners",
+        icon: User,
+      },
+      {
+        title: "Commission Control",
+        url: "/partnership/commission-control",
+        icon: DollarSign,
+      }
+    ],
+  },
+  {
     group: "Career Management",
     name:"career",
     data: [
@@ -83,7 +90,7 @@ const sidebarItems = [
       {
         title: "Applicants Data",
         url: "/career/applicants-data",
-        icon: Folder,
+        icon: Briefcase,
       },
     ],
   },
@@ -92,7 +99,12 @@ const sidebarItems = [
     name:"meta",
     data: [
       {
-        title: "Meta Tags",
+        title: "Meta Content Management",
+        url: "/meta",
+        icon: Hash,
+      },
+      {
+        title: "Affiliate Program",
         url: "/meta",
         icon: Hash,
       }
