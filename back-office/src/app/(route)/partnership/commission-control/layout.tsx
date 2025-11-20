@@ -1,5 +1,5 @@
 import { Suspense } from "react"
 
-export default function LeadsManagementLayout({ children }: { children: React.ReactNode }) {
+export default function CommissionControlLayout({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<div />}>{children}</Suspense>
 }

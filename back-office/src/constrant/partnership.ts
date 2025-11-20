@@ -39,13 +39,39 @@ export type TopPartner = {
   performance: number
 }
 
+export type PartnerStatus = "Active" | "Non Active"
+
+export type PartnerEntry = {
+  id: string
+  fullName: string
+  email: string
+  phone: string
+  country: string
+  status: PartnerStatus
+}
+
 export const leadStatusTone: Record<LeadStatus, StatusTone> = {
   "Proposal Sent": "warning",
   "Follow-up": "info",
   "Lead Created": "info",
-  Closed: "success",
+  "Closed": "success",
 }
 
 export const paymentStatusTone: Record<PaymentStatus, StatusTone> = {
   "Pending Transfer": "warning",
+}
+
+export const leadStatusStyles: Record<LeadStatus, string> = {
+  "Proposal Sent": "border-transparent bg-[#D4AF37]/10 text-[#D4AF37]",
+  "Follow-up": "border-transparent bg-[#8026EF]/10 text-[#8026EF]",
+  "Lead Created": "border-transparent bg-[#2A399D]/10 text-[#2A399D]",
+  "Closed": "border-transparent bg-[#004F33]/10 text-[#004F33]",
+}
+
+export type CommissionItem = {
+  id: string
+  serviceName: string
+  projectValue: string
+  commissionPercentage: number
+  description: string
 }

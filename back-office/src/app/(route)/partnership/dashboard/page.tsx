@@ -1,13 +1,9 @@
 "use client"
 
 import Header from "@/components/layout/header/Header"
-import {
-  DashboardPanel,
-  PerformanceBar,
-  StatCard,
-  StatusBadge,
-} from "@/components/partials/partnership/PartnershipDashboardWidgets"
+import { DashboardPanel, StatCard, StatusBadge } from "@/components/partials/partnership/PartnershipDashboardWidgets"
 import { Button } from "@/components/ui/button"
+import Badge from "@/components/ui/Badge"
 import {
   Table,
   TableBody,
@@ -125,7 +121,9 @@ export default function PartnershipDashboardPage() {
                   <TableCell>{partner.closedLeads}</TableCell>
                   <TableCell className="font-semibold text-slate-900">{partner.totalCommission}</TableCell>
                   <TableCell>
-                    <PerformanceBar value={partner.performance} />
+                    <Badge category="status" variant="closed">
+                      {partner.performance}%
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))}
