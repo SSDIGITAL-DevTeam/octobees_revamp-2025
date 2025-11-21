@@ -2,7 +2,7 @@ import type { PartnerEntry, PartnerStatus } from "@/constrant/partnership"
 
 const statuses: PartnerStatus[] = ["Active", "Non Active"]
 
-const basePartners = [
+const basePartners: PartnerEntry[] = [
   {
     id: "dafa-aulia",
     fullName: "Dafa Aulia",
