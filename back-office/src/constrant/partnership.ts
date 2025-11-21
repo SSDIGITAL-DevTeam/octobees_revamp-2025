@@ -21,6 +21,15 @@ export type LeadEntry = {
   actionLabel: string
 }
 
+export type LeadDetail = LeadEntry & {
+  slug: string
+  projectValue: string
+  email: string
+  phone: string
+  partnerAllotment: string
+  lastUpdate: string
+}
+
 export type PaymentStatus = "Pending Transfer"
 
 export type CommissionPayment = {
@@ -48,6 +57,21 @@ export type PartnerEntry = {
   phone: string
   country: string
   status: PartnerStatus
+}
+
+export type PartnerDetail = PartnerEntry & {
+  affiliateStatus: "Active" | "Inactive"
+  stats: {
+    totalCommission: string
+    pendingCommission: string
+    totalLeads: number
+    closedLeads: number
+    totalCommissionHelper?: string
+    pendingHelper?: string
+    totalLeadsHelper?: string
+    closedHelper?: string
+  }
+  leads: LeadEntry[]
 }
 
 export const leadStatusTone: Record<LeadStatus, StatusTone> = {

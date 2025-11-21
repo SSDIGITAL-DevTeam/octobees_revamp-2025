@@ -1,6 +1,7 @@
 "use client"
 
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Eye } from "lucide-react"
+import Link from "next/link"
 
 import Badge from "@/components/ui/Badge"
 import { Button } from "@/components/ui/button"
@@ -50,10 +51,24 @@ export const PartnersTable = ({ partners }: PartnersTableProps) => {
                 </Badge>
               </TableCell>
               <TableCell className="text-center">
-                <Button variant="ghost" className="text-red-600 hover:text-red-700">
-                  See Details
-                  <ArrowUpRight className="ml-1 h-4 w-4" />
-                </Button>
+                <div className="flex items-center justify-center gap-2">
+                  <Button asChild variant="ghost" className="text-red-600 hover:text-red-700">
+                    <Link href={`/partnership/partners/${partner.id}`}>
+                      See Details
+                      <ArrowUpRight className="ml-1 h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="h-10 w-10 rounded-full border border-red-600 text-red-600 hover:bg-red-50"
+                    title="View partner detail"
+                  >
+                    <Link href={`/partnership/partners/${partner.id}`}>
+                      <Eye className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

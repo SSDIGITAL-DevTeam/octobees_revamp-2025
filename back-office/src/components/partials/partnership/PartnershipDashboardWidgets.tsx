@@ -5,6 +5,7 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 
 import type { StatHighlight, StatusTone } from "@/constrant/partnership"
+import { cn } from "@/lib/utils"
 
 const statusToneStyles: Record<StatusTone, string> = {
   default: "border-slate-200 bg-slate-100 text-slate-700",
@@ -64,12 +65,18 @@ export const StatCard = ({ highlight }: { highlight: StatHighlight }) => (
 export const StatusBadge = ({
   label,
   tone = "default",
+  className,
 }: {
   label: string
   tone?: StatusTone
+  className?: string
 }) => (
   <span
-    className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusToneStyles[tone]}`}
+    className={cn(
+      "inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold",
+      statusToneStyles[tone],
+      className
+    )}
   >
     {label}
   </span>

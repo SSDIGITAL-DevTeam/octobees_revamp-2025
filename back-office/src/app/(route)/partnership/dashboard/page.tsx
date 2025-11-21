@@ -3,6 +3,13 @@
 import Header from "@/components/layout/header/Header"
 import { DashboardPanel, StatCard, StatusBadge } from "@/components/partials/partnership/PartnershipDashboardWidgets"
 import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import Badge from "@/components/ui/Badge"
 import {
   Table,
@@ -18,9 +25,22 @@ import {
   statHighlights,
   topPartners,
 } from "@/data/partnership/dashboard"
-import { leadStatusTone, paymentStatusTone } from "@/constrant/partnership"
+import { leadStatusTone, paymentStatusTone, type LeadStatus } from "@/constrant/partnership"
+import { useState } from "react"
 
 export default function PartnershipDashboardPage() {
+  const [recentLeadRows, setRecentLeadRows] = useState(recentLeads)
+
+  const leadActionOptions: LeadStatus[] = ["Proposal Sent", "Follow-up", "Lead Created", "Closed"]
+
+  const handleLeadActionChange = (leadName: string, nextStatus: LeadStatus) => {
+    setRecentLeadRows((prev) =>
+      prev.map((lead) =>
+        lead.leadName === leadName ? { ...lead, status: nextStatus, actionLabel: nextStatus } : lead
+      )
+    )
+  }
+
   return (
     <main className="flex w-full flex-col gap-10 pb-12">
       <Header title="Partnership Dashboard" label="Partnership Program" />
@@ -41,11 +61,11 @@ export default function PartnershipDashboardPage() {
                 <TableHead>Service Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Remark</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-left">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentLeads.map((lead) => (
+              {recentLeadRows.map((lead) => (
                 <TableRow key={`${lead.leadName}-${lead.status}-${lead.remark}`}>
                   <TableCell className="font-semibold text-slate-900">{lead.leadName}</TableCell>
                   <TableCell>{lead.partnerName}</TableCell>
@@ -55,9 +75,21 @@ export default function PartnershipDashboardPage() {
                   </TableCell>
                   <TableCell className="text-black">{lead.remark}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm" className="h-10 rounded-full px-5 text-sm">
-                      {lead.actionLabel}
-                    </Button>
+                    <Select
+                      value={lead.status}
+                      onValueChange={(value) => handleLeadActionChange(lead.leadName, value as LeadStatus)}
+                    >
+                      <SelectTrigger className="h-10 w-[150px] rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {leadActionOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                 </TableRow>
               ))}
@@ -67,7 +99,7 @@ export default function PartnershipDashboardPage() {
 
         <DashboardPanel
           title="Pending Commission Payments"
-          actionHref="/partnership/commission-control"
+          actionHref="/partnership/dashboard/pending-commission-payment"
           actionLabel="View All"
         >
           <Table>

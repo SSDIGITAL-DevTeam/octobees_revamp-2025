@@ -19,6 +19,7 @@ export const LeadsManagementContent = () => {
     totalPages,
     totalData,
     pageSize,
+    updateLeadStatus,
   } = useLeadsManagement()
 
   const rangeStart = totalData ? (page - 1) * pageSize + 1 : 0
@@ -34,13 +35,13 @@ export const LeadsManagementContent = () => {
             search={search}
             onSearchChange={setSearch}
             status={status}
-            onStatusChange={setStatus}
+            onStatusChange={(value) => setStatus(value)}
             statusOptions={statusOptions}
           />
 
           <div className="mt-8 space-y-6">
             <h2 className="text-2xl font-semibold text-slate-950">All Leads</h2>
-            <LeadsTable leads={leads} />
+            <LeadsTable leads={leads} onStatusChange={updateLeadStatus} />
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <p className="text-sm text-slate-500">
                 Showing {rangeStart}-{rangeEnd} of {totalData} leads

@@ -11,13 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import type { LeadsStatusFilter } from "@/hooks/partnership/useLeadsManagement"
 
 type LeadsFilterBarProps = {
   search: string
   onSearchChange: (value: string) => void
-  status: string
-  onStatusChange: (value: string) => void
-  statusOptions: string[]
+  status: LeadsStatusFilter
+  onStatusChange: (value: LeadsStatusFilter) => void
+  statusOptions: LeadsStatusFilter[]
 }
 
 const formatStatusLabel = (value: string) => {
@@ -44,7 +45,7 @@ export const LeadsFilterBar = ({
         />
       </div>
 
-      <Select value={status} onValueChange={onStatusChange}>
+      <Select value={status} onValueChange={(value) => onStatusChange(value as LeadsStatusFilter)}>
         <SelectTrigger className={cn("w-full rounded-full border-slate-200 bg-white py-6 pl-5 pr-10 text-base md:w-52")}>
           <SelectValue placeholder="All Status" />
         </SelectTrigger>

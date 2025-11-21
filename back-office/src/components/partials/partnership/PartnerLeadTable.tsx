@@ -1,6 +1,6 @@
 "use client"
 
-import { Eye } from "lucide-react"
+import { ChevronDown, Eye } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -12,31 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { LeadEntry, LeadStatus } from "@/constrant/partnership"
+import type { LeadEntry } from "@/constrant/partnership"
 import { leadStatusStyles } from "@/constrant/partnership"
 import { StatusBadge } from "./PartnershipDashboardWidgets"
 import { slugify } from "@/utils/slugify"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
-type LeadsTableProps = {
+type PartnerLeadTableProps = {
   leads: LeadEntry[]
-  onStatusChange: (leadName: string, status: LeadStatus) => void
 }
 
-export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
+export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
   return (
-    <div className="overflow-hidden rounded-3xl border border-border shadow-sm">
+    <div className="overflow-hidden rounded-3xl shadow-sm">
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50">
             <TableHead>Lead Name</TableHead>
-            <TableHead>Partner Name</TableHead>
+            <TableHead>Affiliator</TableHead>
             <TableHead>Service Type</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Remark</TableHead>
@@ -55,23 +47,13 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
               <TableCell className="text-slate-500">{lead.remark}</TableCell>
               <TableCell>
                 <div className="flex justify-end gap-2">
-                  <Select
-                    value={lead.status}
-                    onValueChange={(value) => onStatusChange(lead.leadName, value as LeadStatus)}
+                  <Button
+                    variant="outline"
+                    className="h-10 rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600"
                   >
-                    <SelectTrigger className="h-10 w-[150px] rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(["Proposal Sent", "Follow-up", "Lead Created", "Closed"] as LeadStatus[]).map(
-                        (statusOption) => (
-                          <SelectItem key={statusOption} value={statusOption}>
-                            {statusOption}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
+                    {lead.actionLabel}
+                    <ChevronDown className="ml-2 h-4 w-4 text-slate-500" />
+                  </Button>
                   <Button
                     asChild
                     variant="ghost"
@@ -90,3 +72,5 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
     </div>
   )
 }
+
+export default PartnerLeadTable
