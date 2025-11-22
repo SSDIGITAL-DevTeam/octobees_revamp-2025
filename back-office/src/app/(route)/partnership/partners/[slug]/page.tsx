@@ -110,7 +110,7 @@ export default function PartnerDetailPage({ params }: PartnerDetailPageProps) {
           </div>
         </div>
 
-        <div className="space-y-4 rounded-[26px] border border-border bg-white p-6 shadow-sm">
+        <div className="space-y-4 rounded-[26px] border border-border bg-white p-6 shadow-sm px-8 py-8">
           <p className="text-xl font-semibold text-slate-900">Leads From {partner.fullName}</p>
           <PartnerLeadTable leads={partner.leads} />
         </div>

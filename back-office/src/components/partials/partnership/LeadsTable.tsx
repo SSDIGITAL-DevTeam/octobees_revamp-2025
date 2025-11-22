@@ -31,7 +31,7 @@ type LeadsTableProps = {
 
 export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
   return (
-    <div className="overflow-hidden rounded-3xl border border-border shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border shadow-sm px-8 py-5">
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50">
@@ -40,7 +40,7 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
             <TableHead>Service Type</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Remark</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -75,10 +75,10 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
                   <Button
                     asChild
                     variant="ghost"
-                    className="h-10 w-10 rounded-full border border-red-600 text-red-600 hover:bg-red-50"
+                    className="h-15 w-15 rounded-full text-red-600 hover:bg-red-50"
                   >
                     <Link href={`/partnership/leads-management/${slugify(lead.leadName)}`}>
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-30 w-30" />
                     </Link>
                   </Button>
                 </div>

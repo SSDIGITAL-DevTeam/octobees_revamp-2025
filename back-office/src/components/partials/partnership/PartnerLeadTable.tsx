@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, Eye } from "lucide-react"
+import { Eye } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -12,10 +12,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { LeadEntry } from "@/constrant/partnership"
+import type { LeadEntry, LeadStatus } from "@/constrant/partnership"
 import { leadStatusStyles } from "@/constrant/partnership"
 import { StatusBadge } from "./PartnershipDashboardWidgets"
 import { slugify } from "@/utils/slugify"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type PartnerLeadTableProps = {
   leads: LeadEntry[]
@@ -32,7 +39,7 @@ export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
             <TableHead>Service Type</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Remark</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -46,21 +53,28 @@ export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
               </TableCell>
               <TableCell className="text-slate-500">{lead.remark}</TableCell>
               <TableCell>
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    className="h-10 rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600"
-                  >
-                    {lead.actionLabel}
-                    <ChevronDown className="ml-2 h-4 w-4 text-slate-500" />
-                  </Button>
+                <div className="flex items-center justify-center">
+                  <Select defaultValue={lead.status as LeadStatus}>
+                    <SelectTrigger className="h-10 w-[150px] rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(["Proposal Sent", "Follow-up", "Lead Created", "Closed"] as LeadStatus[]).map(
+                        (statusOption) => (
+                          <SelectItem key={statusOption} value={statusOption}>
+                            {statusOption}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
                   <Button
                     asChild
                     variant="ghost"
-                    className="h-10 w-10 rounded-full border border-red-600 text-red-600 hover:bg-red-50"
+                    className="h-15 w-15 rounded-full text-red-600 hover:bg-red-50"
                   >
                     <Link href={`/partnership/leads-management/${slugify(lead.leadName)}`}>
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-30 w-30" />
                     </Link>
                   </Button>
                 </div>

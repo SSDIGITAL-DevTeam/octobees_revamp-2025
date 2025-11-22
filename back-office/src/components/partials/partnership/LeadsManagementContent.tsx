@@ -30,7 +30,7 @@ export const LeadsManagementContent = () => {
       <Header title="Lead Management" label="Partnership Program" />
 
       <section className="flex flex-col gap-8">
-        <div className="rounded-3xl border border-border bg-white p-6 shadow-sm">
+
           <LeadsFilterBar
             search={search}
             onSearchChange={setSearch}
@@ -39,7 +39,7 @@ export const LeadsManagementContent = () => {
             statusOptions={statusOptions}
           />
 
-          <div className="mt-8 space-y-6">
+          <div className="mt-4 space-y-6">
             <h2 className="text-2xl font-semibold text-slate-950">All Leads</h2>
             <LeadsTable leads={leads} onStatusChange={updateLeadStatus} />
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -49,7 +49,7 @@ export const LeadsManagementContent = () => {
               <LeadsPagination page={page} totalPages={totalPages} onChange={setPage} />
             </div>
           </div>
-        </div>
+
       </section>
     </main>
   )

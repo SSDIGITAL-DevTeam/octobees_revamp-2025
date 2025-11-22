@@ -54,18 +54,8 @@ export const PartnersTable = ({ partners }: PartnersTableProps) => {
                 <div className="flex items-center justify-center gap-2">
                   <Button asChild variant="ghost" className="text-red-600 hover:text-red-700">
                     <Link href={`/partnership/partners/${partner.id}`}>
+                    <Eye className="h-5 w-5" />
                       See Details
-                      <ArrowUpRight className="ml-1 h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="h-10 w-10 rounded-full border border-red-600 text-red-600 hover:bg-red-50"
-                    title="View partner detail"
-                  >
-                    <Link href={`/partnership/partners/${partner.id}`}>
-                      <Eye className="h-5 w-5" />
                     </Link>
                   </Button>
                 </div>

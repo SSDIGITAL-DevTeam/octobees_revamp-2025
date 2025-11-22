@@ -14,6 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { useLeadDetail, leadStatusOptions } from "@/hooks/partnership/useLeadDetail"
 import type { LeadStatus } from "@/constrant/partnership"
 
@@ -27,6 +33,8 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const [status, setStatus] = useState<LeadStatus>(lead?.status ?? "Follow-up")
   const [projectValue, setProjectValue] = useState(lead?.projectValue ?? "")
   const [remark, setRemark] = useState(lead?.remark ?? "")
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
+  const [projectDraft, setProjectDraft] = useState(projectValue)
 
   const infoRows = useMemo(
     () => [
@@ -107,12 +115,25 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           <div className="grid gap-6 px-6 pb-8 pt-4">
             <div className="flex items-center gap-3">
               <div className="text-sm font-semibold text-slate-700">Project Value (IDR)</div>
-              <Input
-                value={projectValue}
-                onChange={(event) => setProjectValue(event.target.value)}
-                className="h-10 w-48 rounded-md border-slate-300 px-3 text-sm"
-              />
-              <Pencil className="h-4 w-4 text-amber-600" />
+              <div className="flex items-center gap-2">
+                <Input
+                  value={projectValue}
+                  readOnly
+                  className="h-10 w-56 rounded-md border-slate-300 px-3 text-sm bg-slate-50"
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 rounded-full border border-amber-300 text-amber-600 hover:bg-amber-50"
+                  onClick={() => {
+                    setProjectDraft(projectValue)
+                    setIsProjectModalOpen(true)
+                  }}
+                  title="Edit project value"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -144,6 +165,45 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           </div>
         </div>
       </section>
+
+      <Dialog open={isProjectModalOpen} onOpenChange={(open) => (!open ? setIsProjectModalOpen(false) : null)}>
+        <DialogContent className="max-w-xl rounded-[20px] px-8 py-6">
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-2xl font-semibold text-slate-900">Edit Project Value</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-3 pt-2">
+            <p className="text-sm font-semibold text-slate-800">Project Value (IDR)</p>
+            <Input
+              value={projectDraft}
+              onChange={(event) => setProjectDraft(event.target.value)}
+              placeholder="Enter project value"
+              className="h-11 rounded-lg border-slate-200 text-sm"
+            />
+          </div>
+
+          <div className="mt-6 flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-10 rounded-full border-slate-300 px-4 text-sm font-semibold text-slate-600"
+              onClick={() => setIsProjectModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              className="h-10 rounded-full bg-amber-400 px-5 text-sm font-semibold text-white hover:bg-amber-500"
+              onClick={() => {
+                setProjectValue(projectDraft)
+                setIsProjectModalOpen(false)
+              }}
+            >
+              Save Changes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }
