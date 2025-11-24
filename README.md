@@ -52,12 +52,12 @@ The system follows a modular, service-oriented architecture pattern.
 
 ```mermaid
 graph TD
-    Client[Clients] -->|HTTP/JSON| API[API Gateway / Backend]
+    Client[Clients] -->|HTTP/JSON| API["API Gateway / Backend"]
     
     subgraph "Frontend Applications"
-        Partner[Partner Portal (React)]
-        Web[Main Website (React)]
-        Admin[Back Office (React)]
+        Partner["Partner Portal (React)"]
+        Web["Main Website (React)"]
+        Admin["Back Office (React)"]
     end
     
     subgraph "Backend Services (Express.js)"
@@ -69,7 +69,7 @@ graph TD
     end
     
     subgraph "Data Layer"
-        DB[(MySQL Database)]
+        DB[("MySQL Database")]
         Storage[Google Cloud Storage]
     end
     
