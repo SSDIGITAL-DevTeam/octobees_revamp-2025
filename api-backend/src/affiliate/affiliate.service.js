@@ -32,16 +32,16 @@ const buildChangePasswordUrl = (token) => `${APP_BASE_URL}${CHANGE_PASSWORD_PATH
 export const createAffiliate = async (raw, req) => {
     const payload = {
         id: randomUUID(),
-        fullName: trim(raw.full_name),
+        fullName: trim(raw.fullName || raw.full_name),
         email: trim(raw.email),
-        countryCode: trim(raw.country_code) || "+62",
+        countryCode: trim(raw.countryCode || raw.country_code) || "+62",
         phone: trim(raw.phone),
         country: trim(raw.country),
-        govOrBusinessId: trim(raw.gov_or_business_id) || null,
+        govOrBusinessId: trim(raw.govOrBusinessId || raw.gov_or_business_id) || null,
         strategy: trim(raw.strategy),
-        portfolioLinks: trim(raw.portfolio_links) || null,
+        portfolioLinks: trim(raw.portfolioLinks || raw.portfolio_links) || null,
         motivation: trim(raw.motivation) || null,
-        otherPrograms: trim(raw.other_programs) || null,
+        otherPrograms: trim(raw.otherPrograms || raw.other_programs) || null,
         phoneE164: null,
         status: "pending",
         ipAddress: req.ip,
@@ -93,7 +93,10 @@ export const getAffiliate = async (id) => {
     return row;
 };
 
-export const reviewAffiliate = async (id, { status, notes, reviewerId: payloadReviewerId }, reviewerId) => {
+export const reviewAffiliate = async (id, payload, reviewerId) => {
+    const { status, reviewerId: payloadReviewerId } = payload;
+    const notes = payload.notes || payload.rejectionNote || payload.rejection_note;
+
     if (!["approved", "rejected"].includes(status)) throw new Error("Invalid status");
     const finalReviewerId = reviewerId ?? payloadReviewerId ?? null;
     if (status === "approved") {

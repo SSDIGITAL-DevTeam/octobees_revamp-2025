@@ -34,13 +34,16 @@ export const getLeadDetail = async (affiliateId, leadId) => {
 };
 
 export const createNewLead = async (affiliateId, leadData) => {
+    const serviceId = leadData.serviceId || leadData.service_id;
+    const projectValue = leadData.projectValue || leadData.project_value;
+
     // Validate required fields
-    if (!leadData.name || !leadData.email || !leadData.phone || !leadData.serviceId) {
+    if (!leadData.name || !leadData.email || !leadData.phone || !serviceId) {
         throw new Error("Missing required fields: name, email, phone, serviceId");
     }
 
     // Validate service exists
-    const service = await getPartnerServiceById(leadData.serviceId);
+    const service = await getPartnerServiceById(serviceId);
     if (!service) {
         throw new Error("Invalid service ID");
     }
@@ -52,8 +55,8 @@ export const createNewLead = async (affiliateId, leadData) => {
         name: leadData.name,
         email: leadData.email,
         phone: leadData.phone,
-        serviceId: leadData.serviceId,
-        projectValue: leadData.projectValue || 0,
+        serviceId: serviceId,
+        projectValue: projectValue || 0,
         status: leadData.status || "Lead Created",
         remark: leadData.remark || null,
     };
@@ -69,9 +72,12 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
         throw new Error("Lead not found or you don't have permission to update it");
     }
 
+    const serviceId = leadData.serviceId || leadData.service_id;
+    const projectValue = leadData.projectValue || leadData.project_value;
+
     // Validate service if provided
-    if (leadData.serviceId) {
-        const service = await getPartnerServiceById(leadData.serviceId);
+    if (serviceId) {
+        const service = await getPartnerServiceById(serviceId);
         if (!service) {
             throw new Error("Invalid service ID");
         }
@@ -82,8 +88,8 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
     if (leadData.name !== undefined) updateData.name = leadData.name;
     if (leadData.email !== undefined) updateData.email = leadData.email;
     if (leadData.phone !== undefined) updateData.phone = leadData.phone;
-    if (leadData.serviceId !== undefined) updateData.serviceId = leadData.serviceId;
-    if (leadData.projectValue !== undefined) updateData.projectValue = leadData.projectValue;
+    if (serviceId !== undefined) updateData.serviceId = serviceId;
+    if (projectValue !== undefined) updateData.projectValue = projectValue;
     if (leadData.status !== undefined) updateData.status = leadData.status;
     if (leadData.remark !== undefined) updateData.remark = leadData.remark;
 
@@ -156,6 +162,9 @@ export const updateAffiliateProfile = async (affiliateId, profileData) => {
     // For now, we'll just validate the data
     const allowedFields = ['fullName', 'phone', 'country'];
     const updateData = {};
+
+    // Support snake_case
+    if (profileData.full_name) profileData.fullName = profileData.full_name;
 
     for (const field of allowedFields) {
         if (profileData[field] !== undefined) {
