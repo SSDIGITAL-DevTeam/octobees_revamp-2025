@@ -27,9 +27,10 @@ const FEATURE_ALIAS: Record<string, string> = {
   affiliate: "subscription",
   settings: "meta",
   backoffice: "dashboard",
+  partnership: "partnership",
 }
 
-const ALLOWED_FEATURES = new Set(["subscription", "user", "blog", "services", "career", "meta"])
+const ALLOWED_FEATURES = new Set(["subscription", "user", "blog", "services", "career", "meta", "partnership"])
 
 const normalizeFeatures = (value: unknown): string[] => {
   const collected = new Set<string>()

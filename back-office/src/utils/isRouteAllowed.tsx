@@ -3,13 +3,14 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
   const routeFeatureMap: Record<string, string[]> = {
     user: ["/user"],
     blog: ["/blog"],
-    services: ["/services"],
+    services: ["/services", "/partnership"],
     meta: ["/meta"],
     position: ["/position"],
     career: ["/career"],
     subscription: ["/subscription", "/affiliate-program"],
+    partnership: ["/partnership"],
   };
-  if (pathname === "/dashboard") return true;
+  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) return true;
 
   for (const feature of features) {
     const prefixes = routeFeatureMap[feature];
