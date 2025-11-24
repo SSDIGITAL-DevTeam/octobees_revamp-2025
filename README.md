@@ -1,370 +1,324 @@
 # Octobees Revamp 2025
 
-> Modern, scalable web platform for Octobees - Complete rebuild with Partner Portal, Affiliate System, and Content Management.
+> A modern, scalable, and comprehensive web platform for Octobees, featuring a robust Partner Portal, Affiliate System, and Content Management System. Built with performance, security, and scalability in mind.
 
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.x-blue.svg)](https://www.mysql.com/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle-0.30.x-orange.svg)](https://orm.drizzle.team/)
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [System Architecture](#-system-architecture)
+- [Project Structure](#-project-structure)
+- [Key Features & Modules](#-key-features--modules)
+  - [Partner Portal](#partner-portal)
+  - [Affiliate System](#affiliate-system)
+  - [Back Office](#back-office)
+  - [Public Website](#public-website)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Environment Configuration](#environment-configuration)
+- [API Documentation](#-api-documentation)
+- [Database Schema](#-database-schema)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Development Workflow](#-development-workflow)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
 
 ## 📋 Overview
 
-Octobees Revamp 2025 is a complete platform consisting of:
+**Octobees Revamp 2025** is a complete re-engineering of the Octobees digital ecosystem. It is designed to streamline business operations, enhance partner relationships, and provide a seamless experience for end-users.
 
-- **🌐 Main Website**: Corporate website with blog, career portal, and service catalog
-- **🎯 Partner Portal**: Dashboard for partners to manage leads and track commissions
-- **🤝 Affiliate System**: Referral system with commission tracking
-- **🏢 Back Office**: Admin panel to manage all resources
-- **📱 API Backend**: RESTful API with 90+ endpoints
+The platform is composed of two main pillars:
+1.  **API Backend**: A robust, RESTful API built with Express.js and MySQL, serving as the central nervous system for data and business logic.
+2.  **Frontend Clients**:
+    *   **Partner Portal**: A dedicated React application for partners to manage their business with Octobees.
+    *   **Main Website**: (In Progress) The public-facing corporate site.
+    *   **Back Office**: (In Progress) The administrative command center.
 
-## 🏗️ Project Structure
+---
+
+## 🏗️ System Architecture
+
+The system follows a modular, service-oriented architecture pattern.
+
+```mermaid
+graph TD
+    Client[Clients] -->|HTTP/JSON| API[API Gateway / Backend]
+    
+    subgraph "Frontend Applications"
+        Partner[Partner Portal (React)]
+        Web[Main Website (React)]
+        Admin[Back Office (React)]
+    end
+    
+    subgraph "Backend Services (Express.js)"
+        Auth[Auth Service]
+        Affiliate[Affiliate Module]
+        PartnerAPI[Partner Module]
+        CMS[Content Management]
+        Order[Order System]
+    end
+    
+    subgraph "Data Layer"
+        DB[(MySQL Database)]
+        Storage[Google Cloud Storage]
+    end
+    
+    Partner --> API
+    Web --> API
+    Admin --> API
+    
+    API --> Auth
+    API --> Affiliate
+    API --> PartnerAPI
+    API --> CMS
+    API --> Order
+    
+    Auth --> DB
+    Affiliate --> DB
+    PartnerAPI --> DB
+    CMS --> DB & Storage
+    Order --> DB
+```
+
+---
+
+## 📂 Project Structure
+
+The repository is organized as a monorepo for easier management and code sharing context.
 
 ```
 octobees_revamp-2025/
-├── api-backend/              # Backend API (Express.js + MySQL)
+├── api-backend/              # 🧠 The Brain: Backend API
 │   ├── src/
-│   │   ├── affiliate/       # Affiliate system
-│   │   ├── partner/         # Partner portal API
-│   │   ├── blog/            # Blog management
-│   │   ├── career/          # Career applications
-│   │   ├── order/           # Order processing
-│   │   └── ...              # Other modules
-│   ├── drizzle/             # Database schema & migrations
-│   ├── README.md            # Backend documentation
+│   │   ├── affiliate/        # Affiliate business logic & routes
+│   │   ├── partner/          # Partner portal specific logic
+│   │   ├── blog/             # CMS for Blogs
+│   │   ├── career/           # Recruitment system
+│   │   ├── order/            # Order processing system
+│   │   ├── auth/             # Centralized Authentication
+│   │   ├── middleware/       # Security & Utility Middlewares
+│   │   └── ...
+│   ├── drizzle/              # Database Schema & Migrations
+│   ├── .env.example          # Backend env template
 │   └── package.json
 │
-├── partner/                  # Partner Portal Frontend (React + TypeScript)
+├── partner/                  # 💻 The Face: Partner Portal Frontend
 │   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── pages/           # Page components
-│   │   └── lib/             # Utilities
-│   ├── README.md            # Frontend documentation
+│   │   ├── components/       # Reusable UI Components
+│   │   ├── hooks/            # Custom React Hooks (Data fetching, etc.)
+│   │   ├── pages/            # Application Routes/Pages
+│   │   ├── contexts/         # Global State (Auth, Theme)
+│   │   └── lib/              # Utilities & API Clients
+│   ├── .env.example          # Frontend env template
 │   └── package.json
 │
-└── README.md                # This file
+└── README.md                 # This documentation
 ```
 
-## 🚀 Quick Start
+---
+
+## 🌟 Key Features & Modules
+
+### 🤝 Partner Portal
+*Designed for business partners to grow with Octobees.*
+
+-   **Dashboard Analytics**: Real-time visualization of performance, pending commissions, and conversion rates.
+-   **Lead Management**: Complete lifecycle management of leads (Create -> Follow-up -> Closed).
+-   **Service Catalog**: Browse available Octobees services with transparent commission rates.
+-   **Commission Tracking**: Detailed history of earnings, payouts, and pending balances.
+-   **Profile Management**: Self-service profile and security settings.
+
+### 🎁 Affiliate System
+*Empowering brand ambassadors.*
+
+-   **Referral Tracking**: Advanced tracking of clicks, signups, and conversions via unique referral links.
+-   **Application Workflow**: Streamlined process for new affiliates to apply and get approved.
+-   **Automated Commissions**: Smart calculation engine for referral rewards.
+
+### 🏢 Back Office
+*The command center for administrators.*
+
+-   **Resource Management**: CRUD capabilities for all system entities (Users, Blogs, Services).
+-   **User Management**: Role-based access control (RBAC) for admin staff.
+-   **Affiliate Approval**: Workflow to review and approve/reject affiliate applications.
+-   **Global Analytics**: System-wide statistics and data export (CSV/Excel).
+
+### 🌐 Public Website
+*The customer-facing experience.*
+
+-   **Blog System**: SEO-optimized content delivery.
+-   **Career Portal**: Job listings and application submission.
+-   **Service Showcase**: Detailed presentation of services and pricing plans.
+-   **Order System**: Seamless checkout and inquiry process.
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up the development environment.
 
 ### Prerequisites
 
-- **Node.js** 20.x or higher
-- **MySQL** 8.x
-- **npm** or **yarn**
+-   **Node.js**: v20.x or higher (LTS recommended)
+-   **MySQL**: v8.x
+-   **Package Manager**: npm or yarn
+-   **Git**: For version control
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/SSDIGITAL-DevTeam/octobees_revamp-2025.git
-   cd octobees_revamp-2025
-   ```
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/SSDIGITAL-DevTeam/octobees_revamp-2025.git
+    cd octobees_revamp-2025
+    ```
 
-2. **Setup Backend**
-   ```bash
-   cd api-backend
-   npm install
-   cp .env.example .env
-   # Edit .env with your configuration
-   npm run push          # Run database migrations
-   npm run dev           # Start backend server
-   ```
+2.  **Backend Setup**
+    ```bash
+    cd api-backend
+    npm install
+    
+    # Configure Environment
+    cp .env.example .env
+    # Open .env and update DB_HOST, DB_USER, DB_PASSWORD, etc.
+    
+    # Database Setup
+    npm run push          # Apply database migrations
+    npm run seed          # (Optional) Seed initial data
+    
+    # Start Server
+    npm run dev
+    ```
+    *Server will start at `http://localhost:8080`*
 
-3. **Setup Partner Portal**
-   ```bash
-   cd partner
-   npm install
-   cp .env.example .env
-   # Edit .env with API URL
-   npm run dev           # Start frontend dev server
-   ```
+3.  **Partner Portal Setup**
+    ```bash
+    cd ../partner
+    npm install
+    
+    # Configure Environment
+    cp .env.example .env
+    # Ensure VITE_API_URL points to your backend (e.g., http://localhost:8080/api)
+    
+    # Start Client
+    npm run dev
+    ```
+    *Client will start at `http://localhost:5173`*
 
-### Access Points
+### Environment Configuration
 
-- **API Backend**: http://localhost:8080/api
-- **Partner Portal**: http://localhost:5173
-- **API Health Check**: http://localhost:8080/api/health
+**Backend (`api-backend/.env`)**
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `PORT` | Server port | `8080` |
+| `DB_HOST` | MySQL Host | `localhost` |
+| `DB_USER` | MySQL User | `root` |
+| `DB_NAME` | Database Name | `octobees` |
+| `JWT_SECRET` | Secret for tokens | `super_secret_key` |
 
-## 📚 Documentation
+**Frontend (`partner/.env`)**
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_API_URL` | API Base URL | `http://localhost:8080/api` |
 
-### Backend API
-Comprehensive API documentation available in [`api-backend/README.md`](./api-backend/README.md)
+---
 
-**Key Features:**
-- 90+ RESTful endpoints
-- JWT authentication
-- Role-based access control
-- File upload support
-- Rate limiting & security
-- Comprehensive Postman collections
+## 📚 API Documentation
 
-**Quick Links:**
-- [API Documentation](./api-backend/README.md)
-- [Database Schema](./api-backend/README.md#database-schema)
-- [Postman Collections](./api-backend/POSTMAN_GUIDE.md)
+The backend provides a comprehensive Swagger-like experience via Postman Collections.
 
-### Partner Portal
-Frontend documentation available in [`partner/README.md`](./partner/README.md)
+-   **Base URL**: `http://localhost:8080/api/v1`
+-   **Authentication**: Bearer Token (JWT)
 
-**Key Features:**
-- Modern React + TypeScript
-- Tailwind CSS styling
-- Responsive design
-- Real-time dashboard
-- Lead management system
-- Commission tracking
+**Available Collections:**
+1.  **[Complete API Collection](./api-backend/Octobees-API-Complete.postman_collection.json)**: Covers all 90+ endpoints.
+2.  **[Partner Portal Collection](./api-backend/Partner-Portal-API.postman_collection.json)**: Focused on partner features.
 
-## 🎯 Key Features
+> **Tip**: Refer to [`api-backend/POSTMAN_GUIDE.md`](./api-backend/POSTMAN_GUIDE.md) for detailed usage instructions.
 
-### 🤝 Partner Portal
-- **Dashboard Analytics**: Real-time stats, pending commissions, conversion rates
-- **Lead Management**: Full CRUD operations with status tracking
-- **Service Catalog**: Browse available services with commission rates
-- **Commission Tracking**: Detailed history with pagination
-- **Profile Management**: Update profile and change email
-
-### 🎁 Affiliate System
-- **Application Management**: Submit and track affiliate applications
-- **Referral Tracking**: Monitor clicks, signups, and conversions
-- **Commission Calculation**: Automated commission processing
-- **Dashboard**: View stats, transactions, and referrals
-
-### 📝 Content Management
-- **Blog System**: Full blog management with categories
-- **Career Portal**: Job postings and applications
-- **Service Catalog**: Service categories and pricing plans
-- **SEO Management**: Meta tags and page optimization
-
-### 🏢 Back Office
-- **Resource Management**: Admin CRUD for all resources
-- **User Management**: Manage admin users and permissions
-- **Affiliate Approval**: Approve/reject affiliate applications
-- **Analytics**: Statistics and CSV exports
-
-## 🛠️ Tech Stack
-
-### Backend
-- **Runtime**: Node.js 20.x
-- **Framework**: Express.js 4.x
-- **Database**: MySQL 8.x
-- **ORM**: Drizzle ORM
-- **Authentication**: JWT
-- **File Storage**: Google Cloud Storage
-- **Email**: Nodemailer
-
-### Frontend (Partner Portal)
-- **Framework**: React 18.x
-- **Language**: TypeScript 5.x
-- **Styling**: Tailwind CSS
-- **Build Tool**: Vite
-- **State Management**: React Hooks
-- **HTTP Client**: Fetch API
-- **Icons**: Lucide React
-
-### DevOps & Tools
-- **Version Control**: Git
-- **API Testing**: Postman
-- **Database Migrations**: Drizzle Kit
-- **Process Manager**: PM2 / Nodemon
-- **Logging**: Pino
+---
 
 ## 📊 Database Schema
 
-### Core Tables
-- **Users & Auth**: `user`, `affiliate_user`, `affiliate_application`
-- **Affiliate**: `affiliate_referral`, `affiliate_transaction`
-- **Partner**: `partner_service`, `partner_lead`, `partner_commission`
-- **Content**: `blog`, `blog_category`, `page`, `metas`
-- **Business**: `order`, `career`, `position`, `subscription`
+The project uses **Drizzle ORM** for type-safe database interactions.
 
-See [Database Documentation](./api-backend/README.md#database-schema) for detailed schema.
+**Core Domains:**
+-   **Identity**: `user`, `affiliate_user`
+-   **Business**: `partner_lead`, `partner_commission`, `order`
+-   **Content**: `blog`, `page`, `metas`
+-   **Catalog**: `partner_service`, `service_category`, `service_plan`
+
+To view the schema visually:
+```bash
+cd api-backend
+npm run studio
+```
+
+---
 
 ## 🧪 Testing
 
-### Backend Testing
+We emphasize quality through comprehensive testing.
+
+### Backend Tests
 ```bash
 cd api-backend
-npm test                              # Run all tests
-node src/seeder/create-test-data.js   # Create test data
+npm test                              # Run unit & integration tests
+node src/seeder/create-test-data.js   # Generate mock data for manual testing
 ```
 
-### Test Credentials
-**Partner/Affiliate:**
-- Email: `testpartner@example.com`
-- Password: `password123`
+**Test Accounts:**
+-   **Partner**: `testpartner@example.com` / `password123`
+-   **Admin**: `admin@octobees.com` / `password123`
 
-**Back Office:**
-- Email: `admin@octobees.com`
-- Password: `password123`
-
-### API Testing
-Import Postman collections from `api-backend/`:
-- `Octobees-API-Complete.postman_collection.json` - All 90+ endpoints
-- `Partner-Portal-API.postman_collection.json` - Partner-specific endpoints
+---
 
 ## 🚀 Deployment
 
-### Backend Deployment
+### Backend
+The backend is production-ready and can be deployed using PM2 or Docker.
 
-**Using PM2:**
 ```bash
 cd api-backend
 npm ci --production
-npm run push              # Run migrations
+npm run push              # Ensure DB is up to date
 pm2 start src/index.js --name octobees-api
-pm2 save
 ```
 
-**Using Docker:**
-```bash
-# Coming soon
-```
+### Frontend
+The frontend is built using Vite and can be deployed to any static host (Vercel, Netlify, Nginx).
 
-### Frontend Deployment
-
-**Build for Production:**
 ```bash
 cd partner
 npm run build
-# Deploy dist/ folder to hosting
+# The 'dist' folder is ready for deployment
 ```
 
-**Environment Variables:**
-```env
-VITE_API_URL=https://api.octobees.com/api
-```
-
-## 📝 Development Workflow
-
-### Branch Strategy
-- `main` - Production-ready code
-- `fitry` - Development branch
-- `feature/*` - Feature branches
-
-### Commit Convention
-```
-feat: Add new feature
-fix: Bug fix
-docs: Documentation
-style: Code style
-refactor: Code refactoring
-test: Testing
-chore: Maintenance
-```
-
-### Pull Request Process
-1. Create feature branch from `main`
-2. Make changes and commit
-3. Push to GitHub
-4. Create Pull Request to `main`
-5. Wait for review and approval
-6. Merge to `main`
-
-## 🔒 Security
-
-- **Authentication**: JWT with secure token storage
-- **Password**: bcrypt hashing with salt
-- **API**: Rate limiting (100 req/15min)
-- **Headers**: Helmet security headers
-- **CORS**: Configured allowed origins
-- **Validation**: Input validation with Zod
-- **SQL**: Protected by ORM (no raw queries)
-
-## 📦 Available Scripts
-
-### Backend (`api-backend/`)
-```bash
-npm run dev              # Start development server
-npm run generate         # Generate database migration
-npm run push            # Apply migrations to database
-npm run studio          # Open Drizzle Studio
-npm test                # Run tests
-npm start               # Start production server
-```
-
-### Frontend (`partner/`)
-```bash
-npm run dev             # Start development server
-npm run build           # Build for production
-npm run preview         # Preview production build
-npm run lint            # Run ESLint
-```
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions from the team!
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+1.  **Branching**: Use `feature/feature-name` or `fix/bug-name`.
+2.  **Commits**: Follow Conventional Commits (e.g., `feat: add new dashboard widget`).
+3.  **Pull Requests**: Open a PR to `main` for review.
 
-See [Contributing Guidelines](./CONTRIBUTING.md) for more details.
-
-## 📞 Support & Contact
-
-- **Issues**: [GitHub Issues](https://github.com/SSDIGITAL-DevTeam/octobees_revamp-2025/issues)
-- **Email**: dev@octobees.com
-- **Documentation**: See README in each module
+---
 
 ## 📄 License
 
 Copyright © 2025 Octobees. All rights reserved.
 
-## 🎉 Acknowledgments
-
-Built with ❤️ by the **Octobees Development Team**
-
-### Team
-- **Backend**: API development, database design, authentication
-- **Frontend**: Partner portal, UI/UX design
-- **DevOps**: Deployment, CI/CD, monitoring
-
-### Technologies
-Special thanks to the amazing open-source projects:
-- [Express.js](https://expressjs.com/)
-- [React](https://reactjs.org/)
-- [Drizzle ORM](https://orm.drizzle.team/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Vite](https://vitejs.dev/)
-
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: November 2025  
-**Status**: ✅ Production Ready
-
----
-
-## 🗺️ Roadmap
-
-### ✅ Completed
-- [x] Backend API with 90+ endpoints
-- [x] Partner Portal frontend
-- [x] Affiliate system
-- [x] Database schema & migrations
-- [x] Authentication & authorization
-- [x] Postman collections
-- [x] Documentation
-
-### 🚧 In Progress
-- [ ] Main website frontend
-- [ ] Email notifications
-- [ ] Advanced analytics
-
-### 📅 Planned
-- [ ] Mobile app (React Native)
-- [ ] Real-time notifications (WebSocket)
-- [ ] Advanced reporting
-- [ ] Multi-language support
-- [ ] Docker deployment
-- [ ] CI/CD pipeline
-
----
-
-For detailed documentation, please refer to:
-- [Backend Documentation](./api-backend/README.md)
-- [Partner Portal Documentation](./partner/README.md)
+**Built with ❤️ by the Octobees Development Team**
