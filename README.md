@@ -10,13 +10,13 @@
 
 ## 📋 Overview
 
-Octobees Revamp 2025 adalah platform lengkap yang terdiri dari:
+Octobees Revamp 2025 is a complete platform consisting of:
 
-- **🌐 Main Website**: Corporate website dengan blog, career portal, dan service catalog
-- **🎯 Partner Portal**: Dashboard untuk partner mengelola leads dan tracking komisi
-- **🤝 Affiliate System**: Sistem referral dengan commission tracking
-- **🏢 Back Office**: Admin panel untuk mengelola semua resources
-- **📱 API Backend**: RESTful API dengan 90+ endpoints
+- **🌐 Main Website**: Corporate website with blog, career portal, and service catalog
+- **🎯 Partner Portal**: Dashboard for partners to manage leads and track commissions
+- **🤝 Affiliate System**: Referral system with commission tracking
+- **🏢 Back Office**: Admin panel to manage all resources
+- **📱 API Backend**: RESTful API with 90+ endpoints
 
 ## 🏗️ Project Structure
 
