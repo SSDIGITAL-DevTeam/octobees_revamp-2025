@@ -8,22 +8,6 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.x-blue.svg)](https://www.mysql.com/)
 
 ## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Database Schema](#database-schema)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-
----
-
-## 🎯 Overview
-
 Octobees API Backend adalah RESTful API yang menyediakan layanan untuk:
 - **Website Octobees**: Blog, career, services, orders, subscriptions
 - **Partner Portal**: Lead management, commission tracking, dashboard analytics
@@ -159,10 +143,7 @@ api-backend/
 ├── package.json               # Dependencies
 ├── server.cjs                 # Server entry (for Passenger)
 │
-└── Postman Collections/       # API testing
-    ├── Octobees-API-Complete.postman_collection.json
-    ├── Partner-Portal-API.postman_collection.json
-    └── POSTMAN_GUIDE.md
+└── docs/                      # Documentation (Moved to root docs/)
 ```
 
 ---

@@ -29,18 +29,6 @@
 - [Deployment](#-deployment)
 - [Development Workflow](#-development-workflow)
 - [Contributing](#-contributing)
-- [License](#-license)
-
----
-
-## 📋 Overview
-
-**Octobees Revamp 2025** is a complete re-engineering of the Octobees digital ecosystem. It is designed to streamline business operations, enhance partner relationships, and provide a seamless experience for end-users.
-
-The platform is composed of two main pillars:
-1.  **API Backend**: A robust, RESTful API built with Express.js and MySQL, serving as the central nervous system for data and business logic.
-2.  **Frontend Clients**:
-    *   **Partner Portal**: A dedicated React application for partners to manage their business with Octobees.
     *   **Main Website**: (In Progress) The public-facing corporate site.
     *   **Back Office**: (In Progress) The administrative command center.
 
@@ -260,24 +248,6 @@ The backend provides a comprehensive Swagger-like experience via Postman Collect
 
 -   **Base URL**: `http://localhost:8080/api/v1`
 -   **Authentication**: Bearer Token (JWT)
-
-**Available Collections:**
-1.  **[Complete API Collection](./api-backend/Octobees-API-Complete.postman_collection.json)**: Covers all 90+ endpoints.
-2.  **[Partner Portal Collection](./api-backend/Partner-Portal-API.postman_collection.json)**: Focused on partner features.
-
-> **Tip**: Refer to [`api-backend/POSTMAN_GUIDE.md`](./api-backend/POSTMAN_GUIDE.md) for detailed usage instructions.
-
----
-
-## 📊 Database Schema
-
-The project uses **Drizzle ORM** for type-safe database interactions.
-
-**Core Domains:**
--   **Identity**: `user`, `affiliate_user`
--   **Business**: `partner_lead`, `partner_commission`, `order`
--   **Content**: `blog`, `page`, `metas`
--   **Catalog**: `partner_service`, `service_category`, `service_plan`
 
 To view the schema visually:
 ```bash
