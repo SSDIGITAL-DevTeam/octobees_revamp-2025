@@ -19,6 +19,7 @@ import forgot from "./auth/forgot-password/forgot-password.controller.js"
 import reset_password from "./auth/reset-password/reset-password.controller.js"
 import logger from "../utils/logger.js";
 import affiliate from "./affiliate/_affiliate.route.js";
+import partner from "./partner/_partner.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -57,6 +58,7 @@ router.use("/v1/user", user.endUser);
 router.use("/v1/plan", plan.endUser);
 router.use("/v1/order", order.endUser);
 router.use("/v1/affiliate", affiliate.endUser);
+router.use("/v1/partner", partner);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {

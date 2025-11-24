@@ -438,3 +438,72 @@ export const affiliateTransaction = mysqlTable("affiliate_transaction", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// Partner Portal Tables
+export const partnerLeadStatusEnum = mysqlEnum("lead_status", [
+  "Lead Created",
+  "Follow-up",
+  "Proposal Sent",
+  "Closed Won",
+  "Closed Lost",
+]);
+
+export const partnerCommissionStatusEnum = mysqlEnum("commission_status", [
+  "Pending Transfer",
+  "Paid",
+]);
+
+export const partnerService = mysqlTable("partner_service", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  name: varchar("name", { length: 191 }).notNull(),
+  commissionPercentage: double("commission_percentage").notNull(),
+  description: text("description").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const partnerLead = mysqlTable("partner_lead", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateId: varchar("affiliate_id", { length: 36 })
+    .notNull()
+    .references(() => affiliateApplication.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 191 }).notNull(),
+  email: varchar("email", { length: 191 }).notNull(),
+  phone: varchar("phone", { length: 32 }).notNull(),
+  serviceId: varchar("service_id", { length: 36 })
+    .notNull()
+    .references(() => partnerService.id),
+  projectValue: double("project_value").notNull().default(0),
+  status: partnerLeadStatusEnum.notNull().default("Lead Created"),
+  remark: text("remark"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const partnerCommission = mysqlTable("partner_commission", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateId: varchar("affiliate_id", { length: 36 })
+    .notNull()
+    .references(() => affiliateApplication.id, { onDelete: "cascade" }),
+  leadId: varchar("lead_id", { length: 36 })
+    .notNull()
+    .references(() => partnerLead.id, { onDelete: "cascade" }),
+  serviceId: varchar("service_id", { length: 36 })
+    .notNull()
+    .references(() => partnerService.id),
+  amount: double("amount").notNull().default(0),
+  status: partnerCommissionStatusEnum.notNull().default("Pending Transfer"),
+  paidAt: datetime("paid_at"),
+  transactionId: varchar("transaction_id", { length: 36 }).references(
+    () => affiliateTransaction.id
+  ),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
