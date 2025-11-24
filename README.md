@@ -99,25 +99,47 @@ The repository is organized as a monorepo for easier management and code sharing
 ```
 octobees_revamp-2025/
 ├── api-backend/              # 🧠 The Brain: Backend API
+│   ├── drizzle/              # Database Configuration
+│   │   ├── migrations/       # SQL Migration files
+│   │   ├── db.js             # Database connection
+│   │   └── schema.js         # Drizzle schema definitions
 │   ├── src/
-│   │   ├── affiliate/        # Affiliate business logic & routes
-│   │   ├── partner/          # Partner portal specific logic
-│   │   ├── blog/             # CMS for Blogs
+│   │   ├── affiliate/        # Affiliate system logic
+│   │   ├── auth/             # Authentication & Authorization
+│   │   ├── blog/             # Blog management
 │   │   ├── career/           # Recruitment system
-│   │   ├── order/            # Order processing system
-│   │   ├── auth/             # Centralized Authentication
-│   │   ├── middleware/       # Security & Utility Middlewares
-│   │   └── ...
-│   ├── drizzle/              # Database Schema & Migrations
+│   │   ├── order/            # Order processing
+│   │   ├── partner/          # Partner portal logic
+│   │   ├── seeder/           # Database seeders
+│   │   ├── user/             # User management
+│   │   ├── middleware/       # Custom middlewares
+│   │   ├── routes.js         # Main route definitions
+│   │   └── index.js          # Entry point
 │   ├── .env.example          # Backend env template
 │   └── package.json
 │
-├── partner/                  # 💻 The Face: Partner Portal Frontend
+├── back-office/              # 🏢 The Command Center: Admin Panel
+│   ├── src/                  # Next.js App Router source
+│   ├── public/               # Static assets
+│   ├── .env.example          # Environment template
+│   └── package.json
+│
+├── end-user/                 # 🌐 The Face: Main Website
+│   ├── src/                  # Next.js App Router source
+│   ├── public/               # Static assets
+│   ├── .env.example          # Environment template
+│   └── package.json
+│
+├── partner/                  # 🤝 The Bridge: Partner Portal Frontend
 │   ├── src/
+│   │   ├── app/              # Next.js App Router
+│   │   │   ├── (auth)/       # Authentication routes
+│   │   │   ├── (pages)/      # Main application routes
+│   │   │   ├── layout.tsx    # Root layout
+│   │   │   └── page.tsx      # Home page
 │   │   ├── components/       # Reusable UI Components
-│   │   ├── hooks/            # Custom React Hooks (Data fetching, etc.)
-│   │   ├── pages/            # Application Routes/Pages
-│   │   ├── contexts/         # Global State (Auth, Theme)
+│   │   ├── hooks/            # Custom React Hooks
+│   │   ├── data/             # Static data & constants
 │   │   └── lib/              # Utilities & API Clients
 │   ├── .env.example          # Frontend env template
 │   └── package.json
