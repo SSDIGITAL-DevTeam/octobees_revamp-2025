@@ -2,23 +2,37 @@
 import nodemailer from "nodemailer";
 import logger from "./logger.js";
 
+const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
+const smtpPort = Number(process.env.SMTP_PORT || 587);
+const smtpSecure =
+  process.env.SMTP_SECURE === "true" ||
+  String(process.env.SMTP_PORT || "").trim() === "465";
+const smtpUser = process.env.SMTP_USER || process.env.USER_EMAIL;
+const smtpPass = process.env.SMTP_PASS || process.env.USER_PASSWORD;
+const transporterAuth = smtpUser
+  ? {
+      user: smtpUser,
+      pass: smtpPass,
+    }
+  : undefined;
+
 export const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.USER_EMAIL,
-    pass: process.env.USER_PASSWORD,
-  },
+  service: process.env.SMTP_SERVICE || undefined,
+  host: smtpHost,
+  port: smtpPort,
+  secure: smtpSecure,
+  auth: transporterAuth,
 });
+
+const defaultFromName = process.env.SMTP_FROM_NAME || "OCTOBEES Team";
+const defaultFromEmail = process.env.SMTP_FROM_EMAIL || smtpUser || "no-reply@octobees.com";
 
 export const sendResetEmail = async (to, link) => {
   logger.info(`Sending reset password email to ${to}`);
   logger.info(`Reset password link: ${link}`);
   try {
     const mailOptions = {
-      from: `"${process.env.USER_EMAIL}" <${process.env.USER_EMAIL}>`,
+      from: `"${defaultFromName}" <${defaultFromEmail}>`,
       to,
       subject: "Reset Your Password",
       html: `
@@ -33,7 +47,7 @@ export const sendResetEmail = async (to, link) => {
         <p>If you did not request a password reset, please ignore this email.</p>
         <br>
         <p>Best regards,</p>
-        <p><strong>Ryan Kusuma</strong><br>Administrator</p>
+        <p><strong>Octobees</strong><br>Administrator</p>
       </div>
     `,
     };

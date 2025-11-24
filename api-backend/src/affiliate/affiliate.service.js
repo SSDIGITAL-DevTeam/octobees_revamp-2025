@@ -10,10 +10,24 @@ import {
     deleteAffiliateById,
     listAffiliateAllForExport,
     aggregateAffiliateStats,
+    findAffiliateUserByAffiliateId,
+    createAffiliateUserRecord,
+    updateAffiliateUserRecord,
+    createAffiliatePasswordToken,
+    invalidatePasswordTokensForUser,
 } from "./affiliate.repository.js";
+import { generateTemporaryPassword, hashPassword, generateOneTimeToken } from "./affiliate.security.js";
+import { sendAffiliateApprovedEmail, sendAffiliateRejectedEmail } from "./affiliate.mailer.js";
+import logger from "../../utils/logger.js";
+import { db } from "../../drizzle/db.js";
 
 const normDigits = (s) => (s || "").toString().replace(/\D+/g, "");
 const trim = (s) => (s == null ? s : String(s).trim());
+const APP_BASE_URL = (process.env.APP_BASE_URL || "https://octobees.com").replace(/\/$/, "");
+const CHANGE_PASSWORD_PATH = process.env.AFFILIATE_CHANGE_PASSWORD_PATH || "/affiliate/change-password";
+const CHANGE_PASSWORD_TOKEN_TTL_HOURS = Number(process.env.AFFILIATE_CHANGE_PASSWORD_TOKEN_TTL_HOURS || 24);
+
+const buildChangePasswordUrl = (token) => `${APP_BASE_URL}${CHANGE_PASSWORD_PATH}?token=${token}`;
 
 export const createAffiliate = async (raw, req) => {
     const payload = {
@@ -82,12 +96,10 @@ export const getAffiliate = async (id) => {
 export const reviewAffiliate = async (id, { status, notes, reviewerId: payloadReviewerId }, reviewerId) => {
     if (!["approved", "rejected"].includes(status)) throw new Error("Invalid status");
     const finalReviewerId = reviewerId ?? payloadReviewerId ?? null;
-    await reviewAffiliateApplication(id, {
-        status,
-        notes: notes || null,
-        reviewerId: finalReviewerId,
-        reviewedAt: dayjs().toDate(),
-    });
+    if (status === "approved") {
+        return approveAffiliate(id, finalReviewerId);
+    }
+    return rejectAffiliate(id, notes, finalReviewerId);
 };
 
 export const deleteAffiliate = async (id) => {
@@ -123,4 +135,108 @@ export const exportAffiliateCsv = async (query = {}) => {
 
 export const getAffiliateStats = async () => {
     return await aggregateAffiliateStats();
+};
+
+export const approveAffiliate = async (id, reviewerId) => {
+    const application = await findAffiliateById(id);
+    if (!application) throw new Error("Application not found");
+
+    const existingUser = await findAffiliateUserByAffiliateId(id);
+    if (application.status === "approved" && existingUser) {
+        return { message: "Application already approved", emailSent: false, alreadyApproved: true };
+    }
+
+    const tempPassword = generateTemporaryPassword();
+    const passwordHash = await hashPassword(tempPassword);
+    const { rawToken, tokenHash } = generateOneTimeToken();
+    const tokenExpiresAt = dayjs().add(CHANGE_PASSWORD_TOKEN_TTL_HOURS, "hour").toDate();
+    let userRecord = existingUser;
+
+    await db.transaction(async (tx) => {
+        await reviewAffiliateApplication(
+            id,
+            {
+                status: "approved",
+                notes: null,
+                reviewerId,
+                reviewedAt: dayjs().toDate(),
+            },
+            tx
+        );
+
+        if (!existingUser) {
+            userRecord = {
+                id: randomUUID(),
+                affiliateId: id,
+                email: application.email,
+                passwordHash,
+                isActive: true,
+                forcePasswordChange: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+            await createAffiliateUserRecord(userRecord, tx);
+        } else {
+            await updateAffiliateUserRecord(
+                existingUser.id,
+                { passwordHash, forcePasswordChange: true, isActive: true },
+                tx
+            );
+            await invalidatePasswordTokensForUser(existingUser.id, tx);
+        }
+
+        await createAffiliatePasswordToken(
+            {
+                id: randomUUID(),
+                affiliateUserId: userRecord.id,
+                tokenHash,
+                type: "initial",
+                expiresAt: tokenExpiresAt,
+                createdAt: new Date(),
+            },
+            tx
+        );
+    });
+
+    const changePasswordUrl = buildChangePasswordUrl(rawToken);
+    let emailSent = true;
+    try {
+        await sendAffiliateApprovedEmail(application, tempPassword, changePasswordUrl);
+    } catch (error) {
+        emailSent = false;
+        logger.error(`Failed to send affiliate approval email for ${application.email}`, { error });
+    }
+
+    return {
+        message: "Affiliate approved",
+        emailSent,
+        changePasswordUrl,
+    };
+};
+
+export const rejectAffiliate = async (id, rejectionNote, reviewerId) => {
+    if (!rejectionNote) throw new Error("Rejection note is required");
+    const application = await findAffiliateById(id);
+    if (!application) throw new Error("Application not found");
+    if (application.status === "approved") throw new Error("Approved application cannot be rejected");
+
+    await reviewAffiliateApplication(
+        id,
+        {
+            status: "rejected",
+            notes: rejectionNote,
+            reviewerId,
+            reviewedAt: dayjs().toDate(),
+        }
+    );
+
+    let emailSent = true;
+    try {
+        await sendAffiliateRejectedEmail(application, rejectionNote);
+    } catch (error) {
+        emailSent = false;
+        logger.error(`Failed to send affiliate rejection email for ${application.email}`, { error });
+    }
+
+    return { message: "Affiliate rejected", emailSent };
 };

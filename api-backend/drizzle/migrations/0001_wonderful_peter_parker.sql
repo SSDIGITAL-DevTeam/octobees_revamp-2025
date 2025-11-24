@@ -1,4 +1,4 @@
-CREATE TABLE `affiliate_application` (
+CREATE TABLE IF NOT EXISTS `affiliate_application` (
 	`id` varchar(36) NOT NULL,
 	`full_name` varchar(191) NOT NULL,
 	`email` varchar(191) NOT NULL,

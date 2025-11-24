@@ -33,6 +33,19 @@ export const careerStatusEnum = mysqlEnum("status", [
 ]);
 
 export const affiliateStatusEnum = mysqlEnum("status", ["pending", "approved", "rejected"]);
+export const affiliateTokenTypeEnum = mysqlEnum("token_type", ["initial", "reset"]);
+export const affiliateReferralStatusEnum = mysqlEnum("referral_status", [
+  "clicked",
+  "registered",
+  "qualified",
+  "purchased",
+]);
+export const affiliateTransactionStatusEnum = mysqlEnum("transaction_status", [
+  "pending",
+  "processing",
+  "paid",
+  "failed",
+]);
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 })
@@ -340,6 +353,88 @@ export const affiliateApplication = mysqlTable("affiliate_application", {
   reviewerId: varchar("reviewer_id", { length: 36 }),
   ipAddress: varchar("ip_address", { length: 64 }),
   userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const affiliateUser = mysqlTable("affiliate_user", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateId: varchar("affiliate_id", { length: 36 })
+    .notNull()
+    .unique()
+    .references(() => affiliateApplication.id),
+  email: varchar("email", { length: 191 }).notNull().unique(),
+  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  forcePasswordChange: boolean("force_password_change").notNull().default(true),
+  lastLoginAt: datetime("last_login_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const affiliatePasswordToken = mysqlTable("affiliate_password_token", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateUserId: varchar("affiliate_user_id", { length: 36 })
+    .notNull()
+    .references(() => affiliateUser.id),
+  tokenHash: varchar("token_hash", { length: 128 }).notNull().unique(),
+  type: affiliateTokenTypeEnum.notNull().default("initial"),
+  expiresAt: datetime("expires_at").notNull(),
+  usedAt: datetime("used_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const affiliateLoginLog = mysqlTable("affiliate_login_log", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateUserId: varchar("affiliate_user_id", { length: 36 }).references(() => affiliateUser.id),
+  ipAddress: varchar("ip_address", { length: 64 }),
+  userAgent: text("user_agent"),
+  status: mysqlEnum("status", ["success", "failed"]).notNull(),
+  reason: varchar("reason", { length: 191 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const affiliateReferral = mysqlTable("affiliate_referral", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateId: varchar("affiliate_id", { length: 36 })
+    .notNull()
+    .references(() => affiliateApplication.id),
+  referralName: varchar("referral_name", { length: 191 }).notNull(),
+  referralEmail: varchar("referral_email", { length: 191 }),
+  status: affiliateReferralStatusEnum.notNull().default("clicked"),
+  clicks: int("clicks").notNull().default(0),
+  signups: int("signups").notNull().default(0),
+  conversions: int("conversions").notNull().default(0),
+  purchaseAmount: double("purchase_amount").notNull().default(0),
+  commissionAmount: double("commission_amount").notNull().default(0),
+  firstInteractionAt: datetime("first_interaction_at").default(sql`CURRENT_TIMESTAMP`),
+  lastConversionAt: datetime("last_conversion_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const affiliateTransaction = mysqlTable("affiliate_transaction", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  affiliateId: varchar("affiliate_id", { length: 36 })
+    .notNull()
+    .references(() => affiliateApplication.id),
+  periodStart: datetime("period_start").notNull(),
+  periodEnd: datetime("period_end").notNull(),
+  amount: double("amount").notNull().default(0),
+  status: affiliateTransactionStatusEnum.notNull().default("pending"),
+  reference: varchar("reference", { length: 64 }),
+  paidAt: datetime("paid_at"),
+  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

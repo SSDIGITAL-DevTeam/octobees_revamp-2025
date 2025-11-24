@@ -6,6 +6,8 @@ import {
     deleteAffiliate,
     exportAffiliateCsv,
     getAffiliateStats,
+    approveAffiliate,
+    rejectAffiliate,
 } from "./affiliate.service.js";
 
 const create = async (req, res) => {
@@ -51,8 +53,29 @@ const getid = async (req, res) => {
 const review = async (req, res) => {
     try {
         const reviewerId = req.user?.id ?? req.body?.reviewerId ?? null;
-        await reviewAffiliate(req.params.id, req.body, reviewerId);
-        res.status(200).json({ status: "success", message: "Application updated." });
+        const result = await reviewAffiliate(req.params.id, req.body, reviewerId);
+        res.status(200).json({ status: "success", message: result?.message ?? "Application updated.", data: result });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const approve = async (req, res) => {
+    try {
+        const reviewerId = req.user?.id ?? null;
+        const result = await approveAffiliate(req.params.id, reviewerId);
+        res.status(200).json({ status: "success", data: result });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const reject = async (req, res) => {
+    try {
+        const reviewerId = req.user?.id ?? null;
+        const rejectionNote = req.body?.rejectionNote || req.body?.rejection_note || req.body?.notes;
+        const result = await rejectAffiliate(req.params.id, rejectionNote, reviewerId);
+        res.status(200).json({ status: "success", data: result });
     } catch (e) {
         res.status(400).json({ status: "error", message: e.message });
     }
@@ -87,4 +110,4 @@ const stats = async (_req, res) => {
     }
 };
 
-export default { create, getall, getid, review, remove, exportCsv, stats };
+export default { create, getall, getid, review, remove, exportCsv, stats, approve, reject };
