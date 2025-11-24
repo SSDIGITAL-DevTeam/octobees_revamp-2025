@@ -1,5 +1,5 @@
 import { url } from "inspector"
-import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash, MailCheck, File, User, DollarSign, UserCheck} from "lucide-react"
+import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash, MailCheck, File, User, DollarSign, UserCheck, Ticket} from "lucide-react"
 import { title } from "process"
 
 const sidebarItems = [
@@ -57,6 +57,11 @@ const sidebarItems = [
     name:"services",
     data: [
       {
+        title: "Affiliate Program",
+        url: "/affiliate-program",
+        icon: Ticket,
+      },
+      {
         title: "Partnership Dashboard",
         url: "/partnership/dashboard",
         icon: UserCheck,
@@ -100,11 +105,6 @@ const sidebarItems = [
     data: [
       {
         title: "Meta Content Management",
-        url: "/meta",
-        icon: Hash,
-      },
-      {
-        title: "Affiliate Program",
         url: "/meta",
         icon: Hash,
       }
