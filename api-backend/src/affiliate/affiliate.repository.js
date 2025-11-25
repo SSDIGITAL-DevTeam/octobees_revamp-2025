@@ -135,6 +135,13 @@ export const deleteAffiliateById = async (id) => {
     await db.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
 };
 
+export const updateAffiliateApplication = async (id, data) => {
+    await db
+        .update(affiliateApplication)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(affiliateApplication.id, id));
+};
+
 // ambil semua (tanpa pagination) untuk Export CSV
 export const listAffiliateAllForExport = async ({
     search,

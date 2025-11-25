@@ -34,5 +34,9 @@ const backOffice = express.Router();
 backOffice.get("/dashboard/stats", partnerBackOffice.stats);
 backOffice.get("/dashboard/recent-leads", partnerBackOffice.recentLeads);
 backOffice.get("/dashboard/pending-commissions", partnerBackOffice.pendingCommissions);
+backOffice.get("/partners", partnerBackOffice.getAll);
+backOffice.get("/partners/:id", partnerBackOffice.getById);
+backOffice.patch("/partners/:id", partnerBackOffice.update);
+backOffice.delete("/partners/:id", partnerBackOffice.remove);
 
 export default { endUser: router, backOffice };

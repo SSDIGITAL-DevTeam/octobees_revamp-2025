@@ -12,6 +12,10 @@ import {
     getGlobalDashboardStats,
     getAllRecentLeads,
     getAllPendingCommissions,
+    getAllPartners as getAllPartnersRepo,
+    getPartnerById as getPartnerByIdRepo,
+    updatePartner as updatePartnerRepo,
+    deletePartner as deletePartnerRepo,
 } from "./partner.repository.js";
 import { v4 as uuidv7 } from "uuid";
 
@@ -223,5 +227,105 @@ export const getBackOfficeRecentLeads = async (limit = 5) => {
 
 export const getBackOfficePendingCommissions = async (limit = 5) => {
     return await getAllPendingCommissions(limit);
+};
+
+// ==================== BACK OFFICE PARTNER MGMT ====================
+
+const trim = (val) => (val == null ? val : String(val).trim());
+
+export const getAllPartners = async (query = {}) => {
+    const page = Number(query.page ?? 1);
+    const limit = Number(query.limit ?? 10);
+    const search = trim(query.search) || undefined;
+    const status = trim(query.status) || undefined;
+    const country = trim(query.country) || undefined;
+    const sort = (trim(query.sort) || "newest").toLowerCase();
+    const allowedStatus = ["pending", "approved", "rejected"];
+    if (status && !allowedStatus.includes(status)) {
+        throw new Error("Invalid status filter");
+    }
+    return await getAllPartnersRepo({
+        page,
+        limit,
+        search,
+        status,
+        country,
+        sort,
+    });
+};
+
+export const getPartnerDetail = async (id) => {
+    const data = await getPartnerByIdRepo(id);
+    if (!data) throw new Error("Partner not found");
+    return data;
+};
+
+export const updatePartner = async (id, raw = {}) => {
+    const existing = await getPartnerByIdRepo(id);
+    if (!existing) throw new Error("Partner not found");
+
+    const allowedStatus = ["pending", "approved", "rejected"];
+    const payload = {};
+    const maybe = (key, alt) => {
+        const val = raw[key] ?? raw[alt];
+        return val === undefined ? undefined : trim(val);
+    };
+
+    const fullName = maybe("fullName", "full_name");
+    if (fullName !== undefined) payload.fullName = fullName;
+
+    const email = maybe("email");
+    if (email !== undefined) payload.email = email;
+
+    const countryCode = maybe("countryCode", "country_code");
+    if (countryCode !== undefined) payload.countryCode = countryCode;
+
+    const phone = maybe("phone");
+    if (phone !== undefined) payload.phone = phone;
+
+    const country = maybe("country");
+    if (country !== undefined) payload.country = country;
+
+    const govOrBusinessId = maybe("govOrBusinessId", "gov_or_business_id");
+    if (govOrBusinessId !== undefined) payload.govOrBusinessId = govOrBusinessId || null;
+
+    const strategy = maybe("strategy");
+    if (strategy !== undefined) payload.strategy = strategy;
+
+    const portfolioLinks = maybe("portfolioLinks", "portfolio_links");
+    if (portfolioLinks !== undefined) payload.portfolioLinks = portfolioLinks || null;
+
+    const motivation = maybe("motivation");
+    if (motivation !== undefined) payload.motivation = motivation || null;
+
+    const otherPrograms = maybe("otherPrograms", "other_programs");
+    if (otherPrograms !== undefined) payload.otherPrograms = otherPrograms || null;
+
+    const notes = maybe("notes");
+    if (notes !== undefined) payload.notes = notes || null;
+
+    const status = maybe("status");
+    if (status !== undefined) {
+        if (!allowedStatus.includes(status)) throw new Error("Invalid status");
+        payload.status = status;
+    }
+
+    if (payload.phone !== undefined || payload.countryCode !== undefined) {
+        const cc = (payload.countryCode ?? existing.countryCode ?? "").replace(/^\+/, "");
+        const ph = (payload.phone ?? existing.phone ?? "").replace(/\D+/g, "");
+        payload.phoneE164 = cc && ph ? `+${cc}${ph}` : null;
+    }
+
+    if (!Object.keys(payload).length) throw new Error("No valid fields to update");
+
+    await updatePartnerRepo(id, payload);
+    return await getPartnerByIdRepo(id);
+};
+
+export const deletePartner = async (id) => {
+    const existing = await getPartnerByIdRepo(id);
+    if (!existing) throw new Error("Partner not found");
+    await deletePartnerRepo(id);
+    return true;
 };
 

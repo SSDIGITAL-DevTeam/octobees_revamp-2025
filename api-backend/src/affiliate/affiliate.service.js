@@ -15,6 +15,7 @@ import {
     updateAffiliateUserRecord,
     createAffiliatePasswordToken,
     invalidatePasswordTokensForUser,
+    updateAffiliateApplication,
 } from "./affiliate.repository.js";
 import { generateTemporaryPassword, hashPassword, generateOneTimeToken } from "./affiliate.security.js";
 import { sendAffiliateApprovedEmail, sendAffiliateRejectedEmail } from "./affiliate.mailer.js";
@@ -109,6 +110,72 @@ export const deleteAffiliate = async (id) => {
     const row = await findAffiliateById(id);
     if (!row) throw new Error("Application not found");
     await deleteAffiliateById(id);
+};
+
+export const updateAffiliate = async (id, raw = {}) => {
+    const existing = await findAffiliateById(id);
+    if (!existing) throw new Error("Application not found");
+
+    const allowedStatus = ["pending", "approved", "rejected"];
+    const payload = {};
+
+    const maybe = (key, alt) => {
+        const val = raw[key] ?? raw[alt];
+        return val === undefined ? undefined : trim(val);
+    };
+
+    const fullName = maybe("fullName", "full_name");
+    if (fullName !== undefined) payload.fullName = fullName;
+
+    const email = maybe("email");
+    if (email !== undefined) payload.email = email;
+
+    const countryCode = maybe("countryCode", "country_code");
+    if (countryCode !== undefined) payload.countryCode = countryCode;
+
+    const phone = maybe("phone");
+    if (phone !== undefined) payload.phone = phone;
+
+    const country = maybe("country");
+    if (country !== undefined) payload.country = country;
+
+    const govOrBusinessId = maybe("govOrBusinessId", "gov_or_business_id");
+    if (govOrBusinessId !== undefined) payload.govOrBusinessId = govOrBusinessId || null;
+
+    const strategy = maybe("strategy");
+    if (strategy !== undefined) payload.strategy = strategy;
+
+    const portfolioLinks = maybe("portfolioLinks", "portfolio_links");
+    if (portfolioLinks !== undefined) payload.portfolioLinks = portfolioLinks || null;
+
+    const motivation = maybe("motivation");
+    if (motivation !== undefined) payload.motivation = motivation || null;
+
+    const otherPrograms = maybe("otherPrograms", "other_programs");
+    if (otherPrograms !== undefined) payload.otherPrograms = otherPrograms || null;
+
+    const notes = maybe("notes");
+    if (notes !== undefined) payload.notes = notes || null;
+
+    const status = maybe("status");
+    if (status !== undefined) {
+        if (!allowedStatus.includes(status)) throw new Error("Invalid status");
+        payload.status = status;
+    }
+
+    // recompute E164 when phone or country code provided
+    if (payload.phone !== undefined || payload.countryCode !== undefined) {
+        const cc = (payload.countryCode ?? existing.countryCode ?? "").replace(/^\+/, "");
+        const ph = normDigits(payload.phone ?? existing.phone ?? "");
+        payload.phoneE164 = cc && ph ? `+${cc}${ph}` : null;
+    }
+
+    if (!Object.keys(payload).length) {
+        throw new Error("No valid fields to update");
+    }
+
+    await updateAffiliateApplication(id, payload);
+    return await findAffiliateById(id);
 };
 
 const toCsv = (rows) => {
@@ -252,4 +319,62 @@ export const rejectAffiliate = async (id, rejectionNote, reviewerId) => {
     }
 
     return { message: "Affiliate rejected", emailSent };
+};
+
+export const resendApprovalEmail = async (id) => {
+    const application = await findAffiliateById(id);
+    if (!application) throw new Error("Application not found");
+    if (application.status !== "approved") throw new Error("Only approved affiliates can receive email resend");
+
+    const existingUser = await findAffiliateUserByAffiliateId(id);
+    if (!existingUser) throw new Error("Affiliate user not found");
+
+    const tempPassword = generateTemporaryPassword();
+    const passwordHash = await hashPassword(tempPassword);
+    const { rawToken, tokenHash } = generateOneTimeToken();
+    const tokenExpiresAt = dayjs().add(CHANGE_PASSWORD_TOKEN_TTL_HOURS, "hour").toDate();
+
+    await db.transaction(async (tx) => {
+        await updateAffiliateUserRecord(
+            existingUser.id,
+            { passwordHash, forcePasswordChange: true },
+            tx
+        );
+        await invalidatePasswordTokensForUser(existingUser.id, tx);
+        await createAffiliatePasswordToken(
+            {
+                id: randomUUID(),
+                affiliateUserId: existingUser.id,
+                tokenHash,
+                type: "resend",
+                expiresAt: tokenExpiresAt,
+                createdAt: new Date(),
+            },
+            tx
+        );
+    });
+
+    const changePasswordUrl = buildChangePasswordUrl(rawToken);
+    let emailSent = true;
+    try {
+        logger.info(`Resending approval email to ${application.email}`, {
+            email: application.email,
+            tempPassword,
+            changePasswordUrl,
+        });
+        await sendAffiliateApprovedEmail(application, tempPassword, changePasswordUrl);
+    } catch (error) {
+        emailSent = false;
+        logger.error(`Failed to resend affiliate approval email for ${application.email}`, {
+            error: error.message,
+            code: error.code,
+            stack: error.stack
+        });
+    }
+
+    return {
+        message: "Approval email resent with new password",
+        emailSent,
+        changePasswordUrl,
+    };
 };

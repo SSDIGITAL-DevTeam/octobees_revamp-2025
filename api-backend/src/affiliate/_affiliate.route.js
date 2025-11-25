@@ -35,9 +35,11 @@ backOffice.get("/applications/stats", affiliate.stats);
 // --- LIST/DETAIL/REVIEW/DELETE ---
 backOffice.get("/applications", affiliate.getall);
 backOffice.get("/applications/:id", affiliate.getid);
+backOffice.patch("/applications/:id", affiliate.update);
 backOffice.patch("/applications/:id/review", affiliate.review);
 backOffice.post("/applications/:id/approve", affiliate.approve);
 backOffice.post("/applications/:id/reject", affiliate.reject);
+backOffice.post("/applications/:id/resend-email", affiliate.resendEmail);
 backOffice.delete("/applications/:id", affiliate.remove);
 
 export default { endUser, backOffice };

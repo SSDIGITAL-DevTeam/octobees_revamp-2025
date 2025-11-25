@@ -1,4 +1,4 @@
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, asc } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import {
     partnerService,
@@ -352,3 +352,96 @@ export const getAllPendingCommissions = async (limit = 5) => {
         .limit(limit);
 };
 
+// ==================== BACK OFFICE PARTNER MGMT ====================
+
+const likeInsensitive = (col, term) =>
+    sql`LOWER(${col}) LIKE ${"%" + String(term).toLowerCase() + "%"}`;
+
+const buildPartnerFilter = ({ search, status, country }) => {
+    const conds = [];
+    if (search) {
+        conds.push(
+            sql`(${likeInsensitive(affiliateApplication.fullName, search)} OR ${likeInsensitive(affiliateApplication.email, search)})`
+        );
+    }
+    if (status) conds.push(eq(affiliateApplication.status, status));
+    if (country) conds.push(likeInsensitive(affiliateApplication.country, country));
+    if (!conds.length) return undefined;
+    return and(...conds);
+};
+
+export const getAllPartners = async ({ page = 1, limit = 10, search, status, country, sort = "newest" }) => {
+    const offset = (Number(page) - 1) * Number(limit);
+    const where = buildPartnerFilter({ search, status, country });
+    const orderBy = sort === "oldest" ? asc(affiliateApplication.createdAt) : desc(affiliateApplication.createdAt);
+
+    const data = await db
+        .select({
+            id: affiliateApplication.id,
+            fullName: affiliateApplication.fullName,
+            email: affiliateApplication.email,
+            phone: affiliateApplication.phone,
+            country: affiliateApplication.country,
+            status: affiliateApplication.status,
+            createdAt: affiliateApplication.createdAt,
+            updatedAt: affiliateApplication.updatedAt,
+        })
+        .from(affiliateApplication)
+        .where(where)
+        .orderBy(orderBy)
+        .limit(Number(limit))
+        .offset(offset);
+
+    const [{ count }] = await db
+        .select({ count: sql`COUNT(*)`.mapWith(Number) })
+        .from(affiliateApplication)
+        .where(where);
+
+    return {
+        data,
+        pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: count ?? 0,
+            totalPages: Math.max(1, Math.ceil((count ?? 0) / Number(limit))),
+        },
+    };
+};
+
+export const getPartnerById = async (id) => {
+    const rows = await db
+        .select({
+            id: affiliateApplication.id,
+            fullName: affiliateApplication.fullName,
+            email: affiliateApplication.email,
+            countryCode: affiliateApplication.countryCode,
+            phone: affiliateApplication.phone,
+            phoneE164: affiliateApplication.phoneE164,
+            country: affiliateApplication.country,
+            govOrBusinessId: affiliateApplication.govOrBusinessId,
+            strategy: affiliateApplication.strategy,
+            portfolioLinks: affiliateApplication.portfolioLinks,
+            motivation: affiliateApplication.motivation,
+            otherPrograms: affiliateApplication.otherPrograms,
+            status: affiliateApplication.status,
+            notes: affiliateApplication.notes,
+            createdAt: affiliateApplication.createdAt,
+            updatedAt: affiliateApplication.updatedAt,
+        })
+        .from(affiliateApplication)
+        .where(eq(affiliateApplication.id, id))
+        .limit(1);
+
+    return rows[0] || null;
+};
+
+export const updatePartner = async (id, data) => {
+    await db
+        .update(affiliateApplication)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(affiliateApplication.id, id));
+};
+
+export const deletePartner = async (id) => {
+    await db.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
+};
