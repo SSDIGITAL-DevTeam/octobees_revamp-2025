@@ -73,6 +73,8 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 
 **Applications:**
 - Submit Application
+ - Resend Approval Email (BO)
+ - Review/Update/Delete Application (BO)
 
 ### 🎯 Partner Portal (13 endpoints)
 **Dashboard:**
@@ -92,6 +94,12 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Get Profile
 - Update Profile
 - Change Email
+
+### 🧭 Partner Management (Back Office)
+- List partners (search, pagination)
+- Get partner detail
+- Update partner (PATCH)
+- Delete partner
 
 ### 🏢 Back Office (11+ endpoints)
 Admin endpoints for:

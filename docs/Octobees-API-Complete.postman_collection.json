@@ -2675,6 +2675,57 @@
                   ]
                 }
               }
+            },
+            {
+              "name": "Update Application (PATCH)",
+              "request": {
+                "method": "PATCH",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/affiliate/applications/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "affiliate",
+                    "applications",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Resend Approval Email",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/affiliate/applications/:id/resend-email",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "affiliate",
+                    "applications",
+                    ":id",
+                    "resend-email"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
             }
           ]
         },
@@ -4012,6 +4063,99 @@
                     "partner",
                     "dashboard",
                     "pending-commissions"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "List Partners",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/partners",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "partners"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Partner by ID",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "partners",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Partner (PATCH)",
+              "request": {
+                "method": "PATCH",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "partners",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Partner",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "partners",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
                   ]
                 }
               }
