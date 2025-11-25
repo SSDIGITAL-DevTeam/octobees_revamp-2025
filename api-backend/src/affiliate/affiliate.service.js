@@ -204,10 +204,20 @@ export const approveAffiliate = async (id, reviewerId) => {
     const changePasswordUrl = buildChangePasswordUrl(rawToken);
     let emailSent = true;
     try {
+        logger.info(`Sending approval email to ${application.email}`, {
+            email: application.email,
+            tempPassword,
+            changePasswordUrl,
+            passwordLength: tempPassword.length
+        });
         await sendAffiliateApprovedEmail(application, tempPassword, changePasswordUrl);
     } catch (error) {
         emailSent = false;
-        logger.error(`Failed to send affiliate approval email for ${application.email}`, { error });
+        logger.error(`Failed to send affiliate approval email for ${application.email}`, {
+            error: error.message,
+            code: error.code,
+            stack: error.stack
+        });
     }
 
     return {

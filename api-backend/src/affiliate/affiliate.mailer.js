@@ -17,7 +17,13 @@ const sendEmail = async (options) => {
     await transporter.sendMail(payload);
     return true;
   } catch (error) {
-    logger.error(`Failed to send affiliate email to ${payload.to}`, { error });
+    logger.error(`Failed to send affiliate email to ${payload.to}`, {
+      error: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     throw error;
   }
 };
@@ -37,6 +43,12 @@ export const sendAffiliateApprovedEmail = async (affiliate, tempPassword, change
     <p>If you did not request this account, please contact our support immediately.</p>
     <p>Regards,<br/>OCTOBEES Team</p>
   `;
+  logger.info(`Affiliate approval email HTML generated`, {
+    to: affiliate.email,
+    hasPassword: html.includes(tempPassword),
+    passwordInHtml: tempPassword,
+    htmlLength: html.length
+  });
   return sendEmail({ to: affiliate.email, subject, html });
 };
 
