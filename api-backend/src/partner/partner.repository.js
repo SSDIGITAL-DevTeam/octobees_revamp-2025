@@ -275,3 +275,80 @@ export const getRecentLeads = async (affiliateId, limit = 5) => {
         .orderBy(desc(partnerLead.updatedAt))
         .limit(limit);
 };
+
+// ==================== BACK OFFICE GLOBAL QUERIES ====================
+
+export const getGlobalDashboardStats = async () => {
+    // Total leads
+    const totalLeadsResult = await db
+        .select({ count: sql`COUNT(*)` })
+        .from(partnerLead);
+
+    // Active Partners (approved affiliates)
+    const activePartnersResult = await db
+        .select({ count: sql`COUNT(*)` })
+        .from(affiliateApplication)
+        .where(eq(affiliateApplication.status, "approved"));
+
+    // Closed Leads (Closed Won)
+    const closedLeadsResult = await db
+        .select({ count: sql`COUNT(*)` })
+        .from(partnerLead)
+        .where(eq(partnerLead.status, "Closed Won"));
+
+    // Pending Commission (Pending Transfer)
+    const pendingCommissionResult = await db
+        .select({
+            total: sql`COALESCE(SUM(${partnerCommission.amount}), 0)`,
+            count: sql`COUNT(*)`,
+        })
+        .from(partnerCommission)
+        .where(eq(partnerCommission.status, "Pending Transfer"));
+
+    return {
+        totalLeads: Number(totalLeadsResult[0]?.count || 0),
+        activePartners: Number(activePartnersResult[0]?.count || 0),
+        closedLeads: Number(closedLeadsResult[0]?.count || 0),
+        pendingCommission: Number(pendingCommissionResult[0]?.total || 0),
+        pendingCommissionCount: Number(pendingCommissionResult[0]?.count || 0),
+    };
+};
+
+export const getAllRecentLeads = async (limit = 5) => {
+    return await db
+        .select({
+            id: partnerLead.id,
+            leadName: partnerLead.name,
+            partnerName: affiliateApplication.fullName,
+            serviceType: partnerService.name,
+            status: partnerLead.status,
+            remark: partnerLead.remark,
+            updatedAt: partnerLead.updatedAt,
+        })
+        .from(partnerLead)
+        .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
+        .leftJoin(affiliateApplication, eq(partnerLead.affiliateId, affiliateApplication.id))
+        .orderBy(desc(partnerLead.updatedAt))
+        .limit(limit);
+};
+
+export const getAllPendingCommissions = async (limit = 5) => {
+    return await db
+        .select({
+            id: partnerCommission.id,
+            partnerName: affiliateApplication.fullName,
+            service: partnerService.name,
+            leadName: partnerLead.name,
+            amount: partnerCommission.amount,
+            status: partnerCommission.status,
+            createdAt: partnerCommission.createdAt,
+        })
+        .from(partnerCommission)
+        .leftJoin(partnerLead, eq(partnerCommission.leadId, partnerLead.id))
+        .leftJoin(partnerService, eq(partnerCommission.serviceId, partnerService.id))
+        .leftJoin(affiliateApplication, eq(partnerCommission.affiliateId, affiliateApplication.id))
+        .where(eq(partnerCommission.status, "Pending Transfer"))
+        .orderBy(desc(partnerCommission.createdAt))
+        .limit(limit);
+};
+

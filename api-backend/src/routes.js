@@ -58,7 +58,7 @@ router.use("/v1/user", user.endUser);
 router.use("/v1/plan", plan.endUser);
 router.use("/v1/order", order.endUser);
 router.use("/v1/affiliate", affiliate.endUser);
-router.use("/v1/partner", partner);
+router.use("/v1/partner", partner.endUser);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {
@@ -75,6 +75,7 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/plan", plan.backOffice);
   backOfficeRouter.use("/order", order.backOffice);
   backOfficeRouter.use("/affiliate", affiliate.backOffice);
+  backOfficeRouter.use("/partner", partner.backOffice);
   backOfficeRouter(req, res, next);
 });
 

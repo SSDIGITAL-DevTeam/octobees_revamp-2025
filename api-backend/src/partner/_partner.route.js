@@ -4,6 +4,8 @@ import partnerLeads from "./partner.leads.controller.js";
 import partnerDashboard from "./partner.dashboard.controller.js";
 import partnerProfile from "./partner.profile.controller.js";
 
+import partnerBackOffice from "./partner.backoffice.controller.js";
+
 const router = express.Router();
 
 // All partner routes are protected with affiliate JWT
@@ -27,4 +29,10 @@ router.get("/profile", partnerProfile.get);
 router.put("/profile", partnerProfile.update);
 router.post("/profile/change-email", partnerProfile.changeEmail);
 
-export default router;
+// ==================== BACK OFFICE ROUTES ====================
+const backOffice = express.Router();
+backOffice.get("/dashboard/stats", partnerBackOffice.stats);
+backOffice.get("/dashboard/recent-leads", partnerBackOffice.recentLeads);
+backOffice.get("/dashboard/pending-commissions", partnerBackOffice.pendingCommissions);
+
+export default { endUser: router, backOffice };

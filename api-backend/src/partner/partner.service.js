@@ -9,6 +9,9 @@ import {
     getCommissionHistory,
     getDashboardStats,
     getRecentLeads,
+    getGlobalDashboardStats,
+    getAllRecentLeads,
+    getAllPendingCommissions,
 } from "./partner.repository.js";
 import { v4 as uuidv7 } from "uuid";
 
@@ -180,3 +183,45 @@ export const updateAffiliateProfile = async (affiliateId, profileData) => {
     // For now, return success
     return { success: true, message: "Profile updated successfully" };
 };
+
+// ==================== BACK OFFICE ====================
+
+export const getBackOfficeDashboardStats = async () => {
+    const stats = await getGlobalDashboardStats();
+
+    // Calculate conversion rate (Closed Leads / Total Leads)
+    // Note: The image shows "32% conversion" under Closed Leads.
+    // Assuming calculation is Closed / Total * 100
+    const conversionRate =
+        stats.totalLeads > 0
+            ? Math.round((stats.closedLeads / stats.totalLeads) * 100)
+            : 0;
+
+    return {
+        totalLeads: {
+            value: stats.totalLeads,
+            subtext: "+3 this month", // Placeholder or implement monthly diff
+        },
+        activePartners: {
+            value: stats.activePartners,
+            subtext: "All verified",
+        },
+        closedLeads: {
+            value: stats.closedLeads,
+            subtext: `${conversionRate}% conversion`,
+        },
+        pendingCommission: {
+            value: `IDR ${stats.pendingCommission.toLocaleString("id-ID")}`,
+            subtext: `${stats.pendingCommissionCount} pending`,
+        },
+    };
+};
+
+export const getBackOfficeRecentLeads = async (limit = 5) => {
+    return await getAllRecentLeads(limit);
+};
+
+export const getBackOfficePendingCommissions = async (limit = 5) => {
+    return await getAllPendingCommissions(limit);
+};
+
