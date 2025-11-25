@@ -1,10 +1,15 @@
-import { eq, and, desc, sql, asc } from "drizzle-orm";
+import { eq, and, desc, sql, asc, inArray } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import {
     partnerService,
     partnerLead,
     partnerCommission,
     affiliateApplication,
+    affiliateUser,
+    affiliatePasswordToken,
+    affiliateLoginLog,
+    affiliateReferral,
+    affiliateTransaction,
 } from "../../drizzle/schema.js";
 
 // ==================== SERVICES ====================
@@ -443,5 +448,27 @@ export const updatePartner = async (id, data) => {
 };
 
 export const deletePartner = async (id) => {
-    await db.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
+    await db.transaction(async (tx) => {
+        const affiliateUsers = await tx
+            .select({ id: affiliateUser.id })
+            .from(affiliateUser)
+            .where(eq(affiliateUser.affiliateId, id));
+        const affiliateUserIds = affiliateUsers.map((u) => u.id);
+
+        // hapus data berelasi terlebih dahulu agar FK tidak gagal
+        if (affiliateUserIds.length) {
+            await tx
+                .delete(affiliatePasswordToken)
+                .where(inArray(affiliatePasswordToken.affiliateUserId, affiliateUserIds));
+            await tx
+                .delete(affiliateLoginLog)
+                .where(inArray(affiliateLoginLog.affiliateUserId, affiliateUserIds));
+        }
+        await tx.delete(partnerCommission).where(eq(partnerCommission.affiliateId, id));
+        await tx.delete(partnerLead).where(eq(partnerLead.affiliateId, id));
+        await tx.delete(affiliateReferral).where(eq(affiliateReferral.affiliateId, id));
+        await tx.delete(affiliateTransaction).where(eq(affiliateTransaction.affiliateId, id));
+        await tx.delete(affiliateUser).where(eq(affiliateUser.affiliateId, id));
+        await tx.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
+    });
 };
