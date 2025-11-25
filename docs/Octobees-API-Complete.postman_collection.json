@@ -81,50 +81,6 @@
           }
         },
         {
-          "name": "Affiliate Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('affiliate_token', jsonData.data.token);",
-                  "}"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": {
-              "type": "noauth"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"testpartner@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/v1/affiliate/auth/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "v1",
-                "affiliate",
-                "auth",
-                "login"
-              ]
-            }
-          }
-        },
-        {
           "name": "Logout",
           "request": {
             "method": "DELETE",
