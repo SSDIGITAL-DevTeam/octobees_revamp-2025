@@ -1,3 +1,4 @@
+// @/components/partials/partnership/leads/LeadsManagementContent.tsx
 "use client"
 
 import Header from "@/components/layout/header/Header"
@@ -20,7 +21,8 @@ export const LeadsManagementContent = () => {
     totalData,
     pageSize,
     updateLeadStatus,
-    // loading, error // kalau mau dipakai di UI bisa diambil juga
+    loading,
+    error,
   } = useLeadsManagement()
 
   const rangeStart = totalData ? (page - 1) * pageSize + 1 : 0
@@ -35,12 +37,19 @@ export const LeadsManagementContent = () => {
           search={search}
           onSearchChange={setSearch}
           status={status}
-          onStatusChange={(value) => setStatus(value)}
+          onStatusChange={setStatus}
           statusOptions={statusOptions}
         />
 
         <div className="mt-4 space-y-6">
           <h2 className="text-2xl font-semibold text-slate-950">All Leads</h2>
+
+          {loading && (
+            <p className="text-sm text-slate-500">Loading leads...</p>
+          )}
+          {error && (
+            <p className="text-sm text-red-600">{error}</p>
+          )}
 
           <LeadsTable leads={leads} onStatusChange={updateLeadStatus} />
 

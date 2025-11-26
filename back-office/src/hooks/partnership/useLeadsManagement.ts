@@ -1,14 +1,17 @@
+// @/hooks/partnership/useLeadsManagement.ts
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-
+import { useEffect, useState } from "react"
+import type { LeadStatus } from "@/constrant/partnership"
 import {
-  getPartnerRecentLeads,
-  type RecentLead,
+  getPartnerLeads,
+  type PartnerLeadApiItem,
 } from "@/lib/api/partnership/dashboardPartnership"
-import { type LeadStatus } from "@/constrant/partnership"
 
-// 1. Tipe row yg dipakai di LeadsTable
+// filter status yg dipakai di filter bar & hook
+export type LeadsStatusFilter = LeadStatus | "all"
+
+// struktur row yang dikirim ke <LeadsTable />
 export type LeadRow = {
   id: string
   leadName: string
@@ -16,113 +19,107 @@ export type LeadRow = {
   serviceType: string
   status: LeadStatus
   remark: string
-  actionLabel: LeadStatus // dipakai di dropdown & badge
+  actionLabel: LeadStatus
 }
 
-const PAGE_SIZE = 10
-
-// sesuaikan kalau kamu punya enum/constant lain
-const STATUS_OPTIONS: LeadStatus[] = [
-  "Proposal Sent",
-  "Follow-up",
-  "Lead Created",
-  "Closed",
-]
-
-// 2. Hook utama
-export function useLeadsManagement() {
-  const [allLeads, setAllLeads] = useState<LeadRow[]>([])
-  const [loading, setLoading] = useState(false)
-
+export const useLeadsManagement = () => {
+  const [leads, setLeads] = useState<LeadRow[]>([])
   const [search, setSearch] = useState("")
-  const [status, setStatus] = useState<LeadStatus | "All">("All")
+  const [status, setStatus] = useState<LeadsStatusFilter>("all")
   const [page, setPage] = useState(1)
+  const [pageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalData, setTotalData] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // --- fetch data dari endpoint yg sama dengan RecentLeadsPanel ---
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true)
-        const res = await getPartnerRecentLeads()
-        const apiData = res.data.data // RecentLead[]
+  // opsi status untuk filter bar
+  const statusOptions: LeadsStatusFilter[] = [
+    "all",
+    "Proposal Sent",
+    "Follow-up",
+    "Lead Created",
+    "Closed",
+  ]
 
-        const mapped: LeadRow[] = apiData.map((item: RecentLead) => ({
-          id: item.id,
-          leadName: item.leadName,
-          partnerName: item.partnerName,
-          serviceType: item.serviceType,
-          status: item.status as LeadStatus,
-          remark: item.remark,
-          actionLabel: item.status as LeadStatus,
-        }))
+  const fetchLeads = async () => {
+    try {
+      setLoading(true)
+      setError(null)
 
-        setAllLeads(mapped)
-      } catch (err) {
-        console.error("Failed to fetch leads:", err)
-      } finally {
-        setLoading(false)
+      const params: Record<string, any> = {
+        page,
+        limit: pageSize,
       }
+
+      if (search) params.search = search
+      if (status !== "all") params.status = status
+
+      const res = await getPartnerLeads(params)
+      const { data, pagination } = res.data
+
+      const mapped: LeadRow[] = data.map((item: PartnerLeadApiItem) => ({
+        id: item.id,
+        leadName: item.leadName,
+        partnerName: item.partnerName,
+        serviceType: item.serviceType,
+        status: item.status as LeadStatus,
+        remark: item.remark,
+        actionLabel: item.status as LeadStatus, // dipakai di dropdown & badge
+      }))
+
+      setLeads(mapped)
+
+      if (pagination) {
+        setTotalPages(pagination.totalPages ?? 1)
+        setTotalData(pagination.total ?? mapped.length)
+      } else {
+        setTotalPages(1)
+        setTotalData(mapped.length)
+      }
+    } catch (err: any) {
+      console.error("Failed to fetch leads:", err)
+      setError(err?.message || "Failed to load leads")
+      setLeads([])
+      setTotalPages(1)
+      setTotalData(0)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    load()
-  }, [])
+  useEffect(() => {
+    fetchLeads()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize, search, status])
 
-  // --- filter by search + status ---
-  const filteredLeads = useMemo(
-    () =>
-      allLeads.filter((lead) => {
-        const q = search.toLowerCase()
-
-        const matchSearch =
-          !q ||
-          lead.leadName.toLowerCase().includes(q) ||
-          lead.partnerName.toLowerCase().includes(q) ||
-          lead.serviceType.toLowerCase().includes(q)
-
-        const matchStatus = status === "All" || lead.status === status
-
-        return matchSearch && matchStatus
-      }),
-    [allLeads, search, status]
-  )
-
-  // --- pagination ---
-  const totalData = filteredLeads.length
-  const totalPages = totalData ? Math.ceil(totalData / PAGE_SIZE) : 1
-
-  const paginatedLeads = useMemo(
-    () =>
-      filteredLeads.slice(
-        (page - 1) * PAGE_SIZE,
-        page * PAGE_SIZE
-      ),
-    [filteredLeads, page]
-  )
-
-  // --- update status, pakai id agar aman walau nama sama ---
+  // kalau user ubah status lewat dropdown di tabel
   const updateLeadStatus = (id: string, nextStatus: LeadStatus) => {
-    setAllLeads((prev) =>
+    setLeads((prev) =>
       prev.map((lead) =>
         lead.id === id
           ? { ...lead, status: nextStatus, actionLabel: nextStatus }
           : lead
       )
     )
+    // NOTE: kalau nanti ada endpoint update status di backend,
+    // di sini tempat panggilnya.
   }
 
   return {
-    loading,
-    leads: paginatedLeads,
+    leads,
     search,
     setSearch,
     status,
     setStatus,
-    statusOptions: STATUS_OPTIONS,
+    statusOptions,
     page,
     setPage,
     totalPages,
     totalData,
-    pageSize: PAGE_SIZE,
+    pageSize,
     updateLeadStatus,
+    loading,
+    error,
   }
 }

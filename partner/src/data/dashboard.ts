@@ -83,21 +83,21 @@ export type CommissionHistoryEntry = {
 export const commissionHistoryEntries: CommissionHistoryEntry[] = [
   {
     id: "ch-20251110",
-    date: "10 11 2025",
+    date: "10 Nov 2025",
     service: "Web Development - PT Lintas",
     amount: "IDR 12.000.000",
     status: "Paid",
   },
   {
     id: "ch-20251106",
-    date: "06 11 2025",
+    date: "06 Nov 2025",
     service: "Marketing Automation - Luminate SG",
     amount: "IDR 8.500.000",
     status: "Pending Transfer",
   },
   {
     id: "ch-20251102",
-    date: "02 11 2025",
+    date: "02 Nov 2025",
     service: "Cloud Migration - Archipelago Group",
     amount: "IDR 6.000.000",
     status: "Paid",
@@ -125,7 +125,7 @@ export const currentDashboardLeads: DashboardLead[] = [
     serviceType: "Web Development",
     status: "Proposal Sent",
     remark: "Waiting for procurement sign-off",
-    lastUpdate: "12 11 2025",
+    lastUpdate: "12 Nov 2025",
   },
   {
     id: "michael-lau",
@@ -135,7 +135,7 @@ export const currentDashboardLeads: DashboardLead[] = [
     serviceType: "Marketing Automation",
     status: "Follow-up",
     remark: "Demo scheduled on 15 Nov",
-    lastUpdate: "11 11 2025",
+    lastUpdate: "11 Nov 2025",
   },
   {
     id: "sari-wulandari",
@@ -145,6 +145,6 @@ export const currentDashboardLeads: DashboardLead[] = [
     serviceType: "Cloud Migration",
     status: "Lead Created",
     remark: "Needs discovery call",
-    lastUpdate: "10 11 2025",
+    lastUpdate: "10 Nov 2025",
   },
 ];
