@@ -3,9 +3,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { useEffect, useState } from "react"
 
 import type { StatHighlight, StatusTone } from "@/constrant/partnership"
 import { cn } from "@/lib/utils"
+import { getPartnerDashboardStats } from "@/lib/api/partnership/dashboardPartnership"
+import { statHighlights as statHighlightsMock } from "@/data/partnership/dashboard"
 
 const statusToneStyles: Record<StatusTone, string> = {
   default: "border-slate-200 bg-slate-100 text-slate-700",
@@ -54,13 +57,93 @@ export const StatCard = ({ highlight }: { highlight: StatHighlight }) => (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-slate-900">{highlight.title}</p>
       <p className="leading-none text-4xl font-semibold text-slate-950">{highlight.value}</p>
-      {highlight.helper && <p className="mt-1 text-sm font-medium text-red-500">{highlight.helper}</p>}
+      {highlight.helper && (
+        <p className="mt-1 text-sm font-medium text-red-500">{highlight.helper}</p>
+      )}
     </div>
     <div className="pointer-events-none absolute -bottom-10 -right-10">
-        <Image src={highlight.image} alt={highlight.title} className="h-40 w-40" />
+      <Image src={highlight.image} alt={highlight.title} className="h-40 w-40" />
     </div>
   </div>
 )
+
+/**
+ * Komponen ini yang akan nge-hit endpoint:
+ * GET /v1/back-office/partner/dashboard/stats
+ *
+ * Dipakai di page dalam grid:
+ *
+ * <div className="grid ...">
+ *   <PartnershipStatCards />
+ * </div>
+ */
+export const PartnershipStatCards = () => {
+  const [cards, setCards] = useState<StatHighlight[]>(statHighlightsMock)
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const res = await getPartnerDashboardStats()
+        const api = res.data.data
+
+        // mapping urutan card:
+        // 0: totalLeads
+        // 1: activePartners
+        // 2: closedLeads
+        // 3: pendingCommission
+        const updated: StatHighlight[] = [...statHighlightsMock]
+
+        if (updated[0]) {
+          updated[0] = {
+            ...updated[0],
+            value: String(api.totalLeads.value),
+            helper: api.totalLeads.subtext,
+          }
+        }
+
+        if (updated[1]) {
+          updated[1] = {
+            ...updated[1],
+            value: String(api.activePartners.value),
+            helper: api.activePartners.subtext,
+          }
+        }
+
+        if (updated[2]) {
+          updated[2] = {
+            ...updated[2],
+            value: String(api.closedLeads.value),
+            helper: api.closedLeads.subtext,
+          }
+        }
+
+        if (updated[3]) {
+          updated[3] = {
+            ...updated[3],
+            value: String(api.pendingCommission.value),
+            helper: api.pendingCommission.subtext,
+          }
+        }
+
+        setCards(updated)
+      } catch (error) {
+        console.error("Failed to fetch partner dashboard stats:", error)
+        // kalau error, biarkan pakai statHighlightsMock
+      }
+    }
+
+    loadStats()
+  }, [])
+
+  // tidak pakai wrapper tambahan supaya layout grid di page tetap sama
+  return (
+    <>
+      {cards.map((highlight) => (
+        <StatCard key={highlight.title} highlight={highlight} />
+      ))}
+    </>
+  )
+}
 
 export const StatusBadge = ({
   label,
