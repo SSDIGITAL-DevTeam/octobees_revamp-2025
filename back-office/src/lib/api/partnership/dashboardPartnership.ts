@@ -95,3 +95,36 @@ export const getPartnerList = (params: PartnerListParams = {}) =>
     "/back-office/partner/partners", // kalau baseURL belum ada /v1 → ganti jadi "/v1/back-office/partner/partners"
     { params }
   )
+
+  export type PartnerLeadsParams = {
+  page?: number
+  limit?: number
+  search?: string
+  status?: string
+}
+
+export type PartnerLeadApiItem = {
+  id: string
+  leadName: string
+  partnerName: string
+  serviceType: string
+  status: string
+  remark: string
+  // kalau backend punya field lain, bisa ditambah di sini
+}
+
+export type PartnerLeadsResponse = {
+  status: string
+  data: PartnerLeadApiItem[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export const getPartnerLeads = (params: PartnerLeadsParams) =>
+  axiosInstance.get<PartnerLeadsResponse>("/back-office/partner/leads", {
+    params,
+  })
