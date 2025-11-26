@@ -35,7 +35,7 @@ const baseLeadDetails: LeadDetail[] = [
     amount: "IDR 5.000.000",
     status: "Proposal Sent",
     remark: "Initial contact made",
-    lastUpdate: "Oct 12, 2025",
+    lastUpdate: "Oct 12 2025",
   },
   {
     id: "nusantara-creative-labs",
@@ -47,7 +47,7 @@ const baseLeadDetails: LeadDetail[] = [
     amount: "IDR 12.000.000",
     status: "Follow-up",
     remark: "Waiting for technical doc",
-    lastUpdate: "Oct 15, 2025",
+    lastUpdate: "Oct 15 2025",
   },
   {
     id: "sinergi-data-prima",
@@ -59,7 +59,7 @@ const baseLeadDetails: LeadDetail[] = [
     amount: "IDR 20.000.000",
     status: "Lead Created",
     remark: "Need pricing breakdown",
-    lastUpdate: "Oct 9, 2025",
+    lastUpdate: "Oct 9 2025",
   },
   {
     id: "alpha-digital-studio",
@@ -68,10 +68,10 @@ const baseLeadDetails: LeadDetail[] = [
     phone: "+62-812-5555-1337",
     serviceType: "UI/UX Design",
     projectValue: "IDR 30.000.000",
-    amount: "IDR 4,500,000",
+    amount: "IDR 4.500.000",
     status: "Lead Created",
     remark: "Proposal under review",
-    lastUpdate: "Oct 18, 2025",
+    lastUpdate: "Oct 18 2025",
   },
 ];
 
