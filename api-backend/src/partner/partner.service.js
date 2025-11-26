@@ -16,6 +16,10 @@ import {
     getPartnerById as getPartnerByIdRepo,
     updatePartner as updatePartnerRepo,
     deletePartner as deletePartnerRepo,
+    getAllLeads,
+    getLeadByIdBackOffice,
+    updateLeadBackOffice,
+    deleteLeadBackOffice,
 } from "./partner.repository.js";
 import { v4 as uuidv7 } from "uuid";
 
@@ -329,3 +333,27 @@ export const deletePartner = async (id) => {
     return true;
 };
 
+// ==================== BACK OFFICE LEADS MGMT ====================
+
+export const getAllLeadsForBackOffice = async (query = {}) => {
+    const { page = 1, limit = 10, search, status, affiliateId } = query;
+    return await getAllLeads({ page, limit, search, status, affiliateId });
+};
+
+export const getLeadDetailForBackOffice = async (id) => {
+    const lead = await getLeadByIdBackOffice(id);
+    if (!lead) throw new Error("Lead not found");
+    return lead;
+};
+
+export const updateLeadForBackOffice = async (id, data) => {
+    await updateLeadBackOffice(id, data);
+    return await getLeadByIdBackOffice(id);
+};
+
+export const deleteLeadForBackOffice = async (id) => {
+    const lead = await getLeadByIdBackOffice(id);
+    if (!lead) throw new Error("Lead not found");
+    await deleteLeadBackOffice(id);
+    return true;
+};

@@ -4159,6 +4159,99 @@
                   ]
                 }
               }
+            },
+            {
+              "name": "Get All Leads (BO)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/leads",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "leads"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Lead by ID (BO)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "leads",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Lead (PATCH, BO)",
+              "request": {
+                "method": "PATCH",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "leads",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Lead (BO)",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "leads",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
             }
           ]
         }

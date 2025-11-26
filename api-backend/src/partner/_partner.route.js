@@ -40,4 +40,10 @@ backOffice.get("/partners/:id", partnerBackOffice.getById);
 backOffice.patch("/partners/:id", partnerBackOffice.update);
 backOffice.delete("/partners/:id", partnerBackOffice.remove);
 
+// Leads Management
+backOffice.get("/leads", partnerBackOffice.getAllLeads);
+backOffice.get("/leads/:id", partnerBackOffice.getLeadById);
+backOffice.patch("/leads/:id", partnerBackOffice.updateLead);
+backOffice.delete("/leads/:id", partnerBackOffice.deleteLead);
+
 export default { endUser: router, backOffice };

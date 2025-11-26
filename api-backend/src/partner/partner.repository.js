@@ -472,3 +472,107 @@ export const deletePartner = async (id) => {
         await tx.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
     });
 };
+
+// ==================== BACK OFFICE LEADS MGMT ====================
+
+const buildLeadFilter = ({ search, status, affiliateId }) => {
+    const conds = [];
+    if (search) {
+        conds.push(
+            sql`(${likeInsensitive(partnerLead.name, search)} OR ${likeInsensitive(partnerLead.email, search)} OR ${likeInsensitive(partnerLead.phone, search)})`
+        );
+    }
+    if (status) conds.push(eq(partnerLead.status, status));
+    if (affiliateId) conds.push(eq(partnerLead.affiliateId, affiliateId));
+    if (!conds.length) return undefined;
+    return and(...conds);
+};
+
+export const getAllLeads = async ({ page = 1, limit = 10, search, status, affiliateId }) => {
+    const offset = (Number(page) - 1) * Number(limit);
+    const where = buildLeadFilter({ search, status, affiliateId });
+
+    const data = await db
+        .select({
+            id: partnerLead.id,
+            name: partnerLead.name,
+            email: partnerLead.email,
+            phone: partnerLead.phone,
+            serviceId: partnerLead.serviceId,
+            serviceName: partnerService.name,
+            projectValue: partnerLead.projectValue,
+            status: partnerLead.status,
+            remark: partnerLead.remark,
+            createdAt: partnerLead.createdAt,
+            updatedAt: partnerLead.updatedAt,
+            affiliateId: partnerLead.affiliateId,
+            partnerName: affiliateApplication.fullName,
+            partnerEmail: affiliateApplication.email,
+        })
+        .from(partnerLead)
+        .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
+        .leftJoin(affiliateApplication, eq(partnerLead.affiliateId, affiliateApplication.id))
+        .where(where)
+        .orderBy(desc(partnerLead.createdAt))
+        .limit(Number(limit))
+        .offset(offset);
+
+    const [{ count }] = await db
+        .select({ count: sql`COUNT(*)`.mapWith(Number) })
+        .from(partnerLead)
+        .leftJoin(affiliateApplication, eq(partnerLead.affiliateId, affiliateApplication.id))
+        .where(where);
+
+    return {
+        data,
+        pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: count ?? 0,
+            totalPages: Math.max(1, Math.ceil((count ?? 0) / Number(limit))),
+        },
+    };
+};
+
+export const getLeadByIdBackOffice = async (leadId) => {
+    const result = await db
+        .select({
+            id: partnerLead.id,
+            name: partnerLead.name,
+            email: partnerLead.email,
+            phone: partnerLead.phone,
+            serviceId: partnerLead.serviceId,
+            serviceName: partnerService.name,
+            projectValue: partnerLead.projectValue,
+            status: partnerLead.status,
+            remark: partnerLead.remark,
+            createdAt: partnerLead.createdAt,
+            updatedAt: partnerLead.updatedAt,
+            affiliateId: partnerLead.affiliateId,
+            partnerName: affiliateApplication.fullName,
+            partnerEmail: affiliateApplication.email,
+            partnerCountry: affiliateApplication.country,
+        })
+        .from(partnerLead)
+        .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
+        .leftJoin(affiliateApplication, eq(partnerLead.affiliateId, affiliateApplication.id))
+        .where(eq(partnerLead.id, leadId))
+        .limit(1);
+
+    return result[0] || null;
+};
+
+export const updateLeadBackOffice = async (leadId, data) => {
+    const result = await db
+        .update(partnerLead)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(partnerLead.id, leadId));
+    return result.affectedRows > 0;
+};
+
+export const deleteLeadBackOffice = async (leadId) => {
+    const result = await db
+        .delete(partnerLead)
+        .where(eq(partnerLead.id, leadId));
+    return result.affectedRows > 0;
+};

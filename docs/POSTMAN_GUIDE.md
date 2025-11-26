@@ -96,10 +96,20 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Change Email
 
 ### 🧭 Partner Management (Back Office)
+**Partner Management:**
 - List partners (search, pagination)
 - Get partner detail
 - Update partner (PATCH)
 - Delete partner
+
+**Leads Management:** ⭐ NEW
+- Get All Leads (with pagination)
+- Get All Leads (with search)
+- Get All Leads (filter by status)
+- Get Lead by ID
+- Update Lead
+- Update Lead Status
+- Delete Lead
 
 ### 🏢 Back Office (11+ endpoints)
 Admin endpoints for:
@@ -256,6 +266,23 @@ Endpoint untuk admin:
 5. Verify: Get Stats
 ```
 
+### Manage Leads (Back Office) ⭐ NEW
+```
+1. Login (Back Office)
+2. Get All Leads
+   - Use pagination: ?page=1&limit=10
+   - Search: ?search=john
+   - Filter by status: ?status=Lead Created
+3. Get Lead by ID (view details)
+4. Update Lead Status
+   - Change status to "Follow-up", "Proposal Sent", etc.
+   - Add remark/notes
+5. Update Lead Information
+   - Update contact details
+   - Update project value
+6. Delete Lead (if needed)
+```
+
 ---
 
 ## 📊 Total Endpoints
@@ -276,14 +303,16 @@ Endpoint untuk admin:
 | Meta Tags | 5 |
 | Affiliate | 8 |
 | Partner Portal | 13 |
-| Back Office | 11+ |
-| **TOTAL** | **90+** |
+| Back Office - Partner Mgmt | 4 |
+| Back Office - Leads Mgmt ⭐ | 7 |
+| Back Office - Other | 11+ |
+| **TOTAL** | **97+** |
 
 ---
 
 ## ✅ Ready to Use!
 
-Collection lengkap dengan **90+ endpoints** sudah siap digunakan untuk:
+Collection lengkap dengan **97+ endpoints** sudah siap digunakan untuk:
 - Development & Testing
 - API Documentation
 - Integration Testing
