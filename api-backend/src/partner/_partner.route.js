@@ -3,7 +3,6 @@ import { affiliateJwtGuard } from "../affiliate/affiliate.auth.middleware.js";
 import partnerLeads from "./partner.leads.controller.js";
 import partnerDashboard from "./partner.dashboard.controller.js";
 import partnerProfile from "./partner.profile.controller.js";
-
 import partnerBackOffice from "./partner.backoffice.controller.js";
 
 const router = express.Router();
@@ -34,6 +33,8 @@ const backOffice = express.Router();
 backOffice.get("/dashboard/stats", partnerBackOffice.stats);
 backOffice.get("/dashboard/recent-leads", partnerBackOffice.recentLeads);
 backOffice.get("/dashboard/pending-commissions", partnerBackOffice.pendingCommissions);
+
+// Partner Management
 backOffice.get("/partners", partnerBackOffice.getAll);
 backOffice.get("/partners/:id", partnerBackOffice.getById);
 backOffice.patch("/partners/:id", partnerBackOffice.update);
