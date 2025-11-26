@@ -111,6 +111,13 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Update Lead Status
 - Delete Lead
 
+**Commission Control (Services):** ⭐ NEW
+- Get All Services
+- Get Service by ID
+- Create Service
+- Update Service
+- Delete Service
+
 ### 🏢 Back Office (11+ endpoints)
 Admin endpoints for:
 - Blog management
@@ -305,14 +312,15 @@ Endpoint untuk admin:
 | Partner Portal | 13 |
 | Back Office - Partner Mgmt | 4 |
 | Back Office - Leads Mgmt ⭐ | 7 |
+| Back Office - Services Mgmt ⭐ | 5 |
 | Back Office - Other | 11+ |
-| **TOTAL** | **97+** |
+| **TOTAL** | **102+** |
 
 ---
 
 ## ✅ Ready to Use!
 
-Collection lengkap dengan **97+ endpoints** sudah siap digunakan untuk:
+Collection lengkap dengan **102+ endpoints** sudah siap digunakan untuk:
 - Development & Testing
 - API Documentation
 - Integration Testing

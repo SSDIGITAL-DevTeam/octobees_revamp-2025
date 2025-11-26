@@ -4252,6 +4252,117 @@
                   ]
                 }
               }
+            },
+            {
+              "name": "List Services (BO)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/services",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "services"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Get Service by ID (BO)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "services",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Create Service (BO)",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/services",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "services"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Update Service (PATCH, BO)",
+              "request": {
+                "method": "PATCH",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "services",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "Delete Service (BO)",
+              "request": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "back-office",
+                    "partner",
+                    "services",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "id"
+                    }
+                  ]
+                }
+              }
             }
           ]
         }
