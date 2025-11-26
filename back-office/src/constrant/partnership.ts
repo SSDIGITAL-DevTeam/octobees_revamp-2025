@@ -76,7 +76,7 @@ export type PartnerDetail = PartnerEntry & {
 
 export const leadStatusTone: Record<LeadStatus, StatusTone> = {
   "Proposal Sent": "warning",
-  "Follow-up": "info",
+  "Follow-up": "danger",
   "Lead Created": "info",
   "Closed": "success",
 }

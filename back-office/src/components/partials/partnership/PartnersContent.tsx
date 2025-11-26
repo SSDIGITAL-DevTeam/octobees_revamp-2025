@@ -7,24 +7,32 @@ import { PartnersFilterBar } from "./PartnersFilterBar"
 import { PartnersTable } from "./PartnersTable"
 
 export const PartnersContent = () => {
-  const { partners, search, setSearch, status, setStatus, statusOptions } = usePartners()
+  const {
+    partners,
+    search,
+    setSearch,
+    status,
+    setStatus,
+    statusOptions,
+    // page, setPage, totalPages, totalData  // kalau nanti mau dipakai
+  } = usePartners()
 
   return (
     <main className="flex w-full flex-col gap-5 pb-12">
       <Header title="Partners" label="Partnership Program" />
 
       <section className="flex flex-col gap-2">
-          <PartnersFilterBar
-            search={search}
-            onSearchChange={setSearch}
-            status={status}
-            onStatusChange={(value) => setStatus(value as PartnerStatus | "all")}
-            statusOptions={statusOptions}
-          />
+        <PartnersFilterBar
+          search={search}
+          onSearchChange={setSearch}
+          status={status}
+          onStatusChange={(value) => setStatus(value as PartnerStatus | "all")}
+          statusOptions={statusOptions}
+        />
 
-          <div className="mt-8">
-            <PartnersTable partners={partners} />
-          </div>
+        <div className="mt-8">
+          <PartnersTable partners={partners} />
+        </div>
       </section>
     </main>
   )

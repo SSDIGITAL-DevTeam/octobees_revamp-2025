@@ -1,71 +1,127 @@
+"use client"
+
 import { useEffect, useMemo, useState } from "react"
 
-import type { LeadEntry, LeadStatus } from "@/constrant/partnership"
-import { mockLeads } from "@/data/partnership/leads/mock"
+import {
+  getPartnerRecentLeads,
+  type RecentLead,
+} from "@/lib/api/partnership/dashboardPartnership"
+import { type LeadStatus } from "@/constrant/partnership"
+
+// 1. Tipe row yg dipakai di LeadsTable
+export type LeadRow = {
+  id: string
+  leadName: string
+  partnerName: string
+  serviceType: string
+  status: LeadStatus
+  remark: string
+  actionLabel: LeadStatus // dipakai di dropdown & badge
+}
 
 const PAGE_SIZE = 10
 
-export type LeadsStatusFilter = LeadStatus | "all"
+// sesuaikan kalau kamu punya enum/constant lain
+const STATUS_OPTIONS: LeadStatus[] = [
+  "Proposal Sent",
+  "Follow-up",
+  "Lead Created",
+  "Closed",
+]
 
-const collectStatuses = (leads: LeadEntry[]): LeadsStatusFilter[] => {
-  const unique = new Set<LeadStatus>()
-  leads.forEach((lead) => unique.add(lead.status))
-  return ["all", ...Array.from(unique)]
-}
+// 2. Hook utama
+export function useLeadsManagement() {
+  const [allLeads, setAllLeads] = useState<LeadRow[]>([])
+  const [loading, setLoading] = useState(false)
 
-export const useLeadsManagement = () => {
-  const [records, setRecords] = useState<LeadEntry[]>(mockLeads)
   const [search, setSearch] = useState("")
-  const [status, setStatus] = useState<LeadsStatusFilter>("all")
+  const [status, setStatus] = useState<LeadStatus | "All">("All")
   const [page, setPage] = useState(1)
 
-  const statusOptions = useMemo(() => collectStatuses(records), [records])
-
-  const filtered = useMemo(() => {
-    const keyword = search.toLowerCase().trim()
-    return records.filter((lead) => {
-      const matchesKeyword =
-        !keyword ||
-        lead.leadName.toLowerCase().includes(keyword) ||
-        lead.partnerName.toLowerCase().includes(keyword) ||
-        lead.serviceType.toLowerCase().includes(keyword)
-      const matchesStatus = status === "all" || lead.status === status
-      return matchesKeyword && matchesStatus
-    })
-  }, [records, search, status])
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-
+  // --- fetch data dari endpoint yg sama dengan RecentLeadsPanel ---
   useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages)
+    const load = async () => {
+      try {
+        setLoading(true)
+        const res = await getPartnerRecentLeads()
+        const apiData = res.data.data // RecentLead[]
+
+        const mapped: LeadRow[] = apiData.map((item: RecentLead) => ({
+          id: item.id,
+          leadName: item.leadName,
+          partnerName: item.partnerName,
+          serviceType: item.serviceType,
+          status: item.status as LeadStatus,
+          remark: item.remark,
+          actionLabel: item.status as LeadStatus,
+        }))
+
+        setAllLeads(mapped)
+      } catch (err) {
+        console.error("Failed to fetch leads:", err)
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [page, totalPages])
 
-  const leads = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE
-    return filtered.slice(start, start + PAGE_SIZE)
-  }, [filtered, page])
+    load()
+  }, [])
 
-  const updateLeadStatus = (leadName: string, nextStatus: LeadStatus) => {
-    setRecords((prev) =>
+  // --- filter by search + status ---
+  const filteredLeads = useMemo(
+    () =>
+      allLeads.filter((lead) => {
+        const q = search.toLowerCase()
+
+        const matchSearch =
+          !q ||
+          lead.leadName.toLowerCase().includes(q) ||
+          lead.partnerName.toLowerCase().includes(q) ||
+          lead.serviceType.toLowerCase().includes(q)
+
+        const matchStatus = status === "All" || lead.status === status
+
+        return matchSearch && matchStatus
+      }),
+    [allLeads, search, status]
+  )
+
+  // --- pagination ---
+  const totalData = filteredLeads.length
+  const totalPages = totalData ? Math.ceil(totalData / PAGE_SIZE) : 1
+
+  const paginatedLeads = useMemo(
+    () =>
+      filteredLeads.slice(
+        (page - 1) * PAGE_SIZE,
+        page * PAGE_SIZE
+      ),
+    [filteredLeads, page]
+  )
+
+  // --- update status, pakai id agar aman walau nama sama ---
+  const updateLeadStatus = (id: string, nextStatus: LeadStatus) => {
+    setAllLeads((prev) =>
       prev.map((lead) =>
-        lead.leadName === leadName ? { ...lead, status: nextStatus, actionLabel: nextStatus } : lead
+        lead.id === id
+          ? { ...lead, status: nextStatus, actionLabel: nextStatus }
+          : lead
       )
     )
   }
 
   return {
-    leads,
+    loading,
+    leads: paginatedLeads,
     search,
     setSearch,
     status,
     setStatus,
-    statusOptions,
+    statusOptions: STATUS_OPTIONS,
     page,
     setPage,
     totalPages,
-    totalData: filtered.length,
+    totalData,
     pageSize: PAGE_SIZE,
     updateLeadStatus,
   }

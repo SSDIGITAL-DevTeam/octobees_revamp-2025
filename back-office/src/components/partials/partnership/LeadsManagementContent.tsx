@@ -20,6 +20,7 @@ export const LeadsManagementContent = () => {
     totalData,
     pageSize,
     updateLeadStatus,
+    // loading, error // kalau mau dipakai di UI bisa diambil juga
   } = useLeadsManagement()
 
   const rangeStart = totalData ? (page - 1) * pageSize + 1 : 0
@@ -30,26 +31,30 @@ export const LeadsManagementContent = () => {
       <Header title="Lead Management" label="Partnership Program" />
 
       <section className="flex flex-col gap-8">
+        <LeadsFilterBar
+          search={search}
+          onSearchChange={setSearch}
+          status={status}
+          onStatusChange={(value) => setStatus(value)}
+          statusOptions={statusOptions}
+        />
 
-          <LeadsFilterBar
-            search={search}
-            onSearchChange={setSearch}
-            status={status}
-            onStatusChange={(value) => setStatus(value)}
-            statusOptions={statusOptions}
-          />
+        <div className="mt-4 space-y-6">
+          <h2 className="text-2xl font-semibold text-slate-950">All Leads</h2>
 
-          <div className="mt-4 space-y-6">
-            <h2 className="text-2xl font-semibold text-slate-950">All Leads</h2>
-            <LeadsTable leads={leads} onStatusChange={updateLeadStatus} />
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <p className="text-sm text-slate-500">
-                Showing {rangeStart}-{rangeEnd} of {totalData} leads
-              </p>
-              <LeadsPagination page={page} totalPages={totalPages} onChange={setPage} />
-            </div>
+          <LeadsTable leads={leads} onStatusChange={updateLeadStatus} />
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <p className="text-sm text-slate-500">
+              Showing {rangeStart}-{rangeEnd} of {totalData} leads
+            </p>
+            <LeadsPagination
+              page={page}
+              totalPages={totalPages}
+              onChange={setPage}
+            />
           </div>
-
+        </div>
       </section>
     </main>
   )
