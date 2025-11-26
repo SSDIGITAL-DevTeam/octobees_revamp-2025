@@ -102,7 +102,7 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Update partner (PATCH)
 - Delete partner
 
-**Leads Management:** ⭐ NEW
+**Leads Management:** ⭐ NEW (folder terpisah di Partner BO)
 - Get All Leads (with pagination)
 - Get All Leads (with search)
 - Get All Leads (filter by status)
@@ -111,7 +111,7 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Update Lead Status
 - Delete Lead
 
-**Commission Control (Services):** ⭐ NEW
+**Commission Control (Services):** ⭐ NEW (folder terpisah di Partner BO)
 - Get All Services
 - Get Service by ID
 - Create Service

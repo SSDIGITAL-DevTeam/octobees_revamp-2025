@@ -4011,358 +4011,378 @@
           "name": "Partner (BO)",
           "item": [
             {
-              "name": "Get Stats",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/dashboard/stats",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "dashboard",
-                    "stats"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Get Recent Leads",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/dashboard/recent-leads",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "dashboard",
-                    "recent-leads"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Get Pending Commissions",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/dashboard/pending-commissions",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "dashboard",
-                    "pending-commissions"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "List Partners",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/partners",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "partners"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Get Partner by ID",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "partners",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+              "name": "Dashboard",
+              "item": [
+                {
+                  "name": "Get Stats",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/dashboard/stats",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "dashboard",
+                        "stats"
+                      ]
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Update Partner (PATCH)",
-              "request": {
-                "method": "PATCH",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "partners",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+                  }
+                },
+                {
+                  "name": "Get Recent Leads",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/dashboard/recent-leads",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "dashboard",
+                        "recent-leads"
+                      ]
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Delete Partner",
-              "request": {
-                "method": "DELETE",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "partners",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+                  }
+                },
+                {
+                  "name": "Get Pending Commissions",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/dashboard/pending-commissions",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "dashboard",
+                        "pending-commissions"
+                      ]
                     }
-                  ]
+                  }
                 }
-              }
+              ]
             },
             {
-              "name": "Get All Leads (BO)",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/leads",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "leads"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Get Lead by ID (BO)",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "leads",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+              "name": "Partners",
+              "item": [
+                {
+                  "name": "List Partners",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/partners",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "partners"
+                      ]
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Update Lead (PATCH, BO)",
-              "request": {
-                "method": "PATCH",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "leads",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+                  }
+                },
+                {
+                  "name": "Get Partner by ID",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "partners",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Delete Lead (BO)",
-              "request": {
-                "method": "DELETE",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "leads",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+                  }
+                },
+                {
+                  "name": "Update Partner (PATCH)",
+                  "request": {
+                    "method": "PATCH",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "partners",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "name": "List Services (BO)",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/services",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "services"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Get Service by ID (BO)",
-              "request": {
-                "method": "GET",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "services",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+                  }
+                },
+                {
+                  "name": "Delete Partner",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/partners/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "partners",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
                     }
-                  ]
+                  }
                 }
-              }
+              ]
             },
             {
-              "name": "Create Service (BO)",
-              "request": {
-                "method": "POST",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/services",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "services"
-                  ]
-                }
-              }
-            },
-            {
-              "name": "Update Service (PATCH, BO)",
-              "request": {
-                "method": "PATCH",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "services",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+              "name": "Leads",
+              "item": [
+                {
+                  "name": "Get All Leads (BO)",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/leads",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "leads"
+                      ]
                     }
-                  ]
+                  }
+                },
+                {
+                  "name": "Get Lead by ID (BO)",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "leads",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Update Lead (PATCH, BO)",
+                  "request": {
+                    "method": "PATCH",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "leads",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Delete Lead (BO)",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/leads/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "leads",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
                 }
-              }
+              ]
             },
             {
-              "name": "Delete Service (BO)",
-              "request": {
-                "method": "DELETE",
-                "url": {
-                  "raw": "{{base_url}}/v1/back-office/partner/services/:id",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "v1",
-                    "back-office",
-                    "partner",
-                    "services",
-                    ":id"
-                  ],
-                  "variable": [
-                    {
-                      "key": "id",
-                      "value": "id"
+              "name": "Services",
+              "item": [
+                {
+                  "name": "List Services (BO)",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/services",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "services"
+                      ]
                     }
-                  ]
+                  }
+                },
+                {
+                  "name": "Get Service by ID (BO)",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "services",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Create Service (BO)",
+                  "request": {
+                    "method": "POST",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/services",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "services"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Update Service (PATCH, BO)",
+                  "request": {
+                    "method": "PATCH",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "services",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Delete Service (BO)",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/services/:id",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "services",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
                 }
-              }
+              ]
             }
           ]
         }
