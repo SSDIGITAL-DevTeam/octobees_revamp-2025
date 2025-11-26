@@ -10,6 +10,11 @@ import {
     getLeadDetailForBackOffice,
     updateLeadForBackOffice,
     deleteLeadForBackOffice,
+    getAllServices,
+    getServiceDetail,
+    createNewService,
+    updateServiceDetail,
+    removeService,
 } from "./partner.service.js";
 
 const stats = async (req, res) => {
@@ -115,8 +120,56 @@ const deleteLead = async (req, res) => {
     }
 };
 
+// ==================== SERVICES MANAGEMENT ====================
+
+const getAllServicesList = async (req, res) => {
+    try {
+        const data = await getAllServices(req.query);
+        res.status(200).json({ status: "success", data: data.data, pagination: data.pagination });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const getServiceById = async (req, res) => {
+    try {
+        const data = await getServiceDetail(req.params.id);
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(404).json({ status: "error", message: e.message });
+    }
+};
+
+const createService = async (req, res) => {
+    try {
+        const data = await createNewService(req.body);
+        res.status(201).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const updateService = async (req, res) => {
+    try {
+        const data = await updateServiceDetail(req.params.id, req.body);
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const deleteService = async (req, res) => {
+    try {
+        await removeService(req.params.id);
+        res.status(200).json({ status: "success", message: "Service deleted" });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
 export default {
     stats, recentLeads, pendingCommissions,
     getAll, getById, update, remove,
-    getAllLeads, getLeadById, updateLead, deleteLead
+    getAllLeads, getLeadById, updateLead, deleteLead,
+    getAllServicesList, getServiceById, createService, updateService, deleteService
 };

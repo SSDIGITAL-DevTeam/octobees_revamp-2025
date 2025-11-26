@@ -20,6 +20,11 @@ import {
     getLeadByIdBackOffice,
     updateLeadBackOffice,
     deleteLeadBackOffice,
+    getAllServicesBackOffice,
+    getServiceById,
+    createService,
+    updateService,
+    deleteService,
 } from "./partner.repository.js";
 import { v4 as uuidv7 } from "uuid";
 
@@ -355,5 +360,39 @@ export const deleteLeadForBackOffice = async (id) => {
     const lead = await getLeadByIdBackOffice(id);
     if (!lead) throw new Error("Lead not found");
     await deleteLeadBackOffice(id);
+    return true;
+};
+
+// ==================== PARTNER SERVICES (BACK OFFICE) ====================
+
+export const getAllServices = async (query = {}) => {
+    const { page = 1, limit = 10, search } = query;
+    return await getAllServicesBackOffice({ page, limit, search });
+};
+
+export const getServiceDetail = async (id) => {
+    const service = await getServiceById(id);
+    if (!service) throw new Error("Service not found");
+    return service;
+};
+
+export const createNewService = async (data) => {
+    // Validate required fields
+    if (!data.name || data.commissionPercentage === undefined || !data.description) {
+        throw new Error("Missing required fields: name, commissionPercentage, description");
+    }
+    return await createService(data);
+};
+
+export const updateServiceDetail = async (id, data) => {
+    const service = await getServiceById(id);
+    if (!service) throw new Error("Service not found");
+    return await updateService(id, data);
+};
+
+export const removeService = async (id) => {
+    const service = await getServiceById(id);
+    if (!service) throw new Error("Service not found");
+    await deleteService(id);
     return true;
 };

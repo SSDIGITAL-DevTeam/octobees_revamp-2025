@@ -11,6 +11,7 @@ import {
     affiliateReferral,
     affiliateTransaction,
 } from "../../drizzle/schema.js";
+import { v4 as uuidv7 } from "uuid";
 
 // ==================== SERVICES ====================
 
@@ -574,5 +575,74 @@ export const deleteLeadBackOffice = async (leadId) => {
     const result = await db
         .delete(partnerLead)
         .where(eq(partnerLead.id, leadId));
+    return result.affectedRows > 0;
+};
+
+// ==================== PARTNER SERVICES (BACK OFFICE) ====================
+
+export const getAllServicesBackOffice = async ({ page = 1, limit = 10, search }) => {
+    const offset = (Number(page) - 1) * Number(limit);
+    const conds = [];
+
+    if (search) {
+        conds.push(likeInsensitive(partnerService.name, search));
+    }
+
+    const where = conds.length ? and(...conds) : undefined;
+
+    const data = await db
+        .select()
+        .from(partnerService)
+        .where(where)
+        .orderBy(desc(partnerService.createdAt))
+        .limit(Number(limit))
+        .offset(offset);
+
+    const [{ count }] = await db
+        .select({ count: sql`COUNT(*)`.mapWith(Number) })
+        .from(partnerService)
+        .where(where);
+
+    return {
+        data,
+        pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: count ?? 0,
+            totalPages: Math.max(1, Math.ceil((count ?? 0) / Number(limit))),
+        },
+    };
+};
+
+export const getServiceById = async (id) => {
+    const result = await db
+        .select()
+        .from(partnerService)
+        .where(eq(partnerService.id, id))
+        .limit(1);
+    return result[0] || null;
+};
+
+export const createService = async (data) => {
+    const id = uuidv7();
+    await db.insert(partnerService).values({
+        id,
+        ...data,
+    });
+    return await getServiceById(id);
+};
+
+export const updateService = async (id, data) => {
+    await db
+        .update(partnerService)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(partnerService.id, id));
+    return await getServiceById(id);
+};
+
+export const deleteService = async (id) => {
+    const result = await db
+        .delete(partnerService)
+        .where(eq(partnerService.id, id));
     return result.affectedRows > 0;
 };

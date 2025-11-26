@@ -46,4 +46,11 @@ backOffice.get("/leads/:id", partnerBackOffice.getLeadById);
 backOffice.patch("/leads/:id", partnerBackOffice.updateLead);
 backOffice.delete("/leads/:id", partnerBackOffice.deleteLead);
 
+// Services Management (Commission Control)
+backOffice.get("/services", partnerBackOffice.getAllServicesList);
+backOffice.get("/services/:id", partnerBackOffice.getServiceById);
+backOffice.post("/services", partnerBackOffice.createService);
+backOffice.patch("/services/:id", partnerBackOffice.updateService);
+backOffice.delete("/services/:id", partnerBackOffice.deleteService);
+
 export default { endUser: router, backOffice };
