@@ -21,6 +21,17 @@ import { generateTemporaryPassword, hashPassword, generateOneTimeToken } from ".
 import { sendAffiliateApprovedEmail, sendAffiliateRejectedEmail } from "./affiliate.mailer.js";
 import logger from "../../utils/logger.js";
 import { db } from "../../drizzle/db.js";
+import { 
+    affiliateApplication,
+    affiliateUser, 
+    affiliatePasswordToken, 
+    affiliateLoginLog, 
+    affiliateReferral, 
+    affiliateTransaction,
+    partnerLead,
+    partnerCommission
+} from "../../drizzle/schema.js";
+import { eq } from "drizzle-orm";
 
 const normDigits = (s) => (s || "").toString().replace(/\D+/g, "");
 const trim = (s) => (s == null ? s : String(s).trim());
@@ -109,7 +120,22 @@ export const reviewAffiliate = async (id, payload, reviewerId) => {
 export const deleteAffiliate = async (id) => {
     const row = await findAffiliateById(id);
     if (!row) throw new Error("Application not found");
-    await deleteAffiliateById(id);
+    
+    await db.transaction(async (tx) => {
+        const affiliateUserRecord = await findAffiliateUserByAffiliateId(id, tx);
+        
+        if (affiliateUserRecord) {
+            await tx.delete(affiliatePasswordToken).where(eq(affiliatePasswordToken.affiliateUserId, affiliateUserRecord.id));
+            await tx.delete(affiliateLoginLog).where(eq(affiliateLoginLog.affiliateUserId, affiliateUserRecord.id));
+            await tx.delete(affiliateUser).where(eq(affiliateUser.id, affiliateUserRecord.id));
+        }
+        
+        await tx.delete(partnerCommission).where(eq(partnerCommission.affiliateId, id));
+        await tx.delete(partnerLead).where(eq(partnerLead.affiliateId, id));
+        await tx.delete(affiliateReferral).where(eq(affiliateReferral.affiliateId, id));
+        await tx.delete(affiliateTransaction).where(eq(affiliateTransaction.affiliateId, id));
+        await tx.delete(affiliateApplication).where(eq(affiliateApplication.id, id));
+    });
 };
 
 export const updateAffiliate = async (id, raw = {}) => {

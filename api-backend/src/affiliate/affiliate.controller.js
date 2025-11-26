@@ -123,8 +123,8 @@ const resendEmail = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const data = await updateAffiliate(req.params.id, req.body);
-        res.status(200).json({ status: "success", data });
+        const updated = await updateAffiliate(req.params.id, req.body);
+        res.status(200).json({ status: "success", data: updated });
     } catch (e) {
         res.status(400).json({ status: "error", message: e.message });
     }
