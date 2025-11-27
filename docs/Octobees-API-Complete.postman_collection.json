@@ -4761,6 +4761,32 @@
                       ]
                     }
                   }
+                },
+                {
+                  "name": "Get Partner Stats",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{base_url}}/v1/back-office/partner/partners/:id/stats",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "v1",
+                        "back-office",
+                        "partner",
+                        "partners",
+                        ":id",
+                        "stats"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id",
+                          "value": "id"
+                        }
+                      ]
+                    }
+                  }
                 }
               ]
             },
