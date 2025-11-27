@@ -231,44 +231,8 @@
               }
             ],
             "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "title",
-                  "value": "Blog Title",
-                  "type": "text"
-                },
-                {
-                  "key": "content",
-                  "value": "Blog content here",
-                  "type": "text"
-                },
-                {
-                  "key": "slug",
-                  "value": "blog-slug",
-                  "type": "text"
-                },
-                {
-                  "key": "categoryId",
-                  "value": "category-id",
-                  "type": "text"
-                },
-                {
-                  "key": "status",
-                  "value": "Published",
-                  "type": "text"
-                },
-                {
-                  "key": "favorite",
-                  "value": "false",
-                  "type": "text"
-                },
-                {
-                  "key": "image",
-                  "type": "file",
-                  "src": []
-                }
-              ]
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
             },
             "url": {
               "raw": "{{base_url}}/v1/blog",
@@ -302,6 +266,16 @@
                   "value": "blog-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
             }
           }
         },
@@ -325,6 +299,16 @@
                   "value": "blog-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
             }
           }
         },
@@ -447,6 +431,16 @@
                   "value": "category-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
             }
           }
         },
@@ -493,6 +487,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
             }
           }
         }
@@ -589,6 +593,16 @@
                   "value": "application-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+628123456789\",\n  \"positionId\": \"position-id\",\n  \"status\": \"Review\"\n}"
             }
           }
         },
@@ -635,6 +649,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+628123456789\",\n  \"positionId\": \"position-id\",\n  \"status\": \"Review\"\n}"
             }
           }
         }
@@ -734,6 +758,16 @@
                   "value": "1"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"UI Designer\",\n  \"description\": \"Role description\",\n  \"location\": \"Jakarta\",\n  \"status\": \"Active\"\n}"
             }
           }
         },
@@ -780,6 +814,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"UI Designer\",\n  \"description\": \"Role description\",\n  \"location\": \"Jakarta\",\n  \"status\": \"Active\"\n}"
             }
           }
         }
@@ -876,6 +920,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"source\": \"website\",\n  \"insight\": \"newsletter\",\n  \"status\": \"active\"\n}"
             }
           }
         },
@@ -922,6 +976,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"source\": \"website\",\n  \"insight\": \"newsletter\",\n  \"status\": \"active\"\n}"
             }
           }
         }
@@ -1021,6 +1085,16 @@
                   "value": "category-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SEO\",\n  \"heading\": \"SEO Services\",\n  \"description\": \"Category description\",\n  \"status\": \"Active\",\n  \"slug\": \"seo\"\n}"
             }
           }
         },
@@ -1067,6 +1141,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SEO\",\n  \"heading\": \"SEO Services\",\n  \"description\": \"Category description\",\n  \"status\": \"Active\",\n  \"slug\": \"seo\"\n}"
             }
           }
         }
@@ -1166,6 +1250,16 @@
                   "value": "plan-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Basic Plan\",\n  \"type\": \"Standard\",\n  \"showPrice\": true,\n  \"status\": \"Active\",\n  \"categoryId\": \"category-id\",\n  \"options\": \"[]\",\n  \"descriptions\": \"Plan description\"\n}"
             }
           }
         },
@@ -1212,6 +1306,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Basic Plan\",\n  \"type\": \"Standard\",\n  \"showPrice\": true,\n  \"status\": \"Active\",\n  \"categoryId\": \"category-id\",\n  \"options\": \"[]\",\n  \"descriptions\": \"Plan description\"\n}"
             }
           }
         }
@@ -1378,6 +1482,16 @@
                   "value": "user-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"admin\",\n  \"status\": \"Active\"\n}"
             }
           }
         },
@@ -1401,6 +1515,16 @@
                   "value": "user-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"admin\",\n  \"status\": \"Active\"\n}"
             }
           }
         },
@@ -1490,6 +1614,16 @@
                 "v1",
                 "page"
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
             }
           }
         },
@@ -1513,6 +1647,16 @@
                   "value": "page-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
             }
           }
         },
@@ -1559,6 +1703,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
             }
           }
         }
@@ -1625,6 +1779,16 @@
                 "v1",
                 "meta"
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
             }
           }
         },
@@ -1648,6 +1812,16 @@
                   "value": "meta-id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
             }
           }
         },
@@ -1694,6 +1868,16 @@
                   "value": "id"
                 }
               ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
             }
           }
         }
@@ -1773,6 +1957,16 @@
                     "auth",
                     "change-password"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"token\": \"<reset-token-from-email>\",\n  \"newPassword\": \"NewStrongPass123!\",\n  \"confirmPassword\": \"NewStrongPass123!\"\n}"
                 }
               }
             },
@@ -1794,6 +1988,16 @@
                     "auth",
                     "forgot-password"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             }
@@ -2315,6 +2519,16 @@
                     "partner",
                     "profile"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"Partner Name\",\n  \"phone\": \"+628123456789\",\n  \"country\": \"ID\"\n}"
                 }
               }
             },
@@ -2342,6 +2556,16 @@
                     "profile",
                     "change-email"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"newEmail\": \"partner@example.com\"\n}"
                 }
               }
             }
@@ -2411,6 +2635,16 @@
                     "back-office",
                     "blog"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2435,6 +2669,16 @@
                       "value": "blog-id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2459,6 +2703,16 @@
                       "value": "blog-id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2557,6 +2811,16 @@
                       "value": "app-id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Updated by admin\",\n  \"fullName\": \"Affiliate Name\",\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             },
@@ -2583,6 +2847,16 @@
                       "value": "app-id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Updated by admin\",\n  \"fullName\": \"Affiliate Name\",\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             },
@@ -2648,6 +2922,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Updated by admin\",\n  \"fullName\": \"Affiliate Name\",\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             },
@@ -2698,6 +2982,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Updated by admin\",\n  \"fullName\": \"Affiliate Name\",\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             },
@@ -2724,6 +3018,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"approved\",\n  \"notes\": \"Updated by admin\",\n  \"fullName\": \"Affiliate Name\",\n  \"email\": \"affiliate@example.com\"\n}"
                 }
               }
             }
@@ -2787,6 +3091,16 @@
                     "back-office",
                     "blog-category"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2811,6 +3125,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2835,6 +3159,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Blog Title\",\n  \"content\": \"Lorem ipsum content\",\n  \"status\": \"Published\",\n  \"categoryId\": \"category-id\",\n  \"favorite\": false\n}"
                 }
               }
             },
@@ -2922,6 +3256,16 @@
                     "back-office",
                     "career"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+628123456789\",\n  \"positionId\": \"position-id\",\n  \"status\": \"Review\"\n}"
                 }
               }
             },
@@ -2946,6 +3290,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+628123456789\",\n  \"positionId\": \"position-id\",\n  \"status\": \"Review\"\n}"
                 }
               }
             },
@@ -2970,6 +3324,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+628123456789\",\n  \"positionId\": \"position-id\",\n  \"status\": \"Review\"\n}"
                 }
               }
             },
@@ -3057,6 +3421,16 @@
                     "back-office",
                     "meta"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
                 }
               }
             },
@@ -3081,6 +3455,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
                 }
               }
             },
@@ -3105,6 +3489,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"key\": \"title\",\n  \"value\": \"SEO Title\",\n  \"content\": \"Meta content\",\n  \"slug\": \"about\"\n}"
                 }
               }
             },
@@ -3192,6 +3586,16 @@
                     "back-office",
                     "page"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
                 }
               }
             },
@@ -3216,6 +3620,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
                 }
               }
             },
@@ -3240,6 +3654,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"page\": \"About\",\n  \"slug\": \"about\",\n  \"source\": \"cms\",\n  \"categoryServiceId\": null,\n  \"blogId\": null\n}"
                 }
               }
             },
@@ -3327,6 +3751,16 @@
                     "back-office",
                     "position"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"UI Designer\",\n  \"description\": \"Role description\",\n  \"location\": \"Jakarta\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -3351,6 +3785,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"UI Designer\",\n  \"description\": \"Role description\",\n  \"location\": \"Jakarta\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -3375,6 +3819,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"UI Designer\",\n  \"description\": \"Role description\",\n  \"location\": \"Jakarta\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -3462,6 +3916,16 @@
                     "back-office",
                     "service-category"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"SEO\",\n  \"heading\": \"SEO Services\",\n  \"description\": \"Category description\",\n  \"status\": \"Active\",\n  \"slug\": \"seo\"\n}"
                 }
               }
             },
@@ -3486,6 +3950,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"SEO\",\n  \"heading\": \"SEO Services\",\n  \"description\": \"Category description\",\n  \"status\": \"Active\",\n  \"slug\": \"seo\"\n}"
                 }
               }
             },
@@ -3510,6 +3984,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"SEO\",\n  \"heading\": \"SEO Services\",\n  \"description\": \"Category description\",\n  \"status\": \"Active\",\n  \"slug\": \"seo\"\n}"
                 }
               }
             },
@@ -3597,6 +4081,16 @@
                     "back-office",
                     "plan"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Basic Plan\",\n  \"type\": \"Standard\",\n  \"showPrice\": true,\n  \"status\": \"Active\",\n  \"categoryId\": \"category-id\",\n  \"options\": \"[]\",\n  \"descriptions\": \"Plan description\"\n}"
                 }
               }
             },
@@ -3621,6 +4115,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Basic Plan\",\n  \"type\": \"Standard\",\n  \"showPrice\": true,\n  \"status\": \"Active\",\n  \"categoryId\": \"category-id\",\n  \"options\": \"[]\",\n  \"descriptions\": \"Plan description\"\n}"
                 }
               }
             },
@@ -3645,6 +4149,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Basic Plan\",\n  \"type\": \"Standard\",\n  \"showPrice\": true,\n  \"status\": \"Active\",\n  \"categoryId\": \"category-id\",\n  \"options\": \"[]\",\n  \"descriptions\": \"Plan description\"\n}"
                 }
               }
             },
@@ -3732,6 +4246,16 @@
                     "back-office",
                     "subscription"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"source\": \"website\",\n  \"insight\": \"newsletter\",\n  \"status\": \"active\"\n}"
                 }
               }
             },
@@ -3756,6 +4280,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"source\": \"website\",\n  \"insight\": \"newsletter\",\n  \"status\": \"active\"\n}"
                 }
               }
             },
@@ -3780,6 +4314,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"source\": \"website\",\n  \"insight\": \"newsletter\",\n  \"status\": \"active\"\n}"
                 }
               }
             },
@@ -3867,6 +4411,16 @@
                     "back-office",
                     "user"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"admin\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -3891,6 +4445,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"admin\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -3915,6 +4479,16 @@
                       "value": "id"
                     }
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"admin\",\n  \"status\": \"Active\"\n}"
                 }
               }
             },
@@ -4002,6 +4576,16 @@
                     "back-office",
                     "order"
                   ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000,\n  \"currency\": \"IDR\",\n  \"bussiness\": \"Company\",\n  \"categoryId\": \"category-id\",\n  \"date\": \"2025-01-01\",\n  \"email\": \"user@example.com\",\n  \"message\": \"Order message\",\n  \"name\": \"Customer\",\n  \"phoneNumber\": \"+628123456789\",\n  \"idPlan\": \"plan-id\",\n  \"time\": \"10:00\"\n}"
                 }
               }
             }
@@ -4140,6 +4724,16 @@
                           "value": "id"
                         }
                       ]
+                    },
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"example\": \"value\"\n}"
                     }
                   }
                 },
@@ -4238,6 +4832,16 @@
                           "value": "id"
                         }
                       ]
+                    },
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"status\": \"Lead Created\",\n  \"remark\": \"Follow up\",\n  \"serviceId\": \"service-id\",\n  \"projectValue\": 50000000\n}"
                     }
                   }
                 },
@@ -4329,6 +4933,16 @@
                         "partner",
                         "services"
                       ]
+                    },
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"SEO Service\",\n  \"commissionPercentage\": 10,\n  \"description\": \"Service description\",\n  \"isActive\": true\n}"
                     }
                   }
                 },
@@ -4354,6 +4968,16 @@
                           "value": "id"
                         }
                       ]
+                    },
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"SEO Service\",\n  \"commissionPercentage\": 10,\n  \"description\": \"Service description\",\n  \"isActive\": true\n}"
                     }
                   }
                 },

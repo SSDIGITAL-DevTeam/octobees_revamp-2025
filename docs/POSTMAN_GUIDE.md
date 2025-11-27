@@ -18,6 +18,7 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 - Refresh Token
 - Forgot Password
 - Reset Password
+> Semua endpoint POST sudah dilengkapi contoh body di koleksi (lihat tab Body).
 
 ### 📝 Blog (6 endpoints)
 - Get All Blogs

@@ -458,6 +458,7 @@ export const partnerService = mysqlTable("partner_service", {
     .primaryKey()
     .$defaultFn(() => uuidv7()),
   name: varchar("name", { length: 191 }).notNull(),
+  projectValue: double("project_value").notNull().default(0),
   commissionPercentage: double("commission_percentage").notNull(),
   description: text("description").notNull(),
   isActive: boolean("is_active").notNull().default(true),

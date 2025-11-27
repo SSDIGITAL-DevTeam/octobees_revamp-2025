@@ -1,11 +1,11 @@
 -- Insert Partner Services
-INSERT INTO partner_service (id, name, commission_percentage, description, is_active, created_at, updated_at) VALUES
-('ps-001', 'Web Development', 15, 'Custom website & web application development', 1, NOW(), NOW()),
-('ps-002', 'Marketing Automation', 12, 'Workflow setup, CRM integration, and optimization', 1, NOW(), NOW()),
-('ps-003', 'Cloud Migration', 18, 'Full assessment and migration to scalable cloud infra', 1, NOW(), NOW()),
-('ps-004', 'Mobile App Development', 15, 'Native and cross-platform mobile application development', 1, NOW(), NOW()),
-('ps-005', 'Data Integration', 14, 'Enterprise data integration and ETL solutions', 1, NOW(), NOW()),
-('ps-006', 'UI/UX Design', 10, 'User interface and user experience design services', 1, NOW(), NOW());
+INSERT INTO partner_service (id, name, project_value, commission_percentage, description, is_active, created_at, updated_at) VALUES
+('ps-001', 'Web Development', 50000000, 15, 'Custom website & web application development', 1, NOW(), NOW()),
+('ps-002', 'Marketing Automation', 30000000, 12, 'Workflow setup, CRM integration, and optimization', 1, NOW(), NOW()),
+('ps-003', 'Cloud Migration', 75000000, 18, 'Full assessment and migration to scalable cloud infra', 1, NOW(), NOW()),
+('ps-004', 'Mobile App Development', 100000000, 15, 'Native and cross-platform mobile application development', 1, NOW(), NOW()),
+('ps-005', 'Data Integration', 60000000, 14, 'Enterprise data integration and ETL solutions', 1, NOW(), NOW()),
+('ps-006', 'UI/UX Design', 25000000, 10, 'User interface and user experience design services', 1, NOW(), NOW());
 
 -- Insert Test Affiliate Application (if not exists)
 INSERT INTO affiliate_application (id, full_name, email, country, strategy, status, created_at, updated_at) VALUES
