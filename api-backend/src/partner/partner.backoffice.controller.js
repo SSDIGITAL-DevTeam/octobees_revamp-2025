@@ -15,6 +15,7 @@ import {
     createNewService,
     updateServiceDetail,
     removeService,
+    calculateDashboardStats,
 } from "./partner.service.js";
 
 const stats = async (req, res) => {
@@ -61,6 +62,15 @@ const getById = async (req, res) => {
         res.status(200).json({ status: "success", data });
     } catch (e) {
         res.status(404).json({ status: "error", message: e.message });
+    }
+};
+
+const getPartnerStats = async (req, res) => {
+    try {
+        const data = await calculateDashboardStats(req.params.id);
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
     }
 };
 
@@ -169,7 +179,7 @@ const deleteService = async (req, res) => {
 
 export default {
     stats, recentLeads, pendingCommissions,
-    getAll, getById, update, remove,
+    getAll, getById, getPartnerStats, update, remove,
     getAllLeads, getLeadById, updateLead, deleteLead,
     getAllServicesList, getServiceById, createService, updateService, deleteService
 };
