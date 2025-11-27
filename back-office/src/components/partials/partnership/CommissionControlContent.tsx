@@ -13,16 +13,7 @@ import { CommissionControlTable } from "./CommissionControlTable"
 import { CommissionServiceModal, type CommissionFormValues } from "./CommissionServiceModal"
 
 export const CommissionControlContent = () => {
-  const {
-    search,
-    setSearch,
-    items,
-    addItem,
-    updateItem,
-    loading,
-    error,
-  } = useCommissionControl()
-
+  const { search, setSearch, items, addItem, updateItem, loading, error } = useCommissionControl()
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create")
   const [selected, setSelected] = useState<CommissionItem | undefined>(undefined)
@@ -44,14 +35,15 @@ export const CommissionControlContent = () => {
     setModalOpen(true)
   }
 
-  const handleSubmit = (payload: CommissionFormValues) => {
+  const handleSubmit = async (payload: CommissionFormValues) => {
     if (modalMode === "create") {
-      addItem({
+      await addItem({
         serviceName: payload.serviceName,
         projectValue: payload.projectValue,
         commissionPercentage: Number(payload.commissionPercentage) || 0,
         description: payload.description,
       })
+      setModalOpen(false)
       return
     }
 
@@ -63,6 +55,7 @@ export const CommissionControlContent = () => {
           Number(payload.commissionPercentage) || selected.commissionPercentage,
         description: payload.description,
       })
+      setModalOpen(false)
     }
   }
 
@@ -91,12 +84,8 @@ export const CommissionControlContent = () => {
         </div>
 
         <div className="mt-3 space-y-2">
-          {loading && (
-            <p className="text-sm text-slate-500">Loading services...</p>
-          )}
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {loading && <p className="text-sm text-slate-500">Loading services...</p>}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           <CommissionControlTable items={items} onEdit={handleEditOpen} />
         </div>

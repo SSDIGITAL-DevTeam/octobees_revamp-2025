@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table"
 import Badge from "@/components/ui/Badge"
 import type { CommissionItem } from "@/constrant/partnership"
+import { formatIDR } from "@/utils/formatCurrency"
 
 type CommissionControlTableProps = {
   items: CommissionItem[]
@@ -40,7 +41,7 @@ export const CommissionControlTable = ({ items, onEdit, onDelete }: CommissionCo
           {items.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="font-semibold text-slate-900">{item.serviceName}</TableCell>
-              <TableCell>{item.projectValue}</TableCell>
+              <TableCell>{formatIDR(Number(item.projectValue))}</TableCell>
               <TableCell>
                 <Badge category="status" variant="closed">
                   {item.commissionPercentage}%

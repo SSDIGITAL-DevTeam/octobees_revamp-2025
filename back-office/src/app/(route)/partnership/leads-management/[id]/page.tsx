@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Pencil } from "lucide-react"
 
 import Header from "@/components/layout/header/Header"
@@ -20,21 +20,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useLeadDetail, leadStatusOptions } from "@/hooks/partnership/useLeadDetail"
+import {
+  useLeadDetail,
+  leadStatusOptions,
+} from "@/hooks/partnership/useLeadDetail"
 import type { LeadStatus } from "@/constrant/partnership"
 
 type LeadDetailPageProps = {
-  params: { slug: string }
+  params: { id: string }
 }
 
 export default function LeadDetailPage({ params }: LeadDetailPageProps) {
-  const slug = decodeURIComponent(params.slug)
-  const lead = useLeadDetail(slug)
-  const [status, setStatus] = useState<LeadStatus>(lead?.status ?? "Follow-up")
-  const [projectValue, setProjectValue] = useState(lead?.projectValue ?? "")
-  const [remark, setRemark] = useState(lead?.remark ?? "")
+  const id = params.id
+  const { lead, loading, error } = useLeadDetail(id)
+
+  const [status, setStatus] = useState<LeadStatus>("Follow-up")
+  const [projectValue, setProjectValue] = useState("")
+  const [remark, setRemark] = useState("")
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
-  const [projectDraft, setProjectDraft] = useState(projectValue)
+  const [projectDraft, setProjectDraft] = useState("")
+
+  // sinkronkan state lokal ketika data lead sudah berhasil di-load
+  useEffect(() => {
+    if (lead) {
+      setStatus(lead.status)
+      setProjectValue(lead.projectValue)
+      setRemark(lead.remark)
+      setProjectDraft(lead.projectValue)
+    }
+  }, [lead])
 
   const infoRows = useMemo(
     () => [
@@ -67,12 +81,35 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     [lead]
   )
 
-  if (!lead) {
+  if (loading) {
     return (
       <main className="flex w-full flex-col gap-6 pb-12">
-        <Header title="Lead Detail" breadcrumbs={[{ label: "Lead Management", href: "/partnership/leads-management" }]} />
+        <Header
+          title="Lead Detail"
+          breadcrumbs={[
+            { label: "Lead Management", href: "/partnership/leads-management" },
+          ]}
+        />
         <div className="rounded-3xl border border-border bg-white p-6 shadow-sm">
-          <p className="text-slate-600">Lead tidak ditemukan.</p>
+          <p className="text-slate-600">Loading lead detail...</p>
+        </div>
+      </main>
+    )
+  }
+
+  if (error || !lead) {
+    return (
+      <main className="flex w-full flex-col gap-6 pb-12">
+        <Header
+          title="Lead Detail"
+          breadcrumbs={[
+            { label: "Lead Management", href: "/partnership/leads-management" },
+          ]}
+        />
+        <div className="rounded-3xl border border-border bg-white p-6 shadow-sm">
+          <p className="text-slate-600">
+            {error || "Lead tidak ditemukan."}
+          </p>
         </div>
       </main>
     )
@@ -92,12 +129,19 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
         <div className="rounded-[26px] border border-border bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-6">
             <div className="space-y-2">
-              <p className="text-xl font-semibold text-slate-950">Lead Detail : {lead.leadName}</p>
-              <p className="text-lg font-semibold text-red-700">Partner Name : {lead.partnerName}</p>
+              <p className="text-xl font-semibold text-slate-950">
+                Lead Detail : {lead.leadName}
+              </p>
+              <p className="text-lg font-semibold text-red-700">
+                Partner Name : {lead.partnerName}
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-slate-700">Status</span>
-              <Select value={status} onValueChange={(value) => setStatus(value as LeadStatus)}>
+              <Select
+                value={status}
+                onValueChange={(value) => setStatus(value as LeadStatus)}
+              >
                 <SelectTrigger className="h-10 w-[160px] rounded-full border border-slate-300 px-4 text-sm">
                   <SelectValue />
                 </SelectTrigger>
@@ -114,7 +158,9 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
           <div className="grid gap-6 px-6 pb-8 pt-4">
             <div className="flex items-center gap-3">
-              <div className="text-sm font-semibold text-slate-700">Project Value (IDR)</div>
+              <div className="text-sm font-semibold text-slate-700">
+                Project Value (IDR)
+              </div>
               <div className="flex items-center gap-2">
                 <Input
                   value={projectValue}
@@ -139,8 +185,14 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {infoRows.map((row) => (
                 <div key={row.label} className="space-y-1">
-                  <p className="text-sm font-semibold text-slate-700">{row.label}</p>
-                  <p className={`text-base font-medium ${row.highlight ? "text-red-700" : "text-slate-900"}`}>
+                  <p className="text-sm font-semibold text-slate-700">
+                    {row.label}
+                  </p>
+                  <p
+                    className={`text-base font-medium ${
+                      row.highlight ? "text-red-700" : "text-slate-900"
+                    }`}
+                  >
                     {row.value}
                   </p>
                 </div>
@@ -166,14 +218,23 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
         </div>
       </section>
 
-      <Dialog open={isProjectModalOpen} onOpenChange={(open) => (!open ? setIsProjectModalOpen(false) : null)}>
+      <Dialog
+        open={isProjectModalOpen}
+        onOpenChange={(open) =>
+          !open ? setIsProjectModalOpen(false) : null
+        }
+      >
         <DialogContent className="max-w-xl rounded-[20px] px-8 py-6">
           <DialogHeader className="text-left">
-            <DialogTitle className="text-2xl font-semibold text-slate-900">Edit Project Value</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold text-slate-900">
+              Edit Project Value
+            </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3 pt-2">
-            <p className="text-sm font-semibold text-slate-800">Project Value (IDR)</p>
+            <p className="text-sm font-semibold text-slate-800">
+              Project Value (IDR)
+            </p>
             <Input
               value={projectDraft}
               onChange={(event) => setProjectDraft(event.target.value)}

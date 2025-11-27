@@ -19,7 +19,7 @@ export const PartnerStatCard = ({ title, value, helper, image, dark }: PartnerSt
         dark ? "bg-red-700 text-white" : ""
       }`}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-7 py-5">
         <p className={`text-sm ${dark ? "text-white/90" : "text-slate-900"}`}>{title}</p>
         <p className="text-3xl font-semibold">{value}</p>
         {helper && (

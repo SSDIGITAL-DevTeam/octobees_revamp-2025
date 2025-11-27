@@ -112,11 +112,20 @@ export type PartnerServiceParams = {
 export type PartnerServiceApiItem = {
   id: string
   name: string
+  projectValue: number
   commissionPercentage: number
   description: string
   isActive: boolean
   createdAt: string
   updatedAt: string
+}
+
+export type CreatePartnerServicePayload = {
+  name: string
+  projectValue: number
+  commissionPercentage: number
+  description: string
+  isActive: boolean
 }
 
 export type PartnerServicesResponse = {
@@ -128,6 +137,52 @@ export type PartnerServicesResponse = {
     total: number
     totalPages: number
   }
+}
+
+  export type PartnerLeadDetailApi = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  serviceId: string
+  serviceName: string
+  projectValue: number
+  status: string
+  remark: string
+  createdAt: string
+  updatedAt: string
+  affiliateId: string
+  partnerName: string
+  partnerEmail: string
+  partnerCountry: string
+}
+
+export type PartnerLeadDetailResponse = {
+  status: string
+  data: PartnerLeadDetailApi
+}
+
+export type PartnerDetailApi = {
+  id: string
+  fullName: string
+  email: string
+  countryCode: string
+  phone: string
+  phoneE164: string
+  country: string
+  govBusinessId: string | null
+  strategy: string | null
+  portfolioLinks: string | null
+  motivation: string | null
+  otherPrograms: string | null
+  status: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type PartnerDetailResponse = {
+  status: string
+  data: PartnerDetailApi
 }
 
 // GET /v1/back-office/partner/dashboard/stats
@@ -162,4 +217,18 @@ export const getPartnerServices = (params: PartnerServiceParams = {}) =>
   axiosInstance.get<PartnerServicesResponse>(
     "/back-office/partner/services",
     { params }
+  )
+
+// POST /v1/back-office/partner/services
+export const createPartnerService = (payload: CreatePartnerServicePayload) =>
+  axiosInstance.post("/back-office/partner/services", payload)
+
+export const getPartnerLeadDetail = (id: string) =>
+  axiosInstance.get<PartnerLeadDetailResponse>(
+    `/back-office/partner/leads/${id}`
+  )
+
+export const getPartnerById = (id: string) =>
+  axiosInstance.get<PartnerDetailResponse>(
+    `/back-office/partner/partners/${id}`
   )

@@ -88,11 +88,7 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
                     variant="ghost"
                     className="h-15 w-15 rounded-full text-red-600 hover:bg-red-50"
                   >
-                    <Link
-                      href={`/partnership/leads-management/${slugify(
-                        lead.leadName
-                      )}`}
-                    >
+                    <Link href={`/partnership/leads-management/${lead.id}`}>
                       <Eye className="h-30 w-30" />
                     </Link>
                   </Button>
