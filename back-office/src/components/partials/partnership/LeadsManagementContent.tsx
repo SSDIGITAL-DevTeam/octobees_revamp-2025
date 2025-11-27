@@ -1,4 +1,4 @@
-// @/components/partials/partnership/leads/LeadsManagementContent.tsx
+// src/components/partials/partnership/leads/LeadsManagementContent.tsx
 "use client"
 
 import Header from "@/components/layout/header/Header"

@@ -74,6 +74,62 @@ export type PartnerListResponse = {
   }
 }
 
+  export type PartnerLeadsParams = {
+  page?: number
+  limit?: number
+  search?: string
+  status?: string
+}
+
+export type PartnerLeadApiItem = {
+  id: string
+  name: string
+  partnerName: string
+  serviceName: string
+  status: string
+  remark: string
+  // kalau backend punya field lain, bisa ditambah di sini
+}
+
+export type PartnerLeadsResponse = {
+  status: string
+  data: PartnerLeadApiItem[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
+export type PartnerServiceParams = {
+  page?: number
+  limit?: number
+  search?: string
+  isActive?: boolean
+}
+
+export type PartnerServiceApiItem = {
+  id: string
+  name: string
+  commissionPercentage: number
+  description: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type PartnerServicesResponse = {
+  status: string
+  data: PartnerServiceApiItem[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+  }
+}
+
 // GET /v1/back-office/partner/dashboard/stats
 export const getPartnerDashboardStats = () =>
   axiosInstance.get<PartnershipStatsResponse>(
@@ -96,35 +152,14 @@ export const getPartnerList = (params: PartnerListParams = {}) =>
     { params }
   )
 
-  export type PartnerLeadsParams = {
-  page?: number
-  limit?: number
-  search?: string
-  status?: string
-}
-
-export type PartnerLeadApiItem = {
-  id: string
-  leadName: string
-  partnerName: string
-  serviceType: string
-  status: string
-  remark: string
-  // kalau backend punya field lain, bisa ditambah di sini
-}
-
-export type PartnerLeadsResponse = {
-  status: string
-  data: PartnerLeadApiItem[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-}
-
 export const getPartnerLeads = (params: PartnerLeadsParams) =>
   axiosInstance.get<PartnerLeadsResponse>("/back-office/partner/leads", {
     params,
-  })
+  }
+)
+
+export const getPartnerServices = (params: PartnerServiceParams = {}) =>
+  axiosInstance.get<PartnerServicesResponse>(
+    "/back-office/partner/services",
+    { params }
+  )

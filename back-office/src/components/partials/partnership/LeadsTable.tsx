@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { LeadEntry, LeadStatus } from "@/constrant/partnership"
+import type { LeadStatus } from "@/constrant/partnership"
 import { leadStatusStyles } from "@/constrant/partnership"
 import { StatusBadge } from "./PartnershipDashboardWidgets"
 import { slugify } from "@/utils/slugify"
@@ -23,10 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { LeadRow } from "@/hooks/partnership/useLeadsManagement"
 
 type LeadsTableProps = {
-  leads: LeadEntry[]
-  onStatusChange: (leadName: string, status: LeadStatus) => void
+  leads: LeadRow[]
+  onStatusChange: (id: string, status: LeadStatus) => void
 }
 
 export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
@@ -44,40 +45,54 @@ export const LeadsTable = ({ leads, onStatusChange }: LeadsTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leads.map((lead, index) => (
-            <TableRow key={`${lead.leadName}-${index}`}>
-              <TableCell className="font-semibold text-slate-900">{lead.leadName}</TableCell>
+          {leads.map((lead) => (
+            <TableRow key={lead.id}>
+              <TableCell className="font-semibold text-slate-900">
+                {lead.leadName}
+              </TableCell>
               <TableCell>{lead.partnerName}</TableCell>
               <TableCell>{lead.serviceType}</TableCell>
               <TableCell>
-                <StatusBadge label={lead.status} className={leadStatusStyles[lead.status]} />
+                <StatusBadge
+                  label={lead.status}
+                  className={leadStatusStyles[lead.status]}
+                />
               </TableCell>
-              <TableCell className="text-slate-500">{lead.remark}</TableCell>
+              <TableCell className="text-slate-500">
+                {lead.remark}
+              </TableCell>
               <TableCell>
                 <div className="flex justify-end gap-2">
                   <Select
                     value={lead.status}
-                    onValueChange={(value) => onStatusChange(lead.leadName, value as LeadStatus)}
+                    onValueChange={(value) =>
+                      onStatusChange(lead.id, value as LeadStatus)
+                    }
                   >
                     <SelectTrigger className="h-10 w-[150px] rounded-full border-slate-200 px-4 text-sm font-semibold text-slate-600">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {(["Proposal Sent", "Follow-up", "Lead Created", "Closed"] as LeadStatus[]).map(
-                        (statusOption) => (
-                          <SelectItem key={statusOption} value={statusOption}>
-                            {statusOption}
-                          </SelectItem>
-                        )
-                      )}
+                      {(
+                        ["Proposal Sent", "Follow-up", "Lead Created", "Closed"] as LeadStatus[]
+                      ).map((statusOption) => (
+                        <SelectItem key={statusOption} value={statusOption}>
+                          {statusOption}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+
                   <Button
                     asChild
                     variant="ghost"
                     className="h-15 w-15 rounded-full text-red-600 hover:bg-red-50"
                   >
-                    <Link href={`/partnership/leads-management/${slugify(lead.leadName)}`}>
+                    <Link
+                      href={`/partnership/leads-management/${slugify(
+                        lead.leadName
+                      )}`}
+                    >
                       <Eye className="h-30 w-30" />
                     </Link>
                   </Button>

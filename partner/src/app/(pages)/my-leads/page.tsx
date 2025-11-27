@@ -109,46 +109,46 @@ const MyLeadsPage = () => {
       </section>
       <section className="rounded-2xl bg-white p-6 shadow-card">
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="text-left text-xs font-semibold uppercase text-[#4B0005]">
-                <th className="pb-3">Lead Name</th>
-                <th className="pb-3">Email</th>
-                <th className="pb-3">Phone No.</th>
-                <th className="pb-3">Service Type</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3">Remark</th>
-                <th className="pb-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-900">
-              {leads.map((lead) => (
-                <tr key={lead.id}>
-                  <td className="py-4 font-semibold">{lead.name}</td>
-                  <td className="py-4">{lead.email}</td>
-                  <td className="py-4">{lead.phone}</td>
-                  <td className="py-4">{lead.serviceType}</td>
-                  <td className="py-4">
-                    <Badge
-                      category="status"
-                      variant={getStatusVariant(lead.status)}
-                    >
-                      {lead.status}
-                    </Badge>
-                  </td>
-                  <td className="py-4 text-slate-600">{lead.remark}</td>
-                  <td className="py-4 text-right">
-                    <Link
-                      href={`/my-leads/${lead.id}`}
-                      className="text-sm font-semibold text-[#E30613] hover:text-[#b1050f]"
-                    >
-                      View Detail
-                    </Link>
-                  </td>
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs font-semibold uppercase text-[#4B0005]">
+                  <th className="pb-3">Lead Name</th>
+                  <th className="pb-3">Email</th>
+                  <th className="pb-3">Phone No.</th>
+                  <th className="pb-3">Service Type</th>
+                  <th className="pb-3">Status</th>
+                  <th className="pb-3">Remark</th>
+                  <th className="pb-3 text-right">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-900">
+                {leads.map((lead) => (
+                  <tr key={lead.id}>
+                    <td className="py-4 font-semibold">{lead.name}</td>
+                    <td className="py-4">{lead.email}</td>
+                    <td className="py-4">{lead.phone}</td>
+                    <td className="py-4">{lead.serviceType}</td>
+                    <td className="py-4">
+                      <Badge
+                        category="status"
+                        variant={getStatusVariant(lead.status)}
+                      >
+                        {lead.status}
+                      </Badge>
+                    </td>
+                    <td className="py-4 text-slate-600">{lead.remark}</td>
+                    <td className="py-4 text-right">
+                      <Link
+                        href={`/my-leads/${lead.id}`}
+                        className="text-sm font-semibold text-[#E30613] hover:text-[#b1050f]"
+                      >
+                        View Detail
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
         </div>
       </section>
       <SelectServiceModal

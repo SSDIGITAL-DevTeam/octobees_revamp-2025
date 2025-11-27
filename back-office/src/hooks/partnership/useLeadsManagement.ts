@@ -60,9 +60,9 @@ export const useLeadsManagement = () => {
 
       const mapped: LeadRow[] = data.map((item: PartnerLeadApiItem) => ({
         id: item.id,
-        leadName: item.leadName,
+        leadName: item.name,
         partnerName: item.partnerName,
-        serviceType: item.serviceType,
+        serviceType: item.serviceName,
         status: item.status as LeadStatus,
         remark: item.remark,
         actionLabel: item.status as LeadStatus, // dipakai di dropdown & badge
