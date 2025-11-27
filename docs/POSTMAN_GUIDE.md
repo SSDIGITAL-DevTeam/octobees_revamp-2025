@@ -100,6 +100,7 @@ Collection ini berisi **SEMUA** endpoint yang ada di api-backend:
 **Partner Management:**
 - List partners (search, pagination)
 - Get partner detail
+- Get partner stats
 - Update partner (PATCH)
 - Delete partner
 
