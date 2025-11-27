@@ -1,0 +1,1 @@
+ALTER TABLE `partner_service` ADD `project_value` double DEFAULT 0 NOT NULL;

@@ -378,9 +378,15 @@ export const getServiceDetail = async (id) => {
 
 export const createNewService = async (data) => {
     // Validate required fields
-    if (!data.name || data.commissionPercentage === undefined || !data.description) {
-        throw new Error("Missing required fields: name, commissionPercentage, description");
+    if (!data.name || data.commissionPercentage === undefined || data.projectValue === undefined || !data.description) {
+        throw new Error("Missing required fields: name, projectValue, commissionPercentage, description");
     }
+
+    // Validate projectValue is a valid number
+    if (typeof data.projectValue !== 'number' || data.projectValue < 0) {
+        throw new Error("projectValue must be a valid number >= 0");
+    }
+
     return await createService(data);
 };
 
