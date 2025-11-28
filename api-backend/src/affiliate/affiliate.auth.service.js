@@ -66,10 +66,6 @@ export const loginAffiliateAccount = async ({ email, password }, meta = {}) => {
         throw new Error("Invalid credentials");
     }
 
-    if (account.forcePasswordChange) {
-        throw new Error("Password change required");
-    }
-
     const payload = {
         sub: account.id,
         affiliateId: account.affiliateId,
