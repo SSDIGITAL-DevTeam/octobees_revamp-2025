@@ -88,7 +88,6 @@ export type PartnerLeadApiItem = {
   serviceName: string
   status: string
   remark: string
-  // kalau backend punya field lain, bisa ditambah di sini
 }
 
 export type PartnerLeadsResponse = {
@@ -100,6 +99,12 @@ export type PartnerLeadsResponse = {
     total: number
     totalPages: number
   }
+}
+
+export type UpdatePartnerLeadPayload = {
+  status?: string
+  remark?: string
+  projectValue?: number
 }
 
 export type PartnerServiceParams = {
@@ -249,3 +254,6 @@ export const getPartnerById = (id: string) =>
   axiosInstance.get<PartnerDetailResponse>(
     `/back-office/partner/partners/${id}`
   )
+
+export const updatePartnerLead = (id: string, payload: UpdatePartnerLeadPayload) =>
+  axiosInstance.patch(`/back-office/partner/leads/${id}`, payload)

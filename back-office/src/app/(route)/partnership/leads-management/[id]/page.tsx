@@ -20,11 +20,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+
 import {
   useLeadDetail,
   leadStatusOptions,
 } from "@/hooks/partnership/useLeadDetail"
 import type { LeadStatus } from "@/constrant/partnership"
+import { updatePartnerLead } from "@/lib/api/partnership/dashboardPartnership"
+
+// OPTIONAL: Jika kamu punya toast
+import { successToast, failedToast } from "@/utils/toast"
 
 type LeadDetailPageProps = {
   params: { id: string }
@@ -37,10 +42,12 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const [status, setStatus] = useState<LeadStatus>("Follow-up")
   const [projectValue, setProjectValue] = useState("")
   const [remark, setRemark] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
   const [projectDraft, setProjectDraft] = useState("")
 
-  // sinkronkan state lokal ketika data lead sudah berhasil di-load
+  // Sync nilai ketika lead berhasil loaded
   useEffect(() => {
     if (lead) {
       setStatus(lead.status)
@@ -50,37 +57,54 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     }
   }, [lead])
 
+  // -----------------------------
+  // 🔥 🔥 LOGIC UPDATE LEAD 🔥 🔥
+  // -----------------------------
+  const handleSaveChanges = async () => {
+    if (!lead) return
+
+    try {
+      setIsSaving(true)
+
+      // Convert projectValue string → number
+      const numericValue =
+        typeof projectValue === "string"
+          ? Number(projectValue.replace(/[^\d]/g, "")) || 0
+          : Number(projectValue) || 0
+
+      await updatePartnerLead(lead.id, {
+        status,
+        remark,
+        projectValue: numericValue,
+      })
+
+      // optional
+      successToast?.("Lead updated successfully")
+
+    } catch (err: any) {
+      failedToast?.(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          "Failed to update lead"
+      )
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const infoRows = useMemo(
     () => [
-      {
-        label: "Lead Name",
-        value: lead?.leadName ?? "-",
-      },
-      {
-        label: "Email Address",
-        value: lead?.email ?? "-",
-      },
-      {
-        label: "Phone No.",
-        value: lead?.phone ?? "-",
-      },
-      {
-        label: "Service Type",
-        value: lead?.serviceType ?? "-",
-        highlight: true,
-      },
-      {
-        label: "Last update",
-        value: lead?.lastUpdate ?? "-",
-      },
-      {
-        label: "Partner Allotment",
-        value: lead?.partnerAllotment ?? "-",
-      },
+      { label: "Lead Name", value: lead?.leadName ?? "-" },
+      { label: "Email Address", value: lead?.email ?? "-" },
+      { label: "Phone No.", value: lead?.phone ?? "-" },
+      { label: "Service Type", value: lead?.serviceType ?? "-", highlight: true },
+      { label: "Last update", value: lead?.lastUpdate ?? "-" },
+      { label: "Partner Allotment", value: lead?.partnerAllotment ?? "-" },
     ],
     [lead]
   )
 
+  // Loading state
   if (loading) {
     return (
       <main className="flex w-full flex-col gap-6 pb-12">
@@ -97,6 +121,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     )
   }
 
+  // Error / Not found
   if (error || !lead) {
     return (
       <main className="flex w-full flex-col gap-6 pb-12">
@@ -107,14 +132,15 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           ]}
         />
         <div className="rounded-3xl border border-border bg-white p-6 shadow-sm">
-          <p className="text-slate-600">
-            {error || "Lead tidak ditemukan."}
-          </p>
+          <p className="text-slate-600">{error || "Lead tidak ditemukan."}</p>
         </div>
       </main>
     )
   }
 
+  // -----------------------------
+  // 🔥 🔥 UI Tetap Sama 🔥 🔥
+  // -----------------------------
   return (
     <main className="flex w-full flex-col gap-8 pb-12">
       <Header
@@ -136,6 +162,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
                 Partner Name : {lead.partnerName}
               </p>
             </div>
+
             <div className="flex items-center gap-3">
               <span className="text-sm font-semibold text-slate-700">Status</span>
               <Select
@@ -161,12 +188,14 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
               <div className="text-sm font-semibold text-slate-700">
                 Project Value (IDR)
               </div>
+
               <div className="flex items-center gap-2">
                 <Input
                   value={projectValue}
                   readOnly
                   className="h-10 w-56 rounded-md border-slate-300 px-3 text-sm bg-slate-50"
                 />
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -201,8 +230,10 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           </div>
         </div>
 
+        {/* Remark Section */}
         <div className="space-y-3 rounded-[18px] border border-border bg-white p-6 shadow-sm">
           <p className="text-sm font-semibold text-slate-700">Remark</p>
+
           <Textarea
             value={remark}
             onChange={(event) => setRemark(event.target.value)}
@@ -211,18 +242,22 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
           />
 
           <div className="flex justify-end">
-            <Button variant="addData" className="h-11 rounded-full px-6">
-              Save Changes
+            <Button
+              variant="addData"
+              className="h-11 rounded-full px-6"
+              onClick={handleSaveChanges}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
       </section>
 
+      {/* Project Value Modal */}
       <Dialog
         open={isProjectModalOpen}
-        onOpenChange={(open) =>
-          !open ? setIsProjectModalOpen(false) : null
-        }
+        onOpenChange={(open) => (!open ? setIsProjectModalOpen(false) : null)}
       >
         <DialogContent className="max-w-xl rounded-[20px] px-8 py-6">
           <DialogHeader className="text-left">
@@ -235,6 +270,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
             <p className="text-sm font-semibold text-slate-800">
               Project Value (IDR)
             </p>
+
             <Input
               value={projectDraft}
               onChange={(event) => setProjectDraft(event.target.value)}
@@ -252,6 +288,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
             >
               Cancel
             </Button>
+
             <Button
               type="button"
               className="h-10 rounded-full bg-amber-400 px-5 text-sm font-semibold text-white hover:bg-amber-500"
