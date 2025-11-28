@@ -139,6 +139,14 @@ export type PartnerServicesResponse = {
   }
 }
 
+export type UpdateServicePayload = {
+  name: string
+  commissionPercentage: number
+  description: string
+  isActive: boolean
+  projectValue: number
+}
+
   export type PartnerLeadDetailApi = {
   id: string
   name: string
@@ -185,7 +193,6 @@ export type PartnerDetailResponse = {
   data: PartnerDetailApi
 }
 
-// GET /v1/back-office/partner/dashboard/stats
 export const getPartnerDashboardStats = () =>
   axiosInstance.get<PartnershipStatsResponse>(
     "/back-office/partner/dashboard/stats"
@@ -219,9 +226,19 @@ export const getPartnerServices = (params: PartnerServiceParams = {}) =>
     { params }
   )
 
-// POST /v1/back-office/partner/services
 export const createPartnerService = (payload: CreatePartnerServicePayload) =>
   axiosInstance.post("/back-office/partner/services", payload)
+
+export const updatePartnerService = (id: string, payload: UpdateServicePayload) =>
+  axiosInstance.patch<{ status: string; data: PartnerServiceApiItem }>(
+    `/back-office/partner/services/${id}`,
+    payload
+  )
+
+export const deletePartnerService = (id: string) =>
+  axiosInstance.delete<{ status: string }>(
+    `/back-office/partner/services/${id}`
+  )
 
 export const getPartnerLeadDetail = (id: string) =>
   axiosInstance.get<PartnerLeadDetailResponse>(

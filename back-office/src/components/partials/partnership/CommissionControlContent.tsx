@@ -1,4 +1,3 @@
-// src/components/partials/partnership/commission/CommissionControlContent.tsx
 "use client"
 
 import { useMemo, useState } from "react"
@@ -10,10 +9,23 @@ import { Input } from "@/components/ui/input"
 import { useCommissionControl } from "@/hooks/partnership/useCommissionControl"
 import type { CommissionItem } from "@/constrant/partnership"
 import { CommissionControlTable } from "./CommissionControlTable"
-import { CommissionServiceModal, type CommissionFormValues } from "./CommissionServiceModal"
+import {
+  CommissionServiceModal,
+  type CommissionFormValues,
+} from "./CommissionServiceModal"
 
 export const CommissionControlContent = () => {
-  const { search, setSearch, items, addItem, updateItem, loading, error } = useCommissionControl()
+  const {
+    search,
+    setSearch,
+    items,
+    addItem,
+    updateItem,
+    deleteItem,
+    loading,
+    error,
+  } = useCommissionControl()
+
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<"create" | "edit">("create")
   const [selected, setSelected] = useState<CommissionItem | undefined>(undefined)
@@ -35,28 +47,25 @@ export const CommissionControlContent = () => {
     setModalOpen(true)
   }
 
+  const handleDelete = async (item: CommissionItem) => {
+    await deleteItem(item.id)
+  }
+
   const handleSubmit = async (payload: CommissionFormValues) => {
-    if (modalMode === "create") {
-      await addItem({
-        serviceName: payload.serviceName,
-        projectValue: payload.projectValue,
-        commissionPercentage: Number(payload.commissionPercentage) || 0,
-        description: payload.description,
-      })
-      setModalOpen(false)
-      return
+    const basePayload = {
+      serviceName: payload.serviceName,
+      projectValue: Number(payload.projectValue) || 0,
+      commissionPercentage: Number(payload.commissionPercentage) || 0,
+      description: payload.description,
     }
 
-    if (selected) {
-      updateItem(selected.id, {
-        serviceName: payload.serviceName,
-        projectValue: payload.projectValue,
-        commissionPercentage:
-          Number(payload.commissionPercentage) || selected.commissionPercentage,
-        description: payload.description,
-      })
-      setModalOpen(false)
+    if (modalMode === "create") {
+      await addItem(basePayload)
+    } else if (selected) {
+      await updateItem(selected.id, basePayload)
     }
+
+    setModalOpen(false)
   }
 
   return (
@@ -84,10 +93,16 @@ export const CommissionControlContent = () => {
         </div>
 
         <div className="mt-3 space-y-2">
-          {loading && <p className="text-sm text-slate-500">Loading services...</p>}
+          {loading && (
+            <p className="text-sm text-slate-500">Loading services...</p>
+          )}
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <CommissionControlTable items={items} onEdit={handleEditOpen} />
+          <CommissionControlTable
+            items={items}
+            onEdit={handleEditOpen}
+            onDelete={handleDelete}
+          />
         </div>
       </section>
 

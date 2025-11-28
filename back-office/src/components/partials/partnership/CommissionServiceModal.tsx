@@ -61,7 +61,7 @@ export const CommissionServiceModal = ({
         initialData
           ? {
               serviceName: initialData.serviceName,
-              projectValue: initialData.projectValue,
+              projectValue: String(initialData.projectValue),
               commissionPercentage: String(initialData.commissionPercentage),
               description: initialData.description,
             }

@@ -95,7 +95,7 @@ export const leadStatusStyles: Record<LeadStatus, string> = {
 export type CommissionItem = {
   id: string
   serviceName: string
-  projectValue: string
+  projectValue: number
   commissionPercentage: number
   description: string
 }
