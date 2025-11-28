@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 
 import { getPartnerRecentLeads, type RecentLead } from "@/lib/api/partnership/dashboardPartnership"
-import { leadStatusTone, type LeadStatus } from "@/constrant/partnership"
+import { leadStatusStyles, type LeadStatus } from "@/constrant/partnership"
 import { recentLeads as recentLeadsMock } from "@/data/partnership/dashboard"
 
 type RecentLeadRow = (typeof recentLeadsMock)[number]
@@ -118,7 +118,7 @@ export function RecentLeadsPanel() {
               <TableCell>
                 <StatusBadge
                   label={lead.status}
-                  tone={leadStatusTone[lead.status]}
+                  className={leadStatusStyles[lead.status]}
                 />
               </TableCell>
               <TableCell className="text-black">
