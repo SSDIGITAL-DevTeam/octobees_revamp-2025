@@ -1,11 +1,14 @@
+// src/hooks/partnership/usePartnerDetail.ts
 "use client"
 
 import { useEffect, useState } from "react"
+import type { LeadStatus } from "@/constrant/partnership"
 import {
   getPartnerById,
   type PartnerDetailApi,
+  getPartnerStatsById,
+  type PartnerStatsApiResponse,
 } from "@/lib/api/partnership/dashboardPartnership"
-import type { LeadStatus } from "@/constrant/partnership"
 
 // tipe yang dipakai di PartnerDetailPage
 export type PartnerDetail = {
@@ -15,9 +18,6 @@ export type PartnerDetail = {
   phone: string
   country: string
   affiliateStatus: "Active" | "Non Active"
-
-  // sementara stats & leads masih dummy / placeholder,
-  // supaya layout lama tetap bisa jalan
   stats: {
     totalCommission: string
     totalCommissionHelper: string
@@ -58,29 +58,47 @@ export const usePartnerDetail = (id: string): UsePartnerDetailResult => {
         setLoading(true)
         setError(null)
 
-        const res = await getPartnerById(id)
-        const data: PartnerDetailApi = res.data.data
+        // panggil detail + stats paralel
+        const [detailRes, statsRes] = await Promise.all([
+          getPartnerById(id),
+          getPartnerStatsById(id),
+        ])
+
+        const detail: PartnerDetailApi = detailRes.data.data
+        const statsApi: PartnerStatsApiResponse["data"] = statsRes.data.data
 
         const mapped: PartnerDetail = {
-          id: data.id,
-          fullName: data.fullName,
-          email: data.email,
-          phone: data.phone,
-          country: data.country,
-          affiliateStatus: data.status === "approved" ? "Active" : "Non Active",
+          id: detail.id,
+          fullName: detail.fullName,
+          email: detail.email,
+          phone: detail.phone,
+          country: detail.country,
+          affiliateStatus: detail.status === "approved" ? "Active" : "Non Active",
 
-          // TODO: nanti bisa diisi dari endpoint stats & leads khusus partner
           stats: {
-            totalCommission: "IDR 0",
-            totalCommissionHelper: "",
-            pendingCommission: "IDR 0",
-            pendingHelper: "",
-            totalLeads: "0",
-            totalLeadsHelper: "",
-            closedLeads: "0",
-            closedHelper: "",
+            totalCommission: statsApi.totalCommission.value, // contoh: "IDR 0"
+            totalCommissionHelper:
+              statsApi.totalCommission.raw > 0
+                ? `Raw: ${statsApi.totalCommission.raw.toLocaleString("id-ID")}`
+                : "",
+            pendingCommission: statsApi.pendingCommission.value,
+            pendingHelper:
+              statsApi.pendingCommission.count > 0
+                ? `${statsApi.pendingCommission.count} pending`
+                : "",
+            totalLeads: statsApi.totalLeads.value,
+            totalLeadsHelper:
+              statsApi.totalLeads.raw > 0
+                ? `${statsApi.totalLeads.raw} total leads`
+                : "",
+            closedLeads: statsApi.closedLeads.value,
+            closedHelper: statsApi.closedLeads.conversionRate
+              ? `${statsApi.closedLeads.conversionRate} conversion`
+              : "",
           },
-          leads: [], // sementara kosong → tabel akan kosong
+
+          // sementara masih kosong / bisa diisi dari endpoint leads by partner kalau nanti ada
+          leads: [],
         }
 
         setPartner(mapped)

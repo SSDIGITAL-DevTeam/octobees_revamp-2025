@@ -198,6 +198,32 @@ export type PartnerDetailResponse = {
   data: PartnerDetailApi
 }
 
+export type PartnerStatsApiData = {
+  totalCommission: {
+    value: string // "IDR 0"
+    raw: number
+  }
+  pendingCommission: {
+    value: string // "IDR 0"
+    raw: number
+    count: number
+  }
+  totalLeads: {
+    value: string // "1"
+    raw: number
+  }
+  closedLeads: {
+    value: string // "0"
+    raw: number
+    conversionRate: string // "0%"
+  }
+}
+
+export type PartnerStatsApiResponse = {
+  status: string
+  data: PartnerStatsApiData
+}
+
 export const getPartnerDashboardStats = () =>
   axiosInstance.get<PartnershipStatsResponse>(
     "/back-office/partner/dashboard/stats"
@@ -253,6 +279,11 @@ export const getPartnerLeadDetail = (id: string) =>
 export const getPartnerById = (id: string) =>
   axiosInstance.get<PartnerDetailResponse>(
     `/back-office/partner/partners/${id}`
+  )
+
+export const getPartnerStatsById = (id: string) =>
+  axiosInstance.get<PartnerStatsApiResponse>(
+    `/back-office/partner/partners/${id}/stats`
   )
 
 export const updatePartnerLead = (id: string, payload: UpdatePartnerLeadPayload) =>
