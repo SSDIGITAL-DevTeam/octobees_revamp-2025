@@ -38,6 +38,7 @@ backOffice.get("/dashboard/pending-commissions", partnerBackOffice.pendingCommis
 backOffice.get("/partners", partnerBackOffice.getAll);
 backOffice.get("/partners/:id", partnerBackOffice.getById);
 backOffice.get("/partners/:id/stats", partnerBackOffice.getPartnerStats);
+backOffice.get("/partners/:id/leads", partnerBackOffice.getPartnerLeads);
 backOffice.patch("/partners/:id", partnerBackOffice.update);
 backOffice.delete("/partners/:id", partnerBackOffice.remove);
 

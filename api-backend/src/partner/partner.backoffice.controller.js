@@ -92,6 +92,17 @@ const remove = async (req, res) => {
     }
 };
 
+const getPartnerLeads = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = { ...req.query, affiliateId: id };
+        const data = await getAllLeadsForBackOffice(query);
+        res.status(200).json({ status: "success", data: data.data, pagination: data.pagination });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
 // ==================== LEADS MANAGEMENT ====================
 
 const getAllLeads = async (req, res) => {
@@ -179,7 +190,7 @@ const deleteService = async (req, res) => {
 
 export default {
     stats, recentLeads, pendingCommissions,
-    getAll, getById, getPartnerStats, update, remove,
+    getAll, getById, getPartnerStats, getPartnerLeads, update, remove,
     getAllLeads, getLeadById, updateLead, deleteLead,
     getAllServicesList, getServiceById, createService, updateService, deleteService
 };
