@@ -1,118 +1,142 @@
-// src/hooks/partnership/usePartnerDetail.ts
 "use client"
 
 import { useEffect, useState } from "react"
-import type { LeadStatus } from "@/constrant/partnership"
 import {
   getPartnerById,
-  type PartnerDetailApi,
   getPartnerStatsById,
-  type PartnerStatsApiResponse,
-} from "@/lib/api/partnership/dashboardPartnership"
+  getPartnerLeadsByPartnerId,
+  PartnerLeadApiItem,
+  PartnerStatsApiData,
+  PartnerDetailApi,
+} from "@/lib/api/partnership/dashboardPartnership" // sesuaikan path service-mu
 
-// tipe yang dipakai di PartnerDetailPage
-export type PartnerDetail = {
+type PartnerStatsUI = {
+  totalCommission: string
+  totalCommissionHelper: string
+  pendingCommission: string
+  pendingHelper: string
+  totalLeads: string
+  totalLeadsHelper: string
+  closedLeads: string
+  closedHelper: string
+}
+
+export type PartnerDetailUI = {
   id: string
   fullName: string
   email: string
   phone: string
   country: string
-  affiliateStatus: "Active" | "Non Active"
-  stats: {
-    totalCommission: string
-    totalCommissionHelper: string
-    pendingCommission: string
-    pendingHelper: string
-    totalLeads: string
-    totalLeadsHelper: string
-    closedLeads: string
-    closedHelper: string
-  }
-  leads: {
-    id: string
-    leadName: string
-    partnerName: string
-    serviceType: string
-    status: LeadStatus
-    remark: string
-    actionLabel: string
-  }[]
+  affiliateStatus: string
+  stats: PartnerStatsUI
+  leads: PartnerLeadApiItem[]
 }
 
-type UsePartnerDetailResult = {
-  partner: PartnerDetail | null
+type UsePartnerDetailState = {
+  partner: PartnerDetailUI | null
   loading: boolean
   error: string | null
 }
 
-export const usePartnerDetail = (id: string): UsePartnerDetailResult => {
-  const [partner, setPartner] = useState<PartnerDetail | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+const mapAffiliateStatus = (apiStatus: string): string => {
+  switch (apiStatus) {
+    case "approved":
+      return "Active"
+    case "pending":
+      return "Pending"
+    case "rejected":
+      return "Inactive"
+    default:
+      return apiStatus
+  }
+}
+
+const mapStatsToUI = (stats: PartnerStatsApiData): PartnerStatsUI => {
+  return {
+    totalCommission: stats.totalCommission.value,
+    totalCommissionHelper: `Total commission: ${stats.totalCommission.raw.toLocaleString(
+      "id-ID"
+    )}`,
+
+    pendingCommission: stats.pendingCommission.value,
+    pendingHelper: `${stats.pendingCommission.count} commission on hold`,
+
+    totalLeads: stats.totalLeads.value,
+    totalLeadsHelper: `${stats.totalLeads.raw} total leads`,
+
+    closedLeads: stats.closedLeads.value,
+    closedHelper: `Conversion rate ${stats.closedLeads.conversionRate}`,
+  }
+}
+
+export const usePartnerDetail = (id: string): UsePartnerDetailState => {
+  const [state, setState] = useState<UsePartnerDetailState>({
+    partner: null,
+    loading: true,
+    error: null,
+  })
 
   useEffect(() => {
     if (!id) return
 
-    const fetchDetail = async () => {
-      try {
-        setLoading(true)
-        setError(null)
+    let cancelled = false
 
-        // panggil detail + stats paralel
-        const [detailRes, statsRes] = await Promise.all([
+    const fetchAll = async () => {
+      try {
+        setState((prev) => ({ ...prev, loading: true, error: null }))
+
+        const [detailRes, statsRes, leadsRes] = await Promise.all([
           getPartnerById(id),
           getPartnerStatsById(id),
+          getPartnerLeadsByPartnerId(id, {
+            page: 1,
+            limit: 50, // bebas, nanti kalau perlu pagination bisa diubah
+          }),
         ])
 
-        const detail: PartnerDetailApi = detailRes.data.data
-        const statsApi: PartnerStatsApiResponse["data"] = statsRes.data.data
+        if (cancelled) return
 
-        const mapped: PartnerDetail = {
+        const detail: PartnerDetailApi = detailRes.data.data
+        const stats: PartnerStatsApiData = statsRes.data.data
+        const leads: PartnerLeadApiItem[] = leadsRes.data.data
+
+        const partner: PartnerDetailUI = {
           id: detail.id,
           fullName: detail.fullName,
           email: detail.email,
           phone: detail.phone,
           country: detail.country,
-          affiliateStatus: detail.status === "approved" ? "Active" : "Non Active",
-
-          stats: {
-            totalCommission: statsApi.totalCommission.value, // contoh: "IDR 0"
-            totalCommissionHelper:
-              statsApi.totalCommission.raw > 0
-                ? `Raw: ${statsApi.totalCommission.raw.toLocaleString("id-ID")}`
-                : "",
-            pendingCommission: statsApi.pendingCommission.value,
-            pendingHelper:
-              statsApi.pendingCommission.count > 0
-                ? `${statsApi.pendingCommission.count} pending`
-                : "",
-            totalLeads: statsApi.totalLeads.value,
-            totalLeadsHelper:
-              statsApi.totalLeads.raw > 0
-                ? `${statsApi.totalLeads.raw} total leads`
-                : "",
-            closedLeads: statsApi.closedLeads.value,
-            closedHelper: statsApi.closedLeads.conversionRate
-              ? `${statsApi.closedLeads.conversionRate} conversion`
-              : "",
-          },
-
-          // sementara masih kosong / bisa diisi dari endpoint leads by partner kalau nanti ada
-          leads: [],
+          affiliateStatus: mapAffiliateStatus(detail.status),
+          stats: mapStatsToUI(stats),
+          leads,
         }
 
-        setPartner(mapped)
+        setState({
+          partner,
+          loading: false,
+          error: null,
+        })
       } catch (err: any) {
-        console.error("Failed to fetch partner detail:", err)
-        setError(err?.message || "Failed to load partner detail")
-        setPartner(null)
-      } finally {
-        setLoading(false)
+        if (cancelled) return
+        const message =
+          err?.response?.data?.message ??
+          err?.message ??
+          "Gagal memuat detail partner"
+
+        setState({
+          partner: null,
+          loading: false,
+          error: message,
+        })
       }
     }
 
-    fetchDetail()
+    fetchAll()
+
+    return () => {
+      cancelled = true
+    }
   }, [id])
 
-  return { partner, loading, error }
+  return state
 }

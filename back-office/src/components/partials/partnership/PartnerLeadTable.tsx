@@ -23,9 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { PartnerLeadApiItem } from "@/lib/api/partnership/dashboardPartnership"
 
 type PartnerLeadTableProps = {
-  leads: LeadEntry[]
+  leads: PartnerLeadApiItem[]
 }
 
 export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
@@ -44,12 +45,12 @@ export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
         </TableHeader>
         <TableBody>
           {leads.map((lead, index) => (
-            <TableRow key={`${lead.leadName}-${index}`}>
-              <TableCell className="font-semibold text-slate-900">{lead.leadName}</TableCell>
+            <TableRow key={`${lead.name}-${index}`}>
+              <TableCell className="font-semibold text-slate-900">{lead.name}</TableCell>
               <TableCell>{lead.partnerName}</TableCell>
-              <TableCell>{lead.serviceType}</TableCell>
+              <TableCell>{lead.serviceName}</TableCell>
               <TableCell>
-                <StatusBadge label={lead.status} className={leadStatusStyles[lead.status]} />
+                <StatusBadge label={lead.status} className={leadStatusStyles[lead.status as LeadStatus]} />
               </TableCell>
               <TableCell className="text-slate-500">{lead.remark}</TableCell>
               <TableCell>
@@ -73,7 +74,7 @@ export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
                     variant="ghost"
                     className="h-15 w-15 rounded-full text-red-600 hover:bg-red-50"
                   >
-                    <Link href={`/partnership/leads-management/${slugify(lead.leadName)}`}>
+                    <Link href={`/partnership/leads-management/${slugify(lead.name)}`}>
                       <Eye className="h-30 w-30" />
                     </Link>
                   </Button>

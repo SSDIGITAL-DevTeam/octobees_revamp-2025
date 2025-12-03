@@ -288,3 +288,12 @@ export const getPartnerStatsById = (id: string) =>
 
 export const updatePartnerLead = (id: string, payload: UpdatePartnerLeadPayload) =>
   axiosInstance.patch(`/back-office/partner/leads/${id}`, payload)
+
+export const getPartnerLeadsByPartnerId = (
+  partnerId: string,
+  params: PartnerLeadsParams = {}
+) =>
+  axiosInstance.get<PartnerLeadsResponse>(
+    `/back-office/partner/partners/${partnerId}/leads`,
+    { params }
+  )
