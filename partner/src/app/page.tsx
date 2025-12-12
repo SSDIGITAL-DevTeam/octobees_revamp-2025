@@ -4,4 +4,5 @@ const RootPage = () => {
   redirect("/overview");
 };
 
+
 export default RootPage;
