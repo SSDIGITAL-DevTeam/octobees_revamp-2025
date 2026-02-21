@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
 // Konfigurasi penyimpanan
 const storage = multer.diskStorage({
@@ -15,7 +16,9 @@ const storage = multer.diskStorage({
 // Konfigurasi penyimpanan
 const storageResume = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "upload/resume/"); // folder penyimpanan resume
+    const uploadPath = "upload/resume/";
+    fs.mkdirSync(uploadPath, { recursive: true }); // auto-create folder jika belum ada
+    cb(null, uploadPath); // folder penyimpanan resume
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
