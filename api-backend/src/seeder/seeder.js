@@ -6,7 +6,7 @@ import logger from "../../utils/logger.js";
 dotenv.config();
 
 async function seed() {
-  const pages = process.env.DEFAULT_PAGE_TITLE.split(",");
+  const pages = (process.env.DEFAULT_PAGE_TITLE || "").split(",").filter(Boolean);
 
   try {
     // await createUser({

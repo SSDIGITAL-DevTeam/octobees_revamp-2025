@@ -20,6 +20,7 @@ import reset_password from "./auth/reset-password/reset-password.controller.js"
 import logger from "../utils/logger.js";
 import affiliate from "./affiliate/_affiliate.route.js";
 import partner from "./partner/_partner.route.js";
+import lead from "./lead/_lead.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -59,6 +60,7 @@ router.use("/v1/plan", plan.endUser);
 router.use("/v1/order", order.endUser);
 router.use("/v1/affiliate", affiliate.endUser);
 router.use("/v1/partner", partner.endUser);
+router.use("/v1/lead", lead.endUser);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {
@@ -76,6 +78,7 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/order", order.backOffice);
   backOfficeRouter.use("/affiliate", affiliate.backOffice);
   backOfficeRouter.use("/partner", partner.backOffice);
+  backOfficeRouter.use("/lead", lead.backOffice);
   backOfficeRouter(req, res, next);
 });
 

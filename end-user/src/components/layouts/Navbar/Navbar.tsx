@@ -1,51 +1,51 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useMediaQuery } from 'usehooks-ts';
-import { NavLink, navLinks } from '@/constants/navlinks';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
-import Logo from '@/components/partials/Logo/Logo';
-import { axiosInstance } from '@/lib/axios';
-import { CategoryService } from '@/constants/payload';
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useMediaQuery } from "usehooks-ts";
+import { NavLink, navLinks } from "@/constants/navlinks";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Sparkles } from "lucide-react";
+import Logo from "@/components/partials/Logo/Logo";
+import { axiosInstance } from "@/lib/axios";
+import { CategoryService } from "@/constants/payload";
 
 export default function Navbar() {
   const [toggle, setToggle] = useState<boolean>(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const matches = useMediaQuery('(min-width: 1024px)');
+  const [openMobileCategory, setOpenMobileCategory] = useState<string | null>(
+    null,
+  );
+  const matches = useMediaQuery("(min-width: 1024px)");
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
-  const dropdownRef = useRef<HTMLLIElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [linkNav, setLinkNav] = useState<CategoryService[]>([]);
-
 
   useEffect(() => {
     const fetchPlan = async () => {
       try {
-        const response = await axiosInstance.get('/service-category',{
-          params : {
-            status : "Active"
-          }
+        const response = await axiosInstance.get("/service-category", {
+          params: {
+            status: "Active",
+          },
         });
         setLinkNav(response.data.data);
+      } catch (error: any) {
+        console.error(error.message);
       }
-      catch (error : any) {
-        console.error(error.message)
-      }
-    }
+    };
     fetchPlan();
-  }, [])
-
+  }, []);
 
   const renderSubMenu = linkNav?.map((item) => ({
     name: item.name,
-    path: `/plans/${item.slug}`
-  }))
+    path: `/plans/${item.slug}`,
+  }));
 
   useEffect(() => {
     setIsClient(true);
@@ -53,14 +53,17 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setOpenDropdown(null);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -70,19 +73,23 @@ export default function Navbar() {
 
   useEffect(() => {
     const controlNavbar = () => {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const currentScrollY = window.scrollY;
 
         if (currentScrollY > lastScrollY) {
-          setScrollDirection('down');
+          setScrollDirection("down");
         } else {
-          setScrollDirection('up');
+          setScrollDirection("up");
         }
-        if (currentScrollY > 0 && currentScrollY <= 800 && scrollDirection === 'down') {
+        if (
+          currentScrollY > 0 &&
+          currentScrollY <= 800 &&
+          scrollDirection === "down"
+        ) {
           setIsVisible(false);
-        } else if (currentScrollY >= 800 && scrollDirection === 'down') {
+        } else if (currentScrollY >= 800 && scrollDirection === "down") {
           setIsVisible(true);
-        } else if (scrollDirection === 'up') {
+        } else if (scrollDirection === "up") {
           setIsVisible(true);
         }
 
@@ -90,14 +97,14 @@ export default function Navbar() {
       }
     };
 
-    window.addEventListener('scroll', controlNavbar);
+    window.addEventListener("scroll", controlNavbar);
     return () => {
-      window.removeEventListener('scroll', controlNavbar);
+      window.removeEventListener("scroll", controlNavbar);
     };
   }, [lastScrollY, scrollDirection]);
 
-  const NavbarColor = 'bg-light shadow-sm';
-  const NavbarPosition = isVisible ? 'top-0' : '-top-full';
+  const NavbarColor = "bg-light shadow-sm";
+  const NavbarPosition = isVisible ? "top-0" : "-top-full";
 
   if (!isClient) {
     return null;
@@ -106,10 +113,13 @@ export default function Navbar() {
   const handleMenuItemClick = () => {
     setToggle(false);
     setOpenDropdown(null);
+    setOpenMobileCategory(null);
   };
 
   return (
-    <nav className={`${NavbarColor} ${NavbarPosition} fixed left-0 right-0 w-full z-[100] transition-all duration-700 ease-out sm:px-5`}>
+    <nav
+      className={`${NavbarColor} ${NavbarPosition} fixed left-0 right-0 w-full z-[100] transition-all duration-700 ease-out sm:px-5`}
+    >
       <div className="max-w-7xl py-5 md:py-7 mx-auto px-7 md:px-2 flex justify-between items-center">
         <Link href="/" className="flex-shrink-0">
           <Logo />
@@ -117,68 +127,108 @@ export default function Navbar() {
 
         {matches && (
           <div className="flex justify-between items-center flex-grow mx-4">
-            <div className={`${(pathname == "/increase-my-sales" || pathname.startsWith('/plans')) ? 'flex items-end justify-end w-full' : 'flex-grow'}`} />
-            <ul className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
-              {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
-                <li key={index} className="relative group rounded-full" ref={dropdownRef}>
-                  <Link
-                    href={navlink.path || '#'}
-                    onClick={(e) => {
-                      if (navlink.menus) {
-                        e.preventDefault();
-                        handleDropdownToggle(navlink.name);
-                      }
-                    }}
-                    className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path || pathname.startsWith(`${navlink.path}/`) ? 'text-primary/80 font-semibold' : 'text-dark'} hover:bg-gray-500/5 hover:text-primary `}
-                  >
-                    {navlink.name}
-                    {navlink.menus && <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? 'rotate-180' : ''}`} />}
-                  </Link>
+            <div
+              className={`${pathname == "/increase-my-sales" || pathname.startsWith("/plans") ? "flex items-end justify-end w-full" : "flex-grow"}`}
+            />
+            <div ref={dropdownRef} className="relative">
+              <ul className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
+                {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
+                  <li key={index} className="relative group rounded-full">
+                    <Link
+                      href={navlink.path || "#"}
+                      onClick={(e) => {
+                        if (navlink.menus) {
+                          e.preventDefault();
+                          handleDropdownToggle(navlink.name);
+                        }
+                      }}
+                      className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path || pathname.startsWith(`${navlink.path}/`) ? "text-primary/80 font-semibold" : "text-dark"} hover:bg-gray-500/5 hover:text-primary `}
+                    >
+                      {navlink.name}
+                      {navlink.menus && (
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? "rotate-180" : ""}`}
+                        />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
 
-                  {navlink.menus && (
-                    <AnimatePresence>
-                      {openDropdown === navlink.name && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.3 }}
-                          className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-                        >
-                          <div className="py-1">
-                            {renderSubMenu.map((submenu, subIndex) => (
+              {/* Services mega-dropdown - positioned relative to the ul wrapper to align with Home */}
+              <AnimatePresence>
+                {openDropdown === "Services" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute left-0 top-full mt-4 rounded-lg shadow-xl bg-white border-b-4 border-primary overflow-hidden z-50"
+                    style={{ minWidth: "520px" }}
+                  >
+                    <div className="grid grid-cols-2 gap-x-10 gap-y-0 p-8">
+                      {navLinks
+                        .find((n) => n.name === "Services")
+                        ?.menus?.map((menu, idx) => (
+                          <div key={idx} className="flex flex-col gap-2 mb-6">
+                            <span
+                              className={`font-bold text-primary text-base flex items-center gap-2 ${menu.name === "AI Solutions" ? "italic" : ""}`}
+                            >
+                              {menu.name}
+                              {menu.name === "AI Solutions" && (
+                                <Sparkles size={16} fill="currentColor" />
+                              )}
+                            </span>
+                            {menu.submenu.map((submenu, subIdx) => (
                               <Link
-                                key={subIndex}
+                                key={subIdx}
                                 href={submenu.path}
-                                className={`block px-4 py-2 text-base hover:bg-gray-100 hover:text-gray-900 ${pathname === submenu.path ? 'text-primary font-medium' : 'text-gray-700'}`}
+                                className={`text-sm text-gray-600 hover:text-primary transition-colors ${pathname === submenu.path ? "text-primary font-medium" : ""}`}
                                 onClick={handleMenuItemClick}
                               >
                                 {submenu.name}
                               </Link>
                             ))}
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  )}
-                </li>
-              ))}
-            </ul>
+                        ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <div className="flex-grow" />
           </div>
         )}
 
-        {(matches && pathname !== '/increase-my-sales' && !pathname.startsWith('/plans')) && (
-          <Link href="/contact-us" className="bg-primary py-3 px-8 text-light font-semibold rounded-full hover:bg-red-800 transition-colors duration-300 flex-shrink-0">
-            Contact Us
-          </Link>
-        )}
+        {matches &&
+          pathname !== "/increase-my-sales" &&
+          !pathname.startsWith("/plans") && (
+            <Link
+              href="/contact-us"
+              className="bg-primary py-3 px-8 text-light font-semibold rounded-full hover:bg-red-800 transition-colors duration-300 flex-shrink-0"
+            >
+              Contact Us
+            </Link>
+          )}
 
         {!matches && (
-          <div className="space-y-1.5 cursor-pointer z-50" onClick={() => setToggle((prevToggle) => !prevToggle)}>
-            <motion.span animate={{ rotateZ: toggle ? 45 : 0, y: toggle ? 8 : 0 }} className="block h-0.5 w-8 bg-dark" />
-            <motion.span animate={{ width: toggle ? 0 : 32 }} className="block h-0.5 w-8 bg-dark" />
-            <motion.span animate={{ rotateZ: toggle ? -45 : 0, y: toggle ? -8 : 0 }} className="block h-0.5 w-8 bg-dark" />
+          <div
+            className="space-y-1.5 cursor-pointer z-50"
+            onClick={() => setToggle((prevToggle) => !prevToggle)}
+          >
+            <motion.span
+              animate={{ rotateZ: toggle ? 45 : 0, y: toggle ? 8 : 0 }}
+              className="block h-0.5 w-8 bg-dark"
+            />
+            <motion.span
+              animate={{ width: toggle ? 0 : 32 }}
+              className="block h-0.5 w-8 bg-dark"
+            />
+            <motion.span
+              animate={{ rotateZ: toggle ? -45 : 0, y: toggle ? -8 : 0 }}
+              className="block h-0.5 w-8 bg-dark"
+            />
           </div>
         )}
 
@@ -194,29 +244,110 @@ export default function Navbar() {
               <div className="flex flex-col gap-y-4 text-dark">
                 {navLinks.map((navlink: NavLink, index: number) => (
                   <div key={index}>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3, delay: index * 0.1 }}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                    >
                       {navlink.menus ? (
                         <>
-                          <div className={`flex items-center gap-1 text-lg cursor-pointer ${openDropdown === navlink.name ? 'text-dark font-bold' : 'text-dark'}`} onClick={() => handleDropdownToggle(navlink.name)}>
+                          <div
+                            className={`flex items-center gap-1 text-lg cursor-pointer ${openDropdown === navlink.name ? "text-dark font-bold" : "text-dark"}`}
+                            onClick={() => handleDropdownToggle(navlink.name)}
+                          >
                             {navlink.name}
-                            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? 'rotate-180' : ''}`} />
+                            <ChevronDown
+                              className={`w-4 h-4 transition-transform duration-300 ${openDropdown === navlink.name ? "rotate-180" : ""}`}
+                            />
                           </div>
                           <AnimatePresence>
                             {openDropdown === navlink.name && (
-                              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
-                                <div className="pt-2 pl-4">
-                                  {renderSubMenu.map((submenu, subIndex) => (
-                                    <Link key={subIndex} href={submenu.path} className={`block py-2 text-sm hover:text-gray-900 ${pathname === submenu.path ? 'text-primary font-medium' : 'text-gray-700'}`} onClick={handleMenuItemClick}>
-                                      {submenu.name}
-                                    </Link>
-                                  ))}
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="pt-2 pl-2 flex flex-col gap-2">
+                                  <div className="w-full">
+                                    {navlink.menus?.map((menu, menuIdx) => (
+                                      <div
+                                        key={menuIdx}
+                                        className="border-b border-gray-100 last:border-0 pb-1"
+                                      >
+                                        <div
+                                          className="font-bold text-primary text-sm py-2 flex items-center justify-between cursor-pointer"
+                                          onClick={() =>
+                                            setOpenMobileCategory(
+                                              openMobileCategory === menu.name
+                                                ? null
+                                                : menu.name,
+                                            )
+                                          }
+                                        >
+                                          <div className="flex items-center gap-1">
+                                            {menu.name}
+                                            {menu.name === "AI Solutions" && (
+                                              <Sparkles
+                                                size={14}
+                                                fill="currentColor"
+                                              />
+                                            )}
+                                          </div>
+                                          <ChevronDown
+                                            className={`w-4 h-4 transition-transform duration-300 ${openMobileCategory === menu.name ? "rotate-180" : ""}`}
+                                          />
+                                        </div>
+                                        <AnimatePresence>
+                                          {openMobileCategory === menu.name && (
+                                            <motion.div
+                                              initial={{
+                                                opacity: 0,
+                                                height: 0,
+                                              }}
+                                              animate={{
+                                                opacity: 1,
+                                                height: "auto",
+                                              }}
+                                              exit={{ opacity: 0, height: 0 }}
+                                              transition={{ duration: 0.2 }}
+                                              className="overflow-hidden"
+                                            >
+                                              <div className="flex flex-col pl-4 pb-2">
+                                                {menu.submenu.map(
+                                                  (submenu, subIdx) => (
+                                                    <Link
+                                                      key={subIdx}
+                                                      href={submenu.path}
+                                                      className={`block py-1.5 text-sm hover:text-primary ${pathname === submenu.path ? "text-primary font-medium" : "text-gray-600"}`}
+                                                      onClick={
+                                                        handleMenuItemClick
+                                                      }
+                                                    >
+                                                      {submenu.name}
+                                                    </Link>
+                                                  ),
+                                                )}
+                                              </div>
+                                            </motion.div>
+                                          )}
+                                        </AnimatePresence>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </motion.div>
                             )}
                           </AnimatePresence>
                         </>
                       ) : (
-                        <Link href={navlink.path || '#'} className={`text-lg hover:font-bold transition-all duration-300 ${pathname === navlink.path ? 'text-dark font-bold' : 'text-dark'}`} onClick={handleMenuItemClick}>
+                        <Link
+                          href={navlink.path || "#"}
+                          className={`text-lg hover:font-bold transition-all duration-300 ${pathname === navlink.path ? "text-dark font-bold" : "text-dark"}`}
+                          onClick={handleMenuItemClick}
+                        >
                           {navlink.name}
                         </Link>
                       )}

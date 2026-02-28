@@ -226,6 +226,22 @@ export const career = mysqlTable("career", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+export const lead = mysqlTable("lead", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 255 }).notNull(),
+  companyName: varchar("companyName", { length: 255 }),
+  companyWebsite: varchar("companyWebsite", { length: 255 }),
+  business: varchar("business", { length: 255 }),
+  message: text("message"),
+  from: varchar("from", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
 export const subscription = mysqlTable("subscription", {
   id: int("id").primaryKey().autoincrement(),
   email: varchar("email", { length: 255 }).notNull(),

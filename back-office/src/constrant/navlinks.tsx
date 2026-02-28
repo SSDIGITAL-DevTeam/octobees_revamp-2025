@@ -1,44 +1,60 @@
-import { url } from "inspector"
-import { Users, ChartPie, NotebookPen, NotebookTabs, Archive, Shapes, Briefcase, Folder, Hash, MailCheck, File, User, DollarSign, UserCheck, Ticket} from "lucide-react"
-import { title } from "process"
+import { url } from "inspector";
+import {
+  Users,
+  ChartPie,
+  NotebookPen,
+  NotebookTabs,
+  Archive,
+  Shapes,
+  Briefcase,
+  Folder,
+  Hash,
+  MailCheck,
+  File,
+  User,
+  DollarSign,
+  UserCheck,
+  Ticket,
+} from "lucide-react";
+import { title } from "process";
 
 const sidebarItems = [
   {
     group: "Dashboard",
-    name:"dashboard",
+    name: "dashboard",
     data: [
       {
         title: "Overview",
         url: "/dashboard",
         icon: ChartPie,
-      }
+      },
     ],
   },
   {
     group: "User Management",
-    name:"user",
+    name: "user",
     data: [
       {
         title: "User",
         url: "/user",
         icon: Users,
-      }
+      },
     ],
   },
   {
     group: "Blog Management",
-    name:"blog",
+    name: "blog",
     data: [
       {
         title: "Blogs",
         url: "/blog/blogs",
         icon: NotebookPen,
-      }
+      },
     ],
   },
   {
     group: "Service Management",
-    name:"services",
+    name: "services",
     data: [
       {
         title: "Services Category",
@@ -54,7 +70,7 @@ const sidebarItems = [
   },
   {
     group: "Partnership Program",
-    name:"services",
+    name: "services",
     data: [
       {
         title: "Affiliate Program",
@@ -80,12 +96,12 @@ const sidebarItems = [
         title: "Commission Control",
         url: "/partnership/commission-control",
         icon: DollarSign,
-      }
+      },
     ],
   },
   {
     group: "Career Management",
-    name:"career",
+    name: "career",
     data: [
       {
         title: "Position",
@@ -100,18 +116,27 @@ const sidebarItems = [
     ],
   },
   {
+    group: "Lead Management",
+    name: "dashboard",
+    data: [
+      {
+        title: "Consultation Leads",
+        url: "/lead",
+        icon: MailCheck,
+      },
+    ],
+  },
+  {
     group: "Others",
-    name:"meta",
+    name: "meta",
     data: [
       {
         title: "Meta Content Management",
         url: "/meta",
         icon: Hash,
-      }
+      },
     ],
   },
-]
+];
 
-export {
-    sidebarItems
-}
+export { sidebarItems };
