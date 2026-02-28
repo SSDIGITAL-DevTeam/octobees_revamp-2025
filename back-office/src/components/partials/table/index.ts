@@ -9,17 +9,19 @@ import TableMetaTag from "./TableMetaTag";
 import TableUser from "./TableUser";
 import TablePosition from "./TablePosition";
 import AffiliateTable from "./affiliate-table";
+import TableLead from "./TableLead";
 
 export {
-    TablePackage,
-    TableCareer,
-    TableBlog,
-    TableBlogCategory,
-    TableSubscription,
-    TablePage,
-    TableCategory,
-    TableMetaTag,
-    TableUser,
-    TablePosition,
-    AffiliateTable
-}
+  TablePackage,
+  TableCareer,
+  TableBlog,
+  TableBlogCategory,
+  TableSubscription,
+  TablePage,
+  TableCategory,
+  TableMetaTag,
+  TableUser,
+  TablePosition,
+  AffiliateTable,
+  TableLead,
+};

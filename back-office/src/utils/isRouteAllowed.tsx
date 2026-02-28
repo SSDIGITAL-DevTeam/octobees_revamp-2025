@@ -10,7 +10,13 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
     subscription: ["/subscription", "/affiliate-program"],
     partnership: ["/partnership"],
   };
-  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) return true;
+  if (
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/lead" ||
+    pathname.startsWith("/lead/")
+  )
+    return true;
 
   for (const feature of features) {
     const prefixes = routeFeatureMap[feature];
@@ -19,5 +25,4 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
     }
   }
   return false;
-
 }

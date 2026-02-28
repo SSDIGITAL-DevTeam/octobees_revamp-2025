@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Manrope, Sora } from "next/font/google";
 import Navbar from "@/components/layouts/Navbar/Navbar";
 import Footer from "@/components/layouts/Footer/Footer";
 import Script from "next/script";
@@ -8,6 +9,20 @@ import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import { pageMetadata } from "@/constants/metadata";
 import OrganizationSchema from "@/app/seo/schema/OrganizationSchema";
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+  preload: true,
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+  preload: true,
+});
 
 export async function generateMetadata() {
   const meta = pageMetadata.home;
@@ -39,7 +54,7 @@ export default function RootLayout({
         }}
       />
 
-      <html lang="en">
+      <html lang="en" className={`${manrope.variable} ${sora.variable}`}>
         <head>
           <meta
             name="google-site-verification"
@@ -56,9 +71,7 @@ export default function RootLayout({
           <OrganizationSchema />
           <Navbar />
 
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
 
           <Footer />
           <Toaster />

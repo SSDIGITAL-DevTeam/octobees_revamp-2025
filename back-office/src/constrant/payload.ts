@@ -16,55 +16,55 @@ export type User = {
   features?: any; // Bisa diganti dengan spesifik shape kalau diketahui
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 export type PlanService = {
   id: string;
   name: string;
-  type: 'Standard' | 'Premium';
+  type: "Standard" | "Premium";
   showPrice: boolean;
-  status: 'Draft' | 'Active' | 'NonActive';
+  status: "Draft" | "Active" | "NonActive";
   options: string;
   descriptions: string;
   categoryId: string;
   category: CategoryService;
   prices: Price[];
   benefits: Benefit[];
-}
+};
 
 export type CategoryService = {
   id: string;
   name: string;
   heading: string;
   description: string;
-  status: 'Draft' | 'Active' | 'NonActive';
+  status: "Draft" | "Active" | "NonActive";
   slug: string;
-}
+};
 
 export type Price = {
   id: string;
-  curr: 'IDR' | 'SGR' | 'MYR';
+  curr: "IDR" | "SGR" | "MYR";
   amount: number;
   discount: number;
   idPlan: string;
-}
+};
 
 export type Benefit = {
   id: string;
   value: string;
   idPlan: string;
-}
+};
 
 export type Role = {
   id: string;
   name: string;
   email: string;
   password: string;
-  status: 'Draft' | 'Active' | 'NonActive';
+  status: "Draft" | "Active" | "NonActive";
   refreshToken?: string | null;
   role: string;
   features: any; // bisa diganti lebih spesifik
-}
+};
 
 export type BlogCategory = {
   id: string;
@@ -73,7 +73,7 @@ export type BlogCategory = {
   createdAt: Date;
   updatedAt: Date;
   status: boolean;
-}
+};
 
 export type Blog = {
   id: string;
@@ -90,20 +90,20 @@ export type Blog = {
   user: {
     id: string;
     name: string;
-  },
+  };
   category: {
     id: string;
     name: string;
     slug: string;
-  },
+  };
   metas?: {
     key: string;
     value: string;
     content?: string | null;
     metaableId?: string;
     metaableType?: string;
-  }[]
-}
+  }[];
+};
 
 export type Pages = {
   id: string;
@@ -111,7 +111,7 @@ export type Pages = {
   slug: string;
   blogId?: string | null;
   categoryServiceId?: string | null;
-}
+};
 
 export type MetaTag = {
   id: string;
@@ -119,7 +119,7 @@ export type MetaTag = {
   value: string;
   content: string;
   slug: string;
-}
+};
 
 export type Order = {
   id: string;
@@ -133,7 +133,7 @@ export type Order = {
   phoneNumber: string;
   idPlan: string;
   time: string;
-}
+};
 
 export type Career = {
   id: string;
@@ -150,15 +150,15 @@ export type Career = {
   position: {
     id: number;
     name: string;
-  }
-}
+  };
+};
 export type Position = {
   id: number;
   name: string;
   status: string;
   createdAt: string;
   updatedAt: string;
-}
+};
 export type Subscription = {
   id: number;
   email: string;
@@ -166,7 +166,18 @@ export type Subscription = {
   insight?: string | null;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-
-
+export type Lead = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  companyName?: string | null;
+  companyWebsite?: string | null;
+  business?: string | null;
+  message?: string | null;
+  from?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
