@@ -19,6 +19,15 @@ const config: Config = {
         manrope: ["var(--font-manrope)", "Manrope", "sans-serif"],
         sora: ["var(--font-sora)", "Sora", "sans-serif"],
       },
+      borderColor: {
+        border: "#E5E7EB",
+      },
+      divideColor: {
+        border: "#E5E7EB",
+      },
+      ringColor: {
+        border: "#E5E7EB",
+      },
       colors: {
         merah: {
           "200": "#dc8a8f",
