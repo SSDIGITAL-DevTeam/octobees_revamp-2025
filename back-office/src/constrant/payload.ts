@@ -181,3 +181,14 @@ export type Lead = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ClientOnboarding = {
+  id: string;
+  name: string;
+  companyName: string;
+  email: string;
+  agreementGuideApproved: boolean;
+  agreementProgramCommitment: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

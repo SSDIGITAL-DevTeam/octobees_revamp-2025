@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { usePathname } from "next/navigation"
 import {
   Sidebar,
@@ -25,9 +25,14 @@ type SidebarComponentsProps = {
 export function Sidebarcomponents({ features }: SidebarComponentsProps) {
   const pathname = usePathname()
   const featureList = Array.isArray(features) ? features : []
-  const allowedSidebarItems = sidebarItems.filter(
-    (item) => item.name === "dashboard" || featureList.includes(item.name)
+  const allowedSidebarItems = sidebarItems.filter((item) =>
+    item.name === "dashboard" || featureList.includes(item.name)
   );
+
+  const isMenuActive = (url: string) => {
+    if (url === "/lead") return pathname === "/lead";
+    return pathname === url || pathname.startsWith(`${url}/`);
+  };
 
   return (
     <Sidebar>
@@ -46,7 +51,7 @@ export function Sidebarcomponents({ features }: SidebarComponentsProps) {
                     {
                       item.data.map((it, index: number) => (
                         <SidebarMenuItem key={index}>
-                          <SidebarMenuButton asChild className={`${pathname.startsWith(it.url) && "rounded-full text-red-700 font-semibold bg-red-700/20 border-[1px] border-red-700"}`}>
+                          <SidebarMenuButton asChild className={`${isMenuActive(it.url) && "rounded-full text-red-700 font-semibold bg-red-700/20 border-[1px] border-red-700"}`}>
                             <a href={it.url} className="flex gap-3 items-center">
                               <it.icon size={15} />
                               <p>{it.title}</p>
@@ -67,3 +72,4 @@ export function Sidebarcomponents({ features }: SidebarComponentsProps) {
     </Sidebar>
   )
 }
+

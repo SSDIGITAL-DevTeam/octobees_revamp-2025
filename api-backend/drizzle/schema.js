@@ -242,6 +242,20 @@ export const lead = mysqlTable("lead", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
+export const clientOnboarding = mysqlTable("client_onboarding", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  name: varchar("name", { length: 255 }).notNull(),
+  companyName: varchar("company_name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
+  agreementGuideApproved: boolean("agreement_guide_approved").notNull().default(false),
+  agreementProgramCommitment: boolean("agreement_program_commitment").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const subscription = mysqlTable("subscription", {
   id: int("id").primaryKey().autoincrement(),
   email: varchar("email", { length: 255 }).notNull(),
