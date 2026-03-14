@@ -178,6 +178,18 @@ export type Lead = {
   business?: string | null;
   message?: string | null;
   from?: string | null;
+  referralCode?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ClientOnboarding = {
+  id: string;
+  name: string;
+  companyName: string;
+  email: string;
+  agreementGuideApproved: boolean;
+  agreementProgramCommitment: boolean;
   createdAt: string;
   updatedAt: string;
 };

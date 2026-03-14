@@ -51,6 +51,10 @@ export default function DialogLead({ children, lead, refetch }: Props) {
       value: lead?.from || "-",
     },
     {
+      name: "Referral Code",
+      value: lead?.referralCode || "-",
+    },
+    {
       name: "Created At",
       value: lead?.createdAt
         ? format(new Date(lead.createdAt), "dd MMMM yyyy HH:mm")

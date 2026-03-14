@@ -52,7 +52,12 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        const { name, email, phone, business, companyName, from } = req.body;
+        let { name, email, phone, business, companyName, from, referralCode } = req.body;
+
+        // If email is not provided, generate a dummy one since it's required in DB
+        if (!email?.trim()) {
+            email = `no-email-${Date.now()}@example.com`;
+        }
 
         if (
             !name?.trim() ||
@@ -62,7 +67,7 @@ const create = async (req, res) => {
         ) {
             return res.status(400).json({ error: "Required fields are missing" });
         }
-        await createLead(req.body);
+        await createLead({ name, email, phone, business, companyName, from, referralCode });
 
         res.status(201).json({ message: "Lead created successfully" });
     } catch (error) {

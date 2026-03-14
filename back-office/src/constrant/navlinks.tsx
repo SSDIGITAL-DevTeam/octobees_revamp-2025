@@ -1,13 +1,10 @@
-import { url } from "inspector";
-import {
+﻿import {
   Users,
   ChartPie,
   NotebookPen,
-  NotebookTabs,
   Archive,
   Shapes,
   Briefcase,
-  Folder,
   Hash,
   MailCheck,
   File,
@@ -15,8 +12,8 @@ import {
   DollarSign,
   UserCheck,
   Ticket,
+  UserRoundCog,
 } from "lucide-react";
-import { title } from "process";
 
 const sidebarItems = [
   {
@@ -123,6 +120,11 @@ const sidebarItems = [
         title: "Consultation Leads",
         url: "/lead",
         icon: MailCheck,
+      },
+      {
+        title: "Client Onboarding",
+        url: "/lead/client-onboarding",
+        icon: UserRoundCog,
       },
     ],
   },
