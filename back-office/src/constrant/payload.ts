@@ -178,6 +178,7 @@ export type Lead = {
   business?: string | null;
   message?: string | null;
   from?: string | null;
+  referralCode?: string | null;
   createdAt: string;
   updatedAt: string;
 };

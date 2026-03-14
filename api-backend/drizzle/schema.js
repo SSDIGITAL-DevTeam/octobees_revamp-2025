@@ -238,6 +238,7 @@ export const lead = mysqlTable("lead", {
   business: varchar("business", { length: 255 }),
   message: text("message"),
   from: varchar("from", { length: 255 }),
+  referralCode: varchar("referralCode", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });

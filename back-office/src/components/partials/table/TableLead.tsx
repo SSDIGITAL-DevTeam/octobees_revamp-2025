@@ -76,6 +76,7 @@ const TableLead: React.FC<TableProps> = ({
     { key: "Phone", value: "phone" },
     { key: "Company", value: "companyName" },
     { key: "From Page", value: "from" },
+    { key: "Referral Code", value: "referralCode" },
     { key: "Created At", value: "createdAt" },
     { key: "Action", value: "action" },
   ];
@@ -111,6 +112,7 @@ const TableLead: React.FC<TableProps> = ({
             <TableCell className="p-2">{lead.phone}</TableCell>
             <TableCell className="p-2">{lead.companyName || "-"}</TableCell>
             <TableCell className="p-2">{lead.from || "-"}</TableCell>
+            <TableCell className="p-2">{lead.referralCode || "-"}</TableCell>
             <TableCell className="p-2">
               {format(new Date(lead.createdAt), "dd MMMM yyyy HH:mm")}
             </TableCell>
