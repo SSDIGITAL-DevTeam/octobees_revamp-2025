@@ -82,12 +82,14 @@ export default function ClientOnboardingPage() {
 
   return (
     <main className="w-full flex flex-col gap-12 pb-12">
-      <Header title={"Client Onboarding"} label={"Lead Management"} />
+      <Header title={"Client Onboarded"} label={"Lead Management"} />
       <section className="flex flex-col gap-16 p-8 rounded-3xl bg-white border border-border shadow-sm w-full min-h-[50vh] items-center">
         <div className="w-full flex justify-between items-center">
           <div className="flex flex-col gap-1 text-sm text-gray-600 justify-start w-full">
-            <h1 className="text-4xl font-semibold text-black">All Client Onboarding</h1>
-            <p>showing all client onboarding accounts</p>
+            <h1 className="text-4xl font-semibold text-black">
+              All Client Onboarded
+            </h1>
+            <p>showing all client onboarded accounts</p>
           </div>
 
           <div className="flex items-center">
@@ -109,7 +111,11 @@ export default function ClientOnboardingPage() {
                 <Search size={23} />
               </Button>
               <Link href="/lead/client-onboarding/add">
-                <Button variant="addData" size="sm" className="flex gap-2 items-center">
+                <Button
+                  variant="addData"
+                  size="sm"
+                  className="flex gap-2 items-center"
+                >
                   <CirclePlus size={15} /> Add Data
                 </Button>
               </Link>

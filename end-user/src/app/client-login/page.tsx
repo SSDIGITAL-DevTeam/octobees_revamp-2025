@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
+import ClientHeader from "@/components/layouts/Navbar/ClientHeader";
 
 type LoginResponse = {
   id: string;
@@ -55,18 +56,21 @@ export default function ClientLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(179,0,11,0.2),#F8F5F2_35%,#F5F5F5_100%)] pt-36 pb-14 md:pt-44 md:pb-24">
-      <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
-        <div className="rounded-3xl border border-primary/15 bg-white p-6 sm:p-8 md:p-12 shadow-[0_15px_40px_rgba(0,0,0,0.08)]">
-          <div className="mx-auto max-w-xl space-y-6">
+    <>
+      <ClientHeader />
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(179,0,11,0.2),#F8F5F2_35%,#F5F5F5_100%)] pt-36 pb-14 md:pt-44 md:pb-24">
+        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+        <div className="rounded-3xl border border-primary/15 bg-white p-6 sm:p-8 md:p-12 shadow-[0_15px_40px_rgba(0,0,0,0.08)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none -mr-20 -mt-20" />
+          <div className="mx-auto max-w-xl space-y-6 relative z-10">
             <div className="space-y-2 text-center">
               <p className="inline-flex rounded-full border border-primary/30 bg-primary/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
                 OCTOBEES Growth Engine
               </p>
-              <h1 className="font-heading text-3xl text-dark font-semibold !leading-[120%] md:text-4xl">
-                Client Login
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-[3.5rem] text-dark font-black tracking-tight !leading-[1.1]">
+                Client <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">Login</span>
               </h1>
-              <p className="font-body text-secondary leading-relaxed">
+              <p className="font-body text-secondary leading-relaxed text-base sm:text-lg">
                 Silakan login terlebih dahulu untuk mengakses halaman Client Onboarding Guide.
               </p>
             </div>
@@ -110,8 +114,9 @@ export default function ClientLoginPage() {
             </form>
           </div>
         </div>
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-﻿import logger from "../../utils/logger.js";
+import logger from "../../utils/logger.js";
 import {
   createClientOnboarding,
   deleteClientOnboardingById,
@@ -7,6 +7,7 @@ import {
   loginClientOnboarding,
   updateClientAgreementById,
   updateClientOnboarding,
+  changePasswordClientOnboarding,
 } from "./client-onboarding.service.js";
 
 const getall = async (req, res) => {
@@ -123,6 +124,23 @@ const agreement = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+    
+    if (!currentPassword || !newPassword) {
+      throw new Error("Password saat ini dan password baru wajib diisi");
+    }
+
+    const data = await changePasswordClientOnboarding(id, { currentPassword, newPassword });
+    res.status(200).json({ message: "Password berhasil diubah", data });
+  } catch (error) {
+    logger.error(`PATCH client_onboarding /:id/change-password error: ${error.message}`);
+    res.status(400).json({ error: error.message });
+  }
+};
+
 export default {
   getall,
   getid,
@@ -131,4 +149,5 @@ export default {
   patch,
   login,
   agreement,
+  changePassword,
 };

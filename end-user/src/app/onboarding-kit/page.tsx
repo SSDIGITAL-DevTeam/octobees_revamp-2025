@@ -1,8 +1,11 @@
 "use client";
 
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
+import ClientHeader from "@/components/layouts/Navbar/ClientHeader";
+import { X, Play } from "lucide-react";
 
 type AgreementState = {
   agreementGuideApproved: boolean;
@@ -31,27 +34,167 @@ function Divider() {
   );
 }
 
+function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolean, onClose: () => void, type: 'desktop' | 'mobile', label: string, videoUrl?: string }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const getFullVideoUrl = (url?: string) => {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8080';
+    return `${baseUrl}${url}`;
+  };
+
+  if (!isOpen || !mounted) return null;
+  
+  const fullVideoUrl = getFullVideoUrl(videoUrl);
+  
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
+      <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm" onClick={onClose} />
+      <div className={`relative bg-gray-900 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-full flex flex-col animate-in fade-in zoom-in-95 duration-200 ${type === 'desktop' ? 'max-w-5xl aspect-video' : 'max-w-[400px] aspect-[9/16]'}`}>
+        <div className="absolute top-3 right-3 md:top-5 md:right-5 z-10 transition-transform hover:scale-110">
+          <button 
+            type="button"
+            onClick={onClose}
+            className="flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/40 text-white hover:bg-primary backdrop-blur-md transition-colors"
+          >
+            <X className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
+        {fullVideoUrl ? (
+          <video
+            src={fullVideoUrl}
+            className="w-full h-full object-contain bg-black"
+            controls
+            autoPlay
+            playsInline
+          >
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <div className="flex-1 flex items-center justify-center bg-gray-800 text-gray-400 relative">
+            <div className="text-center p-6 relative z-10">
+              <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full bg-gray-700 flex items-center justify-center mb-4 md:mb-6 shadow-inner ring-4 ring-gray-600/50">
+                <svg viewBox="0 0 24 24" className="ml-1.5 h-8 w-8 md:h-10 md:w-10 text-gray-400 fill-current" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              </div>
+              <p className="font-heading font-medium text-lg md:text-xl text-white mb-2">{label} - {type === 'desktop' ? 'Desktop' : 'Mobile'}</p>
+              <p className="text-sm md:text-base">Video Player Placeholder</p>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent pointer-events-none" />
+          </div>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+type VideoConfig = {
+  desktop?: string;
+  mobile?: string;
+};
+
+const defaultVideoConfigs: Record<string, VideoConfig> = {
+  "Tutorial Penggunaan Client Portal": {
+    desktop: "/mp4/VIDEO TUTORIAL CLICKUP DESKTOP.mp4",
+    mobile: "/mp4/VIDEO TUTORIAL CLICKUP MOBILE.mp4",
+  },
+  "Tutorial Unggah Assets ke ClickUp": {
+    desktop: "/mp4/TUTORIAL UPLOAD ASSETS DESKTOP.mp4",
+    mobile: "/mp4/TUTORIAL UPLOAD ASSETS MOBILE.mp4",
+  },
+  "Tutorial Memberikan Akses Akun": {},
+};
+
 function VideoPlaceholder({ label }: { label: string }) {
-  return (
-    <div className="mt-8 group perspective-1000">
-      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/60 rounded-[2rem] flex items-center justify-center shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/30">
-        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="flex z-10 items-center justify-center gap-3 rounded-full border border-gray-200/80 bg-white/90 backdrop-blur-md px-6 py-3 shadow-md transition-all duration-300 group-hover:scale-105 group-hover:border-primary/40 group-hover:bg-white">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-primary to-primary/80 text-white shadow-[0_0_15px_rgba(255,107,0,0.3)]">
-            <svg
-              viewBox="0 0 24 24"
-              className="ml-1 h-4 w-4 fill-current drop-shadow-sm"
-              aria-hidden="true"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
+  const [modalType, setModalType] = useState<'desktop' | 'mobile' | null>(null);
+  const [videoConfigs, setVideoConfigs] = useState<Record<string, VideoConfig>>(defaultVideoConfigs);
+  
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await axiosInstance.get("/videos-onboarding/videos");
+        if (response.data && Object.keys(response.data).length > 0) {
+          setVideoConfigs((prev) => ({ ...prev, ...response.data }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch videos:", error);
+      }
+    };
+    fetchVideos();
+  }, []);
+  
+  const videoConfig = videoConfigs[label] || {};
+  const hasVideo = videoConfig.desktop || videoConfig.mobile;
+
+  const VideoThumbnail = ({ type, url }: { type: 'desktop' | 'mobile', url?: string }) => {
+    if (!url) {
+      return (
+        <div className="flex items-center justify-center gap-3 rounded-full border border-gray-200/80 bg-white/90 backdrop-blur-md px-6 py-3 shadow-md">
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-300 text-white">
+            <Play className="h-4 w-4" />
           </span>
-          <span className="font-heading font-bold text-gray-800 tracking-wide text-[15px]">
-            {label}
+          <span className="font-heading font-bold text-gray-500 tracking-wide text-[14px]">
+            Coming Soon
           </span>
         </div>
+      );
+    }
+
+    return (
+      <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 group/thumbnail">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover/thumbnail:scale-110 transition-transform">
+            <Play className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+          </div>
+        </div>
+        <div className="absolute inset-0 bg-black/0 group-hover/thumbnail:bg-black/20 transition-colors" />
+        <div className="absolute bottom-3 left-3 px-2 py-1 rounded bg-black/60 text-white text-xs font-medium">
+          {type === 'desktop' ? '16:9' : '9:16'}
+        </div>
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <>
+      <div className="mt-8 grid grid-cols-1 gap-6 md:gap-8 items-start max-w-2xl mx-auto">
+        {/* Desktop Video Container */}
+        <div className="group perspective-1000 w-full flex flex-col gap-3">
+          <div 
+            onClick={() => hasVideo && setModalType('desktop')}
+            className={`cursor-pointer aspect-video relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/60 rounded-[2rem] shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/30 ${!hasVideo ? 'opacity-60' : ''}`}
+          >
+            <VideoThumbnail type="desktop" url={videoConfig.desktop} />
+          </div>
+          <p className="text-center text-sm font-semibold text-gray-700 bg-white border border-gray-100 py-2.5 rounded-xl shadow-sm">
+            {label} - Desktop
+          </p>
+        </div>
+
+        {/* Mobile Video Container */}
+        <div className="group perspective-1000 w-full max-w-xs mx-auto flex flex-col gap-3">
+          <div 
+            onClick={() => hasVideo && setModalType('mobile')}
+            className={`cursor-pointer aspect-[9/16] max-h-[320px] relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/40 border border-gray-200/60 rounded-[2rem] shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/30 ${!hasVideo ? 'opacity-60' : ''}`}
+          >
+            <VideoThumbnail type="mobile" url={videoConfig.mobile} />
+          </div>
+          <p className="text-center text-sm font-semibold text-gray-700 bg-white border border-gray-100 py-2.5 rounded-xl shadow-sm">
+            {label} - Mobile
+          </p>
+        </div>
+      </div>
+
+      <VideoModal 
+        isOpen={modalType !== null} 
+        onClose={() => setModalType(null)} 
+        type={modalType || 'desktop'} 
+        label={label}
+        videoUrl={modalType === 'desktop' ? videoConfig.desktop : videoConfig.mobile}
+      />
+    </>
   );
 }
 
@@ -256,23 +399,28 @@ export default function OnboardingKitPage() {
 
   if (isCheckingAuth || !session) {
     return (
-      <main className="bg-[#f8fafc] min-h-screen relative overflow-hidden flex items-center justify-center">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="relative z-10 mx-auto max-w-sm px-6 w-full">
-          <div className="rounded-[2rem] border border-white/60 bg-white/80 backdrop-blur-xl p-10 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <div className="w-10 h-10 mx-auto mb-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-            <p className="font-heading text-lg text-gray-600 font-medium animate-pulse">
-              Memeriksa autentikasi...
-            </p>
+      <>
+        <ClientHeader />
+        <main className="bg-[#f8fafc] min-h-screen relative overflow-hidden flex items-center justify-center">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div className="relative z-10 mx-auto max-w-sm px-6 w-full">
+            <div className="rounded-[2rem] border border-white/60 bg-white/80 backdrop-blur-xl p-10 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <div className="w-10 h-10 mx-auto mb-6 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+              <p className="font-heading text-lg text-gray-600 font-medium animate-pulse">
+                Memeriksa autentikasi...
+              </p>
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#fafafa] pt-32 pb-24 md:pt-40 md:pb-32 relative overflow-hidden selection:bg-primary/20 selection:text-primary">
-      {/* Background Decor */}
+    <>
+      <ClientHeader />
+      <main className="min-h-screen bg-[#fafafa] pt-32 pb-24 md:pt-40 md:pb-32 relative overflow-hidden selection:bg-primary/20 selection:text-primary">
+        {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 translate-x-1/4" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-400/5 rounded-full blur-[120px] pointer-events-none translate-y-1/3 -translate-x-1/3" />
 
@@ -1278,9 +1426,35 @@ export default function OnboardingKitPage() {
                 </div>
               </div>
             </SectionBlock>
+
+            <Divider />
+
+            <SectionBlock>
+              <div className="rounded-3xl border border-gray-200 bg-white p-8 sm:p-10 shadow-sm relative overflow-hidden group hover:border-primary/30 transition-colors">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] -mr-10 -mt-10" />
+                <div className="relative z-10 flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
+                  <div className="flex-1 space-y-2">
+                    <h3 className="font-heading text-xl md:text-2xl text-gray-900 font-bold tracking-tight">
+                      Langkah Selanjutnya
+                    </h3>
+                    <p className="text-gray-600 text-[15px] leading-relaxed">
+                      Setelah Anda membaca dan mencentang persetujuan di atas, kami mengharapkan Anda untuk segera mengubah kata sandi demi menjaga keamanan akun. Silakan akses opsi <b>Change Password</b> melalui menu profil Anda yang berada di sudut kanan atas layar.
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <div className="h-14 w-14 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-100 group-hover:bg-primary/5 transition-colors">
+                      <svg className="w-6 h-6 text-gray-400 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </SectionBlock>
           </div>
         </div>
       </div>
     </main>
-  );
+  </>
+);
 }

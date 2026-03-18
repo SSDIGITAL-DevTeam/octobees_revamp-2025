@@ -1,4 +1,4 @@
-﻿import { and, asc, desc, like, or } from "drizzle-orm";
+import { and, asc, desc, like, or } from "drizzle-orm";
 import { compare, genSalt, hash } from "bcryptjs";
 import { clientOnboarding } from "../../drizzle/schema.js";
 import {
@@ -124,6 +124,20 @@ export const updateClientAgreementById = async (id, payload) => {
     agreementGuideApproved: nextGuide,
     agreementProgramCommitment: nextCommitment,
   });
+
+  const updated = await findClientById(id);
+  return sanitizeClient(updated);
+};
+
+export const changePasswordClientOnboarding = async (id, payload) => {
+  const existing = await findClientById(id);
+  if (!existing) throw new Error("Client not found");
+
+  const isMatch = await compare(payload.currentPassword, existing.password);
+  if (!isMatch) throw new Error("Password saat ini salah");
+
+  const encrypted = await encryptPassword(payload.newPassword);
+  await editClient(id, { password: encrypted });
 
   const updated = await findClientById(id);
   return sanitizeClient(updated);
