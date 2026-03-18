@@ -34,7 +34,7 @@ function Divider() {
   );
 }
 
-function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolean, onClose: () => void, type: 'desktop' | 'mobile', label: string, videoUrl?: string }) {
+function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolean, onClose: () => void, type: 'desktop' | 'mobile', label: string, videoUrl?: string | null }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const plyrInstance = useRef<any>(null);
   const [mounted, setMounted] = useState(false);
@@ -194,7 +194,7 @@ function VideoPlaceholder({ label }: { label: string }) {
   const videoConfig = videoConfigs[label] || {};
   const hasVideo = Boolean(videoConfig.desktop || videoConfig.mobile);
 
-  const VideoThumbnail = ({ type, url }: { type: 'desktop' | 'mobile', url?: string }) => {
+  const VideoThumbnail = ({ type, url }: { type: 'desktop' | 'mobile', url?: string | null }) => {
     if (!url) {
       return (
         <div className="flex items-center justify-center gap-3 rounded-full border border-gray-200/80 bg-white/90 backdrop-blur-md px-6 py-3 shadow-md">
