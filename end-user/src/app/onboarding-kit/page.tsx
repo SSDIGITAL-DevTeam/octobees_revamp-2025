@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios";
@@ -35,24 +35,96 @@ function Divider() {
 }
 
 function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolean, onClose: () => void, type: 'desktop' | 'mobile', label: string, videoUrl?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const plyrInstance = useRef<any>(null);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
-  const getFullVideoUrl = (url?: string) => {
-    if (!url) return undefined;
-    if (url.startsWith('http')) return url;
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:8080';
-    return `${baseUrl}${url}`;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !isOpen || !videoUrl || !containerRef.current) return;
+
+    let isMounted = true;
+
+    const initPlyr = async () => {
+      const PlyrLib = (await import("plyr")).default;
+      const PlyrCSS = await import("plyr/dist/plyr.css");
+
+      if (!isMounted || !containerRef.current) return;
+
+      const timer = setTimeout(() => {
+        if (containerRef.current && isMounted) {
+          const videoElement = containerRef.current.querySelector('video, [data-plyr-provider]');
+          if (videoElement && !(videoElement as any)._plyr) {
+            plyrInstance.current = new PlyrLib(videoElement as any, {
+              controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
+              ratio: type === 'desktop' ? '16:9' : '9:16',
+              youtube: {
+                noCookie: true,
+                rel: 0,
+                showinfo: 0,
+                iv_load_policy: 3,
+                modestbranding: 1,
+              },
+            });
+          }
+        }
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    };
+
+    initPlyr();
+
+    return () => {
+      isMounted = false;
+      if (plyrInstance.current) {
+        plyrInstance.current.destroy();
+        plyrInstance.current = null;
+      }
+    };
+  }, [mounted, isOpen, videoUrl, type]);
+
+  const getVideoInfo = () => {
+    if (!videoUrl) return null;
+    
+    const isYouTube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
+    const isVimeo = videoUrl.includes("vimeo.com");
+
+    if (isYouTube) {
+      let videoId = videoUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)?.[1];
+      if (!videoId && videoUrl.includes("embed/")) {
+        videoId = videoUrl.split("embed/")[1]?.split("?")[0]?.split("&")[0];
+      }
+      if (!videoId && videoUrl.includes("shorts/")) {
+        videoId = videoUrl.split("shorts/")[1]?.split("?")[0];
+      }
+      return videoId ? { type: 'youtube', id: videoId } : null;
+    }
+
+    if (isVimeo) {
+      let videoId = videoUrl.match(/vimeo\.com\/(\d+)/)?.[1];
+      if (!videoId && videoUrl.includes("player.vimeo.com")) {
+        videoId = videoUrl.match(/player\.vimeo\.com\/video\/(\d+)/)?.[1];
+      }
+      return videoId ? { type: 'vimeo', id: videoId } : null;
+    }
+
+    return { type: 'video', src: videoUrl };
   };
 
   if (!isOpen || !mounted) return null;
-  
-  const fullVideoUrl = getFullVideoUrl(videoUrl);
+
+  const videoInfo = getVideoInfo();
   
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
       <div className="absolute inset-0 bg-gray-900/80 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative bg-gray-900 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-full flex flex-col animate-in fade-in zoom-in-95 duration-200 ${type === 'desktop' ? 'max-w-5xl aspect-video' : 'max-w-[400px] aspect-[9/16]'}`}>
+      <div className={`relative bg-gray-900 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-full animate-in fade-in zoom-in-95 duration-200 ${type === 'desktop' ? 'max-w-5xl' : 'max-w-[400px]'}`}>
         <div className="absolute top-3 right-3 md:top-5 md:right-5 z-10 transition-transform hover:scale-110">
           <button 
             type="button"
@@ -62,28 +134,32 @@ function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolea
             <X className="w-5 h-5 md:w-6 md:h-6" />
           </button>
         </div>
-        {fullVideoUrl ? (
-          <video
-            src={fullVideoUrl}
-            className="w-full h-full object-contain bg-black"
-            controls
-            autoPlay
-            playsInline
-          >
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-800 text-gray-400 relative">
-            <div className="text-center p-6 relative z-10">
-              <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full bg-gray-700 flex items-center justify-center mb-4 md:mb-6 shadow-inner ring-4 ring-gray-600/50">
-                <svg viewBox="0 0 24 24" className="ml-1.5 h-8 w-8 md:h-10 md:w-10 text-gray-400 fill-current" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+        <div ref={containerRef} className={`w-full ${type === 'desktop' ? 'aspect-video' : 'aspect-[9/16]'}`}>
+          {videoInfo ? (
+            videoInfo.type === 'youtube' ? (
+              <div data-plyr-provider="youtube" data-plyr-embed-id={videoInfo.id} />
+            ) : videoInfo.type === 'vimeo' ? (
+              <div data-plyr-provider="vimeo" data-plyr-embed-id={videoInfo.id} />
+            ) : (
+              <video
+                className="plyr-video"
+                playsInline
+                controls
+                src={videoInfo.src}
+              />
+            )
+          ) : (
+            <div className="flex items-center justify-center bg-gray-800 text-gray-400 h-full">
+              <div className="text-center p-6">
+                <div className="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full bg-gray-700 flex items-center justify-center mb-4 md:mb-6 shadow-inner ring-4 ring-gray-600/50">
+                  <Play className="w-8 h-8 md:w-10 md:h-10 text-gray-400 ml-1" />
+                </div>
+                <p className="font-heading font-medium text-lg md:text-xl text-white mb-2">{label} - {type === 'desktop' ? 'Desktop' : 'Mobile'}</p>
+                <p className="text-sm md:text-base">Video belum tersedia</p>
               </div>
-              <p className="font-heading font-medium text-lg md:text-xl text-white mb-2">{label} - {type === 'desktop' ? 'Desktop' : 'Mobile'}</p>
-              <p className="text-sm md:text-base">Video Player Placeholder</p>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent pointer-events-none" />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>,
     document.body
@@ -91,21 +167,11 @@ function VideoModal({ isOpen, onClose, type, label, videoUrl }: { isOpen: boolea
 }
 
 type VideoConfig = {
-  desktop?: string;
-  mobile?: string;
+  desktop?: string | null;
+  mobile?: string | null;
 };
 
-const defaultVideoConfigs: Record<string, VideoConfig> = {
-  "Tutorial Penggunaan Client Portal": {
-    desktop: "/mp4/VIDEO TUTORIAL CLICKUP DESKTOP.mp4",
-    mobile: "/mp4/VIDEO TUTORIAL CLICKUP MOBILE.mp4",
-  },
-  "Tutorial Unggah Assets ke ClickUp": {
-    desktop: "/mp4/TUTORIAL UPLOAD ASSETS DESKTOP.mp4",
-    mobile: "/mp4/TUTORIAL UPLOAD ASSETS MOBILE.mp4",
-  },
-  "Tutorial Memberikan Akses Akun": {},
-};
+const defaultVideoConfigs: Record<string, VideoConfig> = {};
 
 function VideoPlaceholder({ label }: { label: string }) {
   const [modalType, setModalType] = useState<'desktop' | 'mobile' | null>(null);
@@ -126,7 +192,7 @@ function VideoPlaceholder({ label }: { label: string }) {
   }, []);
   
   const videoConfig = videoConfigs[label] || {};
-  const hasVideo = videoConfig.desktop || videoConfig.mobile;
+  const hasVideo = Boolean(videoConfig.desktop || videoConfig.mobile);
 
   const VideoThumbnail = ({ type, url }: { type: 'desktop' | 'mobile', url?: string }) => {
     if (!url) {

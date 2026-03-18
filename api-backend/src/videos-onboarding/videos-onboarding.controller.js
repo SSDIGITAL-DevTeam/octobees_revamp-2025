@@ -13,35 +13,18 @@ const getVideos = async (req, res) => {
   }
 };
 
-const uploadVideos = async (req, res) => {
+const saveVideos = async (req, res) => {
   try {
-    const { desktopKey, mobileKey } = req.body;
-    
-    const videos = {};
-    
-    if (req.files) {
-      const files = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
-      
-      files.forEach((file) => {
-        const filePath = `/uploads/videos/${file.filename}`;
-        if (file.fieldname === 'desktop' && desktopKey) {
-          videos[desktopKey] = { ...videos[desktopKey], desktop: filePath };
-        }
-        if (file.fieldname === 'mobile' && mobileKey) {
-          videos[mobileKey] = { ...videos[mobileKey], mobile: filePath };
-        }
-      });
-    }
-    
+    const videos = req.body;
     await saveOnboardingVideos(videos);
-    res.status(200).json({ message: "Video berhasil diupload" });
+    res.status(200).json({ message: "Video URLs berhasil disimpan" });
   } catch (error) {
-    console.error(`POST /videos-onboarding/upload error: ${error.message}`);
+    console.error(`POST /videos-onboarding/save error: ${error.message}`);
     res.status(500).json({ error: error.message || "Internal server error" });
   }
 };
 
 export default {
   getVideos,
-  uploadVideos,
+  saveVideos,
 };
