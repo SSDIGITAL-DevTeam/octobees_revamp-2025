@@ -257,6 +257,15 @@ export const clientOnboarding = mysqlTable("client_onboarding", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const onboardingVideos = mysqlTable("onboarding_videos", {
+  id: int("id").primaryKey().autoincrement(),
+  title: varchar("title", { length: 255 }).notNull().unique(),
+  desktopUrl: text("desktop_url"),
+  mobileUrl: text("mobile_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const subscription = mysqlTable("subscription", {
   id: int("id").primaryKey().autoincrement(),
   email: varchar("email", { length: 255 }).notNull(),
