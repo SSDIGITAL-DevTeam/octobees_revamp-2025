@@ -27,6 +27,20 @@ const storageResume = multer.diskStorage({
   },
 });
 
+// Konfigurasi penyimpanan video
+const storageVideo = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = "upload/videos/";
+    fs.mkdirSync(uploadPath, { recursive: true }); // auto-create folder jika belum ada
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `video-${uniqueSuffix}${ext}`);
+  },
+});
+
 // Filter file (opsional, cek hanya gambar)
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
@@ -50,6 +64,15 @@ const docFileFilter = (req, file, cb) => {
   }
 };
 
+const videoFileFilter = (req, file, cb) => {
+  const allowedTypes = ["video/mp4", "video/webm", "video/ogg"];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only video files (mp4, webm, ogg) are allowed"), false);
+  }
+};
+
 export const uploadImage = multer({
   storage,
   fileFilter,
@@ -60,4 +83,10 @@ export const uploadResume = multer({
   storage: storageResume,
   fileFilter: docFileFilter,
   limits: { fileSize: 2 * 1024 * 1024 },
+});
+
+export const uploadVideo = multer({
+  storage: storageVideo,
+  fileFilter: videoFileFilter,
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for videos
 });

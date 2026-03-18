@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import client from "./client-onboarding.controller.js";
 
 const endUser = express.Router();
@@ -9,6 +9,7 @@ endUser.get("/:id", client.getid);
 endUser.patch("/:id", client.patch);
 endUser.delete("/:id", client.remove);
 endUser.patch("/:id/agreement", client.agreement);
+endUser.patch("/:id/change-password", client.changePassword);
 
 const backOffice = express.Router();
 backOffice.get("/", client.getall);

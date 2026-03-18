@@ -9,6 +9,7 @@ import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import { pageMetadata } from "@/constants/metadata";
 import OrganizationSchema from "@/app/seo/schema/OrganizationSchema";
+import GlobalUiWrapper from "@/components/layouts/GlobalUiWrapper";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -69,11 +70,12 @@ export default function RootLayout({
             }}
           ></noscript>
           <OrganizationSchema />
-          <Navbar />
-
-          <Providers>{children}</Providers>
-
-          <Footer />
+          <GlobalUiWrapper
+            navbar={<Navbar />}
+            footer={<Footer />}
+          >
+            <Providers>{children}</Providers>
+          </GlobalUiWrapper>
           <Toaster />
         </body>
       </html>

@@ -122,8 +122,13 @@ const sidebarItems = [
         icon: MailCheck,
       },
       {
-        title: "Client Onboarding",
+        title: "Client Onboarded",
         url: "/lead/client-onboarding",
+        icon: UserRoundCog,
+      },
+      {
+        title: "Onboarding Videos",
+        url: "/lead/onboarding-videos",
         icon: UserRoundCog,
       },
     ],

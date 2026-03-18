@@ -35,6 +35,10 @@ export const navLinks: NavLink[] = [
             name: "AI Automation",
             path: "/services/ai-solutions/ai-automation",
           },
+          {
+            name: "Generative Engine Optimization",
+            path: "/services/ai-solutions/generative-engine-optimization",
+          },
         ],
       },
       {

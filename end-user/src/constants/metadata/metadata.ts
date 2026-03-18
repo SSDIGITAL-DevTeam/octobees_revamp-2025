@@ -545,6 +545,38 @@ export const seoMetadata = {
         },
     },
 
+    geo: {
+        metadataBase,
+        title: 'Generative Engine Optimization (GEO) Services | Octobees',
+        description:
+            'Get your brand cited and recommended by AI search engines like ChatGPT, Gemini, and Google AI Overviews. Our GEO services optimize your content for AI-powered visibility.',
+        keywords: [
+            'Generative Engine Optimization',
+            'GEO Services',
+            'AI Search Optimization',
+            'AI Visibility',
+            'LLM Content Optimization',
+            'AI Citation',
+        ],
+        openGraph: {
+            title: 'Generative Engine Optimization (GEO) Services | Octobees',
+            description:
+                'Get your brand cited and recommended by AI search engines like ChatGPT, Gemini, and Google AI Overviews. Our GEO services optimize your content for AI-powered visibility.',
+            url: `${metadataBase}/services/ai-solutions/generative-engine-optimization`,
+            images: [
+                {
+                    url: defaultImage,
+                    alt: 'Octobees Logo',
+                    width: 1200,
+                    height: 630,
+                },
+            ],
+        },
+        alternates: {
+            canonical: `${metadataBase}/services/ai-solutions/generative-engine-optimization`,
+        },
+    },
+
     success: {
         metadataBase,
         title: 'Thank You for Reaching Out | Octobees',

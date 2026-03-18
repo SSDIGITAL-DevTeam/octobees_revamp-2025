@@ -22,6 +22,7 @@ import affiliate from "./affiliate/_affiliate.route.js";
 import partner from "./partner/_partner.route.js";
 import lead from "./lead/_lead.route.js";
 import clientOnboarding from "./client-onboarding/_client-onboarding.route.js";
+import videosOnboarding from "./videos-onboarding/_videos-onboarding.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -63,6 +64,7 @@ router.use("/v1/affiliate", affiliate.endUser);
 router.use("/v1/partner", partner.endUser);
 router.use("/v1/lead", lead.endUser);
 router.use("/v1/client-onboarding", clientOnboarding.endUser);
+router.use("/v1/videos-onboarding", videosOnboarding);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {
@@ -82,6 +84,7 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/partner", partner.backOffice);
   backOfficeRouter.use("/lead", lead.backOffice);
   backOfficeRouter.use("/client-onboarding", clientOnboarding.backOffice);
+  backOfficeRouter.use("/videos-onboarding", videosOnboarding);
   backOfficeRouter(req, res, next);
 });
 
