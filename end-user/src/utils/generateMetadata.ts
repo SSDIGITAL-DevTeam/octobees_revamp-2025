@@ -3,7 +3,6 @@ import { axiosInstance } from "@/lib/axios";
 import type { Metadata } from "next";
 
 const DEFAULT_BASE_URL = "https://www.octobees.com";
-const DEFAULT_ICON = "/assets/png/asset-logo-octobees.png";
 const DEFAULT_IMAGE = `${DEFAULT_BASE_URL}/assets/png/asset-logo-opengraph-octobees.png`;
 
 type GenerateMetadataArgs = {
@@ -242,11 +241,6 @@ export async function generateMetadata({
     title: resolvedTitle,
     description: resolvedDescription,
     keywords: resolvedKeywords,
-    icons: {
-      icon: DEFAULT_ICON,
-      shortcut: DEFAULT_ICON,
-      apple: DEFAULT_ICON,
-    },
     robots,
     alternates: {
       canonical,
