@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
 import ShareSocmedButton from "@/components/partials/Button/ButtonShareSocmed";
-import AdsCarousel from "@/app/insights/[slug]/_components/AdsCarousel";
 import { InsightContent } from "@/app/insights/_components";
 import dayjs from "dayjs";
 import { Blog } from "@/constants/payload";
@@ -234,7 +233,6 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
           </div>
         )
       }
-      <AdsCarousel />
     </main>
   );
 }
