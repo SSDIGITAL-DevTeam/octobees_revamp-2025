@@ -1,4 +1,4 @@
-﻿import {
+import {
   Users,
   ChartPie,
   NotebookPen,
@@ -13,6 +13,8 @@
   UserCheck,
   Ticket,
   UserRoundCog,
+  PlaySquare,
+  BadgeDollarSign
 } from "lucide-react";
 
 const sidebarItems = [
@@ -130,6 +132,22 @@ const sidebarItems = [
         title: "Onboarding Videos",
         url: "/lead/onboarding-videos",
         icon: UserRoundCog,
+      },
+    ],
+  },
+  {
+    group: "Course Management",
+    name: "dashboard",
+    data: [
+      {
+        title: "Courses",
+        url: "/course/courses",
+        icon: PlaySquare,
+      },
+      {
+        title: "Pembayaran Course",
+        url: "/course/purchases",
+        icon: BadgeDollarSign,
       },
     ],
   },
