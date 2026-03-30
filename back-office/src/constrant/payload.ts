@@ -193,3 +193,30 @@ export type ClientOnboarding = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type Course = {
+  id: string;
+  title: string;
+  bannerUrl: string;
+  price: number;
+  videoUrl: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CoursePurchase = {
+  id: string;
+  courseId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  paymentProofUrl: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+  course: {
+    title: string;
+    price: number;
+  };
+};
