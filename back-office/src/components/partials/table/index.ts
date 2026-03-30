@@ -1,4 +1,4 @@
-import TablePackage from "./TablePackage";
+﻿import TablePackage from "./TablePackage";
 import TableCareer from "./TableCareer";
 import TableBlog from "./TableBlog";
 import TableBlogCategory from "./TableBlogCategory";
@@ -11,8 +11,6 @@ import TablePosition from "./TablePosition";
 import AffiliateTable from "./affiliate-table";
 import TableLead from "./TableLead";
 import TableClientOnboarding from "./TableClientOnboarding";
-import TableCourse from "./TableCourse";
-import TableCoursePurchase from "./TableCoursePurchase";
 
 export {
   TablePackage,
@@ -28,6 +26,4 @@ export {
   AffiliateTable,
   TableLead,
   TableClientOnboarding,
-  TableCourse,
-  TableCoursePurchase,
 };

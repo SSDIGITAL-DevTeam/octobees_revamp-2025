@@ -7,7 +7,6 @@ import routes from "./routes.js";
 import logger from "../utils/logger.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { initializeOnboardingVideos } from "./videos-onboarding/videos-onboarding.repository.js";
 
 dotenv.config();
 
@@ -108,8 +107,5 @@ app.use((err, req, res, next) => {
 });
 
 /** ===================== Start ====================== */
-const server = app.listen(PORT, async () => {
-  logger.info(`Server Running On Port ${PORT}`);
-  await initializeOnboardingVideos();
-});
+const server = app.listen(PORT, () => logger.info(`Server Running On Port ${PORT}`));
 export default server;

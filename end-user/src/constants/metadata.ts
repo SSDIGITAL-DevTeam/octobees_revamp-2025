@@ -1,10 +1,6 @@
 const metadataBase = new URL("https://www.octobees.com");
-const defaultIconPath = "/assets/png/asset-logo-octobees.png";
-const defaultImage = new URL(defaultIconPath, metadataBase).toString();
-const defaultOgImage = new URL(
-  "/assets/png/asset-logo-opengraph-octobees.png",
-  metadataBase,
-).toString();
+const defaultImage = `${metadataBase}assets/png/asset-logo-octobees.png`;
+const defaultOgImage = `${metadataBase}assets/png/asset-logo-opengraph-octobees.png`;
 const defaultAuthor = "Octobees";
 
 export type MetadataType = keyof typeof pageMetadata;
@@ -24,9 +20,16 @@ export const defaultMetadata = {
   publisher: defaultAuthor,
 
   icons: {
-    icon: defaultIconPath,
-    shortcut: defaultIconPath,
-    apple: defaultIconPath,
+    icon: defaultImage,
+    shortcut: defaultImage,
+    apple: defaultImage,
+    other: [
+      {
+        rel: defaultImage,
+        url: defaultImage,
+        color: "#5bbad5",
+      },
+    ],
   },
 
   applicationName: defaultAuthor,

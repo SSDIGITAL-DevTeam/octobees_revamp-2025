@@ -23,8 +23,6 @@ import partner from "./partner/_partner.route.js";
 import lead from "./lead/_lead.route.js";
 import clientOnboarding from "./client-onboarding/_client-onboarding.route.js";
 import videosOnboarding from "./videos-onboarding/_videos-onboarding.route.js";
-import course from "./course/_course.route.js";
-import coursePurchase from "./course-purchase/_course-purchase.route.js";
 
 // Middleware
 // import verifyToken from "../middleware/verify.token.js";
@@ -67,8 +65,6 @@ router.use("/v1/partner", partner.endUser);
 router.use("/v1/lead", lead.endUser);
 router.use("/v1/client-onboarding", clientOnboarding.endUser);
 router.use("/v1/videos-onboarding", videosOnboarding);
-router.use("/v1/course", course.endUser);
-router.use("/v1/course-purchase", coursePurchase.endUser);
 
 // Back Office
 router.use("/v1/back-office", (req, res, next) => {
@@ -89,8 +85,6 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/lead", lead.backOffice);
   backOfficeRouter.use("/client-onboarding", clientOnboarding.backOffice);
   backOfficeRouter.use("/videos-onboarding", videosOnboarding);
-  backOfficeRouter.use("/course", course.backOffice);
-  backOfficeRouter.use("/course-purchase", coursePurchase.backOffice);
   backOfficeRouter(req, res, next);
 });
 

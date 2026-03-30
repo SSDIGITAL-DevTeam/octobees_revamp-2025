@@ -43,13 +43,6 @@
       "when": 1773456300493,
       "tag": "0005_opposite_ultimatum",
       "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1774492227021,
-      "tag": "0006_last_storm",
-      "breakpoints": true
     }
   ]
 }

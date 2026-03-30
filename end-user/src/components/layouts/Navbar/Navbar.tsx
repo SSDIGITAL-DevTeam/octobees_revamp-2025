@@ -132,12 +132,7 @@ export default function Navbar() {
             />
             <div ref={dropdownRef} className="relative">
               <ul className="flex gap-x-3 justify-center py-2 px-4 rounded-full shadow-sm border-gray-400/60 border-[1px]">
-                {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => {
-                  const isActive = navlink.path 
-                    ? (pathname === navlink.path || pathname.startsWith(`${navlink.path}/`)) 
-                    : navlink.menus?.some(m => m.submenu.some(s => pathname === s.path || pathname.startsWith(`${s.path}/`)));
-
-                  return (
+                {navLinks.slice(0, 5).map((navlink: NavLink, index: number) => (
                   <li key={index} className="relative group rounded-full">
                     <Link
                       href={navlink.path || "#"}
@@ -147,7 +142,7 @@ export default function Navbar() {
                           handleDropdownToggle(navlink.name);
                         }
                       }}
-                      className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${isActive ? "text-primary/80 font-semibold" : "text-dark"} hover:bg-gray-500/5 hover:text-primary `}
+                      className={`flex items-center gap-1 text-lg px-4 py-1 rounded-lg transition-colors duration-300 ${pathname === navlink.path || pathname.startsWith(`${navlink.path}/`) ? "text-primary/80 font-semibold" : "text-dark"} hover:bg-gray-500/5 hover:text-primary `}
                     >
                       {navlink.name}
                       {navlink.menus && (
@@ -156,46 +151,8 @@ export default function Navbar() {
                         />
                       )}
                     </Link>
-
-                    <AnimatePresence>
-                      {navlink.menus &&
-                        navlink.name !== "Services" &&
-                        openDropdown === navlink.name && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute left-0 top-full mt-4 rounded-lg border-b-4 border-primary bg-white shadow-xl overflow-hidden z-50"
-                            style={{
-                              minWidth: navlink.name === "Solutions" ? "240px" : "220px",
-                            }}
-                          >
-                            <div className="flex flex-col p-5 gap-3">
-                              {navlink.menus.map((menu, idx) => (
-                                <div key={idx} className="flex flex-col gap-1">
-                                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary/70">
-                                    {menu.name}
-                                  </span>
-                                  {menu.submenu.map((submenu, subIdx) => (
-                                    <Link
-                                      key={subIdx}
-                                      href={submenu.path}
-                                      className={`text-[15px] py-1.5 hover:text-primary transition-colors ${pathname === submenu.path || pathname.startsWith(`${submenu.path}/`) ? "text-primary font-medium" : "text-gray-700"}`}
-                                      onClick={handleMenuItemClick}
-                                    >
-                                      {submenu.name}
-                                    </Link>
-                                  ))}
-                                </div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                    </AnimatePresence>
                   </li>
-                  );
-                })}
+                ))}
               </ul>
 
               {/* Services mega-dropdown - positioned relative to the ul wrapper to align with Home */}
@@ -238,7 +195,6 @@ export default function Navbar() {
                   </motion.div>
                 )}
               </AnimatePresence>
-
             </div>
 
             <div className="flex-grow" />

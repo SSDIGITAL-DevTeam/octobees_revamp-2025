@@ -47,12 +47,6 @@ export const affiliateTransactionStatusEnum = mysqlEnum("transaction_status", [
   "failed",
 ]);
 
-export const coursePurchaseStatusEnum = mysqlEnum("status", [
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-]);
-
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 })
     .primaryKey()
@@ -554,44 +548,3 @@ export const partnerCommission = mysqlTable("partner_commission", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
-
-// Course Tables
-export const course = mysqlTable("course", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  title: varchar("title", { length: 255 }).notNull(),
-  bannerUrl: text("banner_url").notNull(),
-  price: double("price").notNull(),
-  videoUrl: text("video_url").notNull(),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const coursePurchase = mysqlTable("course_purchase", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  courseId: varchar("course_id", { length: 36 })
-    .notNull()
-    .references(() => course.id, { onDelete: "cascade" }),
-  customerName: varchar("customer_name", { length: 255 }).notNull(),
-  customerEmail: varchar("customer_email", { length: 255 }).notNull(),
-  customerPhone: varchar("customer_phone", { length: 32 }).notNull(),
-  paymentProofUrl: text("payment_proof_url").notNull(),
-  status: coursePurchaseStatusEnum.notNull().default("PENDING"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const courseRelations = relations(course, ({ many }) => ({
-  purchases: many(coursePurchase),
-}));
-
-export const coursePurchaseRelations = relations(coursePurchase, ({ one }) => ({
-  course: one(course, {
-    fields: [coursePurchase.courseId],
-    references: [course.id],
-  }),
-}));

@@ -9,14 +9,12 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
     career: ["/career"],
     subscription: ["/subscription", "/affiliate-program"],
     partnership: ["/partnership"],
-    course: ["/course"],
   };
   if (
     pathname === "/dashboard" ||
     pathname.startsWith("/dashboard/") ||
     pathname === "/lead" ||
-    pathname.startsWith("/lead/") ||
-    pathname.startsWith("/course")
+    pathname.startsWith("/lead/")
   )
     return true;
 

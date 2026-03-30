@@ -129,48 +129,18 @@ export const navLinks: NavLink[] = [
     ],
   },
   {
-    name: "Solutions",
-    menus: [
-      {
-        name: "Featured Solutions",
-        submenu: [
-          {
-            name: "VMS Solution",
-            path: "/solutions/vms-solution",
-          },
-          {
-            name: "LMS Solution",
-            path: "/solutions/lms-solution",
-          },
-        ],
-      },
-    ],
+    name: "Insights",
+    path: "/insights",
   },
   {
-    name: "Others",
-    menus: [
-      {
-        name: "Resources & Company",
-        submenu: [
-          {
-            name: "Course",
-            path: "/course",
-          },
-          {
-            name: "Insights",
-            path: "/insights",
-          },
-          {
-            name: "Career",
-            path: "/career",
-          },
-          {
-            name: "Plans",
-            path: "/plans",
-          },
-        ]
-      }
-    ]
+    name: "Career",
+    path: "/career",
+  },
+  {
+    // Plans is hidden - replaced by Services dropdown
+    name: "Plans",
+    path: "/plans",
+    hidden: true,
   },
   {
     name: "Contact Us",
