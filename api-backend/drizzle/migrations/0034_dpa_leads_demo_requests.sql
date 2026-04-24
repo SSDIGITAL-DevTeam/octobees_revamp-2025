@@ -12,27 +12,3 @@ CREATE TABLE IF NOT EXISTS `dpa_lead_demo_request` (
   `updated_at` timestamp NOT NULL DEFAULT (now()),
   CONSTRAINT `dpa_lead_demo_request_id` PRIMARY KEY(`id`)
 );
---> statement-breakpoint
-SET @sql = (SELECT IF(
-  (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS
-   WHERE TABLE_SCHEMA = DATABASE()
-   AND TABLE_NAME = 'dpa_lead_demo_request'
-   AND INDEX_NAME = 'idx_dpa_lead_demo_request_created_at') > 0,
-  'SELECT "Index idx_dpa_lead_demo_request_created_at exists"',
-  'CREATE INDEX idx_dpa_lead_demo_request_created_at ON dpa_lead_demo_request (created_at)'
-));
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
---> statement-breakpoint
-SET @sql = (SELECT IF(
-  (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS
-   WHERE TABLE_SCHEMA = DATABASE()
-   AND TABLE_NAME = 'dpa_lead_demo_request'
-   AND INDEX_NAME = 'idx_dpa_lead_demo_request_status') > 0,
-  'SELECT "Index idx_dpa_lead_demo_request_status exists"',
-  'CREATE INDEX idx_dpa_lead_demo_request_status ON dpa_lead_demo_request (status)'
-));
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
