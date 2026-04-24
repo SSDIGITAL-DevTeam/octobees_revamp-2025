@@ -1,4 +1,4 @@
-CREATE TABLE `blog` (
+CREATE TABLE IF NOT EXISTS `blog` (
 	`id` varchar(36) NOT NULL,
 	`title` varchar(255) NOT NULL,
 	`image` text NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `blog` (
 	CONSTRAINT `blog_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `blog_category` (
+CREATE TABLE IF NOT EXISTS `blog_category` (
 	`id` varchar(36) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`slug` varchar(255) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `blog_category` (
 	CONSTRAINT `blog_category_slug_unique` UNIQUE(`slug`)
 );
 --> statement-breakpoint
-CREATE TABLE `order` (
+CREATE TABLE IF NOT EXISTS `order` (
 	`id` varchar(36) NOT NULL,
 	`amount` text NOT NULL,
 	`bussiness` varchar(255) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `order` (
 	CONSTRAINT `order_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
 	`id` varchar(36) NOT NULL,
 	`name` varchar(255) NOT NULL,
 	`email` varchar(255) NOT NULL,

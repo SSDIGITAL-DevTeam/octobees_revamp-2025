@@ -8,13 +8,13 @@ ALTER TABLE `partner_commission`
   MODIFY COLUMN `commission_type` varchar(80) NOT NULL DEFAULT 'sales';
 --> statement-breakpoint
 
--- 2. Add rule_id to commission records so we can trace which rule created each one.
-ALTER TABLE `partner_commission`
-  ADD COLUMN `rule_id` varchar(36) NULL;
+-- 2. Add rule_id to commission records (guarded)
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `partner_commission` ADD COLUMN `rule_id` varchar(36) NULL', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_commission' AND COLUMN_NAME = 'rule_id');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 --> statement-breakpoint
 
 -- 3. commission_rule — stores each configurable commission rule.
-CREATE TABLE `commission_rule` (
+CREATE TABLE IF NOT EXISTS `commission_rule` (
   `id`              varchar(36)   NOT NULL,
   `name`            varchar(191)  NOT NULL,
   `description`     text          NULL,
@@ -32,11 +32,13 @@ CREATE TABLE `commission_rule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --> statement-breakpoint
 
-CREATE INDEX `idx_cr_trigger_active` ON `commission_rule` (`trigger_type`, `is_active`);
+-- Guarded index: idx_cr_trigger_active
+SET @sql := (SELECT IF(COUNT(*) = 0, 'CREATE INDEX `idx_cr_trigger_active` ON `commission_rule` (`trigger_type`, `is_active`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'commission_rule' AND INDEX_NAME = 'idx_cr_trigger_active');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 --> statement-breakpoint
 
 -- 4. commission_rule_log — audit trail of every evaluation run.
-CREATE TABLE `commission_rule_log` (
+CREATE TABLE IF NOT EXISTS `commission_rule_log` (
   `id`            varchar(36)  NOT NULL,
   `rule_id`       varchar(36)  NOT NULL,
   `affiliate_id`  varchar(36)  NOT NULL,
@@ -52,6 +54,11 @@ CREATE TABLE `commission_rule_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 --> statement-breakpoint
 
-CREATE INDEX `idx_crl_rule_affiliate` ON `commission_rule_log` (`rule_id`, `affiliate_id`);
+-- Guarded index: idx_crl_rule_affiliate
+SET @sql := (SELECT IF(COUNT(*) = 0, 'CREATE INDEX `idx_crl_rule_affiliate` ON `commission_rule_log` (`rule_id`, `affiliate_id`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'commission_rule_log' AND INDEX_NAME = 'idx_crl_rule_affiliate');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 --> statement-breakpoint
-CREATE INDEX `idx_crl_evaluated_at`   ON `commission_rule_log` (`evaluated_at`);
+
+-- Guarded index: idx_crl_evaluated_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'CREATE INDEX `idx_crl_evaluated_at` ON `commission_rule_log` (`evaluated_at`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'commission_rule_log' AND INDEX_NAME = 'idx_crl_evaluated_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

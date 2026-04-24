@@ -1,4 +1,4 @@
-CREATE TABLE `partner_lead_pipeline_status` (
+CREATE TABLE IF NOT EXISTS `partner_lead_pipeline_status` (
   `id` varchar(36) NOT NULL,
   `value` varchar(80) NOT NULL,
   `label` varchar(120) NOT NULL,
