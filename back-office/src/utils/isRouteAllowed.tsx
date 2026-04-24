@@ -1,5 +1,4 @@
 export default function isRouteAllowed(pathname: string, features: string[]) {
-  // Mapping route ke fitur
   const routeFeatureMap: Record<string, string[]> = {
     user: ["/user"],
     blog: ["/blog"],
@@ -10,17 +9,16 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
     subscription: ["/subscription", "/affiliate-program"],
     partnership: ["/partnership", "/partner-recruitment-system"],
   };
-  if (
-    pathname === "/dashboard" ||
-    pathname.startsWith("/dashboard/") ||
-    pathname === "/lead" ||
-    pathname.startsWith("/lead/")
-  )
+
+  const exactRoutes = ["/dashboard", "/lead", "/lead/client-onboarding", "/lead/onboarding-videos"];
+
+  if (exactRoutes.includes(pathname) || pathname.startsWith("/dashboard/") || pathname.startsWith("/lead/")) {
     return true;
+  }
 
   for (const feature of features) {
     const prefixes = routeFeatureMap[feature];
-    if (prefixes?.some((prefix) => pathname.startsWith(prefix))) {
+    if (prefixes?.some((prefix) => pathname.startsWith(prefix) || pathname === prefix)) {
       return true;
     }
   }

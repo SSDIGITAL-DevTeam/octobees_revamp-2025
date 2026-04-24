@@ -26,7 +26,7 @@ export function Sidebarcomponents({ features }: SidebarComponentsProps) {
   const pathname = usePathname()
   const featureList = Array.isArray(features) ? features : []
   const allowedSidebarItems = sidebarItems.filter((item) =>
-    item.name === "dashboard" || featureList.includes(item.name)
+    item.name === "dashboard" || featureList.includes(item.name) || item.name === "partnership"
   );
 
   const isMenuActive = (url: string) => {
