@@ -36,10 +36,14 @@ export const useLeadsManagement = () => {
   // opsi status untuk filter bar
   const statusOptions: LeadsStatusFilter[] = [
     "all",
-    "Proposal Sent",
-    "Follow-up",
-    "Lead Created",
-    "Closed",
+    "New Leads",
+    "Contacted",
+    "Follow-up Day-1",
+    "Follow-up Day-3",
+    "Follow-up Day-7",
+    "Follow-up Day-14",
+    "Closed Won",
+    "Closed Lost",
   ]
 
   const fetchLeads = async () => {
@@ -60,9 +64,9 @@ export const useLeadsManagement = () => {
 
       const mapped: LeadRow[] = data.map((item: PartnerLeadApiItem) => ({
         id: item.id,
-        leadName: item.leadName,
+        leadName: item.name,
         partnerName: item.partnerName,
-        serviceType: item.serviceType,
+        serviceType: item.serviceName,
         status: item.status as LeadStatus,
         remark: item.remark,
         actionLabel: item.status as LeadStatus, // dipakai di dropdown & badge

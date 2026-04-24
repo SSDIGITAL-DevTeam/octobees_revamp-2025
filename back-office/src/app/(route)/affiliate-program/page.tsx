@@ -35,7 +35,13 @@ const parseFilters = (params: URLSearchParams): FilterValue => {
 
   return {
     search: params.get("search") ?? "",
-    status: status === "pending" || status === "approved" || status === "rejected" ? status : "",
+    status:
+      status === "pending" ||
+      status === "qualified" ||
+      status === "approved" ||
+      status === "rejected"
+        ? status
+        : "",
     country: params.get("country") ?? "",
     from: params.get("from") ?? "",
     to: params.get("to") ?? "",

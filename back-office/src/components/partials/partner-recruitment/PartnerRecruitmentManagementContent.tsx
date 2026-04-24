@@ -661,10 +661,12 @@ export const PartnerRecruitmentManagementContent = () => {
         setTrainingItems((current) => [...current, createdTrainingItem])
         await updateBatch(currentBatch.id, {
           trainingMaterialIds: [
-            ...new Set([
-              ...(currentBatch.trainingMaterialIds || []),
-              createdTrainingItem.id,
-            ]),
+            ...Array.from(
+              new Set([
+                ...(currentBatch.trainingMaterialIds || []),
+                createdTrainingItem.id,
+              ]),
+            ),
           ],
         })
         await refresh()
@@ -772,7 +774,9 @@ export const PartnerRecruitmentManagementContent = () => {
         const createdResponse = await createQuestion(payload)
         const createdQuestion = createdResponse.data
         setQuestions((current) => [...current, createdQuestion])
-        setSelectedExamQuestionIds((current) => [...new Set([...current, createdQuestion.id])])
+        setSelectedExamQuestionIds((current) =>
+          Array.from(new Set([...current, createdQuestion.id])),
+        )
         toast.success("Exam question added")
       }
 
@@ -819,7 +823,9 @@ export const PartnerRecruitmentManagementContent = () => {
         const createdResponse = await createQuestion(payload)
         const createdQuestion = createdResponse.data
         setQuestions((current) => [...current, createdQuestion])
-        setSelectedInterviewQuestionIds((current) => [...new Set([...current, createdQuestion.id])])
+        setSelectedInterviewQuestionIds((current) =>
+          Array.from(new Set([...current, createdQuestion.id])),
+        )
         toast.success("Interview guideline added")
       }
 
@@ -914,7 +920,7 @@ export const PartnerRecruitmentManagementContent = () => {
       <Header
         title="Recruitment Management"
         label="Partner Recruitment System"
-        breadcrumbItems={[
+        breadcrumbs={[
           { label: "Partner Recruitment System", href: "/partner-recruitment-system" },
           { label: "Recruitment Management" },
         ]}
@@ -1187,7 +1193,7 @@ export const PartnerRecruitmentManagementContent = () => {
                               checked={checked}
                               onCheckedChange={(value) => {
                                 setSelectedInterviewQuestionIds((current) => {
-                                  if (value === true) return [...new Set([...current, question.id])]
+                                  if (value === true) return Array.from(new Set([...current, question.id]))
                                   return current.filter((id) => id !== question.id)
                                 })
                               }}
@@ -1437,7 +1443,7 @@ export const PartnerRecruitmentManagementContent = () => {
                               checked={checked}
                               onCheckedChange={(value) => {
                                 setSelectedExamQuestionIds((current) => {
-                                  if (value === true) return [...new Set([...current, question.id])]
+                                  if (value === true) return Array.from(new Set([...current, question.id]))
                                   return current.filter((id) => id !== question.id)
                                 })
                               }}

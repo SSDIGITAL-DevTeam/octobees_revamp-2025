@@ -37,7 +37,7 @@ export const getStats = () =>
 
 export const reviewApplication = (
   id: string,
-  data: { status: string; notes?: string }
+  data: { status: string; notes?: string; reviewerId?: string }
 ) =>
   axiosInstance.patch(`/back-office/affiliate/applications/${id}/review`, data)
 

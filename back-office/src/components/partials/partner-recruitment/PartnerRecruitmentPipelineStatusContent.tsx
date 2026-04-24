@@ -286,7 +286,7 @@ export const PartnerRecruitmentPipelineStatusContent = () => {
       <Header
         title="Pipeline Status"
         label="Partner Recruitment System / Master Data"
-        breadcrumbItems={[
+        breadcrumbs={[
           {
             label: "Partner Recruitment System",
             href: "/partner-recruitment-system",

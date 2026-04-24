@@ -15,7 +15,7 @@ import {
 
 type FilterValue = {
   search: string
-  status: "" | "pending" | "approved" | "rejected"
+  status: "" | "pending" | "qualified" | "approved" | "rejected"
   country: string
   from: string
   to: string
@@ -74,6 +74,7 @@ const AffiliateFilters = ({ values, countries, onChange, onExport, onReset }: Af
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="qualified">Qualified</SelectItem>
               <SelectItem value="approved">Approved</SelectItem>
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>

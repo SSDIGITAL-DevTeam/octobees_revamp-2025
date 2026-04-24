@@ -916,10 +916,12 @@ export const PartnerRecruitmentBatchDetailContent = ({
         const createdTrainingItem = createdResponse.data;
         await axiosInstance.put(`/back-office/batch/${batch.id}`, {
           trainingMaterialIds: [
-            ...new Set([
+            ...Array.from(
+              new Set([
               ...(batch.trainingMaterialIds || []),
               createdTrainingItem.id,
-            ]),
+              ]),
+            ),
           ],
         });
         toast.success("Training material added");
@@ -983,10 +985,12 @@ export const PartnerRecruitmentBatchDetailContent = ({
         const createdQuestion = createdResponse.data;
         await axiosInstance.put(`/back-office/batch/${batch.id}`, {
           interviewQuestionIds: [
-            ...new Set([
+            ...Array.from(
+              new Set([
               ...(batch.interviewQuestionIds || []),
               createdQuestion.id,
-            ]),
+              ]),
+            ),
           ],
         });
         toast.success("Interview guideline added");
@@ -1096,7 +1100,9 @@ export const PartnerRecruitmentBatchDetailContent = ({
         const createdQuestion = createdResponse.data;
         await axiosInstance.put(`/back-office/batch/${batch.id}`, {
           examQuestionIds: [
-            ...new Set([...(batch.examQuestionIds || []), createdQuestion.id]),
+            ...Array.from(
+              new Set([...(batch.examQuestionIds || []), createdQuestion.id]),
+            ),
           ],
         });
         toast.success("Exam question added");
@@ -1582,7 +1588,7 @@ export const PartnerRecruitmentBatchDetailContent = ({
       <Header
         title="Batch Details"
         label="Partner Recruitment System"
-        breadcrumbItems={[
+        breadcrumbs={[
           {
             label: "Partner Recruitment System",
             href: "/partner-recruitment-system",

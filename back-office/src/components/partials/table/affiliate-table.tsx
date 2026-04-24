@@ -22,12 +22,14 @@ type AffiliateTableProps = {
 
 const statusStyles: Record<AffiliateRow["status"], string> = {
   pending: "bg-amber-100 text-amber-700 border-amber-200",
+  qualified: "bg-sky-100 text-sky-700 border-sky-200",
   approved: "bg-emerald-100 text-emerald-700 border-emerald-200",
   rejected: "bg-rose-100 text-rose-700 border-rose-200",
 }
 
 const statusDotStyles: Record<AffiliateRow["status"], string> = {
   pending: "bg-amber-500",
+  qualified: "bg-sky-500",
   approved: "bg-emerald-500",
   rejected: "bg-rose-500",
 }

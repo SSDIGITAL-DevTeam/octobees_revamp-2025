@@ -832,7 +832,7 @@ export const CommissionRulesContent = ({
             ? "Partner Recruitment System / Sales Portal Management"
             : "Partner Recruitment System / Master Data"
         }
-        breadcrumbItems={
+        breadcrumbs={
           context === "sales-portal"
             ? [
                 { label: "Partner Recruitment System", href: "/partner-recruitment-system" },

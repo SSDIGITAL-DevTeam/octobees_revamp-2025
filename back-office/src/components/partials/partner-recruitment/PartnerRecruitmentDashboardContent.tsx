@@ -142,7 +142,7 @@ export const PartnerRecruitmentDashboardContent = () => {
       <Header
         title="Partner Recruitment System"
         label="Partner Recruitment System"
-        breadcrumbItems={[{ label: "Partner Recruitment System" }]}
+        breadcrumbs={[{ label: "Partner Recruitment System" }]}
       />
 
       <section className="rounded-3xl border border-border bg-white p-6 shadow-sm">

@@ -1615,7 +1615,7 @@ export const PartnerRecruitmentSalesPortalContent = ({
       <Header
         title={activeSectionMeta.title}
         label="Partner Recruitment System"
-        breadcrumbItems={[
+        breadcrumbs={[
           {
             label: "Partner Recruitment System",
             href: "/partner-recruitment-system",

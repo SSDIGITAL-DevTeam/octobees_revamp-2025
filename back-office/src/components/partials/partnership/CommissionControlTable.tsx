@@ -114,7 +114,7 @@ export const CommissionControlTable = ({
                   <td className="py-4">
                     <StatusBadge
                       label={service.isActive ? "Active" : "Inactive"}
-                      tone={service.isActive ? "success" : "neutral"}
+                      tone={service.isActive ? "success" : "default"}
                     />
                   </td>
                   <td className="py-4 text-slate-500 max-w-[200px] truncate">{service.description || "-"}</td>

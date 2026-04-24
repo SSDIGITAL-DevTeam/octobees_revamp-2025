@@ -337,7 +337,7 @@ export const PartnerListDetailContent = ({ partnerId }: { partnerId: string }) =
       <Header
         title="Partner Details"
         label="Partnership Program"
-        breadcrumbItems={[
+        breadcrumbs={[
           { label: "Partnership Program" },
           { label: "Partner List", href: "/partnership/partner-list" },
           { label: partner?.fullName || "Partner Details" },

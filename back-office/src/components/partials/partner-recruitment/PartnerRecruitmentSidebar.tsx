@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import Logo from "@/asset/logo/webp/asset-logo-with-text.webp";
+import Logo from "@/asset/sidebar/webp/logo-lengkap.webp";
 import { LogoutDialog } from "@/components/partials/dialog/LogoutDialog";
 import {
   Sidebar,
