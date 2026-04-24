@@ -21,7 +21,7 @@ type ReviewStatus = "approved" | "rejected"
 
 type AffiliateReviewDialogProps = {
   applicationId: string
-  currentStatus: "pending" | "approved" | "rejected"
+  currentStatus: "pending" | "qualified" | "approved" | "rejected"
   children: React.ReactNode
   reviewerId?: string | null
   onReviewed?: (nextStatus: ReviewStatus, notes?: string) => Promise<void> | void

@@ -25,36 +25,10 @@ type Props = {
 };
 
 type Data = {
-    value: string;
-    title: string;
+  value: string;
+  title: string;
 };
 
-// const SelectField = ({ control, name, label, data }: Props) => {
-//   return (
-//     <FormField
-//       control={control}
-//       name={name}
-//       render={({ field }) => (
-//         <FormItem>
-//           <FormLabel className="capitalize font-semibold mb-2 text-base">{name}</FormLabel>
-//           <Select onValueChange={field.onChange} defaultValue={field.value}>
-//             <FormControl>
-//               <SelectTrigger>
-//                 <SelectValue placeholder={label} />
-//               </SelectTrigger>
-//             </FormControl>
-//             <SelectContent>
-//               {data.map((item, index) => (
-//                 <SelectItem key={index} value={item.value}>{item.title}</SelectItem>
-//               ))}
-//             </SelectContent>
-//           </Select>
-//           <FormMessage />
-//         </FormItem>
-//       )}
-//     />
-//   );
-// };
 const SelectField = ({ control, name, label, data }: Props) => {
   return (
     <FormField
@@ -62,7 +36,7 @@ const SelectField = ({ control, name, label, data }: Props) => {
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="capitalize font-semibold mb-2 text-base">{name}</FormLabel>
+          <FormLabel className="capitalize font-semibold mb-2 text-base">{label}</FormLabel>
           <Select value={field.value} onValueChange={field.onChange}>
             <FormControl>
               <SelectTrigger>
@@ -71,10 +45,8 @@ const SelectField = ({ control, name, label, data }: Props) => {
             </FormControl>
             <SelectContent>
               {data.map((item, index) => (
-                <SelectItem key={index} value={item?.value}>
-               
-                  {item?.title}
-              
+                <SelectItem key={index} value={item.value}>
+                  {item.title}
                 </SelectItem>
               ))}
             </SelectContent>

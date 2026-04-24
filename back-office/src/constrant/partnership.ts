@@ -10,7 +10,15 @@ export type StatHighlight = {
   image: StaticImageData
 }
 
-export type LeadStatus = "Proposal Sent" | "Follow-up" | "Lead Created" | "Closed"
+export type LeadStatus =
+  | "New Leads"
+  | "Contacted"
+  | "Follow-up Day-1"
+  | "Follow-up Day-3"
+  | "Follow-up Day-7"
+  | "Follow-up Day-14"
+  | "Closed Won"
+  | "Closed Lost"
 
 export type LeadEntry = {
   leadName: string
@@ -75,10 +83,14 @@ export type PartnerDetail = PartnerEntry & {
 }
 
 export const leadStatusTone: Record<LeadStatus, StatusTone> = {
-  "Proposal Sent": "warning",
-  "Follow-up": "danger",
-  "Lead Created": "info",
-  "Closed": "success",
+  "New Leads": "info",
+  "Contacted": "warning",
+  "Follow-up Day-1": "danger",
+  "Follow-up Day-3": "danger",
+  "Follow-up Day-7": "danger",
+  "Follow-up Day-14": "danger",
+  "Closed Won": "success",
+  "Closed Lost": "danger",
 }
 
 export const paymentStatusTone: Record<PaymentStatus, StatusTone> = {
@@ -86,10 +98,14 @@ export const paymentStatusTone: Record<PaymentStatus, StatusTone> = {
 }
 
 export const leadStatusStyles: Record<LeadStatus, string> = {
-  "Proposal Sent": "border-transparent bg-[#D4AF37]/10 text-[#D4AF37]",
-  "Follow-up": "border-transparent bg-[#8026EF]/10 text-[#8026EF]",
-  "Lead Created": "border-transparent bg-[#2A399D]/10 text-[#2A399D]",
-  "Closed": "border-transparent bg-[#004F33]/10 text-[#004F33]",
+  "New Leads": "border-transparent bg-[#2A399D]/10 text-[#2A399D]",
+  "Contacted": "border-transparent bg-[#D4AF37]/10 text-[#D4AF37]",
+  "Follow-up Day-1": "border-transparent bg-[#8026EF]/10 text-[#8026EF]",
+  "Follow-up Day-3": "border-transparent bg-[#7C3AED]/10 text-[#7C3AED]",
+  "Follow-up Day-7": "border-transparent bg-[#6D28D9]/10 text-[#6D28D9]",
+  "Follow-up Day-14": "border-transparent bg-[#5B21B6]/10 text-[#5B21B6]",
+  "Closed Won": "border-transparent bg-[#004F33]/10 text-[#004F33]",
+  "Closed Lost": "border-transparent bg-[#DC2626]/10 text-[#DC2626]",
 }
 
 export type CommissionItem = {

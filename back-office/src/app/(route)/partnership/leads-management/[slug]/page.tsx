@@ -30,7 +30,7 @@ type LeadDetailPageProps = {
 export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const slug = decodeURIComponent(params.slug)
   const lead = useLeadDetail(slug)
-  const [status, setStatus] = useState<LeadStatus>(lead?.status ?? "Follow-up")
+  const [status, setStatus] = useState<LeadStatus>(lead?.status ?? "Follow-up Day-1")
   const [projectValue, setProjectValue] = useState(lead?.projectValue ?? "")
   const [remark, setRemark] = useState(lead?.remark ?? "")
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)

@@ -26,10 +26,11 @@ import { recentLeads as recentLeadsMock } from "@/data/partnership/dashboard"
 type RecentLeadRow = (typeof recentLeadsMock)[number]
 
 const LEAD_ACTION_OPTIONS: LeadStatus[] = [
-  "Proposal Sent",
-  "Follow-up",
-  "Lead Created",
-  "Closed",
+  "New Leads",
+  "Contacted",
+  "Follow-up Day-1",
+  "Closed Won",
+  "Closed Lost",
 ]
 
 export function RecentLeadsPanel() {  

@@ -1,0 +1,1 @@
+ALTER TABLE `blog` ADD `pdf` text NOT NULL;

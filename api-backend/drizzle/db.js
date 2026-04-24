@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import * as schema from './schema.js';
+import * as relations from './relations.js';
 import logger from "../utils/logger.js";
 dotenv.config({ override: true });
 
@@ -19,6 +20,7 @@ const poolConnection = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
+export { poolConnection };
 try {
   // Test the connection
   const connection = await poolConnection.getConnection();
@@ -31,5 +33,7 @@ try {
 
 // Just pass the pool directly
 // export const db = drizzle(pool, { schema,mode:"default" });
-export const db = drizzle(poolConnection, { schema, mode: "default" });
-
+export const db = drizzle(poolConnection, {
+  schema: { ...schema, ...relations },
+  mode: "default",
+});

@@ -1,0 +1,1 @@
+ALTER TABLE `lead` ADD `from` varchar(50) NOT NULL;

@@ -3,12 +3,12 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
   const routeFeatureMap: Record<string, string[]> = {
     user: ["/user"],
     blog: ["/blog"],
-    services: ["/services", "/partnership"],
+    services: ["/services"],
     meta: ["/meta"],
     position: ["/position"],
     career: ["/career"],
     subscription: ["/subscription", "/affiliate-program"],
-    partnership: ["/partnership"],
+    partnership: ["/partnership", "/partner-recruitment-system"],
   };
   if (
     pathname === "/dashboard" ||

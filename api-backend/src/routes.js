@@ -20,6 +20,12 @@ import reset_password from "./auth/reset-password/reset-password.controller.js"
 import logger from "../utils/logger.js";
 import affiliate from "./affiliate/_affiliate.route.js";
 import partner from "./partner/_partner.route.js";
+import batch from "./affiliate-batch/batch.route.js";
+import assessment from "./assessment/assessment.controller.js";
+import assessmentSeeder from "./assessment/assessment.seeder.js";
+import exam from "./assessment/exam.controller.js";
+import trainingContent from "./assessment/training-content.controller.js";
+import { runBatchScreening } from "./assessment/exam.controller.js";
 import lead from "./lead/_lead.route.js";
 import clientOnboarding from "./client-onboarding/_client-onboarding.route.js";
 import videosOnboarding from "./videos-onboarding/_videos-onboarding.route.js";
@@ -62,6 +68,10 @@ router.use("/v1/plan", plan.endUser);
 router.use("/v1/order", order.endUser);
 router.use("/v1/affiliate", affiliate.endUser);
 router.use("/v1/partner", partner.endUser);
+router.use("/v1/batch", batch);
+router.use("/v1/assessment", assessment);
+router.use("/v1/assessment", assessmentSeeder);
+router.use("/v1/exam", exam);
 router.use("/v1/lead", lead.endUser);
 router.use("/v1/client-onboarding", clientOnboarding.endUser);
 router.use("/v1/videos-onboarding", videosOnboarding);
@@ -82,10 +92,15 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/order", order.backOffice);
   backOfficeRouter.use("/affiliate", affiliate.backOffice);
   backOfficeRouter.use("/partner", partner.backOffice);
+  backOfficeRouter.use("/batch", batch);
+  backOfficeRouter.use("/assessment", assessment);
+  backOfficeRouter.use("/training", trainingContent);
   backOfficeRouter.use("/lead", lead.backOffice);
   backOfficeRouter.use("/client-onboarding", clientOnboarding.backOffice);
   backOfficeRouter.use("/videos-onboarding", videosOnboarding);
   backOfficeRouter(req, res, next);
 });
+
+router.post("/v1/back-office/screening/batch", runBatchScreening);
 
 export default router;

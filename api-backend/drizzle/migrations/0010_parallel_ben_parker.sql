@@ -1,0 +1,1 @@
+ALTER TABLE `blog` ADD `publish_date` timestamp DEFAULT null;

@@ -1,8 +1,7 @@
 "use client"
 
-import { Search } from "lucide-react"
-
-import { Input } from "@/components/ui/input"
+import type { ReactNode } from "react"
+import { Filter, Search } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -10,13 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 
 type PartnersFilterBarProps = {
   search: string
   onSearchChange: (value: string) => void
-  status: string
-  onStatusChange: (value: string) => void
-  statusOptions: string[]
+  status?: string
+  onStatusChange?: (value: string) => void
+  statusOptions?: string[]
+  action?: ReactNode
 }
 
 export const PartnersFilterBar = ({
@@ -24,32 +25,41 @@ export const PartnersFilterBar = ({
   onSearchChange,
   status,
   onStatusChange,
-  statusOptions,
+  statusOptions = [],
+  action,
 }: PartnersFilterBarProps) => {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div className="relative w-full">
-        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-border bg-white p-4 shadow-sm">
+      <div className="relative flex-1 min-w-[200px]">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
-          placeholder="Search affiliator"
-          className="w-full rounded-full border border-slate-200 bg-white py-6 pl-12 pr-6 text-base"
+          type="text"
+          placeholder="Search partner..."
           value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="h-10 pl-9"
         />
       </div>
 
-      <Select value={status} onValueChange={onStatusChange}>
-        <SelectTrigger className="w-full rounded-full border-slate-200 bg-white py-6 pl-5 pr-10 text-base md:w-52">
-          <SelectValue placeholder="All Status" />
-        </SelectTrigger>
-        <SelectContent className="rounded-2xl">
-          {statusOptions.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option === "all" ? "All Status" : option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {status && onStatusChange && statusOptions.length > 0 ? (
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-slate-400" />
+          <Select value={status} onValueChange={onStatusChange}>
+            <SelectTrigger className="h-10 w-[160px] rounded-full border-slate-200">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              {statusOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option === "all" ? "All Status" : option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : null}
+
+      {action ? <div className="ml-auto">{action}</div> : null}
     </div>
   )
 }
