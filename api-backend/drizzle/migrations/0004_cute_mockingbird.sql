@@ -1,1 +1,1 @@
-ALTER TABLE `lead` RENAME COLUMN `bussiness` TO `business`;
+ALTER TABLE `lead` CHANGE COLUMN `bussiness` `business` varchar(191) NOT NULL;
