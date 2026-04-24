@@ -58,31 +58,31 @@ const sidebarItems = [
     group: "Partner Management",
     name: "partnership",
     data: [
-      {
-        title: "Partnership Dashboard",
-        url: "/partnership/dashboard",
-        icon: ChartPie,
-      },
-      {
-        title: "Leads Management",
-        url: "/partnership/leads-management",
-        icon: MailCheck,
-      },
-      {
-        title: "Partners",
-        url: "/partnership/partners",
-        icon: CircleUserRound,
-      },
-      {
-        title: "Commission Control",
-        url: "/partnership/commission-control",
-        icon: CircleDollarSign,
-      },
-      {
-        title: "Affiliate Program",
-        url: "/affiliate-program",
-        icon: Ticket,
-      },
+      // {
+      //   title: "Partnership Dashboard",
+      //   url: "/partnership/dashboard",
+      //   icon: ChartPie,
+      // },
+      // {
+      //   title: "Leads Management",
+      //   url: "/partnership/leads-management",
+      //   icon: MailCheck,
+      // },
+      // {
+      //   title: "Partners",
+      //   url: "/partnership/partners",
+      //   icon: CircleUserRound,
+      // },
+      // {
+      //   title: "Commission Control",
+      //   url: "/partnership/commission-control",
+      //   icon: CircleDollarSign,
+      // },
+      // {
+      //   title: "Affiliate Program",
+      //   url: "/affiliate-program",
+      //   icon: Ticket,
+      // },
       {
         title: "Partner Recruitment System",
         url: "/partner-recruitment-system",
