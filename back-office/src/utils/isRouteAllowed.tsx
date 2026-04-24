@@ -1,4 +1,15 @@
+import { sidebarItems } from "@/constrant/navlinks";
+
 export default function isRouteAllowed(pathname: string, features: string[]) {
+  const allRoutes = sidebarItems.flatMap(item => item.data.map(d => d.url));
+  const isKnownRoute = allRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+  
+  if (!isKnownRoute) {
+    return true;
+  }
+
+  const normalizedFeatures = features.length > 0 ? features : ["dashboard", "partnership"];
+
   const routeFeatureMap: Record<string, string[]> = {
     user: ["/user"],
     blog: ["/blog"],
@@ -8,19 +19,20 @@ export default function isRouteAllowed(pathname: string, features: string[]) {
     career: ["/career"],
     subscription: ["/subscription", "/affiliate-program"],
     partnership: ["/partnership", "/partner-recruitment-system"],
+    dashboard: ["/dashboard"],
+    lead: ["/lead"],
   };
 
-  const exactRoutes = ["/dashboard", "/lead", "/lead/client-onboarding", "/lead/onboarding-videos"];
-
-  if (exactRoutes.includes(pathname) || pathname.startsWith("/dashboard/") || pathname.startsWith("/lead/")) {
-    return true;
-  }
-
-  for (const feature of features) {
+  for (const feature of normalizedFeatures) {
     const prefixes = routeFeatureMap[feature];
-    if (prefixes?.some((prefix) => pathname.startsWith(prefix) || pathname === prefix)) {
+    if (prefixes?.some(prefix => pathname.startsWith(prefix) || pathname === prefix)) {
       return true;
     }
   }
+
+  if (normalizedFeatures.includes("dashboard") || normalizedFeatures.includes("partnership")) {
+    return true;
+  }
+
   return false;
 }
