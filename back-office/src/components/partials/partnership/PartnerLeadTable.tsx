@@ -59,7 +59,7 @@ export const PartnerLeadTable = ({ leads }: PartnerLeadTableProps) => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {(["Proposal Sent", "Follow-up", "Lead Created", "Closed"] as LeadStatus[]).map(
+                      {(["New Leads", "Contacted", "Follow-up Day-1", "Closed Won", "Closed Lost"] as LeadStatus[]).map(
                         (statusOption) => (
                           <SelectItem key={statusOption} value={statusOption}>
                             {statusOption}
