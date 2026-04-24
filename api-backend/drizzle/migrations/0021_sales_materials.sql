@@ -1,4 +1,4 @@
-CREATE TABLE `sales_material` (
+CREATE TABLE IF NOT EXISTS `sales_material` (
   `id` varchar(36) NOT NULL,
   `title` varchar(191) NOT NULL,
   `summary` text,
