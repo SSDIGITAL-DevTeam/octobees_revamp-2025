@@ -1,4 +1,4 @@
-CREATE TABLE `metas` (
+CREATE TABLE IF NOT EXISTS `metas` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`key` varchar(255) NOT NULL,
 	`value` varchar(255) NOT NULL,

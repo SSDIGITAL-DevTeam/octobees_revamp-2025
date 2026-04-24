@@ -1,9 +1,19 @@
-ALTER TABLE `affiliate_application`
-  ADD COLUMN `performance_alert_sent_at` datetime,
-  ADD COLUMN `performance_termination_due_at` datetime,
-  ADD COLUMN `performance_terminated_at` datetime;--> statement-breakpoint
+-- Guarded ADD COLUMN: affiliate_application.performance_alert_sent_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD COLUMN `performance_alert_sent_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'performance_alert_sent_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
 
-CREATE TABLE `partner_performance_setting` (
+-- Guarded ADD COLUMN: affiliate_application.performance_termination_due_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD COLUMN `performance_termination_due_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'performance_termination_due_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.performance_terminated_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD COLUMN `performance_terminated_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'performance_terminated_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+CREATE TABLE IF NOT EXISTS `partner_performance_setting` (
   `id` varchar(36) NOT NULL,
   `basic_salary_amount` double NOT NULL DEFAULT 3500,
   `basic_salary_sales_threshold` double NOT NULL DEFAULT 35000,
@@ -14,7 +24,8 @@ CREATE TABLE `partner_performance_setting` (
   `created_at` timestamp NOT NULL DEFAULT (now()),
   `updated_at` timestamp NOT NULL DEFAULT (now()),
   CONSTRAINT `partner_performance_setting_id` PRIMARY KEY(`id`)
-);--> statement-breakpoint
+);
+--> statement-breakpoint
 
 INSERT INTO `partner_performance_setting` (
   `id`,
@@ -24,7 +35,7 @@ INSERT INTO `partner_performance_setting` (
   `initial_commission_full_client_threshold`,
   `termination_grace_days`,
   `is_active`
-) VALUES (
+) SELECT
   'default-partner-performance-setting',
   3500,
   35000,
@@ -32,4 +43,7 @@ INSERT INTO `partner_performance_setting` (
   2,
   2,
   true
+WHERE NOT EXISTS (
+  SELECT 1 FROM `partner_performance_setting`
+  WHERE `id` = 'default-partner-performance-setting'
 );

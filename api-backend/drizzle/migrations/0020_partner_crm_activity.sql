@@ -1,9 +1,19 @@
-ALTER TABLE `partner_lead`
-  ADD `next_follow_up_at` datetime,
-  ADD `last_contact_at` datetime,
-  ADD `last_status_changed_at` datetime;--> statement-breakpoint
+-- Guarded ADD COLUMN: partner_lead.next_follow_up_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `partner_lead` ADD `next_follow_up_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_lead' AND COLUMN_NAME = 'next_follow_up_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
 
-CREATE TABLE `partner_lead_activity` (
+-- Guarded ADD COLUMN: partner_lead.last_contact_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `partner_lead` ADD `last_contact_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_lead' AND COLUMN_NAME = 'last_contact_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: partner_lead.last_status_changed_at
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `partner_lead` ADD `last_status_changed_at` datetime', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_lead' AND COLUMN_NAME = 'last_status_changed_at');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+CREATE TABLE IF NOT EXISTS `partner_lead_activity` (
   `id` varchar(36) NOT NULL,
   `lead_id` varchar(36) NOT NULL,
   `affiliate_id` varchar(36) NOT NULL,

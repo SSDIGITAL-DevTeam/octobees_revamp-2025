@@ -1,4 +1,4 @@
-CREATE TABLE `affiliate_application` (
+CREATE TABLE IF NOT EXISTS `affiliate_application` (
 	`id` varchar(36) NOT NULL,
 	`full_name` varchar(191) NOT NULL,
 	`email` varchar(191) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `affiliate_application` (
 	CONSTRAINT `affiliate_application_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `affiliate_login_log` (
+CREATE TABLE IF NOT EXISTS `affiliate_login_log` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_user_id` varchar(36),
 	`ip_address` varchar(64),
@@ -33,7 +33,7 @@ CREATE TABLE `affiliate_login_log` (
 	CONSTRAINT `affiliate_login_log_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `affiliate_password_token` (
+CREATE TABLE IF NOT EXISTS `affiliate_password_token` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_user_id` varchar(36) NOT NULL,
 	`token_hash` varchar(128) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `affiliate_password_token` (
 	CONSTRAINT `affiliate_password_token_token_hash_unique` UNIQUE(`token_hash`)
 );
 --> statement-breakpoint
-CREATE TABLE `affiliate_referral` (
+CREATE TABLE IF NOT EXISTS `affiliate_referral` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`referral_name` varchar(191) NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE `affiliate_referral` (
 	CONSTRAINT `affiliate_referral_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `affiliate_transaction` (
+CREATE TABLE IF NOT EXISTS `affiliate_transaction` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`period_start` datetime NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `affiliate_transaction` (
 	CONSTRAINT `affiliate_transaction_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `affiliate_user` (
+CREATE TABLE IF NOT EXISTS `affiliate_user` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`email` varchar(191) NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE `affiliate_user` (
 	CONSTRAINT `affiliate_user_email_unique` UNIQUE(`email`)
 );
 --> statement-breakpoint
-CREATE TABLE `partner_commission` (
+CREATE TABLE IF NOT EXISTS `partner_commission` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`lead_id` varchar(36) NOT NULL,
@@ -107,7 +107,7 @@ CREATE TABLE `partner_commission` (
 	CONSTRAINT `partner_commission_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `partner_lead` (
+CREATE TABLE IF NOT EXISTS `partner_lead` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`name` varchar(191) NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE `partner_lead` (
 	CONSTRAINT `partner_lead_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `partner_service` (
+CREATE TABLE IF NOT EXISTS `partner_service` (
 	`id` varchar(36) NOT NULL,
 	`name` varchar(191) NOT NULL,
 	`project_value` double NOT NULL DEFAULT 0,
@@ -134,14 +134,68 @@ CREATE TABLE `partner_service` (
 	CONSTRAINT `partner_service_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-ALTER TABLE `affiliate_login_log` ADD CONSTRAINT `affiliate_login_log_affiliate_user_id_affiliate_user_id_fk` FOREIGN KEY (`affiliate_user_id`) REFERENCES `affiliate_user`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `affiliate_password_token` ADD CONSTRAINT `affiliate_password_token_affiliate_user_id_affiliate_user_id_fk` FOREIGN KEY (`affiliate_user_id`) REFERENCES `affiliate_user`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `affiliate_referral` ADD CONSTRAINT `affiliate_referral_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `affiliate_transaction` ADD CONSTRAINT `affiliate_transaction_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `affiliate_user` ADD CONSTRAINT `affiliate_user_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_lead_id_partner_lead_id_fk` FOREIGN KEY (`lead_id`) REFERENCES `partner_lead`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_service_id_partner_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `partner_service`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_transaction_id_affiliate_transaction_id_fk` FOREIGN KEY (`transaction_id`) REFERENCES `affiliate_transaction`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_lead` ADD CONSTRAINT `partner_lead_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_lead` ADD CONSTRAINT `partner_lead_service_id_partner_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `partner_service`(`id`) ON DELETE no action ON UPDATE no action;
+
+-- Guarded FK: affiliate_login_log.affiliate_user_id -> affiliate_user.id
+SET @fk_name := 'affiliate_login_log_affiliate_user_id_affiliate_user_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_login_log' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `affiliate_login_log` ADD CONSTRAINT `affiliate_login_log_affiliate_user_id_affiliate_user_id_fk` FOREIGN KEY (`affiliate_user_id`) REFERENCES `affiliate_user`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: affiliate_password_token.affiliate_user_id -> affiliate_user.id
+SET @fk_name := 'affiliate_password_token_affiliate_user_id_affiliate_user_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_password_token' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `affiliate_password_token` ADD CONSTRAINT `affiliate_password_token_affiliate_user_id_affiliate_user_id_fk` FOREIGN KEY (`affiliate_user_id`) REFERENCES `affiliate_user`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: affiliate_referral.affiliate_id -> affiliate_application.id
+SET @fk_name := 'affiliate_referral_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_referral' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `affiliate_referral` ADD CONSTRAINT `affiliate_referral_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: affiliate_transaction.affiliate_id -> affiliate_application.id
+SET @fk_name := 'affiliate_transaction_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_transaction' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `affiliate_transaction` ADD CONSTRAINT `affiliate_transaction_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: affiliate_user.affiliate_id -> affiliate_application.id
+SET @fk_name := 'affiliate_user_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_user' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `affiliate_user` ADD CONSTRAINT `affiliate_user_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_commission.affiliate_id -> affiliate_application.id
+SET @fk_name := 'partner_commission_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_commission' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_commission.lead_id -> partner_lead.id
+SET @fk_name := 'partner_commission_lead_id_partner_lead_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_commission' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_lead_id_partner_lead_id_fk` FOREIGN KEY (`lead_id`) REFERENCES `partner_lead`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_commission.service_id -> partner_service.id
+SET @fk_name := 'partner_commission_service_id_partner_service_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_commission' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_service_id_partner_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `partner_service`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_commission.transaction_id -> affiliate_transaction.id
+SET @fk_name := 'partner_commission_transaction_id_affiliate_transaction_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_commission' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_commission` ADD CONSTRAINT `partner_commission_transaction_id_affiliate_transaction_id_fk` FOREIGN KEY (`transaction_id`) REFERENCES `affiliate_transaction`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_lead.affiliate_id -> affiliate_application.id
+SET @fk_name := 'partner_lead_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_lead' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_lead` ADD CONSTRAINT `partner_lead_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_lead.service_id -> partner_service.id
+SET @fk_name := 'partner_lead_service_id_partner_service_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_lead' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_lead` ADD CONSTRAINT `partner_lead_service_id_partner_service_id_fk` FOREIGN KEY (`service_id`) REFERENCES `partner_service`(`id`) ON DELETE no action ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;

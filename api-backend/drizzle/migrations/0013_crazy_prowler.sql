@@ -1,4 +1,4 @@
-CREATE TABLE `assessment_answer` (
+CREATE TABLE IF NOT EXISTS `assessment_answer` (
 	`id` varchar(36) NOT NULL,
 	`session_id` varchar(36) NOT NULL,
 	`question_id` varchar(36) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE `assessment_answer` (
 	CONSTRAINT `assessment_answer_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `assessment_question` (
+CREATE TABLE IF NOT EXISTS `assessment_question` (
 	`id` varchar(36) NOT NULL,
 	`question_type` enum('video_introduction','multiple_choice','essay') NOT NULL,
 	`question` text NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `assessment_question` (
 	CONSTRAINT `assessment_question_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `assessment_session` (
+CREATE TABLE IF NOT EXISTS `assessment_session` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`session_status` enum('not_started','in_progress','submitted','scored','passed','failed') NOT NULL DEFAULT 'not_started',
@@ -53,7 +53,7 @@ CREATE TABLE `assessment_session` (
 	CONSTRAINT `assessment_session_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE `partner_registration_data` (
+CREATE TABLE IF NOT EXISTS `partner_registration_data` (
 	`id` varchar(36) NOT NULL,
 	`affiliate_id` varchar(36) NOT NULL,
 	`gender` enum('male','female','other') NOT NULL,
@@ -78,17 +78,76 @@ CREATE TABLE `partner_registration_data` (
 	CONSTRAINT `partner_registration_data_affiliate_id_unique` UNIQUE(`affiliate_id`)
 );
 --> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `city` varchar(191);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `occupation` varchar(191);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `sales_experience` varchar(20);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `has_sold_saas` varchar(10);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `sales_style` varchar(50);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `income_goal` varchar(20);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `hear_about_us` varchar(50);--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `why_choose` text;--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `video_url` text;--> statement-breakpoint
-ALTER TABLE `affiliate_application` ADD `resume_url` text;--> statement-breakpoint
-ALTER TABLE `assessment_answer` ADD CONSTRAINT `assessment_answer_session_id_assessment_session_id_fk` FOREIGN KEY (`session_id`) REFERENCES `assessment_session`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `assessment_answer` ADD CONSTRAINT `assessment_answer_question_id_assessment_question_id_fk` FOREIGN KEY (`question_id`) REFERENCES `assessment_question`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `assessment_session` ADD CONSTRAINT `assessment_session_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE `partner_registration_data` ADD CONSTRAINT `prd_affiliate_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action;
+
+-- Guarded ADD COLUMN: affiliate_application.city
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `city` varchar(191)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'city');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.occupation
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `occupation` varchar(191)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'occupation');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.sales_experience
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `sales_experience` varchar(20)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'sales_experience');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.has_sold_saas
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `has_sold_saas` varchar(10)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'has_sold_saas');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.sales_style
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `sales_style` varchar(50)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'sales_style');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.income_goal
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `income_goal` varchar(20)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'income_goal');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.hear_about_us
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `hear_about_us` varchar(50)', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'hear_about_us');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.why_choose
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `why_choose` text', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'why_choose');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.video_url
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `video_url` text', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'video_url');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded ADD COLUMN: affiliate_application.resume_url
+SET @sql := (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `affiliate_application` ADD `resume_url` text', 'SELECT 1') FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'affiliate_application' AND COLUMN_NAME = 'resume_url');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: assessment_answer.session_id -> assessment_session.id
+SET @fk_name := 'assessment_answer_session_id_assessment_session_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'assessment_answer' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `assessment_answer` ADD CONSTRAINT `assessment_answer_session_id_assessment_session_id_fk` FOREIGN KEY (`session_id`) REFERENCES `assessment_session`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: assessment_answer.question_id -> assessment_question.id
+SET @fk_name := 'assessment_answer_question_id_assessment_question_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'assessment_answer' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `assessment_answer` ADD CONSTRAINT `assessment_answer_question_id_assessment_question_id_fk` FOREIGN KEY (`question_id`) REFERENCES `assessment_question`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: assessment_session.affiliate_id -> affiliate_application.id
+SET @fk_name := 'assessment_session_affiliate_id_affiliate_application_id_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'assessment_session' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `assessment_session` ADD CONSTRAINT `assessment_session_affiliate_id_affiliate_application_id_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+--> statement-breakpoint
+
+-- Guarded FK: partner_registration_data.affiliate_id -> affiliate_application.id
+SET @fk_name := 'prd_affiliate_fk';
+SET @ddl := (SELECT IF(EXISTS(SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_registration_data' AND CONSTRAINT_NAME = @fk_name AND CONSTRAINT_TYPE = 'FOREIGN KEY'), 'SELECT 1', 'ALTER TABLE `partner_registration_data` ADD CONSTRAINT `prd_affiliate_fk` FOREIGN KEY (`affiliate_id`) REFERENCES `affiliate_application`(`id`) ON DELETE cascade ON UPDATE no action'));
+PREPARE stmt FROM @ddl; EXECUTE stmt; DEALLOCATE PREPARE stmt;
