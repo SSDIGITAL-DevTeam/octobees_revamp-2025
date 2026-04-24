@@ -1,18 +1,18 @@
 ﻿import {
-  Users,
+  Briefcase,
   ChartPie,
   NotebookPen,
   Archive,
   Shapes,
-  Briefcase,
   Hash,
   MailCheck,
-  File,
   User,
-  DollarSign,
-  UserCheck,
   Ticket,
   UserRoundCog,
+  Layers,
+  CircleUserRound,
+  CircleDollarSign,
+  WalletCards,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -24,17 +24,6 @@ const sidebarItems = [
         title: "Overview",
         url: "/dashboard",
         icon: ChartPie,
-      },
-    ],
-  },
-  {
-    group: "User Management",
-    name: "user",
-    data: [
-      {
-        title: "User",
-        url: "/user",
-        icon: Users,
       },
     ],
   },
@@ -66,33 +55,43 @@ const sidebarItems = [
     ],
   },
   {
-    group: "Partnership Program",
-    name: "services",
+    group: "Partner Management",
+    name: "partnership",
     data: [
+      {
+        title: "Partnership Dashboard",
+        url: "/partnership/dashboard",
+        icon: ChartPie,
+      },
+      {
+        title: "Leads Management",
+        url: "/partnership/leads-management",
+        icon: MailCheck,
+      },
+      {
+        title: "Partners",
+        url: "/partnership/partners",
+        icon: CircleUserRound,
+      },
+      {
+        title: "Commission Control",
+        url: "/partnership/commission-control",
+        icon: CircleDollarSign,
+      },
       {
         title: "Affiliate Program",
         url: "/affiliate-program",
         icon: Ticket,
       },
       {
-        title: "Partnership Dashboard",
-        url: "/partnership/dashboard",
-        icon: UserCheck,
+        title: "Partner Recruitment System",
+        url: "/partner-recruitment-system",
+        icon: Layers,
       },
       {
-        title: "Leads Management",
-        url: "/partnership/leads-management",
-        icon: File,
-      },
-      {
-        title: "Partners",
-        url: "/partnership/partners",
+        title: "Partner List",
+        url: "/partnership/partner-list",
         icon: User,
-      },
-      {
-        title: "Commission Control",
-        url: "/partnership/commission-control",
-        icon: DollarSign,
       },
     ],
   },
@@ -101,14 +100,14 @@ const sidebarItems = [
     name: "career",
     data: [
       {
-        title: "Position",
+        title: "Career Position",
         url: "/career/position",
         icon: Briefcase,
       },
       {
         title: "Applicants Data",
         url: "/career/applicants-data",
-        icon: Briefcase,
+        icon: UserRoundCog,
       },
     ],
   },
@@ -130,6 +129,28 @@ const sidebarItems = [
         title: "Onboarding Videos",
         url: "/lead/onboarding-videos",
         icon: UserRoundCog,
+      },
+    ],
+  },
+  {
+    group: "User Management",
+    name: "user",
+    data: [
+      {
+        title: "Users",
+        url: "/user",
+        icon: User,
+      },
+    ],
+  },
+  {
+    group: "Subscription Management",
+    name: "subscription",
+    data: [
+      {
+        title: "Subscription",
+        url: "/subscription",
+        icon: WalletCards,
       },
     ],
   },

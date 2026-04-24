@@ -1,0 +1,1 @@
+ALTER TABLE `lead` MODIFY COLUMN `company_website` varchar(255);

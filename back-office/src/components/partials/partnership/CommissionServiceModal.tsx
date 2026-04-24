@@ -1,173 +1,199 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useState } from "react"
-
+import { useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import type { CommissionItem } from "@/constrant/partnership"
-
-type Mode = "create" | "edit"
-
-type CommissionFormValues = {
-  serviceName: string
-  projectValue: string
-  commissionPercentage: string
-  description: string
-}
+  createPartnerService,
+  type PartnerServiceApiItem,
+  updatePartnerService,
+} from "@/lib/api/partnership/dashboardPartnership";
 
 type CommissionServiceModalProps = {
-  open: boolean
-  mode: Mode
-  initialData?: CommissionItem
-  serviceOptions: string[]
-  onSubmit: (values: CommissionFormValues) => void
-  onClose: () => void
-}
-
-const emptyValues: CommissionFormValues = {
-  serviceName: "",
-  projectValue: "",
-  commissionPercentage: "",
-  description: "",
-}
+  open: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  initialData?: PartnerServiceApiItem | null;
+};
 
 export const CommissionServiceModal = ({
   open,
-  mode,
-  initialData,
-  serviceOptions,
-  onSubmit,
   onClose,
+  onSuccess,
+  initialData,
 }: CommissionServiceModalProps) => {
-  const [values, setValues] = useState<CommissionFormValues>(emptyValues)
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    projectValue: "",
+    description: "",
+    isActive: true,
+  });
+
+  const isEditMode = Boolean(initialData?.id);
+
+  const initialForm = useMemo(
+    () => ({
+      name: initialData?.name || "",
+      projectValue:
+        initialData?.projectValue !== undefined && initialData?.projectValue !== null
+          ? String(initialData.projectValue)
+          : "",
+      description: initialData?.description || "",
+      isActive: initialData?.isActive ?? true,
+    }),
+    [initialData]
+  );
 
   useEffect(() => {
-    if (open) {
-      setValues(
-        initialData
-          ? {
-              serviceName: initialData.serviceName,
-              projectValue: initialData.projectValue,
-              commissionPercentage: String(initialData.commissionPercentage),
-              description: initialData.description,
-            }
-          : emptyValues
-      )
+    if (!open) return;
+    setForm(initialForm);
+  }, [initialForm, open]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+      const payload = {
+        name: form.name,
+        projectValue: parseFloat(form.projectValue),
+        description: form.description,
+        isActive: form.isActive,
+      };
+
+      if (isEditMode && initialData?.id) {
+        await updatePartnerService(initialData.id, payload);
+      } else {
+        await createPartnerService(payload);
+      }
+      onSuccess();
+      onClose();
+      setForm({
+        name: "",
+        projectValue: "",
+        description: "",
+        isActive: true,
+      });
+    } catch (error) {
+      console.error(`Failed to ${isEditMode ? "update" : "create"} service:`, error);
+      toast.error(`Failed to ${isEditMode ? "update" : "create"} service`);
+    } finally {
+      setLoading(false);
     }
-  }, [initialData, open])
+  };
 
-  const title = mode === "create" ? "Add New Service" : "Edit Service"
-  const submitLabel = mode === "create" ? "Create Service" : "Save Changes"
-  const submitVariant = mode === "create" ? "addData" : undefined
+  const formatCurrencyInput = (value: string) => {
+    const numeric = String(value || "").replace(/[^\d.]/g, "");
+    if (!numeric) return "";
 
-  const options = useMemo(() => {
-    const unique = Array.from(new Set(serviceOptions.concat(values.serviceName ? [values.serviceName] : [])))
-    return unique.filter(Boolean)
-  }, [serviceOptions, values.serviceName])
+    const [integerPart = "", decimalPart = ""] = numeric.split(".");
+    const formattedInteger = Number(integerPart || 0).toLocaleString("en-US");
 
-  const handleChange = (key: keyof CommissionFormValues, next: string) => {
-    setValues((prev) => ({ ...prev, [key]: next }))
-  }
+    if (numeric.endsWith(".")) return `$ ${formattedInteger}.`;
+    if (decimalPart) return `$ ${formattedInteger}.${decimalPart.slice(0, 2)}`;
+    return `$ ${formattedInteger}`;
+  };
 
-  const handleSubmit = () => {
-    if (!values.serviceName) return
-    onSubmit(values)
-    onClose()
-  }
+  const parseCurrencyInput = (value: string) =>
+    String(value || "").replace(/[^\d.]/g, "");
+  let submitLabel = "Create Service";
+  if (loading && isEditMode) submitLabel = "Saving...";
+  else if (loading) submitLabel = "Creating...";
+  else if (isEditMode) submitLabel = "Save Changes";
+
+  if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}>
-      <DialogContent className="max-w-2xl rounded-[24px] px-8 py-8">
-        <DialogHeader className="mb-4 text-left">
-          <DialogTitle className="text-2xl font-semibold text-slate-900">{title}</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 rounded-full p-1 hover:bg-slate-100"
+        >
+          <X className="h-5 w-5" />
+        </button>
 
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-800">Service Name</p>
-            <Select value={values.serviceName} onValueChange={(value) => handleChange("serviceName", value)}>
-              <SelectTrigger className="h-12 rounded-lg border-slate-200 text-sm font-medium">
-                <SelectValue placeholder="Select Services" />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((service) => (
-                  <SelectItem key={service} value={service} className="capitalize">
-                    {service}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <h2 className="mb-6 text-xl font-semibold">
+          {isEditMode ? "Edit Service" : "Add New Service"}
+        </h2>
+        <p className="mb-4 text-sm text-slate-500">
+          Commission is configured separately in the <strong>Sales Commission</strong> menu.
+        </p>
 
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-800">Project Value</p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Service Name
+            </label>
             <Input
-              value={values.projectValue}
-              onChange={(event) => handleChange("projectValue", event.target.value)}
-              placeholder="IDR 0"
-              className="h-12 rounded-lg border-slate-200 text-sm"
+              required
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="e.g., Web Development"
             />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-800">Commission (%)</p>
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Project Value ($)
+            </label>
             <Input
-              value={values.commissionPercentage}
-              onChange={(event) => handleChange("commissionPercentage", event.target.value)}
-              placeholder="Enter Commission"
-              className="h-12 rounded-lg border-slate-200 text-sm"
+              required
+              type="text"
+              inputMode="decimal"
+              value={formatCurrencyInput(form.projectValue)}
+              onChange={(e) =>
+                setForm({ ...form, projectValue: parseCurrencyInput(e.target.value) })
+              }
+              placeholder="$ 5,000"
             />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-slate-800">Description</p>
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Description
+            </label>
             <Textarea
-              value={values.description}
-              onChange={(event) => handleChange("description", event.target.value)}
-              placeholder="Enter Description"
-              className="min-h-[140px] rounded-lg border-slate-200 text-sm"
+              required
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              placeholder="Describe the service..."
+              rows={3}
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="h-10 rounded-full border-slate-300 px-4 text-sm font-semibold text-slate-600"
-              onClick={onClose}
-            >
+          <div>
+            <label className="mb-2 block text-sm font-medium">Status</label>
+            <label className="inline-flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+              <input
+                type="checkbox"
+                checked={form.isActive}
+                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+              />
+              <span className="text-sm text-slate-700">Active service</span>
+            </label>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button
-              type="button"
-              variant={submitVariant ?? "secondary"}
-              className={`h-10 rounded-full px-5 text-sm font-semibold ${
-                mode === "edit" ? "bg-amber-400 text-white hover:bg-amber-500" : ""
-              }`}
-              onClick={handleSubmit}
+              type="submit"
+              className="bg-red-700 hover:bg-red-800 text-white"
+              disabled={loading}
             >
               {submitLabel}
             </Button>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-export type { CommissionFormValues }
-export default CommissionServiceModal
+        </form>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1759474252294,
+      "tag": "0000_medical_purifiers",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1761014144818,
+      "tag": "0001_wonderful_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1763954498510,
+      "tag": "0002_busy_gamora",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1764224409576,
+      "tag": "0003_lowly_nomad",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1773455692168,
+      "tag": "0004_plain_red_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1773456300493,
+      "tag": "0005_opposite_ultimatum",
+      "breakpoints": true
+    }
+  ]
+}

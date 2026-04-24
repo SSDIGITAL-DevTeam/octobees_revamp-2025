@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -9,7 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Control } from "react-hook-form";
-import { Eye, EyeOff } from "lucide-react";
 
 type InputFieldProps = {
   name: string;
@@ -18,6 +18,7 @@ type InputFieldProps = {
   control: Control<any>;
   className?: string;
   disabled?: boolean;
+  desc?: string;
 };
 
 const InputField = ({
@@ -26,42 +27,27 @@ const InputField = ({
   type = "text",
   label,
   className,
-  disabled,
+  desc,
+  disabled
 }: InputFieldProps) => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePassword = () => setShowPassword(!showPassword);
-
   return (
     <FormField
       name={name}
       control={control}
       render={({ field }) => (
         <FormItem className="w-full">
-          <FormLabel className="capitalize font-semibold mb-2 text-base">
-            {name}
-          </FormLabel>
+          <FormLabel className="capitalize font-semibold mb-2 text-base">{label}</FormLabel>
+          {desc && <FormDescription>{desc}</FormDescription>}
           <FormControl className="w-full">
-            <div className="w-full relative">
-              <Input
-                {...field}
-                placeholder={label}
-                type={type === "password" ? (showPassword ? "text" : "password") : type}
-                disabled={disabled}
-                className={`py-2 px-4 text-black ${className}`}
-              />
-              {type === "password" && (
-                <button
-                  type="button"
-                  onClick={togglePassword}
-                  className="absolute right-3 top-5 text-gray-500"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              )}
-            </div>
+            <Input
+              {...field}
+              placeholder={label}
+              type={type}
+              disabled={disabled}
+              className={`py-2 px-4 text-black ${className}`}
+            />
           </FormControl>
-          <FormMessage/>
+          <FormMessage />
         </FormItem>
       )}
     />

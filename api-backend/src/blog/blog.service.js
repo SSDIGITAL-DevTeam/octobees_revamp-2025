@@ -28,7 +28,73 @@ import {
   getBlogMetas,
 } from "../metas/metas.repository.js";
 import { v7 as uuidv7 } from "uuid";
+import logger from "../../utils/logger.js";
 // import { insertPage } from "../page/page.repository.js";
+
+const UPLOAD_DIR = path.join(__dirname, "../../upload");
+
+function extractContentImageFilenames(html) {
+  if (!html) return [];
+
+  const filenames = [];
+  const regex = /\/uploads\/(content-[^"'\s)]+)/gi;
+  let match;
+
+  while ((match = regex.exec(html)) !== null) {
+    filenames.push(match[1]);
+  }
+
+  return [...new Set(filenames)];
+}
+
+function safeDeleteFile(filename) {
+  if (!filename || !filename.startsWith("content-")) return false;
+
+  try {
+    const filePath = path.join(UPLOAD_DIR, filename);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      return true;
+    }
+  } catch (err) {
+    logger.warn(`Failed to delete content image: ${filename} - ${err.message}`);
+  }
+
+  return false;
+}
+
+export const uploadContentImage = (file) => {
+  if (!file) throw new Error("No file provided");
+  return { url: file.filename };
+};
+
+export const deleteContentImage = (filename) => {
+  if (!filename) throw new Error("Filename is required");
+  if (!filename.startsWith("content-")) {
+    throw new Error("Invalid content image filename");
+  }
+
+  const deleted = safeDeleteFile(filename);
+  if (!deleted) {
+    logger.warn(`Content image not found or already deleted: ${filename}`);
+  }
+
+  return { deleted, filename };
+};
+
+export const cleanupRemovedContentImages = (oldContent, newContent) => {
+  const oldImages = extractContentImageFilenames(oldContent);
+  const newImages = new Set(extractContentImageFilenames(newContent));
+  let cleaned = 0;
+
+  for (const filename of oldImages) {
+    if (!newImages.has(filename) && safeDeleteFile(filename)) {
+      cleaned += 1;
+    }
+  }
+
+  return cleaned;
+};
 
 export const getAllBlogs = async (filters) => {
   try {

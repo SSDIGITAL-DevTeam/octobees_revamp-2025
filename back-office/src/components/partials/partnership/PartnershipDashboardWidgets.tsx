@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import type { StatHighlight, StatusTone } from "@/constrant/partnership"
 import { cn } from "@/lib/utils"
 import { getPartnerDashboardStats } from "@/lib/api/partnership/dashboardPartnership"
-import { statHighlights as statHighlightsMock } from "@/data/partnership/dashboard"
+import { statHighlights } from "@/data/partnership/dashboard"
 
 const statusToneStyles: Record<StatusTone, string> = {
   default: "border-slate-200 bg-slate-100 text-slate-700",
@@ -61,24 +61,11 @@ export const StatCard = ({ highlight }: { highlight: StatHighlight }) => (
         <p className="mt-1 text-sm font-medium text-red-500">{highlight.helper}</p>
       )}
     </div>
-    <div className="pointer-events-none absolute -bottom-10 -right-10">
-      <Image src={highlight.image} alt={highlight.title} className="h-40 w-40" />
-    </div>
   </div>
 )
 
-/**
- * Komponen ini yang akan nge-hit endpoint:
- * GET /v1/back-office/partner/dashboard/stats
- *
- * Dipakai di page dalam grid:
- *
- * <div className="grid ...">
- *   <PartnershipStatCards />
- * </div>
- */
 export const PartnershipStatCards = () => {
-  const [cards, setCards] = useState<StatHighlight[]>(statHighlightsMock)
+  const [cards, setCards] = useState<StatHighlight[]>(statHighlights)
 
   useEffect(() => {
     const loadStats = async () => {
@@ -86,12 +73,7 @@ export const PartnershipStatCards = () => {
         const res = await getPartnerDashboardStats()
         const api = res.data.data
 
-        // mapping urutan card:
-        // 0: totalLeads
-        // 1: activePartners
-        // 2: closedLeads
-        // 3: pendingCommission
-        const updated: StatHighlight[] = [...statHighlightsMock]
+        const updated: StatHighlight[] = [...statHighlights]
 
         if (updated[0]) {
           updated[0] = {
@@ -128,14 +110,12 @@ export const PartnershipStatCards = () => {
         setCards(updated)
       } catch (error) {
         console.error("Failed to fetch partner dashboard stats:", error)
-        // kalau error, biarkan pakai statHighlightsMock
       }
     }
 
     loadStats()
   }, [])
 
-  // tidak pakai wrapper tambahan supaya layout grid di page tetap sama
   return (
     <>
       {cards.map((highlight) => (

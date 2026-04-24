@@ -1,0 +1,1 @@
+ALTER TABLE `lead` RENAME COLUMN `bussiness` TO `business`;
