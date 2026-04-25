@@ -177,6 +177,24 @@ export async function getAffiliateTermsAndConditions(token: string) {
   return data;
 }
 
+export async function getAffiliateCommissionPolicy(token: string) {
+  const res = await fetch(`${BASE_URL}/partner/dashboard/commission-policy`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return await handlePartnerApiError(res, "Get commission policy");
+  }
+
+  const data = await res.json().catch(() => ({}));
+  return data;
+}
+
 export async function getAffiliatePipelineStatuses(token: string) {
   const res = await fetch(`${BASE_URL}/partner/dashboard/pipeline-statuses`, {
     method: "GET",
@@ -189,6 +207,24 @@ export async function getAffiliatePipelineStatuses(token: string) {
 
   if (!res.ok) {
     return await handlePartnerApiError(res, "Get pipeline statuses");
+  }
+
+  const data = await res.json().catch(() => ({}));
+  return data;
+}
+
+export async function getAffiliateVerticalMarkets(token: string) {
+  const res = await fetch(`${BASE_URL}/partner/dashboard/vertical-markets`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return await handlePartnerApiError(res, "Get vertical markets");
   }
 
   const data = await res.json().catch(() => ({}));

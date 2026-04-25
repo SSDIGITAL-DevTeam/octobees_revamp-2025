@@ -1,4 +1,5 @@
 import type { BadgeVariant } from "@/components/ui/Badge";
+import { getStoredCurrency, getCurrencySymbol, formatWithCurrency } from "@/store/currency";
 
 export type PartnerProfile = {
   username: string;
@@ -45,7 +46,10 @@ export type PartnerLeadItem = {
   phone: string;
   serviceId?: string;
   serviceName?: string;
+  verticalMarketId?: string | null;
+  verticalMarketName?: string | null;
   projectValue?: number;
+  isCustomProjectValue?: boolean;
   status: string;
   source?: string;
   nextFollowUpAt?: string | null;
@@ -53,6 +57,70 @@ export type PartnerLeadItem = {
   lastStatusChangedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+};
+
+export type PartnerVerticalMarketItem = {
+  id: string;
+  name: string;
+  sortOrder: number;
+  isActive: boolean;
+  isSystem?: boolean;
+};
+
+export type PartnerCommissionRuleCondition = {
+  field: string;
+  op: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "not_in";
+  value: string | number | boolean | string[] | number[];
+};
+
+export type PartnerCommissionRuleConditionTree = {
+  operator: "AND" | "OR";
+  groups: Array<{
+    operator: "AND" | "OR";
+    conditions: PartnerCommissionRuleCondition[];
+  }>;
+};
+
+export type PartnerCommissionReward =
+  | { type: "fixed"; value: number }
+  | { type: "percentage"; value: number }
+  | { type: "percentage_of_revenue"; value: number }
+  | {
+      type: "tiered";
+      tiers: Array<{
+        closedClients?: number;
+        amount?: number;
+        min?: number;
+        max?: number;
+        conditions?: PartnerCommissionRuleConditionTree | null;
+      }>;
+    }
+  | { type: "service_config" }
+  | { type: "batch_initial_config" }
+  | Record<string, unknown>;
+
+export type PartnerCommissionPolicyRule = {
+  id: string;
+  name: string;
+  description?: string | null;
+  triggerType: string;
+  commissionType: string;
+  scope: string;
+  periodScope: string;
+  conditions?: PartnerCommissionRuleConditionTree | null;
+  reward?: PartnerCommissionReward | null;
+  priority?: number;
+};
+
+export type PartnerCommissionPolicyReference = {
+  batchId?: string | null;
+  batchName?: string | null;
+  dictionaries: {
+    services: Record<string, string>;
+    pipelineStatuses: Record<string, string>;
+    verticalMarkets: Record<string, string>;
+  };
+  rules: PartnerCommissionPolicyRule[];
 };
 
 export const PARTNER_LEAD_PIPELINE_STATUSES = [
@@ -231,6 +299,10 @@ export const formatCurrencyIdr = (value?: number | null) => {
   return new Intl.NumberFormat("en").format(amount);
 };
 
+export const formatCurrencyGlobal = (value?: number | null): string => {
+  return formatWithCurrency(Number(value ?? 0), getStoredCurrency());
+};
+
 export const formatServiceCommissionLabel = (
   service?: PartnerServiceItem | null,
 ) => {
@@ -242,7 +314,7 @@ export const formatServiceCommissionLabel = (
   );
 
   if (mode === "fixed") {
-    return `$${formatCurrencyIdr(value)} Fixed`;
+    return `${getCurrencySymbol(getStoredCurrency())}${formatCurrencyIdr(value)} Fixed`;
   }
 
   return `${value}%`;

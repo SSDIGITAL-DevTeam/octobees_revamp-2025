@@ -75,7 +75,9 @@ router.get("/dashboard/commissions", partnerDashboard.commissions);
 router.get("/dashboard/recent-leads", partnerDashboard.recentLeads);
 router.get("/dashboard/performance", partnerDashboard.performance);
 router.get("/dashboard/terms-and-conditions", partnerDashboard.termsAndConditions);
+router.get("/dashboard/commission-policy", partnerDashboard.commissionPolicy);
 router.get("/dashboard/pipeline-statuses", partnerDashboard.pipelineStatuses);
+router.get("/dashboard/vertical-markets", partnerDashboard.verticalMarkets);
 
 // ==================== LEADS ROUTES ====================
 router.get("/leads", partnerLeads.getAll);
@@ -103,6 +105,8 @@ backOffice.get("/performance-settings", partnerBackOffice.performanceSettings);
 backOffice.patch("/performance-settings", partnerBackOffice.updatePerformanceSetting);
 backOffice.get("/pipeline-statuses", partnerBackOffice.leadPipelineStatuses);
 backOffice.put("/pipeline-statuses", express.json(), partnerBackOffice.updateLeadPipelineStatusList);
+backOffice.get("/vertical-markets", partnerBackOffice.verticalMarkets);
+backOffice.put("/vertical-markets", express.json(), partnerBackOffice.updateVerticalMarketList);
 
 // Partner Management
 backOffice.get("/partners", partnerBackOffice.getAll);

@@ -21,6 +21,7 @@ import {
   type PartnerLeadItem,
   type PartnerLeadPipelineStatus,
   type PartnerServiceItem,
+  type PartnerVerticalMarketItem,
   formatCurrencyIdr,
   formatDateTime,
 } from "@/lib/partner-portal";
@@ -29,6 +30,7 @@ import {
   getAffiliateLeads,
   getAffiliatePipelineStatuses,
   getAffiliateServices,
+  getAffiliateVerticalMarkets,
   updateAffiliateLead,
 } from "@/services/dashboardService";
 
@@ -44,6 +46,9 @@ const getInitialLeadViewMode = (): "list" | "kanban" => {
 const MyLeadsPage = () => {
   const [leads, setLeads] = useState<PartnerLeadItem[]>([]);
   const [services, setServices] = useState<PartnerServiceItem[]>([]);
+  const [verticalMarkets, setVerticalMarkets] = useState<
+    PartnerVerticalMarketItem[]
+  >([]);
   const [pipelineStatuses, setPipelineStatuses] = useState<
     PartnerLeadPipelineStatus[]
   >(DEFAULT_PARTNER_LEAD_PIPELINE_STATUS_ITEMS);
@@ -97,6 +102,11 @@ const MyLeadsPage = () => {
       services.find((service) => service.id === selectedServiceId)?.name ?? ""
     );
   }, [selectedServiceId, services]);
+
+  const selectedService = useMemo(
+    () => services.find((service) => service.id === selectedServiceId) || null,
+    [selectedServiceId, services],
+  );
 
   const leadStats = useMemo(() => {
     const total = leads.length;
@@ -243,11 +253,17 @@ const MyLeadsPage = () => {
         setIsLoading(true);
       }
 
-      const [leadsResponse, servicesResponse, pipelineResponse] =
+      const [
+        leadsResponse,
+        servicesResponse,
+        pipelineResponse,
+        verticalMarketResponse,
+      ] =
         await Promise.all([
         getAffiliateLeads(token, 1, 100),
         getAffiliateServices(token),
         getAffiliatePipelineStatuses(token),
+        getAffiliateVerticalMarkets(token),
       ]);
 
       setLeads((leadsResponse?.data || []) as PartnerLeadItem[]);
@@ -255,6 +271,13 @@ const MyLeadsPage = () => {
       setPipelineStatuses(
         (pipelineResponse?.data ||
           DEFAULT_PARTNER_LEAD_PIPELINE_STATUS_ITEMS) as PartnerLeadPipelineStatus[],
+      );
+      setVerticalMarkets(
+        Array.isArray(verticalMarketResponse?.data)
+          ? (verticalMarketResponse.data as PartnerVerticalMarketItem[]).filter(
+              (market) => market.isActive,
+            )
+          : [],
       );
     } catch (err: any) {
       toast.error(err?.message || "Failed to load leads.");
@@ -290,6 +313,10 @@ const MyLeadsPage = () => {
     email: string;
     phone: string;
     projectValue: string;
+    isCustomProjectValue: boolean;
+    verticalMarketId: string;
+    verticalMarketName: string;
+    notes: string;
     nextFollowUpAt: string;
   }) => {
     const token = getPartnerToken();
@@ -299,7 +326,17 @@ const MyLeadsPage = () => {
       const createPromise = createAffiliateLead(token, {
         ...payload,
         serviceId: selectedServiceId,
+        verticalMarketId:
+          payload.verticalMarketId === "__custom__"
+            ? undefined
+            : payload.verticalMarketId,
+        verticalMarketName:
+          payload.verticalMarketId === "__custom__"
+            ? payload.verticalMarketName
+            : undefined,
         projectValue: payload.projectValue ? Number(payload.projectValue) : 0,
+        isCustomProjectValue: payload.isCustomProjectValue,
+        notes: payload.notes,
         nextFollowUpAt: payload.nextFollowUpAt || null,
       });
       await toast.promise(createPromise, {
@@ -958,6 +995,8 @@ const MyLeadsPage = () => {
       <AddLeadModal
         open={isAddLeadModalOpen}
         serviceName={selectedServiceLabel}
+        baseProjectValue={Number(selectedService?.projectValue || 0)}
+        verticalMarkets={verticalMarkets}
         onClose={() => setIsAddLeadModalOpen(false)}
         onSubmit={handleCreateLead}
       />

@@ -59,12 +59,20 @@ import {
   listLeadPipelineStatuses,
   seedDefaultLeadPipelineStatuses,
   updateLeadPipelineStatuses as updateLeadPipelineStatusesRepo,
+  DEFAULT_VERTICAL_MARKETS,
+  listVerticalMarkets,
+  seedDefaultVerticalMarkets,
+  updateVerticalMarkets as updateVerticalMarketsRepo,
+  getVerticalMarketById,
+  getVerticalMarketByName,
+  createVerticalMarket,
 } from "./partner.repository.js";
 import { findMetasByTarget, upsertMeta } from "../meta/meta.repository.js";
 import { cleanupRemovedContentImages } from "../blog/blog.service.js";
 import { getBatchById } from "../affiliate-batch/batch.repository.js";
 import {
   getRuleByName,
+  listCommissionRules,
   updateCommissionRule,
 } from "./commission-rule.repository.js";
 
@@ -96,6 +104,27 @@ const DEFAULT_LEAD_PIPELINE_STATUS_VALUES = new Set(
   DEFAULT_LEAD_PIPELINE_STATUSES.map((status) => status.value),
 );
 const PIPELINE_STATUS_COLORS = new Set(["blue", "purple", "green", "red", "slate"]);
+
+const normalizeVerticalMarketItem = (item, fallback = {}, index = 0) => {
+  const rawName = String(item?.name || fallback.name || "").trim();
+  const name = rawName.slice(0, 120);
+  if (!name) throw new Error("Vertical market name is required.");
+
+  return {
+    id: item?.id || fallback.id,
+    name,
+    sortOrder: Number.isFinite(Number(item?.sortOrder ?? fallback.sortOrder))
+      ? Number(item?.sortOrder ?? fallback.sortOrder)
+      : index + 1,
+    isActive: parseBooleanInput(item?.isActive, fallback.isActive ?? true),
+    isSystem: parseBooleanInput(item?.isSystem, fallback.isSystem ?? false),
+  };
+};
+
+const normalizeVerticalMarkets = (markets = DEFAULT_VERTICAL_MARKETS) =>
+  (Array.isArray(markets) ? markets : [])
+    .map((item, index) => normalizeVerticalMarketItem(item, {}, index))
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
 
 const syncBasicSalaryRuleWithSettings = async (setting) => {
   const rule = await getRuleByName("Basic Salary");
@@ -225,6 +254,65 @@ export const getLeadPipelineStatuses = async ({ includeInactive = true } = {}) =
 export const updateLeadPipelineStatuses = async (statuses = []) => {
   const normalized = normalizePipelineStatuses(statuses);
   return updateLeadPipelineStatusesRepo(normalized);
+};
+
+export const getVerticalMarkets = async ({ includeInactive = true } = {}) => {
+  let markets = await listVerticalMarkets({ includeInactive: true });
+  if (!markets.length) {
+    markets = await seedDefaultVerticalMarkets();
+  }
+  const normalized = normalizeVerticalMarkets(markets);
+  return includeInactive ? normalized : normalized.filter((market) => market.isActive);
+};
+
+export const updateVerticalMarkets = async (markets = []) => {
+  const normalized = normalizeVerticalMarkets(markets);
+  if (normalized.filter((market) => market.isActive).length === 0) {
+    throw new Error("At least one vertical market must remain active.");
+  }
+  const names = normalized.map((market) => market.name.toLowerCase());
+  if (new Set(names).size !== names.length) {
+    throw new Error("Vertical market names must be unique.");
+  }
+  return updateVerticalMarketsRepo(normalized);
+};
+
+const resolveLeadVerticalMarket = async (leadData = {}) => {
+  const rawId = leadData.verticalMarketId ?? leadData.vertical_market_id;
+  const rawName =
+    leadData.verticalMarketName ??
+    leadData.vertical_market_name ??
+    leadData.businessMarket ??
+    leadData.business_market;
+
+  if (rawId) {
+    const market = await getVerticalMarketById(rawId);
+    if (!market || !market.isActive) {
+      throw new Error("Selected vertical market is disabled or unavailable.");
+    }
+    return { verticalMarketId: market.id, verticalMarketName: market.name };
+  }
+
+  const name = String(rawName || "").trim();
+  if (!name) {
+    throw new Error("Vertical market is required.");
+  }
+
+  let market = await getVerticalMarketByName(name);
+  if (!market) {
+    market = await createVerticalMarket({
+      id: uuidv7(),
+      name: name.slice(0, 120),
+      sortOrder: (await getVerticalMarkets({ includeInactive: true })).length + 1,
+      isActive: true,
+      isSystem: false,
+    });
+  }
+  if (!market?.isActive) {
+    throw new Error("Selected vertical market is disabled or unavailable.");
+  }
+
+  return { verticalMarketId: market.id, verticalMarketName: market.name };
 };
 
 const assertLeadStatusCanBeSelected = async (status) => {
@@ -490,6 +578,58 @@ export const getPartnerTermsAndConditions = async () => {
   };
 };
 
+export const getPartnerCommissionPolicyReference = async (affiliateId) => {
+  const [rules, services, pipelineStatuses, verticalMarkets, lifecycle] =
+    await Promise.all([
+      listCommissionRules({ includeInactive: false }),
+      getAvailableServices(),
+      getLeadPipelineStatuses({ includeInactive: false }),
+      getVerticalMarkets({ includeInactive: false }),
+      getAffiliateLifecycle(affiliateId).catch(() => null),
+    ]);
+
+  const batchId = lifecycle?.batchId || null;
+  const isRelevantForPartnerBatch = (rule) => {
+    const allConditions =
+      rule.conditions?.groups?.flatMap((group) => group.conditions || []) || [];
+    const batchConditions = allConditions.filter(
+      (condition) => condition.field === "batch_id",
+    );
+    if (!batchConditions.length) return true;
+    return batchConditions.some(
+      (condition) => String(condition.value) === String(batchId),
+    );
+  };
+
+  return {
+    batchId,
+    batchName: lifecycle?.batchName || null,
+    dictionaries: {
+      services: Object.fromEntries(services.map((item) => [item.id, item.name])),
+      pipelineStatuses: Object.fromEntries(
+        pipelineStatuses.map((item) => [item.value, item.label || item.value]),
+      ),
+      verticalMarkets: Object.fromEntries(
+        verticalMarkets.map((item) => [item.id, item.name]),
+      ),
+    },
+    rules: rules
+      .filter((rule) => rule.commissionType !== "initial" || isRelevantForPartnerBatch(rule))
+      .map((rule) => ({
+        id: rule.id,
+        name: rule.name,
+        description: rule.description,
+        triggerType: rule.triggerType,
+        commissionType: rule.commissionType,
+        scope: rule.scope,
+        periodScope: rule.periodScope,
+        conditions: rule.conditions,
+        reward: rule.reward,
+        priority: rule.priority,
+      })),
+  };
+};
+
 export const updatePartnerTermsAndConditions = async (html) => {
   if (typeof html !== "string" || !html.trim()) {
     throw new Error("Terms & Conditions content is required");
@@ -622,10 +762,15 @@ export const getLeadDetail = async (affiliateId, leadId) => {
 
 export const createNewLead = async (affiliateId, leadData) => {
   const serviceId = leadData.serviceId ?? leadData.service_id;
-  const projectValue = leadData.projectValue ?? leadData.project_value;
+  const requestedProjectValue = leadData.projectValue ?? leadData.project_value;
+  const isCustomProjectValue = parseBooleanInput(
+    leadData.isCustomProjectValue ?? leadData.is_custom_project_value,
+    false,
+  );
   const nextFollowUpAt = parseOptionalDate(
     leadData.nextFollowUpAt ?? leadData.next_follow_up_at,
   );
+  const notes = String(leadData.notes ?? leadData.note ?? "").trim();
   const now = new Date();
 
   // Validate required fields
@@ -639,6 +784,19 @@ export const createNewLead = async (affiliateId, leadData) => {
     throw new Error("Invalid service ID");
   }
 
+  const baseProjectValue = Number(service.projectValue || 0);
+  const projectValue = isCustomProjectValue
+    ? Number(requestedProjectValue || 0)
+    : baseProjectValue;
+
+  if (!Number.isFinite(projectValue) || projectValue < baseProjectValue) {
+    throw new Error(
+      `Project value must be at least ${baseProjectValue.toLocaleString("en-US")}.`,
+    );
+  }
+
+  const verticalMarket = await resolveLeadVerticalMarket(leadData);
+
   // Create lead
   const normalizedStatus = await assertLeadStatusCanBeSelected(
     leadData.status || await getDefaultSelectableLeadStatus(),
@@ -650,7 +808,10 @@ export const createNewLead = async (affiliateId, leadData) => {
     email: leadData.email,
     phone: leadData.phone,
     serviceId: serviceId,
+    verticalMarketId: verticalMarket.verticalMarketId,
+    verticalMarketName: verticalMarket.verticalMarketName,
     projectValue: projectValue || 0,
+    isCustomProjectValue,
     status: normalizedStatus,
     nextFollowUpAt,
     lastContactAt: now,
@@ -658,6 +819,14 @@ export const createNewLead = async (affiliateId, leadData) => {
   };
 
   await createLead(data);
+  if (notes) {
+    await insertLeadNote({
+      id: uuidv7(),
+      leadId: data.id,
+      content: notes,
+      createdByType: "partner",
+    });
+  }
   await createLeadActivity({
     id: uuidv7(),
     leadId: data.id,
@@ -669,7 +838,10 @@ export const createNewLead = async (affiliateId, leadData) => {
     note: "Lead created",
     metadata: stringifyMetadata({
       serviceId: data.serviceId,
+      verticalMarketId: data.verticalMarketId,
+      verticalMarketName: data.verticalMarketName,
       projectValue: data.projectValue,
+      isCustomProjectValue: data.isCustomProjectValue,
       nextFollowUpAt: data.nextFollowUpAt,
     }),
   });
@@ -686,6 +858,8 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
 
   const serviceId = leadData.serviceId ?? leadData.service_id;
   const projectValue = leadData.projectValue ?? leadData.project_value;
+  const isCustomProjectValue =
+    leadData.isCustomProjectValue ?? leadData.is_custom_project_value;
   const nextFollowUpAt = parseOptionalDate(
     leadData.nextFollowUpAt ?? leadData.next_follow_up_at,
   );
@@ -704,7 +878,31 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
   if (leadData.email !== undefined) updateData.email = leadData.email;
   if (leadData.phone !== undefined) updateData.phone = leadData.phone;
   if (serviceId !== undefined) updateData.serviceId = serviceId;
-  if (projectValue !== undefined) updateData.projectValue = projectValue;
+  if (
+    leadData.verticalMarketId !== undefined ||
+    leadData.vertical_market_id !== undefined ||
+    leadData.verticalMarketName !== undefined ||
+    leadData.vertical_market_name !== undefined ||
+    leadData.businessMarket !== undefined ||
+    leadData.business_market !== undefined
+  ) {
+    Object.assign(updateData, await resolveLeadVerticalMarket(leadData));
+  }
+  if (isCustomProjectValue !== undefined) {
+    updateData.isCustomProjectValue = parseBooleanInput(isCustomProjectValue, false);
+  }
+  if (projectValue !== undefined) {
+    const nextServiceId = serviceId ?? existingLead.serviceId;
+    const service = await getPartnerServiceById(nextServiceId);
+    const baseProjectValue = Number(service?.projectValue || 0);
+    const nextProjectValue = Number(projectValue || 0);
+    if (!Number.isFinite(nextProjectValue) || nextProjectValue < baseProjectValue) {
+      throw new Error(
+        `Project value must be at least ${baseProjectValue.toLocaleString("en-US")}.`,
+      );
+    }
+    updateData.projectValue = nextProjectValue;
+  }
   if (leadData.status !== undefined) {
     const requestedStatus = normalizeLeadStatus(leadData.status);
     const currentStatus = normalizeLeadStatus(existingLead.status);
@@ -720,6 +918,8 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
     leadData.phone !== undefined ||
     serviceId !== undefined ||
     projectValue !== undefined ||
+    isCustomProjectValue !== undefined ||
+    updateData.verticalMarketId !== undefined ||
     nextFollowUpAt !== undefined
   ) {
     updateData.lastContactAt = new Date();
@@ -768,6 +968,9 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
     metadata: stringifyMetadata({
       nextFollowUpAt: updateData.nextFollowUpAt,
       projectValue: updateData.projectValue,
+      isCustomProjectValue: updateData.isCustomProjectValue,
+      verticalMarketId: updateData.verticalMarketId,
+      verticalMarketName: updateData.verticalMarketName,
     }),
   });
 

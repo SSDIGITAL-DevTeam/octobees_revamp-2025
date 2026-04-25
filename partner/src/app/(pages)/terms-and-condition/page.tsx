@@ -9,9 +9,11 @@ import Topbar from "@/components/layout/Topbar";
 import { Shimmer, SkeletonProse } from "@/components/ui/Shimmer";
 import {
   getPartnerToken,
+  type PartnerCommissionPolicyReference,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
 import {
+  getAffiliateCommissionPolicy,
   getAffiliatePerformance,
   getAffiliateTermsAndConditions,
 } from "@/services/dashboardService";
@@ -22,6 +24,8 @@ const TermsAndConditionPage = () => {
   const [performance, setPerformance] = useState<PartnerPerformanceData | null>(
     null,
   );
+  const [commissionPolicy, setCommissionPolicy] =
+    useState<PartnerCommissionPolicyReference | null>(null);
 
   useEffect(() => {
     const token = getPartnerToken();
@@ -63,15 +67,19 @@ const TermsAndConditionPage = () => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const [termsResponse, performanceResponse] = await Promise.all([
+        const [termsResponse, performanceResponse, commissionPolicyResponse] = await Promise.all([
           getAffiliateTermsAndConditions(token),
           getAffiliatePerformance(token).catch(() => null),
+          getAffiliateCommissionPolicy(token).catch(() => null),
         ]);
         if (!active) return;
 
         setHtml(processHtmlImages(termsResponse?.data?.html || ""));
         setPerformance(
           (performanceResponse?.data || null) as PartnerPerformanceData | null,
+        );
+        setCommissionPolicy(
+          (commissionPolicyResponse?.data || null) as PartnerCommissionPolicyReference | null,
         );
       } catch (error: any) {
         if (!active) return;
@@ -158,7 +166,10 @@ const TermsAndConditionPage = () => {
           </div>
         </section>
       ) : (
-        <CommissionPolicyInfoPanel performance={performance} />
+        <CommissionPolicyInfoPanel
+          performance={performance}
+          commissionPolicy={commissionPolicy}
+        />
       )}
     </div>
   );
