@@ -20,7 +20,7 @@ type TopbarProps = {
 
 const Topbar = ({ title = "Dashboard Overview", onLogout }: TopbarProps) => {
   const [open, setOpen] = useState(false);
-  const [partnerName, setPartnerName] = useState("DIGITAL-PA Partner");
+  const [partnerName, setPartnerName] = useState("OCTOBEES Partner");
   const profileRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const Topbar = ({ title = "Dashboard Overview", onLogout }: TopbarProps) => {
         const profile = response?.data;
         if (!active || !profile) return;
 
-        setPartnerName(profile.username || "DIGITAL-PA Partner");
+        setPartnerName(profile.username || "OCTOBEES Partner");
         setCachedPartnerProfile(profile);
       } catch {
         // Keep cached identity if live profile lookup fails.
@@ -111,7 +111,7 @@ const Topbar = ({ title = "Dashboard Overview", onLogout }: TopbarProps) => {
               {partnerName}
             </p>
             <Badge category="role" variant="partner">
-              DIGITAL-PA Partner
+              OCTOBEES Partner
             </Badge>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#E30613] text-sm font-semibold text-white sm:h-12 sm:w-12 sm:text-base">

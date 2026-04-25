@@ -146,14 +146,14 @@ function ForgotPasswordContent() {
       <div className="flex items-center gap-3 text-[#E30613]">
         <Image
           src="/asset-logo.webp"
-          alt="DIGITAL-PA"
+          alt="OCTOBEES"
           width={44}
           height={44}
           className="h-11 w-11 object-contain"
           priority
         />
         <span className="text-2xl font-semibold tracking-[0.16em] text-[#E30613]">
-          DIGITAL-PA
+          OCTOBEES
         </span>
       </div>
 
@@ -300,7 +300,7 @@ function ForgotPasswordContent() {
           {step === "success" && renderSuccessState()}
 
           <div className="mt-8 border-t border-slate-100 pt-4 text-xs text-slate-400">
-            © {new Date().getFullYear()} DIGITAL-PA
+            © {new Date().getFullYear()} OCTOBEES
           </div>
         </div>
 
@@ -308,7 +308,7 @@ function ForgotPasswordContent() {
           <div className="relative h-full w-full overflow-hidden rounded-[32px]">
             <Image
               src="/assets/auth/login.png"
-              alt="DIGITAL-PA forgot password visual"
+              alt="OCTOBEES forgot password visual"
               fill
               priority
               className="object-cover"
