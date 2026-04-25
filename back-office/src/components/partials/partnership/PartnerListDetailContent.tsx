@@ -54,6 +54,7 @@ import {
   type PartnerLeadSortValue,
 } from "@/lib/partnership/partnerList"
 import { cn } from "@/lib/utils"
+import { useCurrencyStore } from "@/app/store/currency"
 import { LeadDateRangeFilter } from "./LeadDateRangeFilter"
 
 const buildAddress = (partner?: PartnerDetailResponse["data"] | null) => {
@@ -101,6 +102,7 @@ const FALLBACK_PIPELINE_STATUSES: PartnerLeadPipelineStatus[] =
   )
 
 export const PartnerListDetailContent = ({ partnerId }: { partnerId: string }) => {
+  const { currency } = useCurrencyStore()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<"partner-information" | "leads">(
     "leads",
@@ -478,7 +480,7 @@ export const PartnerListDetailContent = ({ partnerId }: { partnerId: string }) =
                     Partner Sales
                   </p>
                   <p className="mt-3 text-3xl font-semibold text-slate-950">
-                    {formatCurrency(monthlyMetrics.salesThisMonth)}
+                    {formatCurrency(monthlyMetrics.salesThisMonth, currency)}
                   </p>
                   <p className="mt-2 text-sm text-slate-500">Closed Won sales in the current month.</p>
                 </div>
@@ -488,7 +490,7 @@ export const PartnerListDetailContent = ({ partnerId }: { partnerId: string }) =
                     Potential Commission
                   </p>
                   <p className="mt-3 text-3xl font-semibold text-slate-950">
-                    {formatCurrency(monthlyMetrics.commissionThisMonth)}
+                    {formatCurrency(monthlyMetrics.commissionThisMonth, currency)}
                   </p>
                   <p className="mt-2 text-sm text-slate-500">
                     Calculated from the service commission rules configured in Partner Recruitment System.

@@ -299,8 +299,19 @@ export const formatCurrencyIdr = (value?: number | null) => {
   return new Intl.NumberFormat("en").format(amount);
 };
 
+import {
+  getStoredCurrency,
+  getCurrencySymbol,
+  formatWithCurrency,
+} from "@/store/currency";
+
+/**
+ * Format an amount using the globally configured currency.
+ * Falls back to USD if no currency has been set.
+ */
 export const formatCurrencyGlobal = (value?: number | null): string => {
-  return formatWithCurrency(Number(value ?? 0), getStoredCurrency());
+  const currency = getStoredCurrency();
+  return formatWithCurrency(Number(value ?? 0), currency);
 };
 
 export const formatServiceCommissionLabel = (
@@ -314,7 +325,8 @@ export const formatServiceCommissionLabel = (
   );
 
   if (mode === "fixed") {
-    return `${getCurrencySymbol(getStoredCurrency())}${formatCurrencyIdr(value)} Fixed`;
+    const symbol = getCurrencySymbol(getStoredCurrency());
+    return `${symbol}${formatCurrencyIdr(value)} Fixed`;
   }
 
   return `${value}%`;

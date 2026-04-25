@@ -136,7 +136,7 @@ const SalesKnowledgeBasePage = () => {
               Product to sell and commission
             </h1> */}
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-              Study the latest sales materials prepared by DIGITAL-PA Singapore
+              Study the latest sales materials prepared by OCTOBEES Singapore
               team.
             </p>
           </div>

@@ -109,14 +109,14 @@ const LoginPage = () => {
               <div className="flex items-center gap-3 text-[#E30613]">
                 <Image
                   src="/asset-logo.webp"
-                  alt="DIGITAL-PA"
+                  alt="OCTOBEES"
                   width={44}
                   height={44}
                   className="h-11 w-11 object-contain"
                   priority
                 />
                 <span className="text-2xl font-semibold tracking-[0.16em] text-[#E30613]">
-                  DIGITAL-PA
+                  OCTOBEES
                 </span>
               </div>
 
@@ -125,7 +125,7 @@ const LoginPage = () => {
 
             <div className="space-y-1">
               <h1 className="text-xl font-semibold text-slate-900">
-                DIGITAL-PA Partner Login
+                OCTOBEES Partner Login
               </h1>
               <p className="text-sm text-slate-500">
                 Enter your details below to login
@@ -188,7 +188,7 @@ const LoginPage = () => {
             </div>
 
             <div className="mt-8 border-t border-slate-100 pt-4 text-xs text-slate-400">
-              © {new Date().getFullYear()} DIGITAL-PA
+              © {new Date().getFullYear()} OCTOBEES
             </div>
           </div>
 

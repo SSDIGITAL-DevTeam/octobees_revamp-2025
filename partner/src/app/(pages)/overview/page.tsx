@@ -26,6 +26,7 @@ import type {
 } from "@/data/dashboard";
 import {
   formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatDate,
   formatServiceCommissionLabel,
   getPartnerToken,
@@ -47,8 +48,10 @@ import {
   getAffiliateServices,
 } from "@/services/dashboardService";
 import type { PartnerProfile } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 
 const DashboardPage = () => {
+  const currency = useCurrency();
   const [stats, setStats] = useState<DashboardStat[]>([]);
   const [services, setServices] = useState<ServiceOffering[]>([]);
   const [recentLeads, setRecentLeads] = useState<DashboardLead[]>([]);
@@ -154,7 +157,7 @@ const DashboardPage = () => {
           {
             id: "total-commission",
             title: "Total Commission",
-            value: dashboardData.totalCommission?.value || formatCurrencyIdr(0),
+            value: dashboardData.totalCommission?.value || formatCurrencyGlobal(0),
             subtitle: "All recorded commission",
             accentColor: "#E30613",
             images: "/assets/icons/coin-icon.svg",
@@ -166,7 +169,7 @@ const DashboardPage = () => {
             id: "pending-commission",
             title: "Pending Commission",
             value:
-              dashboardData.pendingCommission?.value || formatCurrencyIdr(0),
+              dashboardData.pendingCommission?.value || formatCurrencyGlobal(0),
             subtitle: `${dashboardData.pendingCommission?.count || 0} pending transfer`,
             images: "/assets/icons/stopwatch-icon.svg",
           },
@@ -231,7 +234,7 @@ const DashboardPage = () => {
           service: item.serviceName
             ? `${item.serviceName}${item.leadName ? ` - ${item.leadName}` : ""}`
             : item.leadName || "-",
-          amount: formatCurrencyIdr(item.amount),
+          amount: formatCurrencyGlobal(item.amount),
           status: item.status as CommissionHistoryEntry["status"],
         }));
 
@@ -382,7 +385,7 @@ const DashboardPage = () => {
                       {entry.partnerName}
                     </p>
                     <p className="mt-1 text-sm text-slate-500">
-                      Sales {formatCurrencyIdr(entry.salesAmount)}
+                      Sales {formatCurrencyGlobal(entry.salesAmount)}
                     </p>
                   </div>
                 ))
