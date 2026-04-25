@@ -16,6 +16,7 @@ import {
   formatCurrency,
   type PartnerPaymentStatus,
 } from "@/lib/partnership/partnerList"
+import { useCurrencyStore } from "@/app/store/currency"
 
 export type PartnerListRow = {
   id: string
@@ -32,6 +33,8 @@ type PartnerListTableProps = {
 }
 
 export const PartnerListTable = ({ rows }: PartnerListTableProps) => {
+  const { currency } = useCurrencyStore()
+
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
       <Table>
@@ -61,10 +64,10 @@ export const PartnerListTable = ({ rows }: PartnerListTableProps) => {
                   </div>
                 </TableCell>
                 <TableCell className="font-semibold text-slate-900">
-                  {formatCurrency(partner.salesThisMonth)}
+                  {formatCurrency(partner.salesThisMonth, currency)}
                 </TableCell>
                 <TableCell className="font-semibold text-slate-900">
-                  {formatCurrency(partner.commissionThisMonth)}
+                  {formatCurrency(partner.commissionThisMonth, currency)}
                 </TableCell>
                 <TableCell>
                   <StatusBadge label={partner.paymentStatus} tone="warning" />

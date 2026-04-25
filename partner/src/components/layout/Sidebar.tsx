@@ -57,20 +57,20 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
         <div className="mb-8 flex items-center gap-3">
           <Image
             src="/asset-logo.webp"
-            alt="DIGITAL-PA"
+            alt="OCTOBEES"
             width={44}
             height={44}
             className="h-11 w-11 object-contain"
             priority
           />
           <span className="text-xl font-bold tracking-[0em] text-[#E30613]">
-            DIGITAL-PA
+            OCTOBEES
           </span>
         </div>
 
         <nav className="space-y-2">
           <p className="mb-3 text-center text-sm font-medium text-gray-800">
-            DIGITAL-PA Partner Dashboard
+            OCTOBEES Partner Dashboard
           </p>
 
           <div className="space-y-2">
@@ -108,7 +108,7 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps) => {
         </nav>
 
         <div className="mt-auto pt-8 text-xs text-slate-400">
-          &copy; {new Date().getFullYear()} DIGITAL-PA
+          &copy; {new Date().getFullYear()} OCTOBEES
         </div>
       </aside>
     </>

@@ -7,6 +7,10 @@ import {
   type PartnerLeadsParams,
   type PartnerServiceApiItem,
 } from "@/lib/api/partnership/dashboardPartnership"
+import {
+  formatWithCurrency,
+  type CurrencyCode,
+} from "@/app/store/currency"
 
 const PAGE_LIMIT = 100
 const SALES_ELIGIBLE_STATUS = "Won"
@@ -57,13 +61,8 @@ const isValidDate = (value?: string | null) => {
   return !Number.isNaN(new Date(value).getTime())
 }
 
-export const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(Number(value || 0))
+export const formatCurrency = (value: number, currency?: CurrencyCode) =>
+  formatWithCurrency(value, currency)
 
 export const formatDate = (value?: string | null) => {
   if (!isValidDate(value)) return "-"

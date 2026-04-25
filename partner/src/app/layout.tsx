@@ -4,7 +4,7 @@ import ClientProviders from "@/components/providers/ClientProviders";
 
 // Deployment trigger: 2026-04-15T12:00:00Z - Partner portal v3
 export const metadata: Metadata = {
-  title: "DIGITAL-PA Partner Dashboard",
+  title: "OCTOBEES Partner Dashboard",
   description:
     "Affiliate and partner performance dashboard for monitoring leads and commissions.",
 };

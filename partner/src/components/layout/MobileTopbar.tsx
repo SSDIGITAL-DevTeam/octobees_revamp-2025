@@ -80,13 +80,13 @@ const MobileTopbar = ({
       <div className="flex items-center gap-2">
         <Image
           src="/asset-logo.webp"
-          alt="DIGITAL-PA"
+          alt="OCTOBEES"
           width={28}
           height={28}
           className="h-7 w-7 object-contain"
         />
         <span className="text-lg font-bold tracking-[0em] text-[#E30613]">
-          DIGITAL-PA
+          OCTOBEES
         </span>
       </div>
 
@@ -112,7 +112,7 @@ const MobileTopbar = ({
               <p className="text-sm font-medium text-slate-900">
                 {partnerName}
               </p>
-              <p className="text-xs text-slate-500">DIGITAL-PA Partner</p>
+              <p className="text-xs text-slate-500">OCTOBEES Partner</p>
             </div>
             <button
               type="button"
