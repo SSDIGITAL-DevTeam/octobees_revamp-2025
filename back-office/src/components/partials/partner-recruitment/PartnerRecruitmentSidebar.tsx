@@ -12,6 +12,7 @@ import {
   Database,
   FileCheck,
   LayoutDashboard,
+  Settings2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -106,6 +107,11 @@ const recruitmentSidebarItems: {
           },
         ],
       },
+      {
+        title: "Configuration",
+        url: "/partner-recruitment-system/configuration",
+        icon: Settings2,
+      },
     ],
   },
 ];
@@ -146,7 +152,7 @@ export function PartnerRecruitmentSidebar() {
       <SidebarHeader className="px-8 pt-8 flex flex-row items-center justify-between">
         <Image
           src={Logo.src}
-          alt="Logo DIGITAL-PA"
+          alt="Logo OCTOBEES"
           width={1000}
           height={1000}
           className="object-contain w-[12rem]"

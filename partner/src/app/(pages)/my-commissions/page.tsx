@@ -11,7 +11,7 @@ import {
   SkeletonTable,
 } from "@/components/ui/Shimmer";
 import {
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatDate,
   getCommissionStatusVariant,
   getCommissionTypeLabel,
@@ -20,6 +20,7 @@ import {
   type PartnerCommissionItem,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 import {
   getAffiliateCommissions,
   getAffiliatePerformance,
@@ -29,17 +30,13 @@ type CommissionTypeFilter = "all" | "sales" | "initial" | "basic_salary";
 type CommissionStatusFilter = "all" | "Paid" | "Pending Transfer" | "Rejected";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+
 const API_ORIGIN = BASE_URL.replace(/\/api\/v\d+\/?$/, "");
 
 const buildProofAbsoluteUrl = (proofUrl?: string | null) => {
   if (!proofUrl) return "";
   if (/^https?:\/\//i.test(proofUrl)) return proofUrl;
   return `${API_ORIGIN}${proofUrl}`;
-};
-
-const formatAmount = (value?: number | null) => {
-  const amount = Number(value ?? 0);
-  return `$ ${formatCurrencyIdr(amount)}`;
 };
 
 const ordinalSuffix = (day: number) => {
@@ -78,6 +75,10 @@ const formatPeriodLabel = (
 };
 
 const MyCommissionsPage = () => {
+  const currency = useCurrency(); // triggers re-render when currency changes
+  const formatAmount = (value?: number | null) =>
+    formatCurrencyGlobal(value ?? 0);
+
   const [typeFilter, setTypeFilter] = useState<CommissionTypeFilter>("all");
   const [statusFilter, setStatusFilter] =
     useState<CommissionStatusFilter>("all");
