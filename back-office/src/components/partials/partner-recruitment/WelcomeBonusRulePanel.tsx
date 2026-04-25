@@ -33,10 +33,12 @@ import type { AffiliateBatch } from "@/hooks/partnership/useBatches";
 import {
   createCommissionRule,
   getPartnerLeadPipelineStatuses,
+  getPartnerVerticalMarkets,
   listCommissionRules,
   updateCommissionRule,
   type CommissionRule,
   type PartnerLeadPipelineStatus,
+  type PartnerVerticalMarket,
   type RuleCondition,
   type RuleConditionTree,
 } from "@/lib/api/partnership/dashboardPartnership";
@@ -67,6 +69,8 @@ const FIELD_OPTIONS = [
   { value: "tenure_days", label: "Days as a partner", numeric: true, boolean: false },
   { value: "lead_project_value", label: "Deal value", numeric: true, boolean: false },
   { value: "lead_status", label: "Lead status", numeric: false, boolean: false },
+  { value: "lead_vertical_market_id", label: "Vertical market", numeric: false, boolean: false },
+  { value: "vertical_market_first_sale", label: "First seller in vertical market", numeric: false, boolean: true },
   { value: "payout_day", label: "Day of month", numeric: true, boolean: false },
   { value: "is_first_month", label: "Is partner's first month", numeric: false, boolean: true },
 ];
@@ -244,17 +248,20 @@ function ConditionRow({
   onUpdate,
   onRemove,
   pipelineStatuses,
+  verticalMarkets,
 }: {
   condition: RuleCondition;
   onUpdate: (patch: Partial<RuleCondition>) => void;
   onRemove: () => void;
   pipelineStatuses: PartnerLeadPipelineStatus[];
+  verticalMarkets: PartnerVerticalMarket[];
 }) {
   const isNumeric = NUMERIC_FIELDS.has(condition.field);
   const isBoolean =
     FIELD_OPTIONS.find((field) => field.value === condition.field)?.boolean ??
     false;
   const isLeadStatus = condition.field === "lead_status";
+  const isVerticalMarket = condition.field === "lead_vertical_market_id";
   const isListOp = condition.op === "in" || condition.op === "not_in";
   const activePipelineStatuses = pipelineStatuses.filter(
     (status) => status.isActive,
@@ -339,6 +346,62 @@ function ConditionRow({
       );
     }
 
+    if (isVerticalMarket) {
+      const activeMarkets = verticalMarkets.filter((market) => market.isActive);
+      if (isListOp) {
+        const selected = toSelectedValues(condition.value);
+        return (
+          <div className="flex min-w-[220px] flex-wrap gap-1">
+            {activeMarkets.map((market) => {
+              const value = String(market.id || market.name);
+              const checked = selected.includes(value);
+              return (
+                <label
+                  key={value}
+                  className={cn(
+                    "inline-flex cursor-pointer select-none rounded-full border px-2.5 py-1 text-xs font-semibold",
+                    checked
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-slate-200 bg-white text-slate-600",
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={checked}
+                    onChange={() => {
+                      const next = checked
+                        ? selected.filter((item) => item !== value)
+                        : [...selected, value];
+                      onUpdate({ value: next });
+                    }}
+                  />
+                  {market.name}
+                </label>
+              );
+            })}
+          </div>
+        );
+      }
+      return (
+        <select
+          className="h-9 min-w-[180px] rounded-xl border border-slate-200 bg-white px-3 text-sm"
+          value={String(condition.value ?? "")}
+          onChange={(event) => onUpdate({ value: event.target.value })}
+          disabled={activeMarkets.length === 0}
+        >
+          <option value="">
+            {activeMarkets.length > 0 ? "Select market..." : "No active market"}
+          </option>
+          {activeMarkets.map((market) => (
+            <option key={market.id || market.name} value={market.id}>
+              {market.name}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
     if (isListOp) {
       return (
         <Input
@@ -390,10 +453,13 @@ function ConditionRow({
         onChange={(event) => {
           const field = event.target.value;
           const numeric = NUMERIC_FIELDS.has(field);
+          const boolean =
+            FIELD_OPTIONS.find((option) => option.value === field)?.boolean ??
+            false;
           onUpdate({
             field,
             op: numeric ? "gte" : "eq",
-            value: numeric ? 0 : "",
+            value: boolean ? true : numeric ? 0 : "",
           });
         }}
       >
@@ -437,10 +503,12 @@ function TierConditionsEditor({
   tier,
   onChange,
   pipelineStatuses,
+  verticalMarkets,
 }: {
   tier: TierDraft;
   onChange: (conditions: RuleConditionTree | null) => void;
   pipelineStatuses: PartnerLeadPipelineStatus[];
+  verticalMarkets: PartnerVerticalMarket[];
 }) {
   const { logic, conditions } = extractConditions(tier.conditions);
 
@@ -510,6 +578,7 @@ function TierConditionsEditor({
               key={`${condition.field}-${index}`}
               condition={condition}
               pipelineStatuses={pipelineStatuses}
+              verticalMarkets={verticalMarkets}
               onUpdate={(patch) => updateCondition(index, patch)}
               onRemove={() => removeCondition(index)}
             />
@@ -542,6 +611,7 @@ export function WelcomeBonusRuleTable({
   const [saving, setSaving] = useState(false);
   const [rules, setRules] = useState<CommissionRule[]>([]);
   const [pipelineStatuses, setPipelineStatuses] = useState<PartnerLeadPipelineStatus[]>([]);
+  const [verticalMarkets, setVerticalMarkets] = useState<PartnerVerticalMarket[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<DialogMode>("add");
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
@@ -550,12 +620,14 @@ export function WelcomeBonusRuleTable({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [rulesRes, statusesRes] = await Promise.all([
+      const [rulesRes, statusesRes, verticalMarketsRes] = await Promise.all([
         listCommissionRules(true),
         getPartnerLeadPipelineStatuses({ includeInactive: false }),
+        getPartnerVerticalMarkets({ includeInactive: false }),
       ]);
       setRules(rulesRes.data.data ?? []);
       setPipelineStatuses(statusesRes.data.data ?? []);
+      setVerticalMarkets(verticalMarketsRes.data.data ?? []);
     } catch {
       toast.error("Failed to load welcome bonus rules.");
     } finally {
@@ -999,6 +1071,7 @@ export function WelcomeBonusRuleTable({
                       <TierConditionsEditor
                         tier={tier}
                         pipelineStatuses={pipelineStatuses}
+                        verticalMarkets={verticalMarkets}
                         onChange={(conditions) =>
                           updateDraftTier(index, {
                             conditions,

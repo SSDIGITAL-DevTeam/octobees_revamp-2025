@@ -19,6 +19,7 @@ import {
   createCommissionRule,
   updateCommissionRule,
   getPartnerLeadPipelineStatuses,
+  getPartnerVerticalMarkets,
   type CommissionRule,
   type RuleCondition,
   type RuleConditionTree,
@@ -27,6 +28,7 @@ import {
   type RuleScope,
   type RulePeriodScope,
   type PartnerLeadPipelineStatus,
+  type PartnerVerticalMarket,
 } from "@/lib/api/partnership/dashboardPartnership";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +41,8 @@ const FIELD_OPTIONS = [
   { value: "lead_project_value",  label: "Deal value",               numeric: true,  boolean: false },
   { value: "lead_service_id",     label: "Product / Service ID",     numeric: false, boolean: false },
   { value: "lead_status",         label: "Lead status",              numeric: false, boolean: false },
+  { value: "lead_vertical_market_id", label: "Vertical market",       numeric: false, boolean: false },
+  { value: "vertical_market_first_sale", label: "First seller in vertical market", numeric: false, boolean: true },
   { value: "batch_id",            label: "Partner batch",            numeric: false, boolean: false },
   { value: "payout_day",          label: "Day of month",             numeric: true,  boolean: false },
   { value: "is_first_month",      label: "Is partner's first month", numeric: false, boolean: true  },
@@ -118,18 +122,20 @@ const toSelectedValues = (value: RuleCondition["value"]): string[] => {
 // ── Condition row ──────────────────────────────────────────────────────────────
 
 function CondRow({
-  cond, index, onUpdate, onRemove, pipelineStatuses = [],
+  cond, index, onUpdate, onRemove, pipelineStatuses = [], verticalMarkets = [],
 }: {
   cond: RuleCondition;
   index: number;
   onUpdate: (p: Partial<RuleCondition>) => void;
   onRemove: () => void;
   pipelineStatuses?: PartnerLeadPipelineStatus[];
+  verticalMarkets?: PartnerVerticalMarket[];
 }) {
   const isNumeric    = NUMERIC_FIELDS.has(cond.field);
   const isBool       = FIELD_OPTIONS.find((f) => f.value === cond.field)?.boolean ?? false;
   const isListOp     = cond.op === "in" || cond.op === "not_in";
   const isLeadStatus = cond.field === "lead_status";
+  const isVerticalMarket = cond.field === "lead_vertical_market_id";
   const activePipelineStatuses = pipelineStatuses.filter(
     (status) => status.isActive,
   );
@@ -208,6 +214,62 @@ function CondRow({
       );
     }
 
+    if (isVerticalMarket) {
+      const activeMarkets = verticalMarkets.filter((market) => market.isActive);
+      if (isListOp) {
+        const selected = toSelectedValues(cond.value);
+        return (
+          <div className="flex min-w-[220px] flex-wrap gap-1">
+            {activeMarkets.map((market) => {
+              const value = String(market.id || market.name);
+              const checked = selected.includes(value);
+              return (
+                <label
+                  key={value}
+                  className={cn(
+                    "inline-flex cursor-pointer select-none items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
+                    checked
+                      ? "border-slate-900 bg-slate-900 text-white"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-400",
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={checked}
+                    onChange={() => {
+                      const next = checked
+                        ? selected.filter((v) => v !== value)
+                        : [...selected, value];
+                      onUpdate({ value: next });
+                    }}
+                  />
+                  {market.name}
+                </label>
+              );
+            })}
+          </div>
+        );
+      }
+      return (
+        <select
+          className="h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-sm text-slate-700"
+          value={String(cond.value ?? "")}
+          onChange={(e) => onUpdate({ value: e.target.value })}
+          disabled={activeMarkets.length === 0}
+        >
+          <option value="">
+            {activeMarkets.length > 0 ? "Select market..." : "No active market"}
+          </option>
+          {activeMarkets.map((market) => (
+            <option key={market.id || market.name} value={market.id}>
+              {market.name}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
     if (isListOp) {
       return (
         <Input
@@ -251,7 +313,12 @@ function CondRow({
         onChange={(e) => {
           const f = e.target.value;
           const num = NUMERIC_FIELDS.has(f);
-          onUpdate({ field: f, op: num ? "gte" : "eq", value: num ? 0 : "" });
+          const bool = FIELD_OPTIONS.find((option) => option.value === f)?.boolean ?? false;
+          onUpdate({
+            field: f,
+            op: num ? "gte" : "eq",
+            value: bool ? true : num ? 0 : "",
+          });
         }}
       >
         {FIELD_OPTIONS.map((o) => (
@@ -336,20 +403,25 @@ export function EmbeddedRuleConditions({
   const [logic, setLogic]       = useState<"AND" | "OR">("AND");
   const [conds, setConds]       = useState<RuleCondition[]>([]);
   const [pipelineStatuses, setPipelineStatuses] = useState<PartnerLeadPipelineStatus[]>([]);
+  const [verticalMarkets, setVerticalMarkets] = useState<PartnerVerticalMarket[]>([]);
 
   // ── Load ────────────────────────────────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [rulesRes, statusesRes] = await Promise.all([
+        const [rulesRes, statusesRes, verticalMarketsRes] = await Promise.all([
           listCommissionRules(true),
           getPartnerLeadPipelineStatuses({ includeInactive: false }).catch(() => null),
+          getPartnerVerticalMarkets({ includeInactive: false }).catch(() => null),
         ]);
         if (cancelled) return;
 
         if (statusesRes?.data?.data) {
           setPipelineStatuses(statusesRes.data.data);
+        }
+        if (verticalMarketsRes?.data?.data) {
+          setVerticalMarkets(verticalMarketsRes.data.data);
         }
 
         const all = rulesRes.data.data ?? [];
@@ -488,6 +560,7 @@ export function EmbeddedRuleConditions({
                     cond={c}
                     index={i}
                     pipelineStatuses={pipelineStatuses}
+                    verticalMarkets={verticalMarkets}
                     onUpdate={(p) => updateCond(i, p)}
                     onRemove={() => removeCond(i)}
                   />

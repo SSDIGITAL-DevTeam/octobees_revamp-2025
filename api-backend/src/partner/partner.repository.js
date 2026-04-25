@@ -5,6 +5,7 @@ import {
   salesMaterial,
   partnerLead,
   partnerLeadPipelineStatus,
+  partnerVerticalMarket,
   partnerLeadActivity,
   partnerLeadNote,
   partnerCommission,
@@ -94,6 +95,98 @@ export const updateLeadPipelineStatuses = async (statuses = []) => {
   return listLeadPipelineStatuses({ includeInactive: true });
 };
 
+export const DEFAULT_VERTICAL_MARKETS = [
+  { name: "Digital Agency", sortOrder: 1, isActive: true, isSystem: true },
+  { name: "Education", sortOrder: 2, isActive: true, isSystem: true },
+  { name: "Healthcare", sortOrder: 3, isActive: true, isSystem: true },
+  { name: "Real Estate", sortOrder: 4, isActive: true, isSystem: true },
+  { name: "Retail & Ecommerce", sortOrder: 5, isActive: true, isSystem: true },
+  { name: "Food & Beverage", sortOrder: 6, isActive: true, isSystem: true },
+  { name: "Finance & Insurance", sortOrder: 7, isActive: true, isSystem: true },
+  { name: "Professional Services", sortOrder: 8, isActive: true, isSystem: true },
+];
+
+export const listVerticalMarkets = async ({ includeInactive = true } = {}) => {
+  const rows = await db
+    .select()
+    .from(partnerVerticalMarket)
+    .orderBy(asc(partnerVerticalMarket.sortOrder), asc(partnerVerticalMarket.name));
+
+  return includeInactive ? rows : rows.filter((row) => row.isActive);
+};
+
+export const seedDefaultVerticalMarkets = async () => {
+  const existing = await listVerticalMarkets({ includeInactive: true });
+  const existingNames = new Set(existing.map((item) => item.name.toLowerCase()));
+  const missing = DEFAULT_VERTICAL_MARKETS.filter(
+    (item) => !existingNames.has(item.name.toLowerCase()),
+  );
+
+  if (missing.length > 0) {
+    await db.insert(partnerVerticalMarket).values(
+      missing.map((item) => ({
+        id: uuidv7(),
+        ...item,
+      })),
+    );
+  }
+
+  return listVerticalMarkets({ includeInactive: true });
+};
+
+export const updateVerticalMarkets = async (markets = []) => {
+  await seedDefaultVerticalMarkets();
+
+  for (const item of markets) {
+    await db
+      .insert(partnerVerticalMarket)
+      .values({
+        id: item.id || uuidv7(),
+        name: item.name,
+        sortOrder: item.sortOrder,
+        isActive: item.isActive,
+        isSystem: item.isSystem,
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          name: item.name,
+          sortOrder: item.sortOrder,
+          isActive: item.isActive,
+          isSystem: item.isSystem,
+          updatedAt: new Date(),
+        },
+      });
+  }
+
+  return listVerticalMarkets({ includeInactive: true });
+};
+
+export const getVerticalMarketById = async (id) => {
+  if (!id) return null;
+  const rows = await db
+    .select()
+    .from(partnerVerticalMarket)
+    .where(eq(partnerVerticalMarket.id, id))
+    .limit(1);
+  return rows[0] || null;
+};
+
+export const getVerticalMarketByName = async (name) => {
+  const normalized = String(name || "").trim();
+  if (!normalized) return null;
+  const rows = await db
+    .select()
+    .from(partnerVerticalMarket)
+    .where(sql`LOWER(${partnerVerticalMarket.name}) = LOWER(${normalized})`)
+    .limit(1);
+  return rows[0] || null;
+};
+
+export const createVerticalMarket = async (data) => {
+  await db.insert(partnerVerticalMarket).values(data);
+  return getVerticalMarketById(data.id);
+};
+
 // ==================== SERVICES ====================
 
 export const getAllPartnerServices = async () => {
@@ -167,7 +260,10 @@ export const getPartnerLeads = async (affiliateId, filters = {}) => {
       phone: partnerLead.phone,
       serviceId: partnerLead.serviceId,
       serviceName: partnerService.name,
+      verticalMarketId: partnerLead.verticalMarketId,
+      verticalMarketName: partnerLead.verticalMarketName,
       projectValue: partnerLead.projectValue,
+      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -223,7 +319,10 @@ export const getLeadById = async (leadId, affiliateId) => {
       phone: partnerLead.phone,
       serviceId: partnerLead.serviceId,
       serviceName: partnerService.name,
+      verticalMarketId: partnerLead.verticalMarketId,
+      verticalMarketName: partnerLead.verticalMarketName,
       projectValue: partnerLead.projectValue,
+      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -259,6 +358,25 @@ export const updateLead = async (leadId, affiliateId, data) => {
       and(eq(partnerLead.id, leadId), eq(partnerLead.affiliateId, affiliateId)),
     );
   return true;
+};
+
+export const countWonLeadsForVerticalMarket = async (
+  verticalMarketId,
+  { excludeLeadId } = {},
+) => {
+  if (!verticalMarketId) return 0;
+  const conditions = [
+    eq(partnerLead.verticalMarketId, verticalMarketId),
+    eq(partnerLead.status, "Won"),
+  ];
+  if (excludeLeadId) {
+    conditions.push(sql`${partnerLead.id} <> ${excludeLeadId}`);
+  }
+  const rows = await db
+    .select({ count: sql`COUNT(*)`.mapWith(Number) })
+    .from(partnerLead)
+    .where(and(...conditions));
+  return Number(rows[0]?.count || 0);
 };
 
 export const deleteLead = async (leadId, affiliateId) => {
@@ -1189,7 +1307,10 @@ export const getAllLeads = async ({
       phone: partnerLead.phone,
       serviceId: partnerLead.serviceId,
       serviceName: partnerService.name,
+      verticalMarketId: partnerLead.verticalMarketId,
+      verticalMarketName: partnerLead.verticalMarketName,
       projectValue: partnerLead.projectValue,
+      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -1240,7 +1361,10 @@ export const getLeadByIdBackOffice = async (leadId) => {
       phone: partnerLead.phone,
       serviceId: partnerLead.serviceId,
       serviceName: partnerService.name,
+      verticalMarketId: partnerLead.verticalMarketId,
+      verticalMarketName: partnerLead.verticalMarketName,
       projectValue: partnerLead.projectValue,
+      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,

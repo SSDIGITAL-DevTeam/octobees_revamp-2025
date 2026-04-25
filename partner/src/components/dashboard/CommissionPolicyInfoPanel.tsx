@@ -2,11 +2,16 @@
 
 import {
   formatCurrencyIdr,
+  type PartnerCommissionPolicyReference,
+  type PartnerCommissionRuleCondition,
+  type PartnerCommissionRuleConditionTree,
+  type PartnerCommissionPolicyRule,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
 
 type Props = {
   performance: PartnerPerformanceData | null;
+  commissionPolicy?: PartnerCommissionPolicyReference | null;
 };
 
 const formatUsd = (value?: number | null) => `$${formatCurrencyIdr(value)}`;
@@ -23,6 +28,131 @@ const ordinalSuffix = (day: number) => {
     default:
       return "th";
   }
+};
+
+const commissionTypeLabel: Record<string, string> = {
+  initial: "Initial Commission",
+  basic_salary: "Basic Commission",
+  sales: "Sales Commission",
+};
+
+const triggerLabel: Record<string, string> = {
+  lead_won: "When a lead becomes Won",
+  daily_cron: "Checked daily",
+  monthly_cron: "Checked monthly",
+  manual: "Manual admin review",
+};
+
+const periodLabel: Record<string, string> = {
+  first_month: "First active month",
+  current_month: "Current month",
+  any_month: "Any time",
+};
+
+const opLabel: Record<string, string> = {
+  eq: "is",
+  neq: "is not",
+  gt: "is more than",
+  gte: "is at least",
+  lt: "is less than",
+  lte: "is at most",
+  in: "is one of",
+  not_in: "is not one of",
+};
+
+const fieldLabel: Record<string, string> = {
+  closed_clients: "Closed deals",
+  total_revenue: "Monthly revenue",
+  tenure_days: "Days as partner",
+  lead_project_value: "Deal value",
+  lead_service_id: "Product / service",
+  lead_status: "Lead status",
+  lead_vertical_market_id: "Vertical market",
+  vertical_market_first_sale: "First seller in vertical market",
+  batch_id: "Assigned batch",
+  payout_day: "Payout day",
+  is_first_month: "First active month",
+};
+
+const formatConditionValue = (
+  condition: PartnerCommissionRuleCondition,
+  policy?: PartnerCommissionPolicyReference | null,
+) => {
+  const dictionaries = policy?.dictionaries;
+  const formatSingle = (value: unknown) => {
+    if (typeof value === "boolean") return value ? "Yes" : "No";
+    if (condition.field === "lead_project_value" || condition.field === "total_revenue") {
+      return formatUsd(Number(value || 0));
+    }
+    if (condition.field === "lead_service_id") {
+      return dictionaries?.services?.[String(value)] || String(value ?? "—");
+    }
+    if (condition.field === "lead_status") {
+      return dictionaries?.pipelineStatuses?.[String(value)] || String(value ?? "—");
+    }
+    if (condition.field === "lead_vertical_market_id") {
+      return dictionaries?.verticalMarkets?.[String(value)] || String(value ?? "—");
+    }
+    if (condition.field === "batch_id") {
+      return policy?.batchName || "Your assigned batch";
+    }
+    return String(value ?? "—");
+  };
+
+  if (Array.isArray(condition.value)) {
+    return condition.value.map(formatSingle).join(", ");
+  }
+  return formatSingle(condition.value);
+};
+
+const formatCondition = (
+  condition: PartnerCommissionRuleCondition,
+  policy?: PartnerCommissionPolicyReference | null,
+) =>
+  `${fieldLabel[condition.field] || condition.field} ${
+    opLabel[condition.op] || condition.op
+  } ${formatConditionValue(condition, policy)}`;
+
+const flattenConditions = (
+  tree?: PartnerCommissionRuleConditionTree | null,
+): Array<{ logic: "AND" | "OR"; condition: PartnerCommissionRuleCondition }> => {
+  if (!tree?.groups?.length) return [];
+  return tree.groups.flatMap((group) =>
+    (group.conditions || []).map((condition) => ({
+      logic: group.operator || "AND",
+      condition,
+    })),
+  );
+};
+
+const describeReward = (
+  rule: PartnerCommissionPolicyRule,
+  policy?: PartnerCommissionPolicyReference | null,
+) => {
+  const reward = rule.reward;
+  if (!reward || typeof reward !== "object") return "Configured by admin";
+  if (reward.type === "fixed") return `${formatUsd(Number(reward.value || 0))} fixed payout`;
+  if (reward.type === "percentage") return `${Number(reward.value || 0)}% of deal value`;
+  if (reward.type === "percentage_of_revenue") return `${Number(reward.value || 0)}% of monthly revenue`;
+  if (reward.type === "service_config") return "Uses product/service commission rate";
+  if (reward.type === "batch_initial_config") return "Uses your batch welcome bonus tiers";
+  if (reward.type === "tiered") {
+    const tiers = Array.isArray(reward.tiers) ? reward.tiers : [];
+    if (!tiers.length) return "Tiered payout";
+    return tiers
+      .map((tier) => {
+        const threshold = Number(tier.closedClients ?? tier.min ?? 0);
+        return `${threshold}+ closed: ${formatUsd(Number(tier.amount || 0))}`;
+      })
+      .join(" · ");
+  }
+  return "Configured by admin";
+};
+
+const policyToneByType: Record<string, string> = {
+  initial: "border-purple-100 bg-purple-50/50",
+  basic_salary: "border-amber-100 bg-amber-50/50",
+  sales: "border-blue-100 bg-blue-50/50",
 };
 
 type PolicyCardProps = {
@@ -83,7 +213,7 @@ const PolicyCard = ({
   </div>
 );
 
-const CommissionPolicyInfoPanel = ({ performance }: Props) => {
+const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => {
   if (!performance) return null;
 
   const { policy, batch } = performance;
@@ -331,6 +461,98 @@ const CommissionPolicyInfoPanel = ({ performance }: Props) => {
           }
         />
       </div>
+
+      {commissionPolicy?.rules?.length ? (
+        <section className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="flex flex-col gap-1 border-b border-slate-100 pb-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Active Commission Rules
+            </p>
+            <h3 className="text-lg font-bold text-slate-950">
+              Detailed earning conditions
+            </h3>
+            <p className="text-sm text-slate-600">
+              These are the active rules currently used by the system. A
+              commission is created only when the trigger and every required
+              condition are met.
+            </p>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {commissionPolicy.rules.map((rule) => {
+              const conditions = flattenConditions(rule.conditions);
+              return (
+                <article
+                  key={rule.id}
+                  className={`rounded-2xl border p-4 ${
+                    policyToneByType[rule.commissionType] ||
+                    "border-slate-100 bg-slate-50/70"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        {commissionTypeLabel[rule.commissionType] || rule.name}
+                      </p>
+                      <h4 className="mt-1 text-base font-bold text-slate-950">
+                        {rule.name}
+                      </h4>
+                    </div>
+                    <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-slate-600 shadow-sm">
+                      {periodLabel[rule.periodScope] || rule.periodScope}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {rule.description || "Commission rule configured by admin."}
+                  </p>
+
+                  <div className="mt-4 rounded-xl bg-white/85 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      Payout
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">
+                      {describeReward(rule, commissionPolicy)}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 rounded-xl bg-white/85 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      Trigger
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">
+                      {triggerLabel[rule.triggerType] || rule.triggerType}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 rounded-xl bg-white/85 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                      Conditions
+                    </p>
+                    {conditions.length ? (
+                      <div className="mt-2 space-y-2">
+                        {conditions.map(({ condition }, index) => (
+                          <div
+                            key={`${rule.id}-${condition.field}-${index}`}
+                            className="flex gap-2 text-sm leading-5 text-slate-700"
+                          >
+                            <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-slate-400" />
+                            <span>{formatCondition(condition, commissionPolicy)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-sm text-slate-600">
+                        No extra condition. The trigger is enough to qualify.
+                      </p>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <footer className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500 sm:px-5">
         Values are pulled live from the platform settings and your assigned

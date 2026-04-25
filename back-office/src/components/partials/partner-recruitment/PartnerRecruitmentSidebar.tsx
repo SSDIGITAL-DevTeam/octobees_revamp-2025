@@ -105,6 +105,10 @@ const recruitmentSidebarItems: {
             title: "Pipeline Status",
             url: "/partner-recruitment-system/master-data/pipeline-status",
           },
+          {
+            title: "Vertical Market",
+            url: "/partner-recruitment-system/master-data/vertical-market",
+          },
         ],
       },
       {

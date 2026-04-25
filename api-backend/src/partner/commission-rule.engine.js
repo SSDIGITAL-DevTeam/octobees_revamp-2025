@@ -17,6 +17,7 @@ import {
   getAffiliateLifecycle,
   getClosedWonStatsForPeriod,
   getActivePerformanceSetting,
+  countWonLeadsForVerticalMarket,
 } from "./partner.repository.js";
 import {
   getPartnerServiceById,
@@ -146,6 +147,15 @@ const buildContext = (affiliateId, { lead = null, period = null, now = new Date(
       const firstMonthEnd = addMonths(startOfMonth(userCreated), 1);
       return now < firstMonthEnd;
     },
+
+    async isFirstVerticalMarketSeller() {
+      if (!lead?.verticalMarketId) return false;
+      const existingWonCount = await countWonLeadsForVerticalMarket(
+        lead.verticalMarketId,
+        { excludeLeadId: lead.id },
+      );
+      return existingWonCount === 0;
+    },
   };
 };
 
@@ -165,6 +175,9 @@ const resolveField = async (field, ctx, rule) => {
     case "lead_project_value":   return ctx.lead ? Number(ctx.lead.projectValue) : 0;
     case "lead_service_id":      return ctx.lead?.serviceId ?? null;
     case "lead_status":          return ctx.lead?.status ?? null;
+    case "lead_vertical_market_id": return ctx.lead?.verticalMarketId ?? null;
+    case "lead_vertical_market_name": return ctx.lead?.verticalMarketName ?? null;
+    case "vertical_market_first_sale": return ctx.isFirstVerticalMarketSeller();
     case "payout_day":           return ctx.now.getDate();
     case "is_first_month":       return ctx.isFirstMonth();
     default:                     return null;
