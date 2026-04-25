@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect } from "react"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
@@ -50,3 +53,57 @@ export const formatWithCurrency = (
 
 export const getCurrencySymbol = (currency: CurrencyCode = "USD"): string =>
   CURRENCY_OPTIONS.find((option) => option.code === currency)?.symbol ?? "$"
+
+let currencySyncPromise: Promise<CurrencyCode> | null = null
+let lastCurrencySyncAt = 0
+
+const isCurrencyCode = (value: unknown): value is CurrencyCode =>
+  value === "USD" || value === "SGD" || value === "IDR"
+
+export const syncCurrencyFromServer = async () => {
+  if (typeof window === "undefined") return useCurrencyStore.getState().currency
+  const now = Date.now()
+  if (currencySyncPromise) return currencySyncPromise
+  if (now - lastCurrencySyncAt < 60_000) return useCurrencyStore.getState().currency
+
+  const token = sessionStorage.getItem("token")
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!token || !baseUrl) return useCurrencyStore.getState().currency
+
+  currencySyncPromise = (async () => {
+    try {
+      const response = await fetch(`${baseUrl}/back-office/partner/currency-config`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        cache: "no-store",
+      })
+      if (!response.ok) return useCurrencyStore.getState().currency
+      const payload = await response.json().catch(() => ({}))
+      const currency = payload?.data?.currency
+      if (isCurrencyCode(currency)) {
+        useCurrencyStore.getState().setCurrency(currency)
+        lastCurrencySyncAt = Date.now()
+        return currency
+      }
+    } catch {
+      return useCurrencyStore.getState().currency
+    } finally {
+      currencySyncPromise = null
+    }
+
+    return useCurrencyStore.getState().currency
+  })()
+
+  return currencySyncPromise
+}
+
+export const useSharedCurrency = () => {
+  const currency = useCurrencyStore((state) => state.currency)
+  useEffect(() => {
+    void syncCurrencyFromServer()
+  }, [])
+  return currency
+}
