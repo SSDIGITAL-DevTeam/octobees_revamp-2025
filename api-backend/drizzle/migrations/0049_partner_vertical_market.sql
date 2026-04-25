@@ -33,4 +33,3 @@ ALTER TABLE `partner_lead`
 ALTER TABLE `partner_lead`
   ADD CONSTRAINT `partner_lead_vertical_market_id_partner_vertical_market_id_fk`
   FOREIGN KEY (`vertical_market_id`) REFERENCES `partner_vertical_market`(`id`) ON DELETE SET NULL;
---> statement-breakpoint
