@@ -25,7 +25,6 @@ import type {
   ServiceOffering,
 } from "@/data/dashboard";
 import {
-  formatCurrencyIdr,
   formatCurrencyGlobal,
   formatDate,
   formatServiceCommissionLabel,
@@ -38,6 +37,7 @@ import {
   type PartnerLeadPipelineStatus,
   type PartnerServiceItem,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 import {
   getAffiliateCommissions,
   getAffiliateDashboardStat,
@@ -48,7 +48,6 @@ import {
   getAffiliateServices,
 } from "@/services/dashboardService";
 import type { PartnerProfile } from "@/lib/partner-portal";
-import { useCurrency } from "@/store/currency";
 
 const DashboardPage = () => {
   const currency = useCurrency();
@@ -157,7 +156,7 @@ const DashboardPage = () => {
           {
             id: "total-commission",
             title: "Total Commission",
-            value: dashboardData.totalCommission?.value || formatCurrencyGlobal(0),
+            value: formatCurrencyGlobal(nextTotalCommissionRaw),
             subtitle: "All recorded commission",
             accentColor: "#E30613",
             images: "/assets/icons/coin-icon.svg",
@@ -168,8 +167,7 @@ const DashboardPage = () => {
           {
             id: "pending-commission",
             title: "Pending Commission",
-            value:
-              dashboardData.pendingCommission?.value || formatCurrencyGlobal(0),
+            value: formatCurrencyGlobal(Number(dashboardData.pendingCommission?.raw || 0)),
             subtitle: `${dashboardData.pendingCommission?.count || 0} pending transfer`,
             images: "/assets/icons/stopwatch-icon.svg",
           },
@@ -262,7 +260,7 @@ const DashboardPage = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [currency]);
 
   return (
     <div className="space-y-6">

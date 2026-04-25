@@ -12,6 +12,7 @@ import {
   type PartnerPerformanceSettings,
 } from "@/lib/api/partnership/dashboardPartnership";
 import { EmbeddedRuleConditions } from "@/components/partials/partner-recruitment/EmbeddedRuleConditions";
+import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 
 type PerformancePolicyForm = Pick<
   PartnerPerformanceSettings,
@@ -72,6 +73,7 @@ const toNumber = (value: string, defaultValue: number) => {
 };
 
 export const PerformancePolicySettings = () => {
+  const { currency } = useCurrencyStore();
   const [form, setForm] = useState<PerformancePolicyForm>(defaultForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -114,8 +116,8 @@ export const PerformancePolicySettings = () => {
 
   const ruleSummary = useMemo(
     () =>
-      `Partners need $${form.basicSalarySalesThreshold.toLocaleString("en-US")} monthly sales for $${form.basicSalaryAmount.toLocaleString("en-US")} basic salary. Initial commission amount comes from each batch setting; if it is disabled or set to $0, no initial commission is paid. Month-one target is ${form.initialCommissionFullClientThreshold} closed client(s), with ${form.terminationGraceDays} day(s) grace before auto termination.`,
-    [form],
+      `Partners need ${formatWithCurrency(form.basicSalarySalesThreshold, currency)} monthly sales for ${formatWithCurrency(form.basicSalaryAmount, currency)} basic salary. Initial commission amount comes from each batch setting; if it is disabled or set to ${formatWithCurrency(0, currency)}, no initial commission is paid. Month-one target is ${form.initialCommissionFullClientThreshold} closed client(s), with ${form.terminationGraceDays} day(s) grace before auto termination.`,
+    [currency, form],
   );
 
   const updateField = (key: keyof PerformancePolicyForm, value: string) => {

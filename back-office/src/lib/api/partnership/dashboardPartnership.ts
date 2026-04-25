@@ -24,6 +24,8 @@ export type PartnerVerticalMarket = {
   isSystem?: boolean;
 };
 
+export type PartnerCurrencyCode = "USD" | "SGD" | "IDR";
+
 export type PartnershipStatsResponse = {
   status: string;
   data: {
@@ -104,6 +106,17 @@ export const getPartnerRecentLeads = () =>
 export const getPartnerPendingCommissions = () =>
   axiosInstance.get<PendingCommissionsResponse>(
     "/back-office/partner/dashboard/pending-commissions",
+  );
+
+export const getPartnerCurrencyConfig = () =>
+  axiosInstance.get<{ status: string; data: { currency: PartnerCurrencyCode } }>(
+    "/back-office/partner/currency-config",
+  );
+
+export const updatePartnerCurrencyConfig = (currency: PartnerCurrencyCode) =>
+  axiosInstance.put<{ status: string; data: { currency: PartnerCurrencyCode } }>(
+    "/back-office/partner/currency-config",
+    { currency },
   );
 
 export const getPartnerLeadPipelineStatuses = (params: { includeInactive?: boolean } = {}) =>

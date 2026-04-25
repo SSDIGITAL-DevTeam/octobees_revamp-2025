@@ -11,6 +11,7 @@ import {
   type PartnerServiceApiItem,
   updatePartnerService,
 } from "@/lib/api/partnership/dashboardPartnership";
+import { getCurrencySymbol, useCurrencyStore } from "@/app/store/currency";
 
 type CommissionServiceModalProps = {
   open: boolean;
@@ -25,6 +26,8 @@ export const CommissionServiceModal = ({
   onSuccess,
   initialData,
 }: CommissionServiceModalProps) => {
+  const { currency } = useCurrencyStore();
+  const currencySymbol = getCurrencySymbol(currency);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -93,9 +96,9 @@ export const CommissionServiceModal = ({
     const [integerPart = "", decimalPart = ""] = numeric.split(".");
     const formattedInteger = Number(integerPart || 0).toLocaleString("en-US");
 
-    if (numeric.endsWith(".")) return `$ ${formattedInteger}.`;
-    if (decimalPart) return `$ ${formattedInteger}.${decimalPart.slice(0, 2)}`;
-    return `$ ${formattedInteger}`;
+    if (numeric.endsWith(".")) return `${currencySymbol} ${formattedInteger}.`;
+    if (decimalPart) return `${currencySymbol} ${formattedInteger}.${decimalPart.slice(0, 2)}`;
+    return `${currencySymbol} ${formattedInteger}`;
   };
 
   const parseCurrencyInput = (value: string) =>
@@ -139,7 +142,7 @@ export const CommissionServiceModal = ({
 
           <div>
             <label className="mb-1 block text-sm font-medium">
-              Project Value ($)
+              Project Value ({currency})
             </label>
             <Input
               required
@@ -149,7 +152,7 @@ export const CommissionServiceModal = ({
               onChange={(e) =>
                 setForm({ ...form, projectValue: parseCurrencyInput(e.target.value) })
               }
-              placeholder="$ 5,000"
+              placeholder={`${currencySymbol} 5,000`}
             />
           </div>
 

@@ -47,3 +47,6 @@ export const formatWithCurrency = (
     maximumFractionDigits: 2,
   }).format(Number(value || 0))
 }
+
+export const getCurrencySymbol = (currency: CurrencyCode = "USD"): string =>
+  CURRENCY_OPTIONS.find((option) => option.code === currency)?.symbol ?? "$"

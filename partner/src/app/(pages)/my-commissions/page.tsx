@@ -30,13 +30,16 @@ type CommissionTypeFilter = "all" | "sales" | "initial" | "basic_salary";
 type CommissionStatusFilter = "all" | "Paid" | "Pending Transfer" | "Rejected";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
-
 const API_ORIGIN = BASE_URL.replace(/\/api\/v\d+\/?$/, "");
 
 const buildProofAbsoluteUrl = (proofUrl?: string | null) => {
   if (!proofUrl) return "";
   if (/^https?:\/\//i.test(proofUrl)) return proofUrl;
   return `${API_ORIGIN}${proofUrl}`;
+};
+
+const formatAmount = (value?: number | null) => {
+  return formatCurrencyGlobal(value);
 };
 
 const ordinalSuffix = (day: number) => {
@@ -75,10 +78,7 @@ const formatPeriodLabel = (
 };
 
 const MyCommissionsPage = () => {
-  const currency = useCurrency(); // triggers re-render when currency changes
-  const formatAmount = (value?: number | null) =>
-    formatCurrencyGlobal(value ?? 0);
-
+  useCurrency(); // re-render when currency changes
   const [typeFilter, setTypeFilter] = useState<CommissionTypeFilter>("all");
   const [statusFilter, setStatusFilter] =
     useState<CommissionStatusFilter>("all");

@@ -5,6 +5,7 @@ import {
     getCommissions,
     getPerformanceDashboard,
     getPartnerCommissionPolicyReference,
+    getPartnerCurrencyConfig,
     getPartnerTermsAndConditions,
     getRecentDashboardLeads,
     getLeadPipelineStatuses,
@@ -144,6 +145,22 @@ const termsAndConditions = async (req, res) => {
     }
 };
 
+const currencyConfig = async (req, res) => {
+    try {
+        const data = await getPartnerCurrencyConfig();
+
+        res.status(200).json({
+            status: "success",
+            data,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
 const commissionPolicy = async (req, res) => {
     try {
         const affiliateId = req.affiliateUser.affiliateId;
@@ -202,6 +219,7 @@ export default {
     commissions,
     recentLeads,
     performance,
+    currencyConfig,
     termsAndConditions,
     commissionPolicy,
     pipelineStatuses,

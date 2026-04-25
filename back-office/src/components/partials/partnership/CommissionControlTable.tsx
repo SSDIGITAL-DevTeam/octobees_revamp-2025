@@ -10,6 +10,7 @@ import {
   deletePartnerService,
   type PartnerServiceApiItem,
 } from "@/lib/api/partnership/dashboardPartnership";
+import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 
 type CommissionControlTableProps = {
   onRefresh: () => void;
@@ -23,6 +24,7 @@ export const CommissionControlTable = ({
   onEdit,
 }: CommissionControlTableProps) => {
   const [services, setServices] = useState<PartnerServiceApiItem[]>([]);
+  const { currency } = useCurrencyStore();
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -110,7 +112,9 @@ export const CommissionControlTable = ({
               services.map((service) => (
                 <tr key={service.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="font-semibold text-slate-900 px-6 py-4">{service.name}</td>
-                  <td className="py-4 text-slate-700 font-medium">${service.projectValue?.toLocaleString("en-US") || 0}</td>
+                  <td className="py-4 text-slate-700 font-medium">
+                    {formatWithCurrency(Number(service.projectValue || 0), currency)}
+                  </td>
                   <td className="py-4">
                     <StatusBadge
                       label={service.isActive ? "Active" : "Inactive"}

@@ -1,3 +1,7 @@
+"use client";
+
+import { getCurrencySymbol, getStoredCurrency } from "@/store/currency";
+
 const normalizeCurrencyInput = (value: string) => {
   const sanitized = String(value || "").replace(/[^\d.]/g, "");
   const [integerPart = "", ...decimalParts] = sanitized.split(".");
@@ -15,20 +19,21 @@ const normalizeCurrencyInput = (value: string) => {
 export const formatUsdInputValue = (rawValue: string) => {
   const normalized = normalizeCurrencyInput(rawValue);
   if (!normalized) return "";
+  const symbol = getCurrencySymbol(getStoredCurrency());
 
   const hasTrailingDot = normalized.endsWith(".");
   const [integerPart = "0", decimalPart = ""] = normalized.split(".");
   const formattedInteger = Number(integerPart || 0).toLocaleString("en-US");
 
   if (hasTrailingDot) {
-    return `$ ${formattedInteger}.`;
+    return `${symbol} ${formattedInteger}.`;
   }
 
   if (decimalPart) {
-    return `$ ${formattedInteger}.${decimalPart}`;
+    return `${symbol} ${formattedInteger}.${decimalPart}`;
   }
 
-  return `$ ${formattedInteger}`;
+  return `${symbol} ${formattedInteger}`;
 };
 
 export const parseUsdInputValue = (value: string) => normalizeCurrencyInput(value);
