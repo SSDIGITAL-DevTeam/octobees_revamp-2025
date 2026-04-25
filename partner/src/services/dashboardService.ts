@@ -159,6 +159,24 @@ export async function getAffiliatePerformance(token: string) {
   return data;
 }
 
+export async function getAffiliateCurrencyConfig(token: string) {
+  const res = await fetch(`${BASE_URL}/partner/dashboard/currency-config`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return await handlePartnerApiError(res, "Get currency config");
+  }
+
+  const data = await res.json().catch(() => ({}));
+  return data;
+}
+
 export async function getAffiliateTermsAndConditions(token: string) {
   const res = await fetch(`${BASE_URL}/partner/dashboard/terms-and-conditions`, {
     method: "GET",

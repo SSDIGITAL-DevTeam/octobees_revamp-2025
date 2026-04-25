@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatUsdInputValue, parseUsdInputValue } from "@/lib/currency-input";
+import { getCurrencySymbol, useCurrency } from "@/store/currency";
 
 type LeadForm = {
   name: string;
@@ -44,6 +45,8 @@ const AddLeadModal = ({
   onClose,
   onSubmit,
 }: AddLeadModalProps) => {
+  const currency = useCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
   const [form, setForm] = useState<LeadForm>({
     name: "",
     email: "",
@@ -221,7 +224,7 @@ const AddLeadModal = ({
             <input
               type="text"
               inputMode="decimal"
-              placeholder="$ 5,000"
+              placeholder={`${currencySymbol} 5,000`}
               value={formatUsdInputValue(form.projectValue)}
               onChange={handleCurrencyChange}
               disabled={!form.isCustomProjectValue}

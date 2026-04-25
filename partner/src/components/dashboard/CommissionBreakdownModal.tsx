@@ -1,6 +1,7 @@
 "use client";
 
-import { formatCurrencyIdr } from "@/lib/partner-portal";
+import { formatCurrencyGlobal } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 
 type CommissionBreakdownModalProps = {
   open: boolean;
@@ -14,7 +15,7 @@ type CommissionBreakdownModalProps = {
   totalAmount: number;
 };
 
-const formatUsd = (value?: number | null) => `$${formatCurrencyIdr(value)}`;
+const formatCurrency = (value?: number | null) => formatCurrencyGlobal(value);
 
 const CommissionBreakdownModal = ({
   open,
@@ -22,6 +23,7 @@ const CommissionBreakdownModal = ({
   items,
   totalAmount,
 }: CommissionBreakdownModalProps) => {
+  useCurrency();
   if (!open) return null;
 
   return (
@@ -79,7 +81,7 @@ const CommissionBreakdownModal = ({
                   </p>
                 </div>
                 <p className="whitespace-nowrap text-sm font-semibold text-slate-950">
-                  {formatUsd(item.amount)}
+                  {formatCurrency(item.amount)}
                 </p>
               </div>
             </div>
@@ -91,7 +93,7 @@ const CommissionBreakdownModal = ({
             <p className="text-sm font-medium text-white/80">
               Total recorded commission
             </p>
-            <p className="text-xl font-semibold">{formatUsd(totalAmount)}</p>
+            <p className="text-xl font-semibold">{formatCurrency(totalAmount)}</p>
           </div>
         </div>
       </div>

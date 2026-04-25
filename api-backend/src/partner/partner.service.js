@@ -97,8 +97,11 @@ const PARTNER_RECRUITMENT_SETTINGS_ID = "partner-recruitment-system";
 const PARTNER_RECRUITMENT_SETTINGS_TYPE = "partner_settings";
 const PARTNER_TERMS_META_KEY = "terms_and_conditions_html";
 const PARTNER_SALES_COMMISSION_META_KEY = "sales_commission_settings_json";
+const PARTNER_CURRENCY_META_KEY = "currency_code";
+const PARTNER_CURRENCY_CODES = new Set(["USD", "SGD", "IDR"]);
 const DEFAULT_PARTNER_TERMS_HTML =
   "<p>Input Terms &amp; Conditions for partners here.</p>";
+const DEFAULT_PARTNER_CURRENCY = "USD";
 
 const DEFAULT_LEAD_PIPELINE_STATUS_VALUES = new Set(
   DEFAULT_LEAD_PIPELINE_STATUSES.map((status) => status.value),
@@ -576,6 +579,43 @@ export const getPartnerTermsAndConditions = async () => {
         ? termsMeta.content
         : DEFAULT_PARTNER_TERMS_HTML,
   };
+};
+
+export const getPartnerCurrencyConfig = async () => {
+  const metas = await findMetasByTarget(
+    PARTNER_RECRUITMENT_SETTINGS_ID,
+    PARTNER_RECRUITMENT_SETTINGS_TYPE,
+  );
+
+  const currencyMeta = metas
+    .filter((item) => item.key === PARTNER_CURRENCY_META_KEY)
+    .sort((a, b) => Number(b.id || 0) - Number(a.id || 0))[0];
+  const currency = String(currencyMeta?.value || currencyMeta?.content || "")
+    .trim()
+    .toUpperCase();
+
+  return {
+    currency: PARTNER_CURRENCY_CODES.has(currency)
+      ? currency
+      : DEFAULT_PARTNER_CURRENCY,
+  };
+};
+
+export const updatePartnerCurrencyConfig = async (rawCurrency) => {
+  const currency = String(rawCurrency || "").trim().toUpperCase();
+  if (!PARTNER_CURRENCY_CODES.has(currency)) {
+    throw new Error("Invalid currency code");
+  }
+
+  await upsertMeta({
+    metaableId: PARTNER_RECRUITMENT_SETTINGS_ID,
+    metaableType: PARTNER_RECRUITMENT_SETTINGS_TYPE,
+    key: PARTNER_CURRENCY_META_KEY,
+    value: currency,
+    content: currency,
+  });
+
+  return { currency };
 };
 
 export const getPartnerCommissionPolicyReference = async (affiliateId) => {

@@ -27,8 +27,10 @@ import {
     removeSalesMaterial,
     calculateDashboardStats,
     getPerformanceSettings,
+    getPartnerCurrencyConfig,
     getPartnerTermsAndConditions,
     updatePerformanceSettings,
+    updatePartnerCurrencyConfig,
     updatePartnerTermsAndConditions,
     listBackOfficeCommissions,
     markBackOfficeCommissionPaid,
@@ -82,6 +84,24 @@ const performanceSettings = async (req, res) => {
 const updatePerformanceSetting = async (req, res) => {
     try {
         const data = await updatePerformanceSettings(req.body);
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const currencyConfig = async (req, res) => {
+    try {
+        const data = await getPartnerCurrencyConfig();
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
+const updateCurrencyConfig = async (req, res) => {
+    try {
+        const data = await updatePartnerCurrencyConfig(req.body?.currency);
         res.status(200).json({ status: "success", data });
     } catch (e) {
         res.status(400).json({ status: "error", message: e.message });
@@ -539,6 +559,7 @@ const listCommissionRuleLogsHandler = async (req, res) => {
 
 export default {
     stats, recentLeads, pendingCommissions, performanceSettings, updatePerformanceSetting,
+    currencyConfig, updateCurrencyConfig,
     leadPipelineStatuses, updateLeadPipelineStatusList,
     verticalMarkets, updateVerticalMarketList,
     getAll, getById, getPartnerStats, getPartnerLeads, update, remove, deactivate, resetPassword,

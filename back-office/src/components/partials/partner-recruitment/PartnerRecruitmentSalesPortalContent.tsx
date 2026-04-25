@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable no-nested-ternary, react/no-unescaped-entities, prefer-const */
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
@@ -80,6 +79,7 @@ import { useBatches } from "@/hooks/partnership/useBatches";
 import useRecruitmentModuleConfig from "./useRecruitmentModuleConfig";
 import { EmbeddedRuleConditions } from "@/components/partials/partner-recruitment/EmbeddedRuleConditions";
 import { WelcomeBonusRuleTable } from "@/components/partials/partner-recruitment/WelcomeBonusRulePanel";
+import { getCurrencySymbol, useSharedCurrency } from "@/app/store/currency";
 
 const CKEditorComponent = dynamic(
   () => import("@/components/partials/form/CKEditorComponent"),
@@ -156,6 +156,8 @@ export const PartnerRecruitmentSalesPortalContent = ({
 }) => {
   const { batches, updateBatch } = useBatches();
   const { config, updateConfig } = useRecruitmentModuleConfig();
+  const currency = useSharedCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
 
   const [serviceModalOpen, setServiceModalOpen] = useState(false);
   const [editingService, setEditingService] =
@@ -1085,7 +1087,7 @@ export const PartnerRecruitmentSalesPortalContent = ({
                               Percentage (%)
                             </SelectItem>
                             <SelectItem value="fixed">
-                              Fixed Amount ($)
+                              Fixed Amount ({currency})
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -1093,7 +1095,7 @@ export const PartnerRecruitmentSalesPortalContent = ({
                         <div className="relative">
                           {rowConfig.mode === "fixed" && (
                             <span className="absolute left-3 top-2.5 text-slate-400 font-medium">
-                              $
+                              {currencySymbol}
                             </span>
                           )}
                           <Input

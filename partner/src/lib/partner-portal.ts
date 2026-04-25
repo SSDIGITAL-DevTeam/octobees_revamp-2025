@@ -1,5 +1,5 @@
 import type { BadgeVariant } from "@/components/ui/Badge";
-import { getStoredCurrency, getCurrencySymbol, formatWithCurrency } from "@/store/currency";
+import { getStoredCurrency, formatWithCurrency } from "@/store/currency";
 
 export type PartnerProfile = {
   username: string;
@@ -299,19 +299,8 @@ export const formatCurrencyIdr = (value?: number | null) => {
   return new Intl.NumberFormat("en").format(amount);
 };
 
-import {
-  getStoredCurrency,
-  getCurrencySymbol,
-  formatWithCurrency,
-} from "@/store/currency";
-
-/**
- * Format an amount using the globally configured currency.
- * Falls back to USD if no currency has been set.
- */
 export const formatCurrencyGlobal = (value?: number | null): string => {
-  const currency = getStoredCurrency();
-  return formatWithCurrency(Number(value ?? 0), currency);
+  return formatWithCurrency(Number(value ?? 0), getStoredCurrency());
 };
 
 export const formatServiceCommissionLabel = (
@@ -325,8 +314,7 @@ export const formatServiceCommissionLabel = (
   );
 
   if (mode === "fixed") {
-    const symbol = getCurrencySymbol(getStoredCurrency());
-    return `${symbol}${formatCurrencyIdr(value)} Fixed`;
+    return `${formatCurrencyGlobal(value)} Fixed`;
   }
 
   return `${value}%`;

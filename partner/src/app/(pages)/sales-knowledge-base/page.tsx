@@ -19,12 +19,13 @@ const VideoPlayer = dynamic(() => import("@/components/ui/VideoPlayer"), {
 import Topbar from "@/components/layout/Topbar";
 import { Shimmer } from "@/components/ui/Shimmer";
 import {
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatServiceCommissionLabel,
   getPartnerToken,
   type PartnerServiceItem,
   type SalesMaterialItem,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 import {
   getAffiliateSalesMaterials,
   getAffiliateServices,
@@ -76,6 +77,7 @@ const MaterialIcon = ({
 };
 
 const SalesKnowledgeBasePage = () => {
+  useCurrency();
   const [services, setServices] = useState<PartnerServiceItem[]>([]);
   const [materials, setMaterials] = useState<SalesMaterialItem[]>([]);
   const [previewMaterial, setPreviewMaterial] =
@@ -136,7 +138,7 @@ const SalesKnowledgeBasePage = () => {
               Product to sell and commission
             </h1> */}
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-              Study the latest sales materials prepared by OCTOBEES Singapore
+              Study the latest sales materials prepared by DIGITAL-PA Singapore
               team.
             </p>
           </div>
@@ -207,7 +209,7 @@ const SalesKnowledgeBasePage = () => {
                   <div className="rounded-2xl border border-white bg-white p-4">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Project Value</p>
                     <p className="mt-2 text-base font-semibold text-slate-900">
-                      {formatCurrencyIdr(service.projectValue)}
+                      {formatCurrencyGlobal(service.projectValue)}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white bg-white p-4">

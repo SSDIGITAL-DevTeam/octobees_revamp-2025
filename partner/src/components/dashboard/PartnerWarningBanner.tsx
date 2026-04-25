@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatDate,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 
 type Severity = "critical" | "warning" | "info";
 
@@ -79,7 +80,7 @@ const daysBetween = (iso?: string | null, now: Date = new Date()) => {
   return Math.ceil(ms / (1000 * 60 * 60 * 24));
 };
 
-const formatUsd = (value?: number | null) => `$${formatCurrencyIdr(value)}`;
+const formatCurrency = (value?: number | null) => formatCurrencyGlobal(value);
 
 const buildWarningSignature = (item: WarningItem) =>
   JSON.stringify({
@@ -219,7 +220,7 @@ const buildPerformanceWarnings = (
         id: "initial-commission-near",
         severity: "info",
         title: "Initial commission almost unlocked",
-        message: `Close ${needed} more lead(s) in your first month to unlock ${formatUsd(nextTier.amount)} initial commission.`,
+        message: `Close ${needed} more lead(s) in your first month to unlock ${formatCurrency(nextTier.amount)} initial commission.`,
         detail: `Current progress: ${initialCommission.closedClients}/${nextTier.closedClients} closed for the next tier.`,
         cta: {
           href: "/my-leads",
@@ -243,7 +244,7 @@ const buildPerformanceWarnings = (
       id: "basic-salary-shortfall",
       severity: "warning",
       title: "Basic salary at risk this month",
-      message: `You still need ${formatUsd(currentMonth.remainingSales)} in sales to qualify for this month's ${formatUsd(policy.basicSalaryAmount)} basic salary.`,
+      message: `You still need ${formatCurrency(currentMonth.remainingSales)} in sales to qualify for this month's ${formatCurrency(policy.basicSalaryAmount)} basic salary.`,
       detail: `Only ${daysLeftInMonth} day(s) left in the current cycle (ends ${formatDate(currentMonth.periodEnd)}). Current progress: ${currentMonth.progressPercent}%.`,
       cta: {
         href: "/my-leads",
@@ -264,7 +265,7 @@ const buildPerformanceWarnings = (
       severity: "info",
       title: "Close to basic salary threshold",
       message: `You're at ${currentMonth.progressPercent}% of this month's basic salary target.`,
-      detail: `Need ${formatUsd(currentMonth.remainingSales)} more in sales to earn ${formatUsd(policy.basicSalaryAmount)} this cycle.`,
+      detail: `Need ${formatCurrency(currentMonth.remainingSales)} more in sales to earn ${formatCurrency(policy.basicSalaryAmount)} this cycle.`,
     });
   }
 
@@ -372,6 +373,7 @@ const SEVERITY_RANK: Record<Severity, number> = {
 };
 
 const PartnerWarningBanner = ({ performance, extraWarnings = [] }: Props) => {
+  useCurrency();
   const [dismissedWarnings, setDismissedWarnings] = useState<
     Record<string, string>
   >({});

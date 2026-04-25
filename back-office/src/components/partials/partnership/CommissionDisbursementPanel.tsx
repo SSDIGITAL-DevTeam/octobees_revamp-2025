@@ -48,13 +48,7 @@ import {
   type CommissionStatusApi,
   type CommissionTypeApi,
 } from "@/lib/api/partnership/dashboardPartnership";
-
-const formatCurrency = (value: number | null | undefined) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(Number(value || 0));
+import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 
 const commissionTypeBadge: Record<
   CommissionTypeApi,
@@ -135,6 +129,9 @@ const buildProofAbsoluteUrl = (proofUrl: string) => {
 };
 
 export const CommissionDisbursementPanel = () => {
+  const { currency } = useCurrencyStore();
+  const formatCurrency = (value: number | null | undefined) =>
+    formatWithCurrency(Number(value || 0), currency);
   const [rows, setRows] = useState<CommissionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [typeFilter, setTypeFilter] = useState<CommissionTypeApi | "all">(

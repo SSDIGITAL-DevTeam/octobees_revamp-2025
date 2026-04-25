@@ -43,6 +43,7 @@ import {
   type RuleConditionTree,
 } from "@/lib/api/partnership/dashboardPartnership";
 import { cn } from "@/lib/utils";
+import { formatWithCurrency, getCurrencySymbol, useCurrencyStore } from "@/app/store/currency";
 
 type TierDraft = {
   closedClients: number;
@@ -510,6 +511,7 @@ function TierConditionsEditor({
   pipelineStatuses: PartnerLeadPipelineStatus[];
   verticalMarkets: PartnerVerticalMarket[];
 }) {
+  const { currency } = useCurrencyStore();
   const { logic, conditions } = extractConditions(tier.conditions);
 
   const updateCondition = (index: number, patch: Partial<RuleCondition>) => {
@@ -538,7 +540,7 @@ function TierConditionsEditor({
       <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm font-semibold text-slate-900">
-            Conditions for ${tier.amount.toLocaleString("en-US")} bonus
+            Conditions for {formatWithCurrency(tier.amount, currency)} bonus
           </p>
           <p className="text-xs text-slate-500">
             These rules apply only to this tier.
@@ -607,6 +609,8 @@ export function WelcomeBonusRuleTable({
   batches: AffiliateBatch[];
   onTiersSaved?: (batchId: string, tiers: TierDraft[]) => Promise<unknown>;
 }) {
+  const { currency } = useCurrencyStore();
+  const currencySymbol = getCurrencySymbol(currency);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [rules, setRules] = useState<CommissionRule[]>([]);
@@ -871,8 +875,7 @@ export function WelcomeBonusRuleTable({
                           key={`${row.batch.id}-${tier.closedClients}-${tier.amount}`}
                           className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
                         >
-                          {tier.closedClients} deal(s) / $
-                          {tier.amount.toLocaleString("en-US")}
+                          {tier.closedClients} deal(s) / {formatWithCurrency(tier.amount, currency)}
                           {conditionCount > 0
                             ? ` / ${conditionCount} condition(s)`
                             : ""}
@@ -882,7 +885,7 @@ export function WelcomeBonusRuleTable({
                   </div>
                 </TableCell>
                 <TableCell className="font-semibold text-slate-900">
-                  ${highestBonus.toLocaleString("en-US")}
+                  {formatWithCurrency(highestBonus, currency)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -1026,7 +1029,7 @@ export function WelcomeBonusRuleTable({
                           </Label>
                           <div className="relative">
                             <span className="absolute left-4 top-3 text-sm font-semibold text-slate-400">
-                              $
+                              {currencySymbol}
                             </span>
                             <Input
                               type="number"

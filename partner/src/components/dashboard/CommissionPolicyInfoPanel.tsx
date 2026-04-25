@@ -1,20 +1,21 @@
 "use client";
 
 import {
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   type PartnerCommissionPolicyReference,
   type PartnerCommissionRuleCondition,
   type PartnerCommissionRuleConditionTree,
   type PartnerCommissionPolicyRule,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 
 type Props = {
   performance: PartnerPerformanceData | null;
   commissionPolicy?: PartnerCommissionPolicyReference | null;
 };
 
-const formatUsd = (value?: number | null) => `$${formatCurrencyIdr(value)}`;
+const formatCurrency = (value?: number | null) => formatCurrencyGlobal(value);
 
 const ordinalSuffix = (day: number) => {
   if (day >= 11 && day <= 13) return "th";
@@ -82,7 +83,7 @@ const formatConditionValue = (
   const formatSingle = (value: unknown) => {
     if (typeof value === "boolean") return value ? "Yes" : "No";
     if (condition.field === "lead_project_value" || condition.field === "total_revenue") {
-      return formatUsd(Number(value || 0));
+      return formatCurrency(Number(value || 0));
     }
     if (condition.field === "lead_service_id") {
       return dictionaries?.services?.[String(value)] || String(value ?? "—");
@@ -131,7 +132,7 @@ const describeReward = (
 ) => {
   const reward = rule.reward;
   if (!reward || typeof reward !== "object") return "Configured by admin";
-  if (reward.type === "fixed") return `${formatUsd(Number(reward.value || 0))} fixed payout`;
+  if (reward.type === "fixed") return `${formatCurrency(Number(reward.value || 0))} fixed payout`;
   if (reward.type === "percentage") return `${Number(reward.value || 0)}% of deal value`;
   if (reward.type === "percentage_of_revenue") return `${Number(reward.value || 0)}% of monthly revenue`;
   if (reward.type === "service_config") return "Uses product/service commission rate";
@@ -142,7 +143,7 @@ const describeReward = (
     return tiers
       .map((tier) => {
         const threshold = Number(tier.closedClients ?? tier.min ?? 0);
-        return `${threshold}+ closed: ${formatUsd(Number(tier.amount || 0))}`;
+        return `${threshold}+ closed: ${formatCurrency(Number(tier.amount || 0))}`;
       })
       .join(" · ");
   }
@@ -214,6 +215,7 @@ const PolicyCard = ({
 );
 
 const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => {
+  useCurrency();
   if (!performance) return null;
 
   const { policy, batch } = performance;
@@ -321,7 +323,7 @@ const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => 
                         Close {tier.closedClients} client
                         {tier.closedClients > 1 ? "s" : ""}:{" "}
                         <strong className="text-slate-900">
-                          {formatUsd(tier.amount)}
+                          {formatCurrency(tier.amount)}
                         </strong>
                       </span>
                     </div>
@@ -334,7 +336,7 @@ const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => 
                   <span>
                     The highest tier currently available for your batch is{" "}
                     <strong className="text-slate-900">
-                      {formatUsd(highestInitialTier.amount)}
+                      {formatCurrency(highestInitialTier.amount)}
                     </strong>{" "}
                     at{" "}
                     <strong className="text-slate-900">
@@ -406,8 +408,8 @@ const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => 
           iconColor="text-amber-600"
           iconPath="M12 6V18M9 9.5C9 8.12 10.12 7 11.5 7H13C14.66 7 16 8.34 16 10C16 11.66 14.66 13 13 13H11C9.34 13 8 14.34 8 16C8 17.66 9.34 19 11 19H13.5C14.88 19 16 17.88 16 16.5"
           label="Basic Salary"
-          headline={`${formatUsd(policy.basicSalaryAmount)} per month`}
-          description={`Awarded when your monthly closed-lead sales reach the threshold. Min. sales to qualify: ${formatUsd(policy.basicSalarySalesThreshold)}.`}
+          headline={`${formatCurrency(policy.basicSalaryAmount)} per month`}
+          description={`Awarded when your monthly closed-lead sales reach the threshold. Min. sales to qualify: ${formatCurrency(policy.basicSalarySalesThreshold)}.`}
           footer={
             <div className="space-y-1.5">
               <div className="flex items-start gap-2">
@@ -415,7 +417,7 @@ const CommissionPolicyInfoPanel = ({ performance, commissionPolicy }: Props) => 
                 <span>
                   Minimum monthly sales:{" "}
                   <strong className="text-slate-900">
-                    {formatUsd(policy.basicSalarySalesThreshold)}
+                    {formatCurrency(policy.basicSalarySalesThreshold)}
                   </strong>
                 </span>
               </div>

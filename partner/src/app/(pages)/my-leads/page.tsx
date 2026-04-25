@@ -22,9 +22,10 @@ import {
   type PartnerLeadPipelineStatus,
   type PartnerServiceItem,
   type PartnerVerticalMarketItem,
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatDateTime,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 import {
   createAffiliateLead,
   getAffiliateLeads,
@@ -44,6 +45,7 @@ const getInitialLeadViewMode = (): "list" | "kanban" => {
 };
 
 const MyLeadsPage = () => {
+  useCurrency();
   const [leads, setLeads] = useState<PartnerLeadItem[]>([]);
   const [services, setServices] = useState<PartnerServiceItem[]>([]);
   const [verticalMarkets, setVerticalMarkets] = useState<
@@ -671,7 +673,7 @@ const MyLeadsPage = () => {
                                       Value
                                     </p>
                                     <p className="mt-1 text-slate-700">
-                                      {formatCurrencyIdr(lead.projectValue)}
+                                      {formatCurrencyGlobal(lead.projectValue)}
                                     </p>
                                   </div>
                                   <div>
@@ -764,7 +766,7 @@ const MyLeadsPage = () => {
                                         {lead.serviceName || "-"}
                                       </td>
                                       <td className="py-4">
-                                        {formatCurrencyIdr(lead.projectValue)}
+                                        {formatCurrencyGlobal(lead.projectValue)}
                                       </td>
                                       <td className="py-4">
                                         {formatDateTime(lead.nextFollowUpAt)}
@@ -928,7 +930,7 @@ const MyLeadsPage = () => {
                                     <span className="font-medium text-slate-800">
                                       Value:
                                     </span>{" "}
-                                    {formatCurrencyIdr(lead.projectValue)}
+                                    {formatCurrencyGlobal(lead.projectValue)}
                                   </p>
                                   <p>
                                     <span className="font-medium text-slate-800">
