@@ -106,10 +106,123 @@ const ensureMigrationTableSql = `
 
 const legacyReconciliationRules = [
   {
+    tag: "0000_plain_exiles",
+    reason:
+      "Detected legacy back-office schema: base blog/user tables already exist.",
+    isSatisfied: async (pool) =>
+      (await tableExists(pool, "blog")) &&
+      (await tableExists(pool, "blog_category")) &&
+      (await tableExists(pool, "user")) &&
+      ((await tableExists(pool, "order")) || (await tableExists(pool, "lead"))),
+  },
+  {
+    tag: "0001_bright_runaways",
+    reason:
+      "Detected legacy back-office schema: user timestamp columns already exist.",
+    isSatisfied: async (pool) =>
+      await everyColumnExists(pool, "user", ["created_at", "updated_at"]),
+  },
+  {
+    tag: "0002_lively_may_parker",
+    reason:
+      "Detected legacy lead table: order-to-lead migration is already represented.",
+    isSatisfied: async (pool) => await tableExists(pool, "lead"),
+  },
+  {
+    tag: "0003_small_wasp",
+    reason: "Detected legacy lead source column already exists.",
+    isSatisfied: async (pool) =>
+      (await tableExists(pool, "lead")) &&
+      ((await columnExists(pool, "lead", "from")) ||
+        (await addColumnIfMissing(
+          pool,
+          "lead",
+          "from",
+          "`from` varchar(50) NOT NULL DEFAULT ''",
+        ))),
+  },
+  {
+    tag: "0004_cute_mockingbird",
+    reason: "Detected legacy lead business column already exists or was repaired.",
+    isSatisfied: async (pool) => {
+      if (!(await tableExists(pool, "lead"))) return false;
+
+      await repairLeadBusinessColumn(pool);
+      return await columnExists(pool, "lead", "business");
+    },
+  },
+  {
+    tag: "0005_smart_green_goblin",
+    reason: "Detected legacy lead company columns already exist or were repaired.",
+    isSatisfied: async (pool) => {
+      if (!(await tableExists(pool, "lead"))) return false;
+
+      await addColumnIfMissing(
+        pool,
+        "lead",
+        "company_name",
+        "`company_name` varchar(255) NOT NULL DEFAULT ''",
+      );
+      await addColumnIfMissing(
+        pool,
+        "lead",
+        "company_website",
+        "`company_website` varchar(255)",
+      );
+      return everyColumnExists(pool, "lead", [
+        "company_name",
+        "company_website",
+      ]);
+    },
+  },
+  {
+    tag: "0006_remarkable_salo",
+    reason: "Detected legacy lead company website column already exists.",
+    isSatisfied: async (pool) =>
+      (await tableExists(pool, "lead")) &&
+      (await columnExists(pool, "lead", "company_website")),
+  },
+  {
+    tag: "0007_wooden_chimera",
+    reason:
+      "Detected legacy user status drift and lead agreement column already exists or was repaired.",
+    isSatisfied: async (pool) => {
+      if (!(await tableExists(pool, "user"))) return false;
+
+      await repairUserStatusColumn(pool);
+      if (await tableExists(pool, "lead")) {
+        await addColumnIfMissing(
+          pool,
+          "lead",
+          "is_agree",
+          "`is_agree` boolean DEFAULT true",
+        );
+      }
+
+      return await columnExists(pool, "user", "user_status");
+    },
+  },
+  {
+    tag: "0008_wooden_red_wolf",
+    reason: "Detected legacy blog PDF column already exists or was repaired.",
+    isSatisfied: async (pool) =>
+      (await tableExists(pool, "blog")) &&
+      ((await columnExists(pool, "blog", "pdf")) ||
+        (await addColumnIfMissing(pool, "blog", "pdf", "`pdf` text"))),
+  },
+  {
     tag: "0010_parallel_ben_parker",
     reason:
-      "Detected legacy schema drift: `blog.publish_date` exists but migration row is missing.",
-    isSatisfied: async (pool) => columnExists(pool, "blog", "publish_date"),
+      "Detected legacy schema drift: `blog.publish_date` exists or was repaired.",
+    isSatisfied: async (pool) =>
+      (await tableExists(pool, "blog")) &&
+      ((await columnExists(pool, "blog", "publish_date")) ||
+        (await addColumnIfMissing(
+          pool,
+          "blog",
+          "publish_date",
+          "`publish_date` timestamp NULL",
+        ))),
   },
   {
     tag: "0014_adding_security_fields",
@@ -816,22 +929,131 @@ async function repairAffiliateUserTokenVersionColumn(pool) {
 
 async function repairUserStatusColumn(pool) {
   const hasUserStatus = await columnExists(pool, "user", "user_status");
-  if (hasUserStatus) {
+  let repaired = false;
+
+  if (!hasUserStatus) {
+    await pool.query(
+      "ALTER TABLE `user` ADD COLUMN `user_status` enum('Draft','Active','NonActive') NOT NULL DEFAULT 'Active'",
+    );
+    repaired = true;
+  }
+
+  if (await columnExists(pool, "user", "status")) {
+    await pool.query(
+      "UPDATE `user` SET `user_status` = CASE WHEN `status` IN ('Draft','Active','NonActive') THEN `status` ELSE `user_status` END",
+    );
+    repaired = true;
+  }
+
+  if (await columnExists(pool, "user", "plan_status")) {
+    await pool.query(
+      "UPDATE `user` SET `user_status` = CASE WHEN `plan_status` IN ('Draft','Active','NonActive') THEN `plan_status` ELSE `user_status` END",
+    );
+    repaired = true;
+  }
+
+  return repaired;
+}
+
+async function addColumnIfMissing(pool, tableName, columnName, definition) {
+  if (await columnExists(pool, tableName, columnName)) {
     return false;
   }
 
-  const hasPlanStatus = await columnExists(pool, "user", "plan_status");
-  if (hasPlanStatus) {
+  await pool.query(`ALTER TABLE \`${tableName}\` ADD COLUMN ${definition}`);
+  return true;
+}
+
+async function repairLeadBusinessColumn(pool) {
+  const added = await addColumnIfMissing(
+    pool,
+    "lead",
+    "business",
+    "`business` varchar(255) NOT NULL DEFAULT ''",
+  );
+
+  if (await columnExists(pool, "lead", "bussiness")) {
     await pool.query(
-      "ALTER TABLE `user` CHANGE COLUMN `plan_status` `user_status` enum('Draft','Active','NonActive') NOT NULL",
+      "UPDATE `lead` SET `business` = `bussiness` WHERE `business` = ''",
     );
     return true;
   }
 
-  await pool.query(
-    "ALTER TABLE `user` ADD COLUMN `user_status` enum('Draft','Active','NonActive') NOT NULL DEFAULT 'Active'",
-  );
-  return true;
+  return added;
+}
+
+async function repairLegacyBackofficeColumns(pool) {
+  let repaired = false;
+
+  if (await tableExists(pool, "blog")) {
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "blog",
+        "blog_status",
+        "`blog_status` enum('Published','Archived','Draft') NOT NULL DEFAULT 'Draft'",
+      )) || repaired;
+
+    if (await columnExists(pool, "blog", "status")) {
+      await pool.query(
+        "UPDATE `blog` SET `blog_status` = CASE WHEN `status` = 'Published' THEN 'Published' WHEN `status` = 'Draft' THEN 'Draft' ELSE 'Archived' END",
+      );
+      repaired = true;
+    }
+
+    repaired =
+      (await addColumnIfMissing(pool, "blog", "pdf", "`pdf` text")) ||
+      repaired;
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "blog",
+        "publish_date",
+        "`publish_date` timestamp NULL",
+      )) || repaired;
+  }
+
+  if (await tableExists(pool, "lead")) {
+    repaired = (await repairLeadBusinessColumn(pool)) || repaired;
+
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "lead",
+        "phone",
+        "`phone` varchar(50) NOT NULL DEFAULT ''",
+      )) || repaired;
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "lead",
+        "company_name",
+        "`company_name` varchar(255) NOT NULL DEFAULT ''",
+      )) || repaired;
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "lead",
+        "company_website",
+        "`company_website` varchar(255)",
+      )) || repaired;
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "lead",
+        "from",
+        "`from` varchar(50) NOT NULL DEFAULT ''",
+      )) || repaired;
+    repaired =
+      (await addColumnIfMissing(
+        pool,
+        "lead",
+        "is_agree",
+        "`is_agree` boolean DEFAULT true",
+      )) || repaired;
+  }
+
+  return repaired;
 }
 
 async function markMigrationAsApplied(pool, entry) {
@@ -1005,6 +1227,14 @@ async function main() {
     if (repairedUserStatusColumn) {
       console.warn(
         "Repaired missing user.user_status column after migration.",
+      );
+    }
+
+    const repairedLegacyBackofficeColumns =
+      await repairLegacyBackofficeColumns(poolConnection);
+    if (repairedLegacyBackofficeColumns) {
+      console.warn(
+        "Repaired legacy back-office table columns after migration.",
       );
     }
 
