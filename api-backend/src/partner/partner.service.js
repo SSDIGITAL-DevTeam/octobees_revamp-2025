@@ -67,7 +67,11 @@ import {
   getVerticalMarketByName,
   createVerticalMarket,
 } from "./partner.repository.js";
-import { findMetasByTarget, upsertMeta } from "../meta/meta.repository.js";
+import {
+  findMetasByTarget,
+  replaceMetaByKey,
+  upsertMeta,
+} from "../meta/meta.repository.js";
 import { cleanupRemovedContentImages } from "../blog/blog.service.js";
 import { getBatchById } from "../affiliate-batch/batch.repository.js";
 import {
@@ -607,7 +611,7 @@ export const updatePartnerCurrencyConfig = async (rawCurrency) => {
     throw new Error("Invalid currency code");
   }
 
-  await upsertMeta({
+  await replaceMetaByKey({
     metaableId: PARTNER_RECRUITMENT_SETTINGS_ID,
     metaableType: PARTNER_RECRUITMENT_SETTINGS_TYPE,
     key: PARTNER_CURRENCY_META_KEY,

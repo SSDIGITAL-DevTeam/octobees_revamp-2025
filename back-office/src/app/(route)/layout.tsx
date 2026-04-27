@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { useAuthStore } from "../store/login"
 import { toast } from "sonner"
 import RouteGuard from "@/components/layout/wrapper/RouteGuard"
+import { syncCurrencyFromServer } from "../store/currency"
 
 export default function RootLayout({
   children,
@@ -32,6 +33,7 @@ export default function RootLayout({
     try {
       setToken(token)
       setHasToken(true)
+      void syncCurrencyFromServer({ force: true })
     } catch (error) {
       toast.error("Invalid token, please login again")
       router.push("/auth/login")
