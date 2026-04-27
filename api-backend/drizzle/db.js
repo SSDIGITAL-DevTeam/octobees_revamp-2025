@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import * as schema from './schema.js';
 import * as relations from './relations.js';
 import logger from "../utils/logger.js";
+import { ensureBackofficeCompatSchema } from "../src/migrations/backoffice-compat.js";
 dotenv.config({ override: true });
 
 // const poolConnection = mysql.createPool(process.env.DATABASE_URL || 'mysql://localhost.internal:3306/octobees');
@@ -26,6 +27,7 @@ try {
   const connection = await poolConnection.getConnection();
   await connection.ping();
   connection.release();
+  await ensureBackofficeCompatSchema(poolConnection, logger);
   logger.info("✅ Database connection successful");
 } catch (error) {
   logger.error(`❌ Database connection failed: ${error.message}`, { error });
