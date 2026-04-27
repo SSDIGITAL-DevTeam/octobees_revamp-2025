@@ -338,11 +338,16 @@ export const calculateReward = async (reward, ctx, rule) => {
 
 // ── Idempotency helpers ───────────────────────────────────────────────────────
 
-const findExistingByLeadAndRule = async (leadId, ruleId) => {
+const findExistingByLeadAndType = async (leadId, commissionType) => {
   const rows = await db
     .select({ id: partnerCommission.id })
     .from(partnerCommission)
-    .where(and(eq(partnerCommission.leadId, leadId), eq(partnerCommission.ruleId, ruleId)))
+    .where(
+      and(
+        eq(partnerCommission.leadId, leadId),
+        eq(partnerCommission.commissionType, commissionType),
+      ),
+    )
     .limit(1);
   return rows[0] ?? null;
 };
@@ -424,12 +429,13 @@ export const evaluateLeadWonRules = async (lead) => {
         continue;
       }
 
-      // Per-lead scope: idempotency by (leadId, ruleId)
-      const existing = await findExistingByLeadAndRule(lead.id, rule.id);
+      // Per-lead scope: one commission of each type per lead. This lets
+      // service-specific sales rules override the generic fallback rule.
+      const existing = await findExistingByLeadAndType(lead.id, rule.commissionType);
       if (existing) {
         await logRuleEvaluation({
           ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-          outcome: "skipped", reason: "commission already exists for this lead and rule",
+          outcome: "skipped", reason: "commission already exists for this lead and type",
         });
         continue;
       }

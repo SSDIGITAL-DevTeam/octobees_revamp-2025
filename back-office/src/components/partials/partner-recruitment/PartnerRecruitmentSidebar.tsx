@@ -88,6 +88,10 @@ const recruitmentSidebarItems: {
                 title: "Sales Commission",
                 url: "/partner-recruitment-system/sales-portal-management/sales-commission",
               },
+              {
+                title: "Commission Rules",
+                url: "/partner-recruitment-system/master-data/commission-rules",
+              },
             ],
           },
           {

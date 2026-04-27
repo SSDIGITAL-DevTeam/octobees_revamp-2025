@@ -53,12 +53,16 @@ import {
   deleteCommissionRule,
   getCommissionRuleLogs,
   getPartnerLeadPipelineStatuses,
+  getPartnerServices,
+  getPartnerVerticalMarkets,
   type CommissionRule,
   type RuleConditionTree,
   type RuleCondition,
   type RuleReward,
   type CommissionRuleLog,
   type PartnerLeadPipelineStatus,
+  type PartnerServiceApiItem,
+  type PartnerVerticalMarket,
 } from "@/lib/api/partnership/dashboardPartnership";
 import { cn } from "@/lib/utils";
 
@@ -193,6 +197,8 @@ const FIELD_OPTIONS = [
   { value: "lead_project_value", label: "Deal value (Rp)",           numeric: true },
   { value: "lead_service_id",    label: "Product / Service ID",      numeric: false },
   { value: "lead_status",        label: "Lead status",               numeric: false },
+  { value: "lead_vertical_market_id", label: "Vertical market",      numeric: false },
+  { value: "vertical_market_first_sale", label: "First seller in vertical market", numeric: false, boolean: true },
   { value: "batch_id",           label: "Partner batch",             numeric: false },
   { value: "payout_day",         label: "Day of month",              numeric: true },
   { value: "is_first_month",     label: "Is partner's first month",  numeric: false, boolean: true },
@@ -281,6 +287,8 @@ function ConditionRow({
   onRemove,
   disableRemove,
   pipelineStatuses,
+  services,
+  verticalMarkets,
 }: {
   cond: RuleCondition;
   index: number;
@@ -288,15 +296,21 @@ function ConditionRow({
   onRemove: () => void;
   disableRemove: boolean;
   pipelineStatuses: PartnerLeadPipelineStatus[];
+  services: PartnerServiceApiItem[];
+  verticalMarkets: PartnerVerticalMarket[];
 }) {
   const fieldMeta = FIELD_OPTIONS.find((f) => f.value === cond.field);
   const isNumeric  = NUMERIC_FIELDS.has(cond.field);
   const isBoolean  = fieldMeta?.boolean ?? false;
   const isListOp   = cond.op === "in" || cond.op === "not_in";
   const isLeadStatus = cond.field === "lead_status";
+  const isLeadService = cond.field === "lead_service_id";
+  const isVerticalMarket = cond.field === "lead_vertical_market_id";
   const activePipelineStatuses = pipelineStatuses.filter(
     (status) => status.isActive,
   );
+  const activeServices = services.filter((service) => service.isActive);
+  const activeVerticalMarkets = verticalMarkets.filter((market) => market.isActive);
 
   const numericOps = [
     { value: "gte", label: "at least" },
@@ -324,7 +338,12 @@ function ConditionRow({
         onChange={(e) => {
           const f = e.target.value;
           const numeric = NUMERIC_FIELDS.has(f);
-          onUpdate({ field: f, op: numeric ? "gte" : "eq", value: numeric ? 0 : "" });
+          const boolean = FIELD_OPTIONS.find((option) => option.value === f)?.boolean ?? false;
+          onUpdate({
+            field: f,
+            op: numeric ? "gte" : "eq",
+            value: boolean ? true : numeric ? 0 : "",
+          });
         }}
       >
         {FIELD_OPTIONS.map((o) => (
@@ -407,6 +426,101 @@ function ConditionRow({
           {activePipelineStatuses.map((status) => (
             <option key={status.value} value={status.value}>
               {status.label}
+            </option>
+          ))}
+        </select>
+      ) : isLeadService && isListOp ? (
+        <div className="flex min-w-[220px] flex-wrap gap-1">
+          {activeServices.map((service) => {
+            const selected = toSelectedValues(cond.value);
+            const checked = selected.includes(service.id);
+            return (
+              <label
+                key={service.id}
+                className={cn(
+                  "inline-flex cursor-pointer select-none items-center rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
+                  checked
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-400",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={checked}
+                  onChange={() => {
+                    const next = checked
+                      ? selected.filter((value) => value !== service.id)
+                      : [...selected, service.id];
+                    onUpdate({ value: next });
+                  }}
+                />
+                {service.name}
+              </label>
+            );
+          })}
+        </div>
+      ) : isLeadService ? (
+        <select
+          className="h-9 min-w-[180px] rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700"
+          value={String(cond.value ?? "")}
+          onChange={(e) => onUpdate({ value: e.target.value })}
+          disabled={activeServices.length === 0}
+        >
+          <option value="">
+            {activeServices.length > 0 ? "Select service..." : "No active service"}
+          </option>
+          {activeServices.map((service) => (
+            <option key={service.id} value={service.id}>
+              {service.name}
+            </option>
+          ))}
+        </select>
+      ) : isVerticalMarket && isListOp ? (
+        <div className="flex min-w-[220px] flex-wrap gap-1">
+          {activeVerticalMarkets.map((market) => {
+            const value = String(market.id || market.name);
+            const selected = toSelectedValues(cond.value);
+            const checked = selected.includes(value);
+            return (
+              <label
+                key={value}
+                className={cn(
+                  "inline-flex cursor-pointer select-none items-center rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
+                  checked
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-400",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={checked}
+                  onChange={() => {
+                    const next = checked
+                      ? selected.filter((item) => item !== value)
+                      : [...selected, value];
+                    onUpdate({ value: next });
+                  }}
+                />
+                {market.name}
+              </label>
+            );
+          })}
+        </div>
+      ) : isVerticalMarket ? (
+        <select
+          className="h-9 min-w-[180px] rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700"
+          value={String(cond.value ?? "")}
+          onChange={(e) => onUpdate({ value: e.target.value })}
+          disabled={activeVerticalMarkets.length === 0}
+        >
+          <option value="">
+            {activeVerticalMarkets.length > 0 ? "Select market..." : "No active market"}
+          </option>
+          {activeVerticalMarkets.map((market) => (
+            <option key={market.id || market.name} value={market.id || market.name}>
+              {market.name}
             </option>
           ))}
         </select>
@@ -660,6 +774,8 @@ export const CommissionRulesContent = ({
   const [deleteTarget, setDeleteTarget] = useState<CommissionRule | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [pipelineStatuses, setPipelineStatuses] = useState<PartnerLeadPipelineStatus[]>([]);
+  const [services, setServices] = useState<PartnerServiceApiItem[]>([]);
+  const [verticalMarkets, setVerticalMarkets] = useState<PartnerVerticalMarket[]>([]);
 
   // Form state
   const [formOpen, setFormOpen] = useState(false);
@@ -699,15 +815,21 @@ export const CommissionRulesContent = ({
   useEffect(() => {
     let cancelled = false;
 
-    getPartnerLeadPipelineStatuses({ includeInactive: false })
-      .then((res) => {
+    Promise.all([
+      getPartnerLeadPipelineStatuses({ includeInactive: false }).catch(() => null),
+      getPartnerServices({ limit: 1000 }).catch(() => null),
+      getPartnerVerticalMarkets({ includeInactive: false }).catch(() => null),
+    ])
+      .then(([statusesRes, servicesRes, verticalMarketsRes]) => {
         if (!cancelled) {
-          setPipelineStatuses(res.data.data ?? []);
+          setPipelineStatuses(statusesRes?.data?.data ?? []);
+          setServices(servicesRes?.data?.data ?? []);
+          setVerticalMarkets(verticalMarketsRes?.data?.data ?? []);
         }
       })
       .catch(() => {
         if (!cancelled) {
-          toast.error("Failed to load pipeline statuses");
+          toast.error("Failed to load rule reference data");
         }
       });
 
@@ -1187,6 +1309,8 @@ export const CommissionRulesContent = ({
                           onRemove={() => removeCond(i)}
                           disableRemove={false}
                           pipelineStatuses={pipelineStatuses}
+                          services={services}
+                          verticalMarkets={verticalMarkets}
                         />
                       ))}
                     </div>
