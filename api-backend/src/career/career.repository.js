@@ -1,24 +1,24 @@
 import { count, eq } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
-import { career } from "../../drizzle/schema.js";
+import { career, position } from "../../drizzle/schema.js";
 import logger from "../../utils/logger.js";
 
 export const findAllCareers = async (skip, limit, where, orderBy) => {
   try {
-    const datas = await db.query.career.findMany({
-      where,
-      orderBy,
-      limit,
-      offset: skip,
-      with:{
+    let query = db
+      .select({
+        ...career,
         position: {
-          columns: {
-            id: true,
-            name: true
-          }
-        }
-      }
-    });
+          id: position.id,
+          name: position.name,
+        },
+      })
+      .from(career)
+      .leftJoin(position, eq(career.positionId, position.id));
+    if (where) query = query.where(where);
+    if (orderBy) query = query.orderBy(...orderBy);
+
+    const datas = await query.limit(limit).offset(skip);
 
     const totalQuery = db.select({ count: count() }).from(career);
     if (where) totalQuery.where(where);
@@ -34,18 +34,19 @@ export const findAllCareers = async (skip, limit, where, orderBy) => {
 
 export const findCareerById = async (id) => {
   try {
-    const data = await db.query.career.findFirst({
-      where: eq(career.id, id),
-      with:{
+    const data = await db
+      .select({
+        ...career,
         position: {
-          columns: {
-            id: true,
-            name: true
-          }
-        }
-      }
-    });
-    return data;
+          id: position.id,
+          name: position.name,
+        },
+      })
+      .from(career)
+      .leftJoin(position, eq(career.positionId, position.id))
+      .where(eq(career.id, id))
+      .limit(1);
+    return data[0] || null;
   } catch (error) {
     logger.error(`GET /:id error: ${error.message}`);
     throw new Error("Get Career By ID Unsuccessfully");

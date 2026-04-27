@@ -1,4 +1,4 @@
-import { count, eq, sql } from "drizzle-orm";
+import { count, eq, inArray } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import {
   planService,
@@ -9,19 +9,58 @@ import {
 import { v7 as uuidv7 } from "uuid";
 import logger from "../../utils/logger.js";
 
+const attachPlanRelations = async (plans) => {
+  if (!plans.length) return plans;
+
+  const planIds = plans.map((plan) => plan.id);
+  const categoryIds = [
+    ...new Set(plans.map((plan) => plan.categoryId).filter(Boolean)),
+  ];
+
+  const categories = categoryIds.length
+    ? await db
+        .select()
+        .from(categoryService)
+        .where(inArray(categoryService.id, categoryIds))
+    : [];
+  const prices = await db.select().from(price).where(inArray(price.idPlan, planIds));
+  const benefits = await db
+    .select()
+    .from(benefit)
+    .where(inArray(benefit.idPlan, planIds));
+
+  const categoryById = new Map(categories.map((item) => [item.id, item]));
+  const pricesByPlanId = new Map();
+  const benefitsByPlanId = new Map();
+
+  for (const item of prices) {
+    const collection = pricesByPlanId.get(item.idPlan) || [];
+    collection.push(item);
+    pricesByPlanId.set(item.idPlan, collection);
+  }
+
+  for (const item of benefits) {
+    const collection = benefitsByPlanId.get(item.idPlan) || [];
+    collection.push(item);
+    benefitsByPlanId.set(item.idPlan, collection);
+  }
+
+  return plans.map((plan) => ({
+    ...plan,
+    category: categoryById.get(plan.categoryId) || null,
+    prices: pricesByPlanId.get(plan.id) || [],
+    benefits: benefitsByPlanId.get(plan.id) || [],
+  }));
+};
+
 export const findAllPlans = async (skip, limit, where, orderBy) => {
   try {
-    const datas = await db.query.planService.findMany({
-      where,
-      with: {
-        category: true,
-        prices: true,
-        benefits: true,
-      },
-      limit: limit,
-      offset: skip,
-      orderBy,
-    });
+    let query = db.select().from(planService);
+    if (where) query = query.where(where);
+    if (orderBy) query = query.orderBy(...orderBy);
+
+    const plans = await query.limit(limit).offset(skip);
+    const datas = await attachPlanRelations(plans);
 
     const totalQuery = db.select({ count: count() }).from(planService);
     if (where) totalQuery.where(where);
@@ -36,23 +75,13 @@ export const findAllPlans = async (skip, limit, where, orderBy) => {
 
 export const findPlanByName = async (name) => {
   try {
-    const data = await db.query.planService.findFirst({
-      where: eq(planService.name, name),
-      with: {
-        category: {
-          columns: {
-            name: true,
-          },
-        },
-        prices: true,
-        benefits: {
-          columns: {
-            value: true,
-          },
-        },
-      },
-    });
-    return data;
+    const plans = await db
+      .select()
+      .from(planService)
+      .where(eq(planService.name, name))
+      .limit(1);
+    const [data] = await attachPlanRelations(plans);
+    return data || null;
   } catch (error) {
     logger.error(`GET /:NAME error: ${error.message}`);
     throw new Error("Get Plan By Name Unsuccessfully");
@@ -60,23 +89,13 @@ export const findPlanByName = async (name) => {
 };
 export const findPlanById = async (id) => {
   try {
-    const data = await db.query.planService.findFirst({
-      where: eq(planService.id, id),
-      with: {
-        category: {
-          columns: {
-            name: true,
-          },
-        },
-        prices: true,
-        benefits: {
-          columns: {
-            value: true,
-          },
-        },
-      },
-    });
-    return data;
+    const plans = await db
+      .select()
+      .from(planService)
+      .where(eq(planService.id, id))
+      .limit(1);
+    const [data] = await attachPlanRelations(plans);
+    return data || null;
   } catch (error) {
     logger.error(`GET /:ID error: ${error.message}`);
     throw new Error("Get Plan By Id Unsuccessfully");
