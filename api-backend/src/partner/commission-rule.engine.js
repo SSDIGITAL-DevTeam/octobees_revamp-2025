@@ -10,6 +10,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../../drizzle/db.js";
 import { partnerCommission } from "../../drizzle/schema.js";
 import {
+  getCommissionRuleById,
   getRulesByTrigger,
   logRuleEvaluation,
 } from "./commission-rule.repository.js";
@@ -18,6 +19,7 @@ import {
   getClosedWonStatsForPeriod,
   getActivePerformanceSetting,
   countWonLeadsForVerticalMarket,
+  getLeadByIdBackOffice,
 } from "./partner.repository.js";
 import {
   getPartnerServiceById,
@@ -574,4 +576,95 @@ export const runMonthlyCronRules = async ({ partners, now = new Date() } = {}) =
     total += result.created;
   }
   return { created: total };
+};
+
+export const evaluateManualRule = async ({
+  ruleId,
+  affiliateId,
+  leadId = null,
+  now = new Date(),
+} = {}) => {
+  if (!ruleId) throw new Error("ruleId is required");
+  if (!affiliateId) throw new Error("affiliateId is required");
+
+  const rule = await getCommissionRuleById(ruleId);
+  if (!rule) throw new Error("Rule not found");
+  if (rule.triggerType !== "manual") {
+    throw new Error("Only manual rules can be run manually");
+  }
+
+  let lead = null;
+  if (leadId) {
+    lead = await getLeadByIdBackOffice(leadId);
+    if (!lead) throw new Error("Lead not found");
+    if (lead.affiliateId !== affiliateId) {
+      throw new Error("Lead does not belong to selected partner");
+    }
+  }
+
+  const period = formatPeriod(now);
+  const ctx = buildContext(affiliateId, { lead, period, now });
+  const passed = await evaluateConditions(rule.conditions, ctx, rule);
+  if (!passed) {
+    await logRuleEvaluation({
+      ruleId: rule.id,
+      affiliateId,
+      leadId,
+      period,
+      outcome: "skipped",
+      reason: "conditions not met",
+    });
+    return { created: 0, skipped: true, reason: "conditions not met" };
+  }
+
+  const amount = await calculateReward(rule.reward, ctx, rule);
+  if (amount <= 0) {
+    await logRuleEvaluation({
+      ruleId: rule.id,
+      affiliateId,
+      leadId,
+      period,
+      outcome: "skipped",
+      reason: "reward calculated as 0",
+    });
+    return { created: 0, skipped: true, reason: "reward calculated as 0" };
+  }
+
+  const existing =
+    rule.scope === "per_lead" && leadId
+      ? await findExistingByLeadAndType(leadId, rule.commissionType)
+      : await findExistingByPeriodAndType(affiliateId, rule.commissionType, period);
+
+  if (existing) {
+    await logRuleEvaluation({
+      ruleId: rule.id,
+      affiliateId,
+      leadId,
+      period,
+      outcome: "skipped",
+      reason: "commission already exists",
+    });
+    return { created: 0, skipped: true, reason: "commission already exists" };
+  }
+
+  await insertCommission({
+    affiliateId,
+    leadId,
+    serviceId: lead?.serviceId ?? null,
+    amount,
+    commissionType: rule.commissionType,
+    period,
+    ruleId: rule.id,
+  });
+
+  await logRuleEvaluation({
+    ruleId: rule.id,
+    affiliateId,
+    leadId,
+    period,
+    outcome: "created",
+    amount,
+  });
+
+  return { created: 1, amount, period };
 };

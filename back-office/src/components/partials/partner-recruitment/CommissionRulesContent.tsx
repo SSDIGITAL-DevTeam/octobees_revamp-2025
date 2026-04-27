@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 
 import Header from "@/components/layout/header/Header";
+import { axiosInstance } from "@/lib/axios";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -64,6 +65,7 @@ import {
   type PartnerServiceApiItem,
   type PartnerVerticalMarket,
 } from "@/lib/api/partnership/dashboardPartnership";
+import type { AffiliateBatch } from "@/hooks/partnership/useBatches";
 import { cn } from "@/lib/utils";
 
 // ── Plain-language constants ───────────────────────────────────────────────────
@@ -220,6 +222,39 @@ const OP_LABELS: Record<string, string> = {
 // ── Converter helpers ──────────────────────────────────────────────────────────
 
 type Cadence = "per_deal" | "first_month" | "monthly" | "any_month";
+type RuleTypePreset = "sales" | "initial" | "basic_salary" | "__custom__";
+
+const RULE_TYPE_OPTIONS: Array<{
+  value: RuleTypePreset;
+  label: string;
+  description: string;
+  icon: typeof DollarSign;
+}> = [
+  {
+    value: "sales",
+    label: "Sales Commission",
+    description: "Commission paid when a partner closes a deal.",
+    icon: Percent,
+  },
+  {
+    value: "initial",
+    label: "Welcome Bonus",
+    description: "Per-batch bonus with tiered payout levels.",
+    icon: Gift,
+  },
+  {
+    value: "basic_salary",
+    label: "Basic Salary",
+    description: "Monthly salary based on partner performance.",
+    icon: DollarSign,
+  },
+  {
+    value: "__custom__",
+    label: "Other Bonus",
+    description: "Define a custom bonus type and calculation.",
+    icon: Sparkles,
+  },
+];
 
 const toCadence = (scope: string, periodScope: string): Cadence => {
   if (scope === "per_lead") return "per_deal";
@@ -250,6 +285,15 @@ const toSelectedValues = (value: RuleCondition["value"]): string[] => {
   if (value) return [String(value)];
   return [];
 };
+
+const getConditionValue = (
+  conditions: RuleCondition[],
+  field: string,
+): RuleCondition["value"] | undefined =>
+  conditions.find((condition) => condition.field === field)?.value;
+
+const withoutCondition = (conditions: RuleCondition[], field: string) =>
+  conditions.filter((condition) => condition.field !== field);
 
 // ── Human-readable summaries ───────────────────────────────────────────────────
 
@@ -289,6 +333,7 @@ function ConditionRow({
   pipelineStatuses,
   services,
   verticalMarkets,
+  batches,
 }: {
   cond: RuleCondition;
   index: number;
@@ -298,6 +343,7 @@ function ConditionRow({
   pipelineStatuses: PartnerLeadPipelineStatus[];
   services: PartnerServiceApiItem[];
   verticalMarkets: PartnerVerticalMarket[];
+  batches: AffiliateBatch[];
 }) {
   const fieldMeta = FIELD_OPTIONS.find((f) => f.value === cond.field);
   const isNumeric  = NUMERIC_FIELDS.has(cond.field);
@@ -306,6 +352,7 @@ function ConditionRow({
   const isLeadStatus = cond.field === "lead_status";
   const isLeadService = cond.field === "lead_service_id";
   const isVerticalMarket = cond.field === "lead_vertical_market_id";
+  const isBatch = cond.field === "batch_id";
   const activePipelineStatuses = pipelineStatuses.filter(
     (status) => status.isActive,
   );
@@ -524,6 +571,53 @@ function ConditionRow({
             </option>
           ))}
         </select>
+      ) : isBatch && isListOp ? (
+        <div className="flex min-w-[220px] flex-wrap gap-1">
+          {batches.map((batch) => {
+            const selected = toSelectedValues(cond.value);
+            const checked = selected.includes(batch.id);
+            return (
+              <label
+                key={batch.id}
+                className={cn(
+                  "inline-flex cursor-pointer select-none items-center rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
+                  checked
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-400",
+                )}
+              >
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={checked}
+                  onChange={() => {
+                    const next = checked
+                      ? selected.filter((item) => item !== batch.id)
+                      : [...selected, batch.id];
+                    onUpdate({ value: next });
+                  }}
+                />
+                {batch.name}
+              </label>
+            );
+          })}
+        </div>
+      ) : isBatch ? (
+        <select
+          className="h-9 min-w-[180px] rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700"
+          value={String(cond.value ?? "")}
+          onChange={(e) => onUpdate({ value: e.target.value })}
+          disabled={batches.length === 0}
+        >
+          <option value="">
+            {batches.length > 0 ? "Select batch..." : "No batch available"}
+          </option>
+          {batches.map((batch) => (
+            <option key={batch.id} value={batch.id}>
+              {batch.name}
+            </option>
+          ))}
+        </select>
       ) : isListOp ? (
         <Input
           className="h-9 min-w-[180px] rounded-xl text-sm"
@@ -566,9 +660,17 @@ function ConditionRow({
 function RewardValueEditor({
   reward,
   onChange,
+  pipelineStatuses,
+  services,
+  verticalMarkets,
+  batches,
 }: {
   reward: RuleReward;
   onChange: (r: RuleReward) => void;
+  pipelineStatuses: PartnerLeadPipelineStatus[];
+  services: PartnerServiceApiItem[];
+  verticalMarkets: PartnerVerticalMarket[];
+  batches: AffiliateBatch[];
 }) {
   if (reward.type === "fixed" || reward.type === "percentage" || reward.type === "percentage_of_revenue") {
     const val = (reward as { type: string; value: number }).value ?? 0;
@@ -597,56 +699,152 @@ function RewardValueEditor({
   }
 
   if (reward.type === "tiered") {
-    const tiers = (reward as { type: "tiered"; tiers: { min: number; max?: number; amount: number }[] }).tiers ?? [];
-    const updateTier = (i: number, patch: Partial<{ min: number; amount: number }>) => {
+    const tiers = (reward as {
+      type: "tiered";
+      tiers: {
+        closedClients?: number;
+        min?: number;
+        max?: number;
+        amount: number;
+        conditions?: RuleConditionTree;
+      }[];
+    }).tiers ?? [];
+    const updateTier = (
+      i: number,
+      patch: Partial<{
+        closedClients: number;
+        min: number;
+        amount: number;
+        conditions: RuleConditionTree;
+      }>,
+    ) => {
       const next = tiers.map((t, idx) => idx === i ? { ...t, ...patch } : t);
       onChange({ ...reward, tiers: next } as RuleReward);
     };
-    const addTier = () => onChange({ ...reward, tiers: [...tiers, { min: (tiers.at(-1)?.min ?? 0) + 1, amount: 0 }] } as RuleReward);
+    const addTier = () => {
+      const previousThreshold =
+        tiers.at(-1)?.closedClients ?? tiers.at(-1)?.min ?? 0;
+      onChange({
+        ...reward,
+        tiers: [
+          ...tiers,
+          { closedClients: previousThreshold + 1, min: previousThreshold + 1, amount: 0 },
+        ],
+      } as RuleReward);
+    };
     const removeTier = (i: number) => onChange({ ...reward, tiers: tiers.filter((_, idx) => idx !== i) } as RuleReward);
+    const getTierConditions = (tier: (typeof tiers)[number]) =>
+      treeToFlat(tier.conditions ?? null).conditions;
+    const updateTierConditions = (
+      tierIndex: number,
+      conditions: RuleCondition[],
+    ) => {
+      updateTier(tierIndex, { conditions: flatToTree("AND", conditions) });
+    };
 
     return (
       <div className="mt-4 space-y-3">
         <p className="text-sm text-slate-500">
-          Set how much a partner earns based on how many deals they closed in the period.
-          The <strong>highest matching tier</strong> applies.
+          Set the payout levels. Each level can also have its own extra
+          conditions, matching the Welcome Bonus setup.
         </p>
         {tiers.map((tier, i) => (
-          <div key={i} className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <span className="text-sm font-semibold text-slate-500 w-14 shrink-0">
-              Level {i + 1}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500">If closed deals ≥</span>
-              <Input
-                type="number"
-                className="h-9 w-20 rounded-xl text-center font-bold"
-                min={1}
-                value={tier.min}
-                onChange={(e) => updateTier(i, { min: Number(e.target.value) })}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-500">Pay</span>
-              <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold">Rp</span>
+          <div key={i} className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-semibold text-slate-500 w-14 shrink-0">
+                Level {i + 1}
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500">If closed deals ≥</span>
                 <Input
                   type="number"
-                  className="h-9 pl-9 w-36 rounded-xl font-bold"
-                  min={0}
-                  value={tier.amount}
-                  onChange={(e) => updateTier(i, { amount: Number(e.target.value) })}
+                  className="h-9 w-20 rounded-xl text-center font-bold"
+                  min={1}
+                  value={tier.closedClients ?? tier.min ?? 1}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    updateTier(i, { closedClients: value, min: value });
+                  }}
                 />
               </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-500">Pay</span>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold">Rp</span>
+                  <Input
+                    type="number"
+                    className="h-9 pl-9 w-36 rounded-xl font-bold"
+                    min={0}
+                    value={tier.amount}
+                    onChange={(e) => updateTier(i, { amount: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+              <button
+                type="button"
+                className="ml-auto h-8 w-8 flex items-center justify-center rounded-xl text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-colors disabled:opacity-30"
+                onClick={() => removeTier(i)}
+                disabled={tiers.length <= 1}
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
-            <button
-              type="button"
-              className="ml-auto h-8 w-8 flex items-center justify-center rounded-xl text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-colors disabled:opacity-30"
-              onClick={() => removeTier(i)}
-              disabled={tiers.length <= 1}
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="space-y-2 border-t border-slate-200 pt-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Level Conditions
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-8 rounded-xl border-dashed"
+                  onClick={() => {
+                    const conditions = getTierConditions(tier);
+                    updateTierConditions(i, [
+                      ...conditions,
+                      { field: "closed_clients", op: "gte", value: tier.closedClients ?? tier.min ?? 1 },
+                    ]);
+                  }}
+                >
+                  <Plus className="mr-1.5 h-3.5 w-3.5" /> Add condition
+                </Button>
+              </div>
+              {getTierConditions(tier).length === 0 ? (
+                <p className="text-xs text-slate-500">
+                  No extra condition. This level follows the closed deal target above.
+                </p>
+              ) : (
+                getTierConditions(tier).map((condition, conditionIndex) => (
+                  <ConditionRow
+                    key={conditionIndex}
+                    cond={condition}
+                    index={conditionIndex}
+                    onUpdate={(patch) => {
+                      const conditions = getTierConditions(tier);
+                      updateTierConditions(
+                        i,
+                        conditions.map((item, idx) =>
+                          idx === conditionIndex ? { ...item, ...patch } : item,
+                        ),
+                      );
+                    }}
+                    onRemove={() => {
+                      const conditions = getTierConditions(tier);
+                      updateTierConditions(
+                        i,
+                        conditions.filter((_, idx) => idx !== conditionIndex),
+                      );
+                    }}
+                    disableRemove={false}
+                    pipelineStatuses={pipelineStatuses}
+                    services={services}
+                    verticalMarkets={verticalMarkets}
+                    batches={batches}
+                  />
+                ))
+              )}
+            </div>
           </div>
         ))}
         <Button type="button" variant="outline" size="sm" className="rounded-xl border-dashed" onClick={addTier}>
@@ -776,6 +974,7 @@ export const CommissionRulesContent = ({
   const [pipelineStatuses, setPipelineStatuses] = useState<PartnerLeadPipelineStatus[]>([]);
   const [services, setServices] = useState<PartnerServiceApiItem[]>([]);
   const [verticalMarkets, setVerticalMarkets] = useState<PartnerVerticalMarket[]>([]);
+  const [batches, setBatches] = useState<AffiliateBatch[]>([]);
 
   // Form state
   const [formOpen, setFormOpen] = useState(false);
@@ -795,6 +994,15 @@ export const CommissionRulesContent = ({
   const [fReward, setFReward]             = useState<RuleReward>({ type: "fixed", value: 0 } as RuleReward);
   const [fActive, setFActive]             = useState(true);
   const [fPriority, setFPriority]         = useState(0);
+
+  const selectedBatchId = String(getConditionValue(fConds, "batch_id") ?? "");
+  const selectedServiceId = String(getConditionValue(fConds, "lead_service_id") ?? "");
+  const visibleFormConditions = fConds.filter((condition) => {
+    if (fTypePreset === "initial" && condition.field === "batch_id") return false;
+    if (fTypePreset === "sales" && condition.field === "lead_service_id") return false;
+    if (fTypePreset === "basic_salary" && condition.field === "total_revenue") return false;
+    return true;
+  });
 
   // ── Load rules ─────────────────────────────────────────────────────────────
 
@@ -819,12 +1027,14 @@ export const CommissionRulesContent = ({
       getPartnerLeadPipelineStatuses({ includeInactive: false }).catch(() => null),
       getPartnerServices({ limit: 1000 }).catch(() => null),
       getPartnerVerticalMarkets({ includeInactive: false }).catch(() => null),
+      axiosInstance.get("/back-office/batch").catch(() => null),
     ])
-      .then(([statusesRes, servicesRes, verticalMarketsRes]) => {
+      .then(([statusesRes, servicesRes, verticalMarketsRes, batchesRes]) => {
         if (!cancelled) {
           setPipelineStatuses(statusesRes?.data?.data ?? []);
           setServices(servicesRes?.data?.data ?? []);
           setVerticalMarkets(verticalMarketsRes?.data?.data ?? []);
+          setBatches(batchesRes?.data?.data ?? []);
         }
       })
       .catch(() => {
@@ -847,7 +1057,84 @@ export const CommissionRulesContent = ({
     setFPriority(0); setShowAdvanced(false);
   };
 
-  const openCreate = () => { setEditingId(null); resetForm(); setFormOpen(true); };
+  const applyRuleType = (type: RuleTypePreset) => {
+    setFTypePreset(type);
+    setFTypeCustom("");
+
+    if (type === "sales") {
+      setFTrigger("lead_won");
+      setFCadence("per_deal");
+      setFPriority(-1);
+      setFReward({ type: "percentage", value: 0 } as RuleReward);
+      setFConds((prev) => withoutCondition(prev, "batch_id"));
+      if (!fName.trim()) setFName("Sales Commission");
+      return;
+    }
+
+    if (type === "initial") {
+      setFTrigger("daily_cron");
+      setFCadence("first_month");
+      setFPriority(10);
+      setFReward({
+        type: "tiered",
+        tiers: [{ closedClients: 1, min: 1, amount: 0 }],
+      } as RuleReward);
+      setFConds((prev) =>
+        withoutCondition(withoutCondition(prev, "lead_service_id"), "total_revenue"),
+      );
+      if (!fName.trim()) setFName("Welcome Bonus");
+      return;
+    }
+
+    if (type === "basic_salary") {
+      setFTrigger("monthly_cron");
+      setFCadence("monthly");
+      setFPriority(20);
+      setFReward({ type: "fixed", value: 0 } as RuleReward);
+      setFConds((prev) => {
+        const withoutSource = withoutCondition(
+          withoutCondition(prev, "batch_id"),
+          "lead_service_id",
+        );
+        const existingThreshold = getConditionValue(withoutSource, "total_revenue");
+        if (existingThreshold !== undefined) return withoutSource;
+        return [
+          ...withoutSource,
+          { field: "total_revenue", op: "gte", value: 0 },
+        ];
+      });
+      if (!fName.trim()) setFName("Basic Salary");
+      return;
+    }
+
+    setFTrigger("manual");
+    setFCadence("any_month");
+    setFReward({ type: "fixed", value: 0 } as RuleReward);
+  };
+
+  const setSourceCondition = (
+    field: "batch_id" | "lead_service_id",
+    value: string,
+  ) => {
+    setFConds((prev) => {
+      const next = withoutCondition(prev, field);
+      if (!value) return next;
+      return [...next, { field, op: "eq", value }];
+    });
+  };
+
+  const setBasicThreshold = (value: number) => {
+    setFConds((prev) => {
+      const next = withoutCondition(prev, "total_revenue");
+      return [...next, { field: "total_revenue", op: "gte", value }];
+    });
+  };
+
+  const openCreate = () => {
+    setEditingId(null);
+    resetForm();
+    setFormOpen(true);
+  };
 
   const openEdit = (rule: CommissionRule) => {
     setEditingId(rule.id);
@@ -858,7 +1145,7 @@ export const CommissionRulesContent = ({
     const preset = COMMISSION_TYPE_PRESETS.find(
       (p) => p.value === rule.commissionType && p.value !== "__custom__",
     );
-    if (preset) { setFTypePreset(preset.value); setFTypeCustom(""); }
+    if (preset) { setFTypePreset(preset.value as RuleTypePreset); setFTypeCustom(""); }
     else         { setFTypePreset("__custom__"); setFTypeCustom(rule.commissionType); }
     const { logic, conditions } = treeToFlat(rule.conditions);
     setFCondLogic(logic); setFConds(conditions);
@@ -871,6 +1158,14 @@ export const CommissionRulesContent = ({
     if (!fName.trim()) { toast.error("Please enter a rule name."); return; }
     const commissionType = fTypePreset === "__custom__" ? fTypeCustom : fTypePreset;
     if (!commissionType.trim()) { toast.error("Please select a commission category."); return; }
+    if (commissionType === "initial" && !selectedBatchId) {
+      toast.error("Please select the partner batch for this welcome bonus.");
+      return;
+    }
+    if (commissionType === "initial" && fReward.type !== "tiered") {
+      toast.error("Welcome bonus must use tiered payout levels.");
+      return;
+    }
     const { scope, periodScope } = fromCadence(fCadence);
     const payload = {
       name: fName,
@@ -928,10 +1223,30 @@ export const CommissionRulesContent = ({
   };
 
   const updateCond = (i: number, patch: Partial<RuleCondition>) =>
-    setFConds((prev) => prev.map((c, idx) => idx === i ? { ...c, ...patch } : c));
+    setFConds((prev) => {
+      const visible = prev.filter((condition) => {
+        if (fTypePreset === "initial" && condition.field === "batch_id") return false;
+        if (fTypePreset === "sales" && condition.field === "lead_service_id") return false;
+        if (fTypePreset === "basic_salary" && condition.field === "total_revenue") return false;
+        return true;
+      });
+      const target = visible[i];
+      return prev.map((condition) =>
+        condition === target ? { ...condition, ...patch } : condition,
+      );
+    });
 
   const removeCond = (i: number) =>
-    setFConds((prev) => prev.filter((_, idx) => idx !== i));
+    setFConds((prev) => {
+      const visible = prev.filter((condition) => {
+        if (fTypePreset === "initial" && condition.field === "batch_id") return false;
+        if (fTypePreset === "sales" && condition.field === "lead_service_id") return false;
+        if (fTypePreset === "basic_salary" && condition.field === "total_revenue") return false;
+        return true;
+      });
+      const target = visible[i];
+      return prev.filter((condition) => condition !== target);
+    });
 
   const addCond = () =>
     setFConds((prev) => [...prev, { field: "closed_clients", op: "gte", value: 1 }]);
@@ -1181,10 +1496,65 @@ export const CommissionRulesContent = ({
           </div>
 
           <div className="px-6 py-6 space-y-8">
-            {/* ── Section 1: Name ─────────────────────────────────────────── */}
+            {/* ── Section 1: Rule Type ───────────────────────────────────── */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">1</span>
+                <h3 className="font-semibold text-slate-900">Choose rule type</h3>
+              </div>
+              <div className="grid gap-3 pl-8 sm:grid-cols-2">
+                {RULE_TYPE_OPTIONS.map((option) => {
+                  const Icon = option.icon;
+                  const active = fTypePreset === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => applyRuleType(option.value)}
+                      className={cn(
+                        "flex items-start gap-3 rounded-2xl border-2 p-4 text-left transition-all",
+                        active
+                          ? "border-slate-900 bg-slate-50"
+                          : "border-slate-200 bg-white hover:border-slate-300",
+                      )}
+                    >
+                      <div className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                        active ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-500",
+                      )}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">
+                          {option.label}
+                        </p>
+                        <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                          {option.description}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {fTypePreset === "__custom__" && (
+                <div className="pl-8">
+                  <Label className="text-sm font-medium text-slate-700">
+                    Custom bonus type
+                  </Label>
+                  <Input
+                    placeholder="e.g. referral_bonus, milestone_reward"
+                    value={fTypeCustom}
+                    onChange={(e) => setFTypeCustom(e.target.value)}
+                    className="mt-2 h-10 rounded-xl font-mono text-sm"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* ── Section 1: Name ─────────────────────────────────────────── */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">2</span>
                 <h3 className="font-semibold text-slate-900">Name this rule</h3>
               </div>
               <div className="space-y-3 pl-8">
@@ -1218,7 +1588,7 @@ export const CommissionRulesContent = ({
             {/* ── Section 2: Trigger ──────────────────────────────────────── */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">2</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">3</span>
                 <h3 className="font-semibold text-slate-900">When should this fire?</h3>
               </div>
               <div className="grid grid-cols-2 gap-3 pl-8">
@@ -1253,12 +1623,85 @@ export const CommissionRulesContent = ({
             {/* ── Section 3: Conditions ───────────────────────────────────── */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">3</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">4</span>
                 <h3 className="font-semibold text-slate-900">Who qualifies?</h3>
                 <span className="text-xs text-slate-400 font-normal">(optional)</span>
               </div>
               <div className="pl-8 space-y-3">
-                {fConds.length === 0 ? (
+                {fTypePreset === "initial" && (
+                  <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+                    <Label className="text-sm font-semibold text-slate-800">
+                      Partner batch
+                    </Label>
+                    <select
+                      className="mt-2 h-10 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm font-medium text-slate-700"
+                      value={selectedBatchId}
+                      onChange={(event) => setSourceCondition("batch_id", event.target.value)}
+                    >
+                      <option value="">Select batch...</option>
+                      {batches.map((batch) => (
+                        <option key={batch.id} value={batch.id}>
+                          {batch.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {fTypePreset === "sales" && (
+                  <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+                    <Label className="text-sm font-semibold text-slate-800">
+                      Product / Service
+                    </Label>
+                    <select
+                      className="mt-2 h-10 w-full rounded-xl border border-blue-100 bg-white px-3 text-sm font-medium text-slate-700"
+                      value={selectedServiceId}
+                      onChange={(event) => {
+                        const serviceId = event.target.value;
+                        setSourceCondition("lead_service_id", serviceId);
+                        const service = services.find((item) => item.id === serviceId);
+                        if (service) {
+                          const mode = service.commissionMode ?? "percentage";
+                          setFReward({
+                            type: mode === "fixed" ? "fixed" : "percentage",
+                            value: Number(
+                              service.commissionValue ??
+                                service.commissionPercentage ??
+                                0,
+                            ),
+                          } as RuleReward);
+                        }
+                      }}
+                    >
+                      <option value="">All services</option>
+                      {services.map((service) => (
+                        <option key={service.id} value={service.id}>
+                          {service.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {fTypePreset === "basic_salary" && (
+                  <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+                    <Label className="text-sm font-semibold text-slate-800">
+                      Monthly sales threshold
+                    </Label>
+                    <div className="relative mt-2 max-w-xs">
+                      <span className="absolute left-3 top-2.5 text-sm font-semibold text-slate-400">Rp</span>
+                      <Input
+                        type="number"
+                        min={0}
+                        className="h-10 rounded-xl pl-9 font-bold"
+                        value={Number(getConditionValue(fConds, "total_revenue") ?? 0)}
+                        onChange={(event) => setBasicThreshold(Number(event.target.value))}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {visibleFormConditions.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-5 text-center">
                     <p className="text-sm text-slate-500">
                       <span className="font-semibold text-slate-700">No conditions set</span> — this rule will apply to every qualifying event.
@@ -1276,7 +1719,7 @@ export const CommissionRulesContent = ({
                 ) : (
                   <>
                     {/* Logic toggle */}
-                    {fConds.length > 1 && (
+                    {visibleFormConditions.length > 1 && (
                       <div className="flex items-center gap-3">
                         <span className="text-sm text-slate-500">Match</span>
                         <div className="inline-flex rounded-xl border border-slate-200 overflow-hidden">
@@ -1300,7 +1743,7 @@ export const CommissionRulesContent = ({
 
                     {/* Condition rows */}
                     <div className="space-y-2">
-                      {fConds.map((cond, i) => (
+                      {visibleFormConditions.map((cond, i) => (
                         <ConditionRow
                           key={i}
                           cond={cond}
@@ -1311,6 +1754,7 @@ export const CommissionRulesContent = ({
                           pipelineStatuses={pipelineStatuses}
                           services={services}
                           verticalMarkets={verticalMarkets}
+                          batches={batches}
                         />
                       ))}
                     </div>
@@ -1331,13 +1775,25 @@ export const CommissionRulesContent = ({
             {/* ── Section 4: Reward ───────────────────────────────────────── */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">4</span>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">5</span>
                 <h3 className="font-semibold text-slate-900">How much to pay?</h3>
               </div>
               <div className="pl-8 space-y-4">
-                {/* Reward type cards */}
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {REWARD_OPTIONS.map((opt) => {
+                {fTypePreset === "initial" ? (
+                  <div className="rounded-2xl border border-amber-100 bg-amber-50/60 px-4 py-3 text-sm text-amber-800">
+                    Welcome Bonus always uses tiered payout levels per selected batch.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {REWARD_OPTIONS.filter((option) => {
+                      if (fTypePreset === "sales") {
+                        return option.type === "fixed" || option.type === "percentage";
+                      }
+                      if (fTypePreset === "basic_salary") {
+                        return option.type === "fixed";
+                      }
+                      return option.type !== "batch_initial_config" && option.type !== "service_config";
+                    }).map((opt) => {
                     const Icon = opt.icon;
                     const active = fReward.type === opt.type;
                     return (
@@ -1364,11 +1820,19 @@ export const CommissionRulesContent = ({
                         <p className="mt-0.5 text-[11px] text-slate-500 leading-tight">{opt.description}</p>
                       </button>
                     );
-                  })}
-                </div>
+                    })}
+                  </div>
+                )}
 
                 {/* Reward value inputs */}
-                <RewardValueEditor reward={fReward} onChange={setFReward} />
+                <RewardValueEditor
+                  reward={fReward}
+                  onChange={setFReward}
+                  pipelineStatuses={pipelineStatuses}
+                  services={services}
+                  verticalMarkets={verticalMarkets}
+                  batches={batches}
+                />
               </div>
             </div>
 
@@ -1382,44 +1846,13 @@ export const CommissionRulesContent = ({
                 <div className="flex items-center gap-2">
                   <Settings className="h-4 w-4 text-slate-400" />
                   <span className="text-sm font-semibold text-slate-700">Advanced Settings</span>
-                  <span className="text-xs text-slate-400">(category, priority, frequency)</span>
+                  <span className="text-xs text-slate-400">(priority, frequency)</span>
                 </div>
                 <ChevronDown className={cn("h-4 w-4 text-slate-400 transition-transform", showAdvanced && "rotate-180")} />
               </button>
 
               {showAdvanced && (
                 <div className="border-t border-slate-100 bg-slate-50/50 px-5 pb-5 pt-4 space-y-5">
-                  {/* Commission category */}
-                  <div className="space-y-1.5">
-                    <Label className="text-sm font-medium text-slate-700">Commission category</Label>
-                    <p className="text-xs text-slate-400">How this commission will be labeled in payment records.</p>
-                    <div className="flex gap-2 flex-wrap">
-                      {COMMISSION_TYPE_PRESETS.map((p) => (
-                        <button
-                          key={p.value}
-                          type="button"
-                          onClick={() => setFTypePreset(p.value)}
-                          className={cn(
-                            "rounded-xl border px-3 py-1.5 text-sm font-medium transition-all",
-                            fTypePreset === p.value
-                              ? "border-slate-900 bg-slate-900 text-white"
-                              : "border-slate-200 bg-white text-slate-600 hover:border-slate-300",
-                          )}
-                        >
-                          {p.label}
-                        </button>
-                      ))}
-                    </div>
-                    {fTypePreset === "__custom__" && (
-                      <Input
-                        placeholder="e.g. referral_bonus, milestone_reward"
-                        value={fTypeCustom}
-                        onChange={(e) => setFTypeCustom(e.target.value)}
-                        className="mt-2 rounded-xl h-10 font-mono text-sm"
-                      />
-                    )}
-                  </div>
-
                   {/* Frequency */}
                   <div className="space-y-1.5">
                     <Label className="text-sm font-medium text-slate-700">Calculation frequency</Label>

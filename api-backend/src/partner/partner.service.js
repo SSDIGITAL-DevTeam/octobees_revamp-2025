@@ -1456,7 +1456,6 @@ export const getBackOfficePendingCommissions = async (limit = 5) => {
 
 // ==================== BACK OFFICE COMMISSION DISBURSEMENT ====================
 
-const VALID_COMMISSION_TYPES = ["sales", "initial", "basic_salary"];
 const VALID_COMMISSION_STATUSES = ["Pending Transfer", "Paid", "Rejected"];
 
 export const listBackOfficeCommissions = async (query = {}) => {
@@ -1470,10 +1469,8 @@ export const listBackOfficeCommissions = async (query = {}) => {
     : undefined;
   const search = query.search ? String(query.search).trim() : undefined;
 
-  if (type && !VALID_COMMISSION_TYPES.includes(type)) {
-    throw new Error(
-      `Invalid commission type. Must be one of: ${VALID_COMMISSION_TYPES.join(", ")}`,
-    );
+  if (type && !/^[a-z0-9_-]{1,80}$/i.test(type)) {
+    throw new Error("Invalid commission type");
   }
   if (status && !VALID_COMMISSION_STATUSES.includes(status)) {
     throw new Error(

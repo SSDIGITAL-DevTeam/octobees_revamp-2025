@@ -1,4 +1,5 @@
 import * as ruleRepo from "./commission-rule.repository.js";
+import { evaluateManualRule } from "./commission-rule.engine.js";
 
 import {
     getBackOfficeDashboardStats,
@@ -560,6 +561,19 @@ const listCommissionRuleLogsHandler = async (req, res) => {
     }
 };
 
+const runManualCommissionRuleHandler = async (req, res) => {
+    try {
+        const data = await evaluateManualRule({
+            ruleId: req.params.id,
+            affiliateId: req.body?.affiliateId,
+            leadId: req.body?.leadId || null,
+        });
+        res.status(200).json({ status: "success", data });
+    } catch (e) {
+        res.status(400).json({ status: "error", message: e.message });
+    }
+};
+
 export default {
     stats, recentLeads, pendingCommissions, performanceSettings, updatePerformanceSetting,
     currencyConfig, updateCurrencyConfig,
@@ -579,4 +593,5 @@ export default {
     updateCommissionRule: updateCommissionRuleHandler,
     deleteCommissionRule: deleteCommissionRuleHandler,
     listCommissionRuleLogs: listCommissionRuleLogsHandler,
+    runManualCommissionRule: runManualCommissionRuleHandler,
 };

@@ -51,7 +51,7 @@ import {
 import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 
 const commissionTypeBadge: Record<
-  CommissionTypeApi,
+  string,
   { label: string; className: string }
 > = {
   sales: {
@@ -67,6 +67,26 @@ const commissionTypeBadge: Record<
     className: "bg-amber-50 text-amber-700 border border-amber-200",
   },
 };
+
+const triggerLabel: Record<string, string> = {
+  lead_won: "Deal won",
+  daily_cron: "Daily check",
+  monthly_cron: "Monthly check",
+  manual: "Manual",
+};
+
+const formatCommissionType = (value: string) =>
+  value
+    .split("_")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const getCommissionTypeMeta = (type: string) =>
+  commissionTypeBadge[type] ?? {
+    label: formatCommissionType(type),
+    className: "bg-slate-50 text-slate-700 border border-slate-200",
+  };
 
 const statusBadge: Record<
   CommissionStatusApi,
@@ -430,7 +450,7 @@ export const CommissionDisbursementPanel = () => {
                 </TableRow>
               ) : (
                 rows.map((row) => {
-                  const typeMeta = commissionTypeBadge[row.commissionType];
+                  const typeMeta = getCommissionTypeMeta(row.commissionType);
                   const statusMeta = statusBadge[row.status];
                   const isPending = row.status === "Pending Transfer";
                   const isPaid = row.status === "Paid";
@@ -480,13 +500,34 @@ export const CommissionDisbursementPanel = () => {
                             </p>
                           </div>
                         ) : row.commissionType === "initial" ? (
-                          <span className="text-xs text-slate-500">
-                            Welcome bonus
-                          </span>
+                          <div className="text-sm">
+                            <p className="font-medium text-slate-800">
+                              Welcome bonus
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {row.ruleName || "Rule-based"}
+                            </p>
+                          </div>
+                        ) : row.commissionType === "basic_salary" ? (
+                          <div className="text-sm">
+                            <p className="font-medium text-slate-800">
+                              Monthly basic salary
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {row.ruleName || "Rule-based"}
+                            </p>
+                          </div>
                         ) : (
-                          <span className="text-xs text-slate-500">
-                            Monthly basic salary
-                          </span>
+                          <div className="text-sm">
+                            <p className="font-medium text-slate-800 truncate max-w-[200px]">
+                              {row.ruleName || formatCommissionType(row.commissionType)}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {row.ruleTriggerType
+                                ? triggerLabel[row.ruleTriggerType] ?? row.ruleTriggerType
+                                : "Rule-based"}
+                            </p>
+                          </div>
                         )}
                       </TableCell>
                       <TableCell className="font-mono text-sm text-slate-600">
@@ -583,9 +624,9 @@ export const CommissionDisbursementPanel = () => {
               {payState.commission?.partnerName} &mdash;{" "}
               {formatCurrency(payState.commission?.amount)} (
               {
-                commissionTypeBadge[
-                  payState.commission?.commissionType || "sales"
-                ].label
+                getCommissionTypeMeta(
+                  payState.commission?.commissionType || "sales",
+                ).label
               }
               )
             </DialogDescription>

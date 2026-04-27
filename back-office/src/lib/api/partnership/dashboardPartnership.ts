@@ -580,9 +580,18 @@ export const getCommissionRuleLogs = (
     { params },
   );
 
+export const runManualCommissionRule = (
+  id: string,
+  data: { affiliateId: string; leadId?: string | null },
+) =>
+  axiosInstance.post<{ status: string; data: { created: number; amount?: number; period?: string } }>(
+    `/back-office/partner/commission-rules/${id}/run`,
+    data,
+  );
+
 // ==================== COMMISSION DISBURSEMENT ====================
 
-export type CommissionTypeApi = "sales" | "initial" | "basic_salary";
+export type CommissionTypeApi = "sales" | "initial" | "basic_salary" | string;
 export type CommissionStatusApi = "Pending Transfer" | "Paid" | "Rejected";
 
 export type CommissionRecord = {
@@ -597,6 +606,9 @@ export type CommissionRecord = {
   projectValue: number | null;
   amount: number;
   commissionType: CommissionTypeApi;
+  ruleId: string | null;
+  ruleName: string | null;
+  ruleTriggerType: "lead_won" | "daily_cron" | "monthly_cron" | "manual" | string | null;
   period: string | null;
   status: CommissionStatusApi;
   paidAt: string | null;
