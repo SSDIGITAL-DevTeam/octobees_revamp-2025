@@ -867,11 +867,18 @@ async function main() {
   const { entries } = validateMigrationSet(defaultMigrationsFolder);
   console.log(`Migration set validated. Entries in journal: ${entries.length}`);
 
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is required to run migrations");
+  const databaseUrl =
+    process.env.DATABASE_URL ||
+    (process.env.DB_HOST &&
+      `mysql://${process.env.DB_USER}:${encodeURIComponent(process.env.DB_PASSWORD || "")}@${process.env.DB_HOST}:${process.env.DB_PORT || 3306}/${process.env.DB_NAME}`);
+
+  if (!databaseUrl) {
+    throw new Error(
+      "Database connection not configured. Set DATABASE_URL or DB_HOST/DB_USER/DB_PASSWORD/DB_PORT/DB_NAME environment variables.",
+    );
   }
 
-  const poolConnection = mysql.createPool(process.env.DATABASE_URL);
+  const poolConnection = mysql.createPool(databaseUrl);
   const db = drizzle(poolConnection);
 
   try {
