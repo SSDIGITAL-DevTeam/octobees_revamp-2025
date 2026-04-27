@@ -1,7 +1,7 @@
 import { db } from "../../drizzle/db.js";
 import { order } from "../../drizzle/schema.js";
 import logger from "../../utils/logger.js";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 export const findAllOrders = async (skip, limit, where, orderBy) => {
   try {

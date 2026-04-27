@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CheckCircle2, Globe, Info } from "lucide-react"
+import { toast } from "sonner"
 import Header from "@/components/layout/header/Header"
 import {
   CURRENCY_OPTIONS,
@@ -9,16 +10,46 @@ import {
   useCurrencyStore,
   type CurrencyCode,
 } from "@/app/store/currency"
+import {
+  getPartnerCurrencyConfig,
+  updatePartnerCurrencyConfig,
+} from "@/lib/api/partnership/dashboardPartnership"
 
 export const PartnerRecruitmentConfigurationContent = () => {
   const { currency, setCurrency } = useCurrencyStore()
   const [selected, setSelected] = useState<CurrencyCode>(currency)
   const [saved, setSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  const handleSave = () => {
-    setCurrency(selected)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+  useEffect(() => {
+    getPartnerCurrencyConfig()
+      .then((response) => {
+        const nextCurrency = response.data.data.currency
+        setCurrency(nextCurrency)
+        setSelected(nextCurrency)
+      })
+      .catch(() => {
+        setSelected(currency)
+      })
+  }, [setCurrency])
+
+  const handleSave = async () => {
+    try {
+      setSaving(true)
+      const response = await updatePartnerCurrencyConfig(selected)
+      const nextCurrency = response.data.data.currency
+      setCurrency(nextCurrency)
+      setSelected(nextCurrency)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+      toast.success(`Currency updated to ${nextCurrency}`)
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to update currency setting",
+      )
+    } finally {
+      setSaving(false)
+    }
   }
 
   const hasChanges = selected !== currency
@@ -103,10 +134,9 @@ export const PartnerRecruitmentConfigurationContent = () => {
         <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-xs text-blue-700">
           <Info size={14} className="flex-shrink-0" />
           <span>
-            This setting is saved locally in your browser. It will apply to
-            Partner List, Sales Portal Management, and the Partner Portal
-            commission views. All users on this device will see the selected
-            currency.
+            This setting is saved to the shared backend configuration and then
+            cached in each browser. Partner Recruitment System and Partner
+            Portal pages will use the same currency.
           </span>
         </div>
 
@@ -114,10 +144,10 @@ export const PartnerRecruitmentConfigurationContent = () => {
           <button
             type="button"
             onClick={handleSave}
-            disabled={!hasChanges}
+            disabled={!hasChanges || saving}
             className="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Save Configuration
+            {saving ? "Saving..." : "Save Configuration"}
           </button>
 
           {saved && (

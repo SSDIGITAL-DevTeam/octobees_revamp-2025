@@ -16,6 +16,16 @@ export type PartnerLeadPipelineStatus = {
   isSystem?: boolean;
 };
 
+export type PartnerVerticalMarket = {
+  id?: string;
+  name: string;
+  sortOrder: number;
+  isActive: boolean;
+  isSystem?: boolean;
+};
+
+export type PartnerCurrencyCode = "USD" | "SGD" | "IDR";
+
 export type PartnershipStatsResponse = {
   status: string;
   data: {
@@ -98,6 +108,17 @@ export const getPartnerPendingCommissions = () =>
     "/back-office/partner/dashboard/pending-commissions",
   );
 
+export const getPartnerCurrencyConfig = () =>
+  axiosInstance.get<{ status: string; data: { currency: PartnerCurrencyCode } }>(
+    "/back-office/partner/currency-config",
+  );
+
+export const updatePartnerCurrencyConfig = (currency: PartnerCurrencyCode) =>
+  axiosInstance.put<{ status: string; data: { currency: PartnerCurrencyCode } }>(
+    "/back-office/partner/currency-config",
+    { currency },
+  );
+
 export const getPartnerLeadPipelineStatuses = (params: { includeInactive?: boolean } = {}) =>
   axiosInstance.get<{ status: string; data: PartnerLeadPipelineStatus[] }>(
     "/back-office/partner/pipeline-statuses",
@@ -110,6 +131,20 @@ export const updatePartnerLeadPipelineStatuses = (
   axiosInstance.put<{ status: string; data: PartnerLeadPipelineStatus[] }>(
     "/back-office/partner/pipeline-statuses",
     { statuses },
+  );
+
+export const getPartnerVerticalMarkets = (params: { includeInactive?: boolean } = {}) =>
+  axiosInstance.get<{ status: string; data: PartnerVerticalMarket[] }>(
+    "/back-office/partner/vertical-markets",
+    { params },
+  );
+
+export const updatePartnerVerticalMarkets = (
+  markets: PartnerVerticalMarket[],
+) =>
+  axiosInstance.put<{ status: string; data: PartnerVerticalMarket[] }>(
+    "/back-office/partner/vertical-markets",
+    { markets },
   );
 
 export const getPartnerList = (params: PartnerListParams = {}) =>
@@ -132,6 +167,8 @@ export type PartnerLeadApiItem = {
   phone: string;
   serviceId?: string | null;
   serviceName: string;
+  verticalMarketId?: string | null;
+  verticalMarketName?: string | null;
   status: string;
   remark: string;
   affiliateId?: string;
@@ -168,6 +205,8 @@ export type PartnerLeadDetailApiItem = {
   phone: string;
   serviceId: string;
   serviceName: string;
+  verticalMarketId?: string | null;
+  verticalMarketName?: string | null;
   projectValue: number;
   status: string;
   remark: string;

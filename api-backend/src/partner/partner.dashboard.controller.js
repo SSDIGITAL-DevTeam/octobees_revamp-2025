@@ -4,9 +4,12 @@ import {
     getAvailableSalesMaterials,
     getCommissions,
     getPerformanceDashboard,
+    getPartnerCommissionPolicyReference,
+    getPartnerCurrencyConfig,
     getPartnerTermsAndConditions,
     getRecentDashboardLeads,
     getLeadPipelineStatuses,
+    getVerticalMarkets,
 } from "./partner.service.js";
 
 // GET /dashboard/stats - Get dashboard statistics
@@ -142,10 +145,60 @@ const termsAndConditions = async (req, res) => {
     }
 };
 
+const currencyConfig = async (req, res) => {
+    try {
+        const data = await getPartnerCurrencyConfig();
+
+        res.status(200).json({
+            status: "success",
+            data,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
+const commissionPolicy = async (req, res) => {
+    try {
+        const affiliateId = req.affiliateUser.affiliateId;
+        const data = await getPartnerCommissionPolicyReference(affiliateId);
+
+        res.status(200).json({
+            status: "success",
+            data,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
 const pipelineStatuses = async (req, res) => {
     try {
         const includeInactive = req.query.includeInactive === "true";
         const data = await getLeadPipelineStatuses({ includeInactive });
+
+        res.status(200).json({
+            status: "success",
+            data,
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
+const verticalMarkets = async (req, res) => {
+    try {
+        const includeInactive = req.query.includeInactive === "true";
+        const data = await getVerticalMarkets({ includeInactive });
 
         res.status(200).json({
             status: "success",
@@ -166,6 +219,9 @@ export default {
     commissions,
     recentLeads,
     performance,
+    currencyConfig,
     termsAndConditions,
+    commissionPolicy,
     pipelineStatuses,
+    verticalMarkets,
 };

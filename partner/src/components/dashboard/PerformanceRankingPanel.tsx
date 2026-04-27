@@ -3,10 +3,11 @@
 import { useMemo, useState } from "react";
 
 import {
-  formatCurrencyIdr,
+  formatCurrencyGlobal,
   formatDate,
   type PartnerPerformanceData,
 } from "@/lib/partner-portal";
+import { useCurrency } from "@/store/currency";
 
 type PerformanceRankingPanelProps = {
   performance: PartnerPerformanceData | null;
@@ -31,7 +32,7 @@ const terminationCopy: Record<
   terminated: "Terminated",
 };
 
-const formatUsd = (value?: number | null) => `$${formatCurrencyIdr(value)}`;
+const formatCurrency = (value?: number | null) => formatCurrencyGlobal(value);
 
 const getFirstName = (text: string) => {
   if (!text) return "";
@@ -39,10 +40,10 @@ const getFirstName = (text: string) => {
 };
 
 const censorAmount = (amount: number) => {
-  if (!amount) return formatUsd(0);
+  if (!amount) return formatCurrency(0);
 
   let digitCount = 0;
-  return formatUsd(amount).replace(/\d/g, (match) => {
+  return formatCurrency(amount).replace(/\d/g, (match) => {
     digitCount += 1;
     return digitCount === 1 ? match : "x";
   });
@@ -73,6 +74,7 @@ const PerformanceRankingPanel = ({
   performance,
   showInsights = true,
 }: PerformanceRankingPanelProps) => {
+  useCurrency();
   const [rankingView, setRankingView] = useState<"podium" | "list">("podium");
   const leaderboard = useMemo(
     () => performance?.ranking?.leaderboard ?? [],
@@ -160,10 +162,10 @@ const PerformanceRankingPanel = ({
                   Threshold Basic Salary
                 </p>
                 <h2 className="mt-2 text-2xl font-bold text-slate-950">
-                  {formatUsd(policy.basicSalaryAmount)}
+                  {formatCurrency(policy.basicSalaryAmount)}
                 </h2>
                 <p className="mt-1 text-sm text-slate-600">
-                  Minimum sales {formatUsd(policy.basicSalarySalesThreshold)}{" "}
+                  Minimum sales {formatCurrency(policy.basicSalarySalesThreshold)}{" "}
                   per month
                 </p>
               </div>
@@ -217,13 +219,13 @@ const PerformanceRankingPanel = ({
                 <div>
                   <p className="text-slate-500">Sales amount</p>
                   <p className="font-semibold text-slate-950">
-                    {formatUsd(currentMonth.salesAmount)}
+                    {formatCurrency(currentMonth.salesAmount)}
                   </p>
                 </div>
                 <div>
                   <p className="text-slate-500">Remaining</p>
                   <p className="font-semibold text-slate-950">
-                    {formatUsd(currentMonth.remainingSales)}
+                    {formatCurrency(currentMonth.remainingSales)}
                   </p>
                 </div>
               </div>
@@ -235,7 +237,7 @@ const PerformanceRankingPanel = ({
               Initial Commission
             </p>
             <h2 className="mt-2 text-xl font-bold text-slate-950">
-              {formatUsd(displayedInitialCommission)}
+              {formatCurrency(displayedInitialCommission)}
             </h2>
             <p className="mt-1 text-sm text-slate-600">
               {initialCommission.status === "disabled"
@@ -268,20 +270,20 @@ const PerformanceRankingPanel = ({
               <div className="flex justify-between gap-3">
                 <span className="text-slate-500">Configured from batch</span>
                 <span className="font-semibold text-slate-950">
-                  {formatUsd(initialCommission.configuredAmount)}
+                  {formatCurrency(initialCommission.configuredAmount)}
                 </span>
               </div>
               <div className="flex justify-between gap-3">
                 <span className="text-slate-500">Current eligible amount</span>
                 <span className="font-semibold text-slate-950">
-                  {formatUsd(initialCommission.eligibleAmount)}
+                  {formatCurrency(initialCommission.eligibleAmount)}
                 </span>
               </div>
               {nextInitialTier ? (
                 <div className="flex justify-between gap-3">
                   <span className="text-slate-500">Next tier</span>
                   <span className="font-semibold text-slate-950">
-                    {formatUsd(nextInitialTier.amount)} after{" "}
+                    {formatCurrency(nextInitialTier.amount)} after{" "}
                     {nextTierRemaining} more close
                     {nextTierRemaining === 1 ? "" : "s"}
                   </span>

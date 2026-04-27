@@ -11,6 +11,7 @@ import {
   formatUsdInputValue,
   parseUsdInputValue,
 } from "@/lib/currency-input";
+import { getCurrencySymbol, useCurrency } from "@/store/currency";
 
 type LeadFields = {
   name: string;
@@ -48,6 +49,8 @@ const EditLeadModal = ({
   onClose,
   onSubmit,
 }: EditLeadModalProps) => {
+  const currency = useCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
   const [form, setForm] = useState<LeadFields>(lead);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -178,7 +181,7 @@ const EditLeadModal = ({
             <input
               type="text"
               inputMode="decimal"
-              placeholder="$ 5,000"
+              placeholder={`${currencySymbol} 5,000`}
               value={formatUsdInputValue(form.projectValue || "")}
               onChange={handleCurrencyChange}
               className={inputClass}

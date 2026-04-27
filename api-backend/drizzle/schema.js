@@ -1,39 +1,233 @@
-import { relations, sql } from "drizzle-orm";
-import {
-  boolean,
-  date,
-  datetime,
-  double,
-  json,
-  mysqlEnum,
-  mysqlTable,
-  varchar,
-  text,
-  timestamp,
-  int,
-} from "drizzle-orm/mysql-core";
-import { v4 as uuidv4, v4 as uuidv7 } from "uuid";
+import { sql } from 'drizzle-orm';
+import { date, mysqlTable, varchar, mysqlEnum, json, timestamp, boolean, text, int, datetime, double } from 'drizzle-orm/mysql-core';
+import { v4 as uuidv4 } from 'uuid';
 
 // Enums
-export const userStatusEnum = mysqlEnum("status", [
-  "Draft",
-  "Active",
-  "NonActive",
-]);
+export const userStatusEnum = mysqlEnum('user_status', ['Draft', 'Active', 'NonActive']);
+export const blogStatusEnum = mysqlEnum('blog_status', ['Published', 'Archived', 'Draft']);
 
-export const blogStatusEnum = mysqlEnum("status", [
-  "Published",
-  "Takedown",
-  "Draft",
-]);
+export const user = mysqlTable('user', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  status: userStatusEnum.notNull(),
+  refreshToken: text('refresh_token'),
+  role: varchar('role', { length: 50 }).notNull(),
+  features: json('features').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
 
-export const careerStatusEnum = mysqlEnum("status", [
-  "Rejected",
-  "Review",
-  "Accepted",
-]);
+export const blogCategory = mysqlTable('blog_category', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  status: boolean('status').notNull(),
+});
 
-export const affiliateStatusEnum = mysqlEnum("status", ["pending", "approved", "rejected"]);
+export const blog = mysqlTable('blog', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  title: varchar('title', { length: 255 }).notNull(),
+  image: text('image').notNull(),
+  pdf: text('pdf'),
+  content: text('content').notNull(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  status: blogStatusEnum.notNull(),
+  favorite: boolean('favorite').notNull(),
+  categoryId: varchar('category_id', { length: 36 })
+    .notNull()
+    .references(() => blogCategory.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  publishDate: timestamp('publish_date').default(null), // ⬅️ default NULL
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  userId: varchar('user_id', { length: 36 })
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+});
+
+
+export const lead = mysqlTable('lead', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }).notNull(),
+  business: varchar('business', { length: 255 }).notNull(),
+  message: text('message'),
+  companyName: varchar('company_name', { length: 255 }).notNull(),
+  companyWebsite: varchar('company_website', { length: 255 }),
+  from: varchar('from', { length: 50 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  isAgree: boolean('is_agree').default(true), //setelah migrate akan di ubah menjadi not null
+});
+
+// Legacy order route still imports this schema export during API boot.
+// Keep the table mapping available so old order endpoints do not break startup.
+export const order = mysqlTable('order', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  amount: double('amount').notNull(),
+  currency: mysqlEnum('currency', ['IDR', 'SGD', 'MYR']).notNull().default('IDR'),
+  bussiness: varchar('bussiness', { length: 191 }).notNull(),
+  categoryId: varchar('categoryId', { length: 191 }).notNull(),
+  date: varchar('date', { length: 191 }).notNull(),
+  email: varchar('email', { length: 191 }).notNull(),
+  message: varchar('message', { length: 191 }).notNull(),
+  name: varchar('name', { length: 191 }).notNull(),
+  phoneNumber: varchar('phoneNumber', { length: 191 }).notNull(),
+  idPlan: varchar('idPlan', { length: 191 }).notNull(),
+  time: varchar('time', { length: 191 }).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const dpaLeadDemoRequestStatusValues = ['new', 'contacted', 'qualified', 'converted', 'lost'];
+export const dpaLeadDemoRequestStatusEnum = mysqlEnum(
+  'status',
+  dpaLeadDemoRequestStatusValues,
+);
+
+export const dpaLeadDemoRequest = mysqlTable('dpa_lead_demo_request', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  whatsappNumber: varchar('whatsapp_number', { length: 50 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  businessType: varchar('business_type', { length: 120 }).notNull(),
+  businessTypeOther: varchar('business_type_other', { length: 255 }),
+  coreProblem: text('core_problem').notNull(),
+  source: varchar('source', { length: 100 }).notNull().default('dpa-leads-landing-page'),
+  status: dpaLeadDemoRequestStatusEnum.notNull().default('new'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const benefit = mysqlTable('benefit', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  value: varchar('value', { length: 191 }).notNull(),
+  idPlan: varchar('idPlan', { length: 191 }).notNull(),
+});
+
+export const career = mysqlTable('career', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  phoneNumber: varchar('phoneNumber', { length: 255 }).notNull(),
+  positionId: int('positionId'),
+  resume: text('resume').notNull(),
+  portfolio: varchar('portfolio', { length: 255 }).notNull(),
+  message: text('message'),
+  status: mysqlEnum('status', ['Rejected', 'Review', 'Accepted']).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const categoryService = mysqlTable('categoryservice', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 191 }).notNull().unique(),
+  heading: varchar('heading', { length: 191 }).notNull(),
+  description: varchar('description', { length: 191 }).notNull(),
+  status: mysqlEnum('status', ['Draft', 'Active', 'NonActive']).notNull().default('Draft'),
+  slug: varchar('slug', { length: 191 }).notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const metaTag = mysqlTable('metatag', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  key: varchar('key', { length: 191 }).notNull(),
+  value: varchar('value', { length: 191 }).notNull(),
+  content: varchar('content', { length: 191 }).notNull(),
+  slug: varchar('slug', { length: 191 }).notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const pages = mysqlTable('pages', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  page: varchar('page', { length: 191 }).notNull(),
+  slug: varchar('slug', { length: 191 }).notNull().unique(),
+  source: varchar('source', { length: 191 }).notNull().default('none'),
+  categoryServiceId: varchar('categoryServiceId', { length: 191 }).default(null),
+  blogId: varchar('blogId', { length: 191 }).default(null),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const planService = mysqlTable('planservice', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 191 }).notNull(),
+  type: mysqlEnum('type', ['Standard', 'Premium']).notNull(),
+  showPrice: boolean('showPrice').notNull().default(true),
+  status: mysqlEnum('status', ['Draft', 'Active', 'NonActive']).notNull(),
+  options: varchar('options', { length: 191 }).notNull(),
+  descriptions: varchar('descriptions', { length: 191 }).notNull(),
+  categoryId: varchar('categoryId', { length: 191 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const position = mysqlTable('position', {
+  id: int('id').autoincrement().primaryKey(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  status: mysqlEnum('status', ['Active', 'NonActive']).notNull().default('Active'),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const price = mysqlTable('price', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  curr: mysqlEnum('curr', ['IDR', 'SGR', 'MYR']).notNull(),
+  amount: double('amount').notNull(),
+  discount: double('discount').notNull(),
+  idPlan: varchar('idPlan', { length: 191 }).notNull(),
+});
+
+export const subscription = mysqlTable('subscription', {
+  id: int('id').autoincrement().primaryKey(),
+  email: varchar('email', { length: 255 }).notNull(),
+  source: varchar('source', { length: 255 }).notNull(),
+  insight: varchar('insight', { length: 255 }),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const clientOnboarding = mysqlTable('client_onboarding', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  companyName: varchar('company_name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  agreementGuideApproved: boolean('agreement_guide_approved').notNull().default(false),
+  agreementProgramCommitment: boolean('agreement_program_commitment').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const onboardingVideos = mysqlTable('onboarding_videos', {
+  id: int('id').autoincrement().primaryKey(),
+  title: varchar('title', { length: 255 }).notNull().unique(),
+  desktopUrl: text('desktop_url'),
+  mobileUrl: text('mobile_url'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Metas table for polymorphic SEO metadata
+export const metas = mysqlTable('metas', {
+  id: int('id').autoincrement().primaryKey(),
+  key: varchar('key', { length: 255 }).notNull(),
+  value: varchar('value', { length: 255 }).notNull(),
+  content: text('content'),
+  metaableId: varchar('metaable_id', { length: 36 }).notNull(), // UUID of target
+  metaableType: varchar('metaable_type', { length: 50 }).notNull(), // e.g., 'blog'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Affiliate Enums
+export const affiliateStatusEnum = mysqlEnum("status", ["pending", "qualified", "approved", "rejected"]);
 export const affiliateTokenTypeEnum = mysqlEnum("token_type", ["initial", "reset"]);
 export const affiliateReferralStatusEnum = mysqlEnum("referral_status", [
   "clicked",
@@ -47,333 +241,6 @@ export const affiliateTransactionStatusEnum = mysqlEnum("transaction_status", [
   "paid",
   "failed",
 ]);
-
-export const user = mysqlTable("user", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  password: varchar("password", { length: 255 }).notNull(),
-  status: userStatusEnum.notNull(),
-  refreshToken: text("refresh_token"),
-  role: varchar("role", { length: 50 }).notNull(),
-  features: json("features"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const planService = mysqlTable("planservice", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 191 }).notNull(),
-  type: mysqlEnum("type", ["Standard", "Premium"]).notNull(),
-  showPrice: boolean("showPrice").notNull().default(true),
-  status: mysqlEnum("status", ["Draft", "Active", "NonActive"]).notNull(),
-  options: varchar("options", { length: 191 }).notNull(),
-  descriptions: varchar("descriptions", { length: 191 }).notNull(),
-  categoryId: varchar("categoryId", { length: 191 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const categoryService = mysqlTable("categoryservice", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 191 }).notNull().unique(),
-  heading: varchar("heading", { length: 191 }).notNull(),
-  description: varchar("description", { length: 191 }).notNull(),
-  status: mysqlEnum("status", ["Draft", "Active", "NonActive"]).notNull().default("Draft"),
-  slug: varchar("slug", { length: 191 }).notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const price = mysqlTable("price", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  curr: mysqlEnum("curr", ["IDR", "SGR", "MYR"]).notNull(),
-  amount: double("amount").notNull(),
-  discount: double("discount").notNull(),
-  idPlan: varchar("idPlan", { length: 191 }).notNull(),
-});
-
-export const benefit = mysqlTable("benefit", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  value: varchar("value", { length: 191 }).notNull(),
-  idPlan: varchar("idPlan", { length: 191 }).notNull(),
-});
-
-export const role = mysqlTable("role", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 191 }).notNull(),
-  email: varchar("email", { length: 191 }).notNull().unique(),
-  password: varchar("password", { length: 191 }).notNull(),
-  status: mysqlEnum("status", ["Draft", "Active", "NonActive"]).notNull(),
-  refreshToken: varchar("refreshToken", { length: 191 }),
-  role: varchar("role", { length: 191 }).notNull(),
-  features: json("features").notNull(),
-});
-
-export const blogCategory = mysqlTable("blog_category", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 255 }).notNull().unique(),
-  slug: varchar("slug", { length: 255 }).notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  status: boolean("status").notNull(),
-});
-
-export const blog = mysqlTable("blog", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  title: varchar("title", { length: 255 }).notNull(),
-  image: text("image").notNull(),
-  content: text("content").notNull(),
-  slug: varchar("slug", { length: 255 }).notNull().unique(),
-  status: blogStatusEnum.notNull(),
-  favorite: boolean("favorite").notNull(),
-  categoryId: varchar("category_id", { length: 36 })
-    .notNull()
-    .references(() => blogCategory.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  userId: varchar("user_id", { length: 36 })
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-});
-
-export const pages = mysqlTable("pages", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  page: varchar("page", { length: 191 }).notNull(),
-  slug: varchar("slug", { length: 191 }).notNull().unique(),
-  source: varchar("source", { length: 191 }).notNull().default("none"),
-  categoryServiceId: varchar("categoryServiceId", { length: 191 }).default(null),
-  blogId: varchar("blogId", { length: 191 }).default(null), //tambahan 
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const metaTag = mysqlTable("metatag", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  key: varchar("key", { length: 191 }).notNull(),
-  value: varchar("value", { length: 191 }).notNull(),
-  content: varchar("content", { length: 191 }).notNull(),
-  slug: varchar("slug", { length: 191 })
-    .notNull()
-    .references(() => pages.slug, { onDelete: "cascade", onUpdate: "cascade" }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const order = mysqlTable("order", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  amount: double("amount").notNull(),
-  currency: mysqlEnum("currency", ["IDR", "SGD", "MYR"]).default("IDR").notNull(),
-  bussiness: varchar("bussiness", { length: 191 }).notNull(),
-  categoryId: varchar("categoryId", { length: 191 }).notNull(),
-  date: varchar("date", { length: 191 }).notNull(),
-  email: varchar("email", { length: 191 }).notNull(),
-  message: varchar("message", { length: 191 }).notNull(),
-  name: varchar("name", { length: 191 }).notNull(),
-  phoneNumber: varchar("phoneNumber", { length: 191 }).notNull(),
-  idPlan: varchar("idPlan", { length: 191 }).notNull(),
-  time: varchar("time", { length: 191 }).notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const position = mysqlTable("position", {
-  id: int("id").primaryKey().autoincrement(),
-  name: varchar("name", { length: 255 }).notNull().unique(),
-  status: mysqlEnum("status", ["Active", "NonActive"])
-    .notNull()
-    .default("Active"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const career = mysqlTable("career", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  phoneNumber: varchar("phoneNumber", { length: 255 }).notNull(),
-  positionId: int("positionId").references(() => position.id, {
-    onDelete: "cascade",
-  }),
-  resume: text("resume").notNull(),
-  portfolio: varchar("portfolio", { length: 255 }).notNull(),
-  message: text("message"),
-  status: careerStatusEnum.notNull().$defaultFn(() => "Review"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const lead = mysqlTable("lead", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
-  phone: varchar("phone", { length: 255 }).notNull(),
-  companyName: varchar("companyName", { length: 255 }),
-  companyWebsite: varchar("companyWebsite", { length: 255 }),
-  business: varchar("business", { length: 255 }),
-  message: text("message"),
-  from: varchar("from", { length: 255 }),
-  referralCode: varchar("referralCode", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const clientOnboarding = mysqlTable("client_onboarding", {
-  id: varchar("id", { length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  name: varchar("name", { length: 255 }).notNull(),
-  companyName: varchar("company_name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  password: varchar("password", { length: 255 }).notNull(),
-  agreementGuideApproved: boolean("agreement_guide_approved").notNull().default(false),
-  agreementProgramCommitment: boolean("agreement_program_commitment").notNull().default(false),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const onboardingVideos = mysqlTable("onboarding_videos", {
-  id: int("id").primaryKey().autoincrement(),
-  title: varchar("title", { length: 255 }).notNull().unique(),
-  desktopUrl: text("desktop_url"),
-  mobileUrl: text("mobile_url"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const subscription = mysqlTable("subscription", {
-  id: int("id").primaryKey().autoincrement(),
-  email: varchar("email", { length: 255 }).notNull(),
-  source: varchar("source", { length: 255 }).notNull(),
-  insight: varchar("insight", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-// Relations
-export const positionRelations = relations(position, ({ many }) => ({
-  careers: many(career),
-}));
-
-export const careerRelations = relations(career, ({ one }) => ({
-  position: one(position, {
-    fields: [career.positionId],
-    references: [position.id],
-  }),
-}));
-
-export const planServiceRelations = relations(planService, ({ many, one }) => ({
-  prices: many(price, { relationName: "PlanServiceToPrice" }),
-  benefits: many(benefit, { relationName: "BenefitToPlanService" }),
-  category: one(categoryService, {
-    relationName: "CategoryServiceToPlanService",
-    fields: [planService.categoryId],
-    references: [categoryService.id],
-  }),
-  orders: many(order, { relationName: "OrderToPlanService" }),
-}));
-
-export const categoryServiceRelations = relations(
-  categoryService,
-  ({ many }) => ({
-    plans: many(planService, { relationName: "CategoryServiceToPlanService" }),
-    orders: many(order, { relationName: "CategoryServiceToOrder" }),
-    pages: many(pages, { relationName: "CategoryServiceToPages" }),
-  })
-);
-
-export const priceRelations = relations(price, ({ one }) => ({
-  plan: one(planService, {
-    relationName: "PlanServiceToPrice",
-    fields: [price.idPlan],
-    references: [planService.id],
-  }),
-}));
-
-export const benefitRelations = relations(benefit, ({ one }) => ({
-  plan: one(planService, {
-    relationName: "BenefitToPlanService",
-    fields: [benefit.idPlan],
-    references: [planService.id],
-  }),
-}));
-
-export const roleRelations = relations(role, ({ many }) => ({
-  blogs: many(blog, { relationName: "BlogToRole" }),
-}));
-
-export const pagesRelations = relations(pages, ({ many, one }) => ({
-  meta: many(metaTag, { relationName: "MetaTagToPages" }),
-  categoryService: one(categoryService, {
-    relationName: "CategoryServiceToPages",
-    fields: [pages.categoryServiceId],
-    references: [categoryService.id],
-  }),
-  blog: one(blog, {
-    relationName: "BlogToPages",
-    fields: [pages.blogId],
-    references: [blog.id],
-  }),
-}));
-
-export const metaTagRelations = relations(metaTag, ({ one }) => ({
-  pages: one(pages, {
-    relationName: "MetaTagToPages",
-    fields: [metaTag.slug],
-    references: [pages.slug],
-  }),
-}));
-
-export const orderRelations = relations(order, ({ one }) => ({
-  category: one(categoryService, {
-    relationName: "CategoryServiceToOrder",
-    fields: [order.categoryId],
-    references: [categoryService.id],
-  }),
-  plan: one(planService, {
-    relationName: "OrderToPlanService",
-    fields: [order.idPlan],
-    references: [planService.id],
-  }),
-}));
-
-
-export const metas = mysqlTable('metas', {
-  id: int('id').autoincrement().primaryKey(),
-  key: varchar('key', { length: 255 }).notNull(),
-  value: varchar('value', { length: 255 }).notNull(),
-  content: text('content'),
-  metaableId: varchar('metaable_id', { length: 36 }).notNull(), // UUID of target
-  metaableType: varchar('metaable_type', { length: 50 }).notNull(), // e.g., 'blog'
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
 
 export const affiliateBatchStatusEnum = mysqlEnum("status", ["open", "closed", "draft"]);
 
@@ -569,6 +436,18 @@ export const partnerLeadPipelineStatus = mysqlTable("partner_lead_pipeline_statu
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const partnerVerticalMarket = mysqlTable("partner_vertical_market", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
+  name: varchar("name", { length: 120 }).notNull().unique(),
+  sortOrder: int("sort_order").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+  isSystem: boolean("is_system").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const partnerCommissionStatusValues = [
   "Pending Transfer",
   "Paid",
@@ -699,7 +578,13 @@ export const partnerLead = mysqlTable("partner_lead", {
   serviceId: varchar("service_id", { length: 36 })
     .notNull()
     .references(() => partnerService.id),
+  verticalMarketId: varchar("vertical_market_id", { length: 36 }).references(
+    () => partnerVerticalMarket.id,
+    { onDelete: "set null" },
+  ),
+  verticalMarketName: varchar("vertical_market_name", { length: 120 }),
   projectValue: double("project_value").notNull().default(0),
+  isCustomProjectValue: boolean("is_custom_project_value").notNull().default(false),
   status: varchar("lead_status", { length: 80 }).notNull().default("New Leads"),
   nextFollowUpAt: datetime("next_follow_up_at"),
   lastContactAt: datetime("last_contact_at"),
