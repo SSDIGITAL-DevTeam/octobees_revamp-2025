@@ -814,6 +814,26 @@ async function repairAffiliateUserTokenVersionColumn(pool) {
   return true;
 }
 
+async function repairUserStatusColumn(pool) {
+  const hasUserStatus = await columnExists(pool, "user", "user_status");
+  if (hasUserStatus) {
+    return false;
+  }
+
+  const hasPlanStatus = await columnExists(pool, "user", "plan_status");
+  if (hasPlanStatus) {
+    await pool.query(
+      "ALTER TABLE `user` CHANGE COLUMN `plan_status` `user_status` enum('Draft','Active','NonActive') NOT NULL",
+    );
+    return true;
+  }
+
+  await pool.query(
+    "ALTER TABLE `user` ADD COLUMN `user_status` enum('Draft','Active','NonActive') NOT NULL DEFAULT 'Active'",
+  );
+  return true;
+}
+
 async function markMigrationAsApplied(pool, entry) {
   await pool.query(
     `
@@ -979,6 +999,14 @@ async function main() {
     }
 
     await migrate(db, { migrationsFolder: defaultMigrationsFolder });
+
+    const repairedUserStatusColumn =
+      await repairUserStatusColumn(poolConnection);
+    if (repairedUserStatusColumn) {
+      console.warn(
+        "Repaired missing user.user_status column after migration.",
+      );
+    }
 
     const repairedBatchAiColumns =
       await repairBatchAiScreeningSummaryColumns(poolConnection);

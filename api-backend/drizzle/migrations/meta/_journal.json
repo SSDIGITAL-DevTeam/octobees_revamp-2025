@@ -351,6 +351,13 @@
       "when": 1777574400000,
       "tag": "0049_partner_vertical_market",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "5",
+      "when": 1777660800000,
+      "tag": "0050_user_status_compat",
+      "breakpoints": true
     }
   ]
 }
