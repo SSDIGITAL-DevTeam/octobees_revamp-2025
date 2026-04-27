@@ -3,7 +3,7 @@
 import Header from "@/components/layout/header/Header";
 import { axiosInstance } from "@/lib/axios";
 import { ArrowUpRightFromCircle } from "lucide-react";
-import { act, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 interface BlockCardProps {
   text: string;
@@ -45,6 +45,11 @@ const reducer = (state: any, action: any) => {
   }
 };
 
+const getTotal = (result: PromiseSettledResult<any>) => {
+  if (result.status !== "fulfilled") return 0;
+  return Number(result.value?.data?.pagination?.total || 0);
+};
+
 export default function Page(): JSX.Element {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -56,7 +61,7 @@ export default function Page(): JSX.Element {
           activeCategory, nonActiveCategory, draftCategory,
           activePackage, nonActivePackage, draftPackage,
           publishedBlog, takedownBlog, draftBlog, totalBlogCategory
-        ] = await Promise.all([
+        ] = await Promise.allSettled([
           axiosInstance.get("/user", { params: { status: "Active" } }),
           axiosInstance.get("/user", { params: { status: "NonActive" } }),
           axiosInstance.get("/user", { params: { status: "Draft" } }),
@@ -67,7 +72,7 @@ export default function Page(): JSX.Element {
           axiosInstance.get("/plan", { params: { status: "NonActive" } }),
           axiosInstance.get("/plan", { params: { status: "Draft" } }),
           axiosInstance.get("/blog", { params: { status: "Published" } }),
-          axiosInstance.get("/blog", { params: { status: "Takedown" } }),
+          axiosInstance.get("/blog", { params: { status: "Archived" } }),
           axiosInstance.get("/blog", { params: { status: "Draft" } }),
           axiosInstance.get("/blog-category"),
         ]);
@@ -75,19 +80,19 @@ export default function Page(): JSX.Element {
         dispatch({
           type: "FETCH_SUCCESS",
           payload: {
-            activeUsers: activeUser.data.pagination.total,
-            nonActiveUsers: nonActiveUser.data.pagination.total,
-            draftUsers: draftUser.data.pagination.total,
-            activeServices: activeCategory.data.pagination.total,
-            nonActiveServices: nonActiveCategory.data.pagination.total,
-            draftServices: draftCategory.data.pagination.total,
-            activePackages: activePackage.data.pagination.total,
-            nonActivePackages: nonActivePackage.data.pagination.total,
-            draftPackages: draftPackage.data.pagination.total,
-            publishedBlogs: publishedBlog.data.pagination.total,
-            takedownBlogs: takedownBlog.data.pagination.total,
-            draftBlogs: draftBlog.data.pagination.total,
-            totalBlogCategories: totalBlogCategory.data.pagination.total,
+            activeUsers: getTotal(activeUser),
+            nonActiveUsers: getTotal(nonActiveUser),
+            draftUsers: getTotal(draftUser),
+            activeServices: getTotal(activeCategory),
+            nonActiveServices: getTotal(nonActiveCategory),
+            draftServices: getTotal(draftCategory),
+            activePackages: getTotal(activePackage),
+            nonActivePackages: getTotal(nonActivePackage),
+            draftPackages: getTotal(draftPackage),
+            publishedBlogs: getTotal(publishedBlog),
+            takedownBlogs: getTotal(takedownBlog),
+            draftBlogs: getTotal(draftBlog),
+            totalBlogCategories: getTotal(totalBlogCategory),
           },
         });
       } catch (error: any) {
