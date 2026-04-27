@@ -1,1 +1,0 @@
-ALTER TABLE `lead` ADD `referralCode` varchar(255);
