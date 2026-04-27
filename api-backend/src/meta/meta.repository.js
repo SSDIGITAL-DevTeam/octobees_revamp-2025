@@ -157,6 +157,32 @@ export const upsertMeta = async ({
   });
 };
 
+export const replaceMetaByKey = async ({
+  metaableId,
+  metaableType,
+  key,
+  value = "",
+  content = null,
+}) => {
+  await db
+    .delete(metas)
+    .where(
+      and(
+        eq(metas.metaableId, metaableId),
+        eq(metas.metaableType, metaableType),
+        eq(metas.key, key),
+      ),
+    );
+
+  await db.insert(metas).values({
+    metaableId,
+    metaableType,
+    key,
+    value,
+    content,
+  });
+};
+
 export const deleteMetasByTarget = async (metaableId, metaableType) => {
   await db
     .delete(metas)

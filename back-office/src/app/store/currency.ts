@@ -60,11 +60,26 @@ let lastCurrencySyncAt = 0
 const isCurrencyCode = (value: unknown): value is CurrencyCode =>
   value === "USD" || value === "SGD" || value === "IDR"
 
-export const syncCurrencyFromServer = async () => {
+export const setSharedCurrency = (currency: CurrencyCode) => {
+  useCurrencyStore.getState().setCurrency(currency)
+  lastCurrencySyncAt = Date.now()
+  currencySyncPromise = null
+}
+
+export const resetCurrencySyncCache = () => {
+  lastCurrencySyncAt = 0
+  currencySyncPromise = null
+}
+
+export const syncCurrencyFromServer = async (
+  options: { force?: boolean } = {},
+) => {
   if (typeof window === "undefined") return useCurrencyStore.getState().currency
   const now = Date.now()
-  if (currencySyncPromise) return currencySyncPromise
-  if (now - lastCurrencySyncAt < 60_000) return useCurrencyStore.getState().currency
+  if (currencySyncPromise && !options.force) return currencySyncPromise
+  if (!options.force && now - lastCurrencySyncAt < 60_000) {
+    return useCurrencyStore.getState().currency
+  }
 
   const token = sessionStorage.getItem("token")
   const baseUrl = process.env.NEXT_PUBLIC_API_URL
@@ -84,8 +99,7 @@ export const syncCurrencyFromServer = async () => {
       const payload = await response.json().catch(() => ({}))
       const currency = payload?.data?.currency
       if (isCurrencyCode(currency)) {
-        useCurrencyStore.getState().setCurrency(currency)
-        lastCurrencySyncAt = Date.now()
+        setSharedCurrency(currency)
         return currency
       }
     } catch {

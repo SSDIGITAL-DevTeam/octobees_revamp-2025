@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/partials/partnership/PartnershipDashboardWidgets";
+import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 import {
   Table,
   TableBody,
@@ -19,16 +20,12 @@ type InitialCommissionTableProps = {
   onEdit: (batch: AffiliateBatch) => void;
 };
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-});
-
 export const InitialCommissionTable = ({
   batches,
   onEdit,
 }: InitialCommissionTableProps) => {
+  const { currency } = useCurrencyStore();
+
   return (
     <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       <Table>
@@ -78,7 +75,9 @@ export const InitialCommissionTable = ({
                 </TableCell>
                 <TableCell className="font-medium text-slate-900">
                   <div className="space-y-1">
-                    <div>{currencyFormatter.format(Number(topTier?.amount || 0))}</div>
+                    <div>
+                      {formatWithCurrency(Number(topTier?.amount || 0), currency)}
+                    </div>
                     <div className="text-xs text-slate-500">
                       {tiers.length} tier{tiers.length > 1 ? "s" : ""}
                     </div>

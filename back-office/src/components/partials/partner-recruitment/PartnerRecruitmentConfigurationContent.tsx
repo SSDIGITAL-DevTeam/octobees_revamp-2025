@@ -7,38 +7,35 @@ import Header from "@/components/layout/header/Header"
 import {
   CURRENCY_OPTIONS,
   formatWithCurrency,
+  setSharedCurrency,
+  syncCurrencyFromServer,
   useCurrencyStore,
   type CurrencyCode,
 } from "@/app/store/currency"
-import {
-  getPartnerCurrencyConfig,
-  updatePartnerCurrencyConfig,
-} from "@/lib/api/partnership/dashboardPartnership"
+import { updatePartnerCurrencyConfig } from "@/lib/api/partnership/dashboardPartnership"
 
 export const PartnerRecruitmentConfigurationContent = () => {
-  const { currency, setCurrency } = useCurrencyStore()
+  const { currency } = useCurrencyStore()
   const [selected, setSelected] = useState<CurrencyCode>(currency)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    getPartnerCurrencyConfig()
-      .then((response) => {
-        const nextCurrency = response.data.data.currency
-        setCurrency(nextCurrency)
+    syncCurrencyFromServer({ force: true })
+      .then((nextCurrency) => {
         setSelected(nextCurrency)
       })
       .catch(() => {
         setSelected(currency)
       })
-  }, [setCurrency])
+  }, [currency])
 
   const handleSave = async () => {
     try {
       setSaving(true)
       const response = await updatePartnerCurrencyConfig(selected)
       const nextCurrency = response.data.data.currency
-      setCurrency(nextCurrency)
+      setSharedCurrency(nextCurrency)
       setSelected(nextCurrency)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
