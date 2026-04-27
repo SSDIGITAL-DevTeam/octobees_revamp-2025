@@ -166,5 +166,6 @@ backOffice.get("/commission-rules/:id", partnerBackOffice.getCommissionRule);
 backOffice.patch("/commission-rules/:id", express.json(), partnerBackOffice.updateCommissionRule);
 backOffice.delete("/commission-rules/:id", partnerBackOffice.deleteCommissionRule);
 backOffice.get("/commission-rules/:id/logs", partnerBackOffice.listCommissionRuleLogs);
+backOffice.post("/commission-rules/:id/run", express.json(), partnerBackOffice.runManualCommissionRule);
 
 export default { endUser: router, backOffice };

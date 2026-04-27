@@ -18,6 +18,7 @@ import {
   affiliateTransaction,
   partnerPerformanceSetting,
   partnerRegistrationData,
+  commissionRule,
 } from "../../drizzle/schema.js";
 import { v4 as uuidv7 } from "uuid";
 
@@ -419,6 +420,9 @@ export const getCommissionHistory = async (affiliateId, filters = {}) => {
       value: partnerLead.projectValue,
       status: partnerCommission.status,
       commissionType: partnerCommission.commissionType,
+      ruleId: partnerCommission.ruleId,
+      ruleName: commissionRule.name,
+      ruleTriggerType: commissionRule.triggerType,
       period: partnerCommission.period,
       proofUrl: partnerCommission.proofUrl,
       transactionReference: partnerCommission.transactionReference,
@@ -433,6 +437,7 @@ export const getCommissionHistory = async (affiliateId, filters = {}) => {
       partnerService,
       eq(partnerCommission.serviceId, partnerService.id),
     )
+    .leftJoin(commissionRule, eq(partnerCommission.ruleId, commissionRule.id))
     .where(whereClause)
     .orderBy(desc(partnerCommission.createdAt))
     .limit(limit)
@@ -643,6 +648,7 @@ export const listCommissionsForBackOffice = async ({
       partnerRegistrationData,
       eq(partnerRegistrationData.affiliateId, affiliateApplication.id),
     )
+    .leftJoin(commissionRule, eq(partnerCommission.ruleId, commissionRule.id))
     .where(whereClause)
     .orderBy(desc(partnerCommission.createdAt))
     .limit(limitNum)
