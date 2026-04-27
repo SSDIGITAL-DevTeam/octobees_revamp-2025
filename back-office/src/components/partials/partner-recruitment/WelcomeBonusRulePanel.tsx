@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, memo } from "react";
 import { toast } from "sonner";
-import { Edit, Filter, Gift, Loader2, Plus, Save, Trash2, X } from "lucide-react";
+import {
+  Edit,
+  Filter,
+  Gift,
+  Loader2,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +52,11 @@ import {
   type RuleConditionTree,
 } from "@/lib/api/partnership/dashboardPartnership";
 import { cn } from "@/lib/utils";
-import { formatWithCurrency, getCurrencySymbol, useCurrencyStore } from "@/app/store/currency";
+import {
+  formatWithCurrency,
+  getCurrencySymbol,
+  useCurrencyStore,
+} from "@/app/store/currency";
 
 type TierDraft = {
   closedClients: number;
@@ -65,15 +78,55 @@ type WelcomeBonusRow = {
 };
 
 const FIELD_OPTIONS = [
-  { value: "closed_clients", label: "Number of closed deals", numeric: true, boolean: false },
-  { value: "total_revenue", label: "Monthly revenue (total)", numeric: true, boolean: false },
-  { value: "tenure_days", label: "Days as a partner", numeric: true, boolean: false },
-  { value: "lead_project_value", label: "Deal value", numeric: true, boolean: false },
-  { value: "lead_status", label: "Lead status", numeric: false, boolean: false },
-  { value: "lead_vertical_market_id", label: "Vertical market", numeric: false, boolean: false },
-  { value: "vertical_market_first_sale", label: "First seller in vertical market", numeric: false, boolean: true },
+  {
+    value: "closed_clients",
+    label: "Number of closed deals",
+    numeric: true,
+    boolean: false,
+  },
+  {
+    value: "total_revenue",
+    label: "Monthly revenue (total)",
+    numeric: true,
+    boolean: false,
+  },
+  {
+    value: "tenure_days",
+    label: "Days as a partner",
+    numeric: true,
+    boolean: false,
+  },
+  {
+    value: "lead_project_value",
+    label: "Deal value",
+    numeric: true,
+    boolean: false,
+  },
+  {
+    value: "lead_status",
+    label: "Lead status",
+    numeric: false,
+    boolean: false,
+  },
+  {
+    value: "lead_vertical_market_id",
+    label: "Vertical market",
+    numeric: false,
+    boolean: false,
+  },
+  {
+    value: "vertical_market_first_sale",
+    label: "First seller in vertical market",
+    numeric: false,
+    boolean: true,
+  },
   { value: "payout_day", label: "Day of month", numeric: true, boolean: false },
-  { value: "is_first_month", label: "Is partner's first month", numeric: false, boolean: true },
+  {
+    value: "is_first_month",
+    label: "Is partner's first month",
+    numeric: false,
+    boolean: true,
+  },
 ];
 
 const NUMERIC_FIELDS = new Set(
@@ -105,7 +158,9 @@ const closedDealsCondition = (closedClients: number): RuleCondition => ({
 const defaultTier = (closedClients = 2): TierDraft => ({
   closedClients,
   amount: 0,
-  conditions: buildTierConditionTree("AND", [closedDealsCondition(closedClients)]),
+  conditions: buildTierConditionTree("AND", [
+    closedDealsCondition(closedClients),
+  ]),
 });
 
 const lockedBatchCondition = (batchId: string): RuleCondition => ({
@@ -123,7 +178,9 @@ const toSelectedValues = (value: RuleCondition["value"]): string[] => {
   return [];
 };
 
-const getTierConditions = (tier: Record<string, unknown>): RuleConditionTree | null => {
+const getTierConditions = (
+  tier: Record<string, unknown>,
+): RuleConditionTree | null => {
   const value = tier.conditions;
   if (!value || typeof value !== "object") return null;
   const tree = value as RuleConditionTree;
@@ -163,7 +220,10 @@ const ensureClosedDealsCondition = (
     ? extracted.conditions
     : [closedDealsCondition(closedClients), ...extracted.conditions];
 
-  return buildTierConditionTree(extracted.logic, nextConditions) as RuleConditionTree;
+  return buildTierConditionTree(
+    extracted.logic,
+    nextConditions,
+  ) as RuleConditionTree;
 };
 
 const normalizeTiers = (
@@ -172,27 +232,28 @@ const normalizeTiers = (
 ): TierDraft[] => {
   if (!Array.isArray(raw) || raw.length === 0) return [defaultTier()];
 
-  const normalized: Array<TierDraft | null> = (raw as Record<string, unknown>[])
-    .map((tier) => {
-      const rawClosedClients = Math.round(
-        Number(tier.closedClients ?? tier.min ?? 1),
-      );
-      const amount = Number(tier.amount ?? 0);
-      if (!Number.isFinite(rawClosedClients) || rawClosedClients < 1) return null;
-      if (!Number.isFinite(amount) || amount < 0) return null;
-      const conditions = ensureClosedDealsCondition(
-        getTierConditions(tier) ?? fallbackConditions,
-        rawClosedClients,
-      );
-      const closedClients =
-        getClosedDealsFromConditions(conditions) ?? rawClosedClients;
+  const normalized: Array<TierDraft | null> = (
+    raw as Record<string, unknown>[]
+  ).map((tier) => {
+    const rawClosedClients = Math.round(
+      Number(tier.closedClients ?? tier.min ?? 1),
+    );
+    const amount = Number(tier.amount ?? 0);
+    if (!Number.isFinite(rawClosedClients) || rawClosedClients < 1) return null;
+    if (!Number.isFinite(amount) || amount < 0) return null;
+    const conditions = ensureClosedDealsCondition(
+      getTierConditions(tier) ?? fallbackConditions,
+      rawClosedClients,
+    );
+    const closedClients =
+      getClosedDealsFromConditions(conditions) ?? rawClosedClients;
 
-      return {
-        closedClients,
-        amount,
-        conditions,
-      };
-    });
+    return {
+      closedClients,
+      amount,
+      conditions,
+    };
+  });
 
   return normalized
     .filter((tier): tier is TierDraft => Boolean(tier))
@@ -220,7 +281,9 @@ const extractConditions = (
   batchId?: string,
 ): { logic: "AND" | "OR"; conditions: RuleCondition[] } => {
   const raw = tree?.groups?.[0]?.conditions ?? [];
-  const lockedKey = batchId ? conditionKey(lockedBatchCondition(batchId)) : null;
+  const lockedKey = batchId
+    ? conditionKey(lockedBatchCondition(batchId))
+    : null;
 
   return {
     logic: (tree?.groups?.[0]?.operator as "AND" | "OR") ?? "AND",
@@ -500,7 +563,7 @@ function ConditionRow({
   );
 }
 
-function TierConditionsEditor({
+const TierConditionsEditor = memo(function TierConditionsEditor({
   tier,
   onChange,
   pipelineStatuses,
@@ -522,7 +585,9 @@ function TierConditionsEditor({
   };
 
   const removeCondition = (index: number) => {
-    const next = conditions.filter((_, conditionIndex) => conditionIndex !== index);
+    const next = conditions.filter(
+      (_, conditionIndex) => conditionIndex !== index,
+    );
     onChange(buildTierConditionTree(logic, next));
   };
 
@@ -559,7 +624,9 @@ function TierConditionsEditor({
                     ? "bg-slate-900 text-white"
                     : "bg-white text-slate-500",
                 )}
-                onClick={() => onChange(buildTierConditionTree(value, conditions))}
+                onClick={() =>
+                  onChange(buildTierConditionTree(value, conditions))
+                }
               >
                 {value === "AND" ? "All" : "Any"}
               </button>
@@ -600,7 +667,7 @@ function TierConditionsEditor({
       </Button>
     </div>
   );
-}
+});
 
 export function WelcomeBonusRuleTable({
   batches,
@@ -614,8 +681,12 @@ export function WelcomeBonusRuleTable({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [rules, setRules] = useState<CommissionRule[]>([]);
-  const [pipelineStatuses, setPipelineStatuses] = useState<PartnerLeadPipelineStatus[]>([]);
-  const [verticalMarkets, setVerticalMarkets] = useState<PartnerVerticalMarket[]>([]);
+  const [pipelineStatuses, setPipelineStatuses] = useState<
+    PartnerLeadPipelineStatus[]
+  >([]);
+  const [verticalMarkets, setVerticalMarkets] = useState<
+    PartnerVerticalMarket[]
+  >([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMode, setDialogMode] = useState<DialogMode>("add");
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
@@ -646,7 +717,9 @@ export function WelcomeBonusRuleTable({
   const rows = useMemo<WelcomeBonusRow[]>(() => {
     return batches.map((batch) => {
       const rule = findRuleForBatch(rules, batch.id);
-      const fallback = rule ? extractConditions(rule.conditions, batch.id) : null;
+      const fallback = rule
+        ? extractConditions(rule.conditions, batch.id)
+        : null;
       const fallbackTree =
         fallback && fallback.conditions.length > 0
           ? buildTierConditionTree(fallback.logic, fallback.conditions)
@@ -695,20 +768,23 @@ export function WelcomeBonusRuleTable({
     ? batches.find((batch) => batch.id === draft.batchId)
     : null;
 
-  const updateDraftTier = (index: number, patch: Partial<TierDraft>) => {
-    setDraft((current) =>
-      current
-        ? {
-            ...current,
-            tiers: current.tiers.map((tier, tierIndex) =>
-              tierIndex === index ? { ...tier, ...patch } : tier,
-            ),
-          }
-        : current,
-    );
-  };
+  const updateDraftTier = useCallback(
+    (index: number, patch: Partial<TierDraft>) => {
+      setDraft((current) =>
+        current
+          ? {
+              ...current,
+              tiers: current.tiers.map((tier, tierIndex) =>
+                tierIndex === index ? { ...tier, ...patch } : tier,
+              ),
+            }
+          : current,
+      );
+    },
+    [],
+  );
 
-  const addDraftTier = () => {
+  const addDraftTier = useCallback(() => {
     setDraft((current) => {
       if (!current) return current;
       const normalized = normalizeTiers(current.tiers);
@@ -716,15 +792,12 @@ export function WelcomeBonusRuleTable({
       const nextClosedClients = lastClosedClients + 1;
       return {
         ...current,
-        tiers: [
-          ...normalized,
-          defaultTier(nextClosedClients),
-        ],
+        tiers: [...normalized, defaultTier(nextClosedClients)],
       };
     });
-  };
+  }, []);
 
-  const removeDraftTier = (index: number) => {
+  const removeDraftTier = useCallback((index: number) => {
     setDraft((current) =>
       current
         ? {
@@ -733,7 +806,7 @@ export function WelcomeBonusRuleTable({
           }
         : current,
     );
-  };
+  }, []);
 
   const handleSave = async () => {
     if (!draft) return;
@@ -875,7 +948,8 @@ export function WelcomeBonusRuleTable({
                           key={`${row.batch.id}-${tier.closedClients}-${tier.amount}`}
                           className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
                         >
-                          {tier.closedClients} deal(s) / {formatWithCurrency(tier.amount, currency)}
+                          {tier.closedClients} deal(s) /{" "}
+                          {formatWithCurrency(tier.amount, currency)}
                           {conditionCount > 0
                             ? ` / ${conditionCount} condition(s)`
                             : ""}
@@ -915,8 +989,8 @@ export function WelcomeBonusRuleTable({
             Welcome Bonus Configurations
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            Manage per-batch welcome bonus tiers. Dynamic conditions are attached
-            to each bonus tier, not globally to the batch.
+            Manage per-batch welcome bonus tiers. Dynamic conditions are
+            attached to each bonus tier, not globally to the batch.
           </p>
         </div>
         <Button
@@ -932,7 +1006,10 @@ export function WelcomeBonusRuleTable({
 
       {renderTableContent()}
 
-      <Dialog open={dialogOpen} onOpenChange={(open) => !saving && setDialogOpen(open)}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => !saving && setDialogOpen(open)}
+      >
         <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>
@@ -1017,7 +1094,8 @@ export function WelcomeBonusRuleTable({
                             Tier {index + 1}
                           </p>
                           <p className="text-sm text-slate-500">
-                            Closed deals requirement is managed from this tier&apos;s conditions.
+                            Closed deals requirement is managed from this
+                            tier&apos;s conditions.
                           </p>
                         </div>
                       </div>
@@ -1028,13 +1106,13 @@ export function WelcomeBonusRuleTable({
                             Bonus Amount
                           </Label>
                           <div className="relative">
-                            <span className="absolute left-4 top-3 text-sm font-semibold text-slate-400">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500">
                               {currencySymbol}
                             </span>
                             <Input
                               type="number"
                               min={0}
-                              className="h-12 rounded-2xl border-slate-200 bg-white pl-8 text-lg font-bold text-slate-950"
+                              className="h-12 rounded-2xl border-slate-200 bg-white pl-12 pr-4 text-lg font-bold text-slate-950"
                               value={tier.amount}
                               onChange={(event) =>
                                 updateDraftTier(index, {
