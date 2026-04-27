@@ -73,8 +73,12 @@ import {
   upsertMeta,
 } from "../meta/meta.repository.js";
 import { cleanupRemovedContentImages } from "../blog/blog.service.js";
-import { getBatchById } from "../affiliate-batch/batch.repository.js";
 import {
+  getBatchById,
+  saveBatchRecruitmentMeta,
+} from "../affiliate-batch/batch.repository.js";
+import {
+  createCommissionRule,
   getRuleByName,
   listCommissionRules,
   updateCommissionRule,
@@ -134,7 +138,11 @@ const normalizeVerticalMarkets = (markets = DEFAULT_VERTICAL_MARKETS) =>
     .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name));
 
 const syncBasicSalaryRuleWithSettings = async (setting) => {
-  const rule = await getRuleByName("Basic Salary");
+  const rule =
+    (await getRuleByName("Basic Salary")) ||
+    (await listCommissionRules({ includeInactive: true })).find(
+      (item) => item.commissionType === "basic_salary",
+    );
   if (!rule) return;
 
   const threshold = Number(setting.basicSalarySalesThreshold || 35000);
@@ -178,6 +186,143 @@ const syncBasicSalaryRuleWithSettings = async (setting) => {
       value: amount,
     },
   });
+};
+
+const getRuleConditions = (conditions) => {
+  if (!conditions || typeof conditions !== "object") return [];
+  if (!Array.isArray(conditions.groups)) return [];
+  return conditions.groups.flatMap((group) =>
+    Array.isArray(group?.conditions) ? group.conditions : [],
+  );
+};
+
+const getRuleConditionValue = (conditions, field) => {
+  const condition = getRuleConditions(conditions).find(
+    (item) => item?.field === field,
+  );
+  return condition?.value;
+};
+
+const getSalesRuleServiceId = (rule) => {
+  if (rule?.commissionType !== "sales") return null;
+  const serviceId = getRuleConditionValue(rule.conditions, "lead_service_id");
+  return serviceId ? String(serviceId) : null;
+};
+
+const getInitialRuleBatchId = (rule) => {
+  if (rule?.commissionType !== "initial") return null;
+  const batchId = getRuleConditionValue(rule.conditions, "batch_id");
+  return batchId ? String(batchId) : null;
+};
+
+const getBasicSalaryThreshold = (rule) => {
+  const condition = getRuleConditions(rule?.conditions).find(
+    (item) => item?.field === "total_revenue",
+  );
+  const value = Number(condition?.value);
+  return Number.isFinite(value) && value > 0 ? value : null;
+};
+
+const normalizeRuleRewardToServiceConfig = (reward = {}) => {
+  if (reward?.type === "fixed") {
+    const value = normalizeSalesCommissionValue(reward.value);
+    return { mode: "fixed", value };
+  }
+  if (reward?.type === "percentage") {
+    const value = normalizeSalesCommissionValue(reward.value);
+    return { mode: "percentage", value };
+  }
+  return null;
+};
+
+const buildServiceSalesRuleConditions = (serviceId) => ({
+  operator: "AND",
+  groups: [
+    {
+      operator: "AND",
+      conditions: [{ field: "lead_service_id", op: "eq", value: serviceId }],
+    },
+  ],
+});
+
+const buildServiceSalesRuleReward = ({ mode, value }) => ({
+  type: mode === "fixed" ? "fixed" : "percentage",
+  value: normalizeSalesCommissionValue(value),
+});
+
+const findSalesRuleForService = async (serviceId) => {
+  const rules = await listCommissionRules({ includeInactive: true });
+  return (
+    rules.find((rule) => getSalesRuleServiceId(rule) === String(serviceId)) ||
+    null
+  );
+};
+
+const syncSalesCommissionRuleForService = async (service, config) => {
+  if (!service?.id) return null;
+
+  const existingRule = await findSalesRuleForService(service.id);
+  const payload = {
+    name: `Sales Commission - ${service.name}`,
+    description: `Sales commission for ${service.name}.`,
+    triggerType: "lead_won",
+    commissionType: "sales",
+    scope: "per_lead",
+    periodScope: "any_month",
+    conditions:
+      existingRule?.conditions || buildServiceSalesRuleConditions(service.id),
+    reward: buildServiceSalesRuleReward(config),
+    isActive: existingRule?.isActive ?? true,
+    priority: existingRule?.priority ?? -1,
+  };
+
+  if (existingRule) {
+    return updateCommissionRule(existingRule.id, payload);
+  }
+
+  return createCommissionRule(payload);
+};
+
+export const syncCommissionRuleToSource = async (rule) => {
+  if (!rule) return;
+
+  if (rule.commissionType === "basic_salary") {
+    const payload = {};
+    const amount = Number(rule.reward?.type === "fixed" ? rule.reward.value : NaN);
+    const threshold = getBasicSalaryThreshold(rule);
+
+    if (Number.isFinite(amount) && amount >= 0) {
+      payload.basicSalaryAmount = amount;
+    }
+    if (threshold !== null) {
+      payload.basicSalarySalesThreshold = threshold;
+    }
+    if (Object.keys(payload).length) {
+      await updateActivePerformanceSetting(payload);
+    }
+    return;
+  }
+
+  if (rule.commissionType === "initial") {
+    const batchId = getInitialRuleBatchId(rule);
+    const tiers = Array.isArray(rule.reward?.tiers) ? rule.reward.tiers : null;
+    if (batchId && tiers) {
+      await saveBatchRecruitmentMeta(batchId, {
+        initialCommissionTiers: tiers,
+      });
+    }
+    return;
+  }
+
+  if (rule.commissionType === "sales") {
+    const serviceId = getSalesRuleServiceId(rule);
+    const config = normalizeRuleRewardToServiceConfig(rule.reward);
+    if (serviceId && config) {
+      await updateServiceCommissionSetting(serviceId, config, {
+        syncRule: false,
+      });
+    }
+  }
 };
 
 const parseOptionalDate = (value) => {
@@ -1981,7 +2126,11 @@ export const updateServiceDetail = async (id, data) => {
   return decorateServiceCommission(updatedService, settings);
 };
 
-export const updateServiceCommissionSetting = async (id, data = {}) => {
+export const updateServiceCommissionSetting = async (
+  id,
+  data = {},
+  options = {},
+) => {
   const service = await getServiceById(id);
   if (!service) throw new Error("Service not found");
 
@@ -2009,6 +2158,10 @@ export const updateServiceCommissionSetting = async (id, data = {}) => {
   }
 
   const updatedService = await getServiceById(id);
+  if (options.syncRule !== false) {
+    await syncSalesCommissionRuleForService(updatedService, { mode, value });
+  }
+
   return decorateServiceCommission(updatedService, nextSettings);
 };
 

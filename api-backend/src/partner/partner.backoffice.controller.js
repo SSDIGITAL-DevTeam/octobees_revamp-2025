@@ -40,6 +40,7 @@ import {
     updateLeadPipelineStatuses,
     getVerticalMarkets,
     updateVerticalMarkets,
+    syncCommissionRuleToSource,
 } from "./partner.service.js";
 import { uploadContentImage as uploadBlogContentImage } from "../blog/blog.service.js";
 
@@ -517,6 +518,7 @@ const createCommissionRuleHandler = async (req, res) => {
             name, description, triggerType, commissionType, scope, periodScope,
             conditions, reward, isActive, priority,
         });
+        await syncCommissionRuleToSource(rule);
         res.status(201).json({ status: "success", data: rule });
     } catch (e) {
         res.status(400).json({ status: "error", message: e.message });
@@ -527,6 +529,7 @@ const updateCommissionRuleHandler = async (req, res) => {
     try {
         const rule = await ruleRepo.updateCommissionRule(req.params.id, req.body || {});
         if (!rule) return res.status(404).json({ status: "error", message: "Rule not found" });
+        await syncCommissionRuleToSource(rule);
         res.status(200).json({ status: "success", data: rule });
     } catch (e) {
         res.status(400).json({ status: "error", message: e.message });

@@ -242,7 +242,7 @@ const AddLeadModal = ({
 
           <div>
             <label className="mb-1 block text-sm font-medium text-slate-700">
-              Vertical Market
+              Businees Type
             </label>
             <select
               value={form.verticalMarketId}
@@ -260,7 +260,7 @@ const AddLeadModal = ({
               required
             >
               <option value="" disabled>
-                Select business market
+                Select business type
               </option>
               {verticalMarkets.map((market) => (
                 <option key={market.id} value={market.id}>
@@ -279,10 +279,10 @@ const AddLeadModal = ({
                 required
               />
             ) : null}
-            <p className="mt-2 text-xs text-slate-500">
+            {/* <p className="mt-2 text-xs text-slate-500">
               This helps detect sales into new business markets for commission
               conditions.
-            </p>
+            </p> */}
           </div>
 
           <div>
