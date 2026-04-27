@@ -64,8 +64,10 @@ export const findUserByEmail = async (email, status = undefined) => {
 
     return selectedEmail;
   } catch (error) {
-    logger.error(`GET by Email / error: ${error.message}`);
-    throw new Error("Email not found | Unauthorized");
+    logger.error(`GET by Email / error: ${error.message}`, { stack: error.stack, code: error.code });
+    // Re-throw DB errors with the real message so they are diagnosable.
+    // A genuine "not found" is returned as null above, not via catch.
+    throw error;
   }
 };
 
