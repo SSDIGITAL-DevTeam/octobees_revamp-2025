@@ -16,18 +16,11 @@ import { formatWithCurrency, useCurrencyStore } from "@/app/store/currency";
 
 type PerformancePolicyForm = Pick<
   PartnerPerformanceSettings,
-  | "basicSalaryAmount"
-  | "basicSalarySalesThreshold"
-  | "firstMonthMinimumClosedClients"
-  | "initialCommissionFullClientThreshold"
-  | "terminationGraceDays"
+  "basicSalaryAmount" | "terminationGraceDays"
 >;
 
 const defaultForm: PerformancePolicyForm = {
   basicSalaryAmount: 3500,
-  basicSalarySalesThreshold: 35000,
-  firstMonthMinimumClosedClients: 1,
-  initialCommissionFullClientThreshold: 2,
   terminationGraceDays: 2,
 };
 
@@ -43,27 +36,6 @@ const fields: Array<{
     label: "Basic Salary Amount",
     helper: "Monthly salary shown to eligible partners.",
     min: 0,
-  },
-  {
-    key: "basicSalarySalesThreshold",
-    label: "Basic Salary Sales Threshold",
-    helper: "Minimum monthly closed sales value required.",
-    min: 1,
-  },
-  {
-    key: "firstMonthMinimumClosedClients",
-    label: "Minimum First Month Closed Clients",
-    helper: "Partner must close at least this many clients in month one.",
-    min: 1,
-    step: 1,
-  },
-  {
-    key: "initialCommissionFullClientThreshold",
-    label: "Default Min. Closed Clients (fallback for batches)",
-    helper:
-      "Global fallback for initial commission eligibility. Overridden per-batch if the batch sets its own value.",
-    min: 1,
-    step: 1,
   },
 ];
 
@@ -86,18 +58,6 @@ export const PerformancePolicySettings = () => {
         basicSalaryAmount: Number(
           response.data.data.basicSalaryAmount ?? defaultForm.basicSalaryAmount,
         ),
-        basicSalarySalesThreshold: Number(
-          response.data.data.basicSalarySalesThreshold ??
-            defaultForm.basicSalarySalesThreshold,
-        ),
-        firstMonthMinimumClosedClients: Number(
-          response.data.data.firstMonthMinimumClosedClients ??
-            defaultForm.firstMonthMinimumClosedClients,
-        ),
-        initialCommissionFullClientThreshold: Number(
-          response.data.data.initialCommissionFullClientThreshold ??
-            defaultForm.initialCommissionFullClientThreshold,
-        ),
         terminationGraceDays: Number(
           response.data.data.terminationGraceDays ??
             defaultForm.terminationGraceDays,
@@ -116,7 +76,7 @@ export const PerformancePolicySettings = () => {
 
   const ruleSummary = useMemo(
     () =>
-      `Partners need ${formatWithCurrency(form.basicSalarySalesThreshold, currency)} monthly sales for ${formatWithCurrency(form.basicSalaryAmount, currency)} basic salary. Initial commission amount comes from each batch setting; if it is disabled or set to ${formatWithCurrency(0, currency)}, no initial commission is paid. Month-one target is ${form.initialCommissionFullClientThreshold} closed client(s), with ${form.terminationGraceDays} day(s) grace before auto termination.`,
+      `Partners receive ${formatWithCurrency(form.basicSalaryAmount, currency)} basic salary each month. Specific payment conditions (minimum sales, first month requirements, etc.) are configured in the payment conditions section below. Grace period before auto-termination is ${form.terminationGraceDays} day(s).`,
     [currency, form],
   );
 
@@ -133,15 +93,6 @@ export const PerformancePolicySettings = () => {
       const response = await updatePartnerPerformanceSettings(form);
       setForm({
         basicSalaryAmount: Number(response.data.data.basicSalaryAmount),
-        basicSalarySalesThreshold: Number(
-          response.data.data.basicSalarySalesThreshold,
-        ),
-        firstMonthMinimumClosedClients: Number(
-          response.data.data.firstMonthMinimumClosedClients,
-        ),
-        initialCommissionFullClientThreshold: Number(
-          response.data.data.initialCommissionFullClientThreshold,
-        ),
         terminationGraceDays: Number(response.data.data.terminationGraceDays),
       });
       toast.success("Partner performance policy updated");
@@ -201,7 +152,17 @@ export const PerformancePolicySettings = () => {
         ))}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-slate-100">
+      <div className="mt-8 space-y-6 border-t border-slate-100 pt-8">
+        <div>
+          <h3 className="text-lg font-semibold text-slate-900">
+            Payment Conditions
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Define the conditions partners must meet each month to receive their
+            basic salary. Configure requirements like minimum monthly revenue,
+            first month closed client targets, and other criteria below.
+          </p>
+        </div>
         <EmbeddedRuleConditions
           commissionType="basic_salary"
           ruleName="Basic Salary — Payment Conditions"
@@ -210,7 +171,7 @@ export const PerformancePolicySettings = () => {
           periodScope="current_month"
           defaultReward={{ type: "fixed", value: form.basicSalaryAmount }}
           title="When should basic salary be paid?"
-          description="Set conditions a partner must meet each month to receive their basic salary. Leave empty to always pay when the monthly payout runs."
+          description="Set conditions a partner must meet each month to receive their basic salary. Leave empty to always pay when the monthly payout runs. Example conditions: minimum monthly revenue, minimum closed clients, first month requirements, etc."
         />
       </div>
     </section>
