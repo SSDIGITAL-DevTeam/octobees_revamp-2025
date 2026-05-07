@@ -365,13 +365,6 @@
       "when": 1777747200000,
       "tag": "0051_legacy_backoffice_compat",
       "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1746619200000,
-      "tag": "0007_blog_add_pdf",
-      "breakpoints": true
     }
   ]
 }
