@@ -31,7 +31,7 @@ const TableLead: React.FC<TableProps> = ({
 }) => {
   const handleDelete = async (id: string) => {
     try {
-      await axiosInstance.delete(`/lead/${id}`);
+      await axiosInstance.delete(`/back-office/lead/${id}`);
       successToast("Lead has been deleted");
       setRefetch(!refetch);
     } catch (error: any) {
