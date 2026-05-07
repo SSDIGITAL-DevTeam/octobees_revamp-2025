@@ -88,11 +88,9 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
     name: string;
     email: string;
     phone: string;
-    serviceId?: string;
-    serviceType?: string;
-    projectValue?: string;
     status?: string;
     nextFollowUpAt?: string;
+    services: { serviceId: string; projectValue: number; isCustomProjectValue: boolean }[];
   }) => {
     const token = getPartnerToken();
     if (!token || !lead) return;
@@ -102,8 +100,7 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
         name: payload.name,
         email: payload.email,
         phone: payload.phone,
-        serviceId: payload.serviceId || undefined,
-        projectValue: payload.projectValue ? Number(payload.projectValue) : 0,
+        services: payload.services,
         status: payload.status || undefined,
         nextFollowUpAt: payload.nextFollowUpAt || null,
       });
@@ -307,14 +304,28 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
                 <p className="mt-1 text-slate-900">{lead.phone}</p>
               </div>
 
-              <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
-                <p className="text-sm text-slate-500">Service Type</p>
-                <p className="mt-1 font-semibold text-[#E30613]">{lead.serviceName || "-"}</p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
-                <p className="text-sm text-slate-500">Project Value</p>
-                <p className="mt-1 text-slate-900">{formatCurrencyGlobal(lead.projectValue)}</p>
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 md:col-span-2">
+                <p className="text-sm text-slate-500">Services & Project Value</p>
+                {(lead.services?.length ?? 0) > 0 ? (
+                  <div className="mt-2 divide-y divide-slate-100">
+                    {lead.services!.map((svc) => (
+                      <div key={svc.serviceId} className="flex items-center justify-between gap-4 py-2">
+                        <span className="font-semibold text-[#E30613]">{svc.serviceName}</span>
+                        <span className="text-slate-900">{formatCurrencyGlobal(svc.projectValue)}</span>
+                      </div>
+                    ))}
+                    {lead.services!.length > 1 && (
+                      <div className="flex items-center justify-between gap-4 py-2">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Total</span>
+                        <span className="font-semibold text-slate-900">
+                          {formatCurrencyGlobal(lead.services!.reduce((sum, s) => sum + s.projectValue, 0))}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="mt-1 font-semibold text-[#E30613]">{lead.serviceName || "-"}</p>
+                )}
               </div>
 
               <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
@@ -415,14 +426,20 @@ const LeadDetailPage = ({ params }: LeadDetailPageProps) => {
             name: lead.name,
             email: lead.email,
             phone: lead.phone,
+            services: lead.services ?? [],
             serviceId: lead.serviceId,
-            serviceType: lead.serviceName,
-            projectValue: String(lead.projectValue ?? ""),
+            projectValue: lead.projectValue,
             status: lead.status,
-            nextFollowUpAt: lead.nextFollowUpAt ? new Date(lead.nextFollowUpAt).toISOString().slice(0, 16) : "",
+            nextFollowUpAt: lead.nextFollowUpAt
+              ? new Date(lead.nextFollowUpAt).toISOString().slice(0, 16)
+              : "",
           }}
-          services={services.map((service) => ({ id: service.id, name: service.name }))}
-          pipelineStatuses={pipelineStatuses.filter((status) => status.isActive)}
+          services={services.map((s) => ({
+            id: s.id,
+            name: s.name,
+            projectValue: s.projectValue,
+          }))}
+          pipelineStatuses={pipelineStatuses.filter((s) => s.isActive)}
           onClose={() => setIsEditModalOpen(false)}
           onSubmit={handleUpdateLead}
         />

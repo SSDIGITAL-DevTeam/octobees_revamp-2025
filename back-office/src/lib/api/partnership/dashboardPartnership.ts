@@ -160,21 +160,33 @@ export type PartnerLeadsParams = {
   affiliateId?: string;
 };
 
+export type LeadServiceEntry = {
+  serviceId: string;
+  serviceName: string;
+  projectValue: number;
+  isCustomProjectValue: boolean;
+};
+
 export type PartnerLeadApiItem = {
   id: string;
   name: string;
   email: string;
   phone: string;
+  /** Multi-service list — source of truth */
+  services: LeadServiceEntry[];
+  /** @deprecated use services[0].serviceId */
   serviceId?: string | null;
-  serviceName: string;
+  /** @deprecated use services[0].serviceName */
+  serviceName?: string;
   verticalMarketId?: string | null;
   verticalMarketName?: string | null;
   status: string;
-  remark: string;
+  remark?: string;
   affiliateId?: string;
   partnerName: string;
   partnerEmail?: string;
-  projectValue: number;
+  /** @deprecated use services[0].projectValue */
+  projectValue?: number;
   nextFollowUpAt?: string | null;
   lastContactAt?: string | null;
   lastStatusChangedAt?: string | null;
@@ -203,13 +215,17 @@ export type PartnerLeadDetailApiItem = {
   name: string;
   email: string;
   phone: string;
-  serviceId: string;
-  serviceName: string;
+  services: LeadServiceEntry[];
+  /** @deprecated use services[0].serviceId */
+  serviceId?: string;
+  /** @deprecated use services[0].serviceName */
+  serviceName?: string;
   verticalMarketId?: string | null;
   verticalMarketName?: string | null;
-  projectValue: number;
+  /** @deprecated use services[0].projectValue */
+  projectValue?: number;
   status: string;
-  remark: string;
+  remark?: string;
   nextFollowUpAt?: string | null;
   lastContactAt?: string | null;
   lastStatusChangedAt?: string | null;

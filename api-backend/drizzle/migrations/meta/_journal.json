@@ -365,6 +365,13 @@
       "when": 1777747200000,
       "tag": "0051_legacy_backoffice_compat",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "5",
+      "when": 1777833600000,
+      "tag": "0052_partner_lead_multi_service",
+      "breakpoints": true
     }
   ]
 }

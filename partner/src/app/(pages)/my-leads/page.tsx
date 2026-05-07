@@ -63,9 +63,7 @@ const MyLeadsPage = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
-    null,
-  );
+  const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
   const [updatingLeadId, setUpdatingLeadId] = useState<string | null>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<
     Record<string, boolean>
@@ -99,15 +97,9 @@ const MyLeadsPage = () => {
     [orderedPipelineStatuses],
   );
 
-  const selectedServiceLabel = useMemo(() => {
-    return (
-      services.find((service) => service.id === selectedServiceId)?.name ?? ""
-    );
-  }, [selectedServiceId, services]);
-
-  const selectedService = useMemo(
-    () => services.find((service) => service.id === selectedServiceId) || null,
-    [selectedServiceId, services],
+  const selectedServices = useMemo(
+    () => services.filter((s) => selectedServiceIds.includes(s.id)),
+    [selectedServiceIds, services],
   );
 
   const leadStats = useMemo(() => {
@@ -190,7 +182,12 @@ const MyLeadsPage = () => {
         ? normalizedStatus === statusFilter
         : true;
       const matchesSearch = keyword
-        ? [lead.name, lead.email, lead.phone, lead.serviceName]
+        ? [
+            lead.name,
+            lead.email,
+            lead.phone,
+            ...(lead.services ?? []).map((s) => s.serviceName),
+          ]
             .filter(Boolean)
             .some((value) => String(value).toLowerCase().includes(keyword))
         : true;
@@ -314,30 +311,25 @@ const MyLeadsPage = () => {
     name: string;
     email: string;
     phone: string;
-    projectValue: string;
-    isCustomProjectValue: boolean;
     verticalMarketId: string;
     verticalMarketName: string;
     notes: string;
     nextFollowUpAt: string;
+    services: { serviceId: string; projectValue: number; isCustomProjectValue: boolean }[];
   }) => {
     const token = getPartnerToken();
-    if (!token || !selectedServiceId) return;
+    if (!token) return;
 
     try {
       const createPromise = createAffiliateLead(token, {
-        ...payload,
-        serviceId: selectedServiceId,
+        name: payload.name,
+        email: payload.email,
+        phone: payload.phone,
+        services: payload.services,
         verticalMarketId:
-          payload.verticalMarketId === "__custom__"
-            ? undefined
-            : payload.verticalMarketId,
+          payload.verticalMarketId === "__custom__" ? undefined : payload.verticalMarketId,
         verticalMarketName:
-          payload.verticalMarketId === "__custom__"
-            ? payload.verticalMarketName
-            : undefined,
-        projectValue: payload.projectValue ? Number(payload.projectValue) : 0,
-        isCustomProjectValue: payload.isCustomProjectValue,
+          payload.verticalMarketId === "__custom__" ? payload.verticalMarketName : undefined,
         notes: payload.notes,
         nextFollowUpAt: payload.nextFollowUpAt || null,
       });
@@ -665,7 +657,12 @@ const MyLeadsPage = () => {
                                       Service
                                     </p>
                                     <p className="mt-1 text-slate-700">
-                                      {lead.serviceName || "-"}
+                                      {lead.services?.[0]?.serviceName || lead.serviceName || "-"}
+                                      {(lead.services?.length ?? 0) > 1 && (
+                                        <span className="ml-1.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-500">
+                                          +{lead.services!.length - 1}
+                                        </span>
+                                      )}
                                     </p>
                                   </div>
                                   <div>
@@ -673,7 +670,9 @@ const MyLeadsPage = () => {
                                       Value
                                     </p>
                                     <p className="mt-1 text-slate-700">
-                                      {formatCurrencyGlobal(lead.projectValue)}
+                                      {formatCurrencyGlobal(
+                                        lead.services?.reduce((sum, s) => sum + s.projectValue, 0) ?? lead.projectValue,
+                                      )}
                                     </p>
                                   </div>
                                   <div>
@@ -763,10 +762,19 @@ const MyLeadsPage = () => {
                                       <td className="py-4">{lead.email}</td>
                                       <td className="py-4">{lead.phone}</td>
                                       <td className="py-4">
-                                        {lead.serviceName || "-"}
+                                        <span>
+                                          {lead.services?.[0]?.serviceName || lead.serviceName || "-"}
+                                        </span>
+                                        {(lead.services?.length ?? 0) > 1 && (
+                                          <span className="ml-1.5 rounded-full bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-500">
+                                            +{lead.services!.length - 1}
+                                          </span>
+                                        )}
                                       </td>
                                       <td className="py-4">
-                                        {formatCurrencyGlobal(lead.projectValue)}
+                                        {formatCurrencyGlobal(
+                                          lead.services?.reduce((sum, s) => sum + s.projectValue, 0) ?? lead.projectValue,
+                                        )}
                                       </td>
                                       <td className="py-4">
                                         {formatDateTime(lead.nextFollowUpAt)}
@@ -924,13 +932,20 @@ const MyLeadsPage = () => {
                                     <span className="font-medium text-slate-800">
                                       Service:
                                     </span>{" "}
-                                    {lead.serviceName || "-"}
+                                    {lead.services?.[0]?.serviceName || lead.serviceName || "-"}
+                                    {(lead.services?.length ?? 0) > 1 && (
+                                      <span className="ml-1 rounded-full bg-slate-100 px-1.5 py-0.5 text-xs font-semibold text-slate-500">
+                                        +{lead.services!.length - 1}
+                                      </span>
+                                    )}
                                   </p>
                                   <p>
                                     <span className="font-medium text-slate-800">
                                       Value:
                                     </span>{" "}
-                                    {formatCurrencyGlobal(lead.projectValue)}
+                                    {formatCurrencyGlobal(
+                                      lead.services?.reduce((sum, s) => sum + s.projectValue, 0) ?? lead.projectValue,
+                                    )}
                                   </p>
                                   <p>
                                     <span className="font-medium text-slate-800">
@@ -984,20 +999,18 @@ const MyLeadsPage = () => {
       <SelectServiceModal
         open={isSelectModalOpen}
         services={serviceOptions}
-        selectedServiceId={selectedServiceId}
+        selectedServiceIds={selectedServiceIds}
         onClose={() => setIsSelectModalOpen(false)}
-        onConfirm={(serviceId) => {
-          setSelectedServiceId(serviceId);
+        onConfirm={(serviceIds) => {
+          setSelectedServiceIds(serviceIds);
           setIsSelectModalOpen(false);
           setIsAddLeadModalOpen(true);
         }}
-        onSelectionChange={(serviceId) => setSelectedServiceId(serviceId)}
       />
 
       <AddLeadModal
         open={isAddLeadModalOpen}
-        serviceName={selectedServiceLabel}
-        baseProjectValue={Number(selectedService?.projectValue || 0)}
+        services={selectedServices}
         verticalMarkets={verticalMarkets}
         onClose={() => setIsAddLeadModalOpen(false)}
         onSubmit={handleCreateLead}

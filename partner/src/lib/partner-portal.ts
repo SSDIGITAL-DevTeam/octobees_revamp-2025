@@ -39,17 +39,28 @@ export type SalesMaterialItem = {
   updatedAt?: string;
 };
 
+export type LeadServiceEntry = {
+  serviceId: string;
+  serviceName: string;
+  projectValue: number;
+  isCustomProjectValue: boolean;
+};
+
 export type PartnerLeadItem = {
   id: string;
   name: string;
   email: string;
   phone: string;
+  /** Multi-service list — source of truth */
+  services: LeadServiceEntry[];
+  /** @deprecated use services[0].serviceId */
   serviceId?: string;
+  /** @deprecated use services[0].serviceName */
   serviceName?: string;
+  /** @deprecated use services[0].projectValue */
+  projectValue?: number;
   verticalMarketId?: string | null;
   verticalMarketName?: string | null;
-  projectValue?: number;
-  isCustomProjectValue?: boolean;
   status: string;
   source?: string;
   nextFollowUpAt?: string | null;

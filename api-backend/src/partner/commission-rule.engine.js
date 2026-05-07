@@ -174,8 +174,8 @@ const resolveField = async (field, ctx, rule) => {
     case "total_revenue":        return ctx.getTotalRevenue(scope);
     case "tenure_days":          return ctx.getTenureDays();
     case "batch_id":             return (await ctx.getAffiliate())?.batchId ?? null;
-    case "lead_project_value":   return ctx.lead ? Number(ctx.lead.projectValue) : 0;
-    case "lead_service_id":      return ctx.lead?.serviceId ?? null;
+    case "lead_project_value":   return ctx.lead ? Number(ctx.lead._serviceProjectValue ?? ctx.lead.projectValue ?? 0) : 0;
+    case "lead_service_id":      return ctx.lead?._serviceId ?? ctx.lead?.serviceId ?? null;
     case "lead_status":          return ctx.lead?.status ?? null;
     case "lead_vertical_market_id": return ctx.lead?.verticalMarketId ?? null;
     case "lead_vertical_market_name": return ctx.lead?.verticalMarketName ?? null;
@@ -324,9 +324,10 @@ export const calculateReward = async (reward, ctx, rule) => {
      */
     case "service_config": {
       if (!ctx.lead) return 0;
-      const service = await getPartnerServiceById(ctx.lead.serviceId);
+      const serviceId = ctx.lead._serviceId ?? ctx.lead.serviceId;
+      const service = await getPartnerServiceById(serviceId);
       if (!service) return 0;
-      const projectValue = Number(ctx.lead.projectValue ?? service.projectValue ?? 0);
+      const projectValue = Number(ctx.lead._serviceProjectValue ?? ctx.lead.projectValue ?? service.projectValue ?? 0);
       const settings = await getPartnerSalesCommissionSettings();
       const config = resolveServiceCommissionConfig(service, settings);
       if (config.mode === "fixed") return Math.max(0, config.value);
@@ -340,16 +341,16 @@ export const calculateReward = async (reward, ctx, rule) => {
 
 // ── Idempotency helpers ───────────────────────────────────────────────────────
 
-const findExistingByLeadAndType = async (leadId, commissionType) => {
+const findExistingByLeadServiceAndType = async (leadId, serviceId, commissionType) => {
+  const conds = [
+    eq(partnerCommission.leadId, leadId),
+    eq(partnerCommission.commissionType, commissionType),
+  ];
+  if (serviceId) conds.push(eq(partnerCommission.serviceId, serviceId));
   const rows = await db
     .select({ id: partnerCommission.id })
     .from(partnerCommission)
-    .where(
-      and(
-        eq(partnerCommission.leadId, leadId),
-        eq(partnerCommission.commissionType, commissionType),
-      ),
-    )
+    .where(and(...conds))
     .limit(1);
   return rows[0] ?? null;
 };
@@ -399,7 +400,8 @@ const updateCommissionAmountById = async (id, amount) => {
 /**
  * evaluateLeadWonRules
  * Called every time a lead transitions to "Won".
- * Evaluates all active `lead_won` rules for this lead's affiliate.
+ * Evaluates all active `lead_won` rules once per service on the lead,
+ * so a lead with N services can produce up to N commissions per matching rule.
  */
 export const evaluateLeadWonRules = async (lead) => {
   if (!lead || lead.status !== "Won") return { evaluated: 0 };
@@ -408,60 +410,76 @@ export const evaluateLeadWonRules = async (lead) => {
   if (!rules.length) return { evaluated: 0 };
 
   const period = formatPeriod(new Date(lead.updatedAt ?? lead.createdAt));
-  const ctx = buildContext(lead.affiliateId, { lead, period });
+
+  // Build the list of service slots to evaluate.
+  // Falls back to a single entry using the legacy serviceId for old records.
+  const serviceSlots =
+    Array.isArray(lead.services) && lead.services.length > 0
+      ? lead.services.map((s) => ({
+          serviceId: s.serviceId,
+          projectValue: s.projectValue,
+        }))
+      : [{ serviceId: lead.serviceId ?? null, projectValue: lead.projectValue ?? 0 }];
+
   let evaluated = 0;
 
-  for (const rule of rules) {
-    try {
-      const passed = await evaluateConditions(rule.conditions, ctx, rule);
-      if (!passed) {
+  for (const slot of serviceSlots) {
+    // Overlay per-service fields onto a lead-shaped object so the context
+    // resolves lead_service_id and lead_project_value correctly.
+    const leadCtx = { ...lead, _serviceId: slot.serviceId, _serviceProjectValue: slot.projectValue };
+    const ctx = buildContext(lead.affiliateId, { lead: leadCtx, period });
+
+    for (const rule of rules) {
+      try {
+        const passed = await evaluateConditions(rule.conditions, ctx, rule);
+        if (!passed) {
+          await logRuleEvaluation({
+            ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
+            outcome: "skipped", reason: "conditions not met",
+          });
+          continue;
+        }
+
+        const amount = await calculateReward(rule.reward, ctx, rule);
+        if (amount <= 0) {
+          await logRuleEvaluation({
+            ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
+            outcome: "skipped", reason: "reward calculated as 0",
+          });
+          continue;
+        }
+
+        // Idempotency: one commission per (leadId, serviceId, commissionType).
+        const existing = await findExistingByLeadServiceAndType(lead.id, slot.serviceId, rule.commissionType);
+        if (existing) {
+          await logRuleEvaluation({
+            ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
+            outcome: "skipped", reason: "commission already exists for this lead/service/type",
+          });
+          continue;
+        }
+
+        await insertCommission({
+          affiliateId: lead.affiliateId,
+          leadId: lead.id,
+          serviceId: slot.serviceId,
+          amount,
+          commissionType: rule.commissionType,
+          period,
+          ruleId: rule.id,
+        });
+
         await logRuleEvaluation({
           ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-          outcome: "skipped", reason: "conditions not met",
+          outcome: "created", amount,
         });
-        continue;
-      }
-
-      const amount = await calculateReward(rule.reward, ctx, rule);
-      if (amount <= 0) {
+        evaluated++;
+      } catch (err) {
         await logRuleEvaluation({
           ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-          outcome: "skipped", reason: "reward calculated as 0",
-        });
-        continue;
+          outcome: "error", reason: err?.message ?? String(err),
+        }).catch(() => {});
       }
-
-      // Per-lead scope: one commission of each type per lead. This lets
-      // service-specific sales rules override the generic fallback rule.
-      const existing = await findExistingByLeadAndType(lead.id, rule.commissionType);
-      if (existing) {
-        await logRuleEvaluation({
-          ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-          outcome: "skipped", reason: "commission already exists for this lead and type",
-        });
-        continue;
-      }
-
-      await insertCommission({
-        affiliateId: lead.affiliateId,
-        leadId: lead.id,
-        serviceId: lead.serviceId ?? null,
-        amount,
-        commissionType: rule.commissionType,
-        period,
-        ruleId: rule.id,
-      });
-
-      await logRuleEvaluation({
-        ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-        outcome: "created", amount,
-      });
-      evaluated++;
-    } catch (err) {
-      await logRuleEvaluation({
-        ruleId: rule.id, affiliateId: lead.affiliateId, leadId: lead.id, period,
-        outcome: "error", reason: err?.message ?? String(err),
-      }).catch(() => {});
     }
   }
 
@@ -632,7 +650,7 @@ export const evaluateManualRule = async ({
 
   const existing =
     rule.scope === "per_lead" && leadId
-      ? await findExistingByLeadAndType(leadId, rule.commissionType)
+      ? await findExistingByLeadServiceAndType(leadId, lead?.serviceId ?? null, rule.commissionType)
       : await findExistingByPeriodAndType(affiliateId, rule.commissionType, period);
 
   if (existing) {

@@ -575,22 +575,37 @@ export const partnerLead = mysqlTable("partner_lead", {
   name: varchar("name", { length: 191 }).notNull(),
   email: varchar("email", { length: 191 }).notNull(),
   phone: varchar("phone", { length: 32 }).notNull(),
-  serviceId: varchar("service_id", { length: 36 })
-    .notNull()
-    .references(() => partnerService.id),
+  // Deprecated: source of truth is now partnerLeadService. Kept nullable for backwards compat.
+  serviceId: varchar("service_id", { length: 36 }).references(() => partnerService.id),
   verticalMarketId: varchar("vertical_market_id", { length: 36 }).references(
     () => partnerVerticalMarket.id,
     { onDelete: "set null" },
   ),
   verticalMarketName: varchar("vertical_market_name", { length: 120 }),
-  projectValue: double("project_value").notNull().default(0),
-  isCustomProjectValue: boolean("is_custom_project_value").notNull().default(false),
+  // Deprecated: project_value is now stored per-service in partnerLeadService.
+  projectValue: double("project_value").default(0),
+  isCustomProjectValue: boolean("is_custom_project_value").default(false),
   status: varchar("lead_status", { length: 80 }).notNull().default("New Leads"),
   nextFollowUpAt: datetime("next_follow_up_at"),
   lastContactAt: datetime("last_contact_at"),
   lastStatusChangedAt: datetime("last_status_changed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const partnerLeadService = mysqlTable("partner_lead_service", {
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => uuidv4()),
+  leadId: varchar("lead_id", { length: 36 })
+    .notNull()
+    .references(() => partnerLead.id, { onDelete: "cascade" }),
+  serviceId: varchar("service_id", { length: 36 })
+    .notNull()
+    .references(() => partnerService.id, { onDelete: "cascade" }),
+  projectValue: double("project_value").notNull().default(0),
+  isCustomProjectValue: boolean("is_custom_project_value").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const partnerLeadActivity = mysqlTable("partner_lead_activity", {

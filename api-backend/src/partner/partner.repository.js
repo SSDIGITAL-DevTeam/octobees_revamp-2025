@@ -4,6 +4,7 @@ import {
   partnerService,
   salesMaterial,
   partnerLead,
+  partnerLeadService,
   partnerLeadPipelineStatus,
   partnerVerticalMarket,
   partnerLeadActivity,
@@ -251,20 +252,53 @@ export const getPartnerServiceById = async (id) => {
 
 // ==================== LEADS ====================
 
+// Fetch services for a list of lead IDs and group by leadId.
+const loadServicesForLeads = async (leadIds) => {
+  if (!leadIds.length) return {};
+  const rows = await db
+    .select({
+      leadId: partnerLeadService.leadId,
+      serviceId: partnerLeadService.serviceId,
+      serviceName: partnerService.name,
+      projectValue: partnerLeadService.projectValue,
+      isCustomProjectValue: partnerLeadService.isCustomProjectValue,
+    })
+    .from(partnerLeadService)
+    .leftJoin(partnerService, eq(partnerLeadService.serviceId, partnerService.id))
+    .where(inArray(partnerLeadService.leadId, leadIds));
+
+  return rows.reduce((acc, row) => {
+    if (!acc[row.leadId]) acc[row.leadId] = [];
+    acc[row.leadId].push({
+      serviceId: row.serviceId,
+      serviceName: row.serviceName ?? "",
+      projectValue: Number(row.projectValue ?? 0),
+      isCustomProjectValue: Boolean(row.isCustomProjectValue),
+    });
+    return acc;
+  }, {});
+};
+
 export const getPartnerLeads = async (affiliateId, filters = {}) => {
-  let query = db
+  const conditions = [eq(partnerLead.affiliateId, affiliateId)];
+  if (filters.status) {
+    conditions.push(eq(partnerLead.status, filters.status));
+  }
+  const where = conditions.length > 1 ? and(...conditions) : conditions[0];
+
+  const page = filters.page || 1;
+  const limit = filters.limit || 10;
+  const offset = (page - 1) * limit;
+
+  const results = await db
     .select({
       id: partnerLead.id,
       affiliateId: partnerLead.affiliateId,
       name: partnerLead.name,
       email: partnerLead.email,
       phone: partnerLead.phone,
-      serviceId: partnerLead.serviceId,
-      serviceName: partnerService.name,
       verticalMarketId: partnerLead.verticalMarketId,
       verticalMarketName: partnerLead.verticalMarketName,
-      projectValue: partnerLead.projectValue,
-      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -273,25 +307,13 @@ export const getPartnerLeads = async (affiliateId, filters = {}) => {
       updatedAt: partnerLead.updatedAt,
     })
     .from(partnerLead)
-    .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
-    .where(eq(partnerLead.affiliateId, affiliateId));
-
-  // Apply filters
-  if (filters.status) {
-    query = query.where(eq(partnerLead.status, filters.status));
-  }
-
-  // Apply pagination
-  const page = filters.page || 1;
-  const limit = filters.limit || 10;
-  const offset = (page - 1) * limit;
-
-  const results = await query
+    .where(where)
     .orderBy(desc(partnerLead.createdAt))
     .limit(limit)
     .offset(offset);
 
-  // Get total count
+  const servicesByLead = await loadServicesForLeads(results.map((r) => r.id));
+
   const countResult = await db
     .select({ count: sql`count(*)` })
     .from(partnerLead)
@@ -300,7 +322,7 @@ export const getPartnerLeads = async (affiliateId, filters = {}) => {
   const total = Number(countResult[0]?.count || 0);
 
   return {
-    data: results,
+    data: results.map((r) => ({ ...r, services: servicesByLead[r.id] ?? [] })),
     pagination: {
       page,
       limit,
@@ -318,12 +340,8 @@ export const getLeadById = async (leadId, affiliateId) => {
       name: partnerLead.name,
       email: partnerLead.email,
       phone: partnerLead.phone,
-      serviceId: partnerLead.serviceId,
-      serviceName: partnerService.name,
       verticalMarketId: partnerLead.verticalMarketId,
       verticalMarketName: partnerLead.verticalMarketName,
-      projectValue: partnerLead.projectValue,
-      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -332,17 +350,30 @@ export const getLeadById = async (leadId, affiliateId) => {
       updatedAt: partnerLead.updatedAt,
     })
     .from(partnerLead)
-    .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
     .where(
       and(eq(partnerLead.id, leadId), eq(partnerLead.affiliateId, affiliateId)),
     )
     .limit(1);
 
-  return result[0] || null;
+  if (!result[0]) return null;
+  const servicesByLead = await loadServicesForLeads([leadId]);
+  return { ...result[0], services: servicesByLead[leadId] ?? [] };
 };
 
 export const createLead = async (data) => {
-  const result = await db.insert(partnerLead).values(data);
+  const { services = [], ...leadData } = data;
+  const result = await db.insert(partnerLead).values(leadData);
+  if (services.length) {
+    await db.insert(partnerLeadService).values(
+      services.map((s) => ({
+        id: uuidv7(),
+        leadId: leadData.id,
+        serviceId: s.serviceId,
+        projectValue: Number(s.projectValue ?? 0),
+        isCustomProjectValue: Boolean(s.isCustomProjectValue),
+      })),
+    );
+  }
   return result.insertId;
 };
 
@@ -359,6 +390,21 @@ export const updateLead = async (leadId, affiliateId, data) => {
       and(eq(partnerLead.id, leadId), eq(partnerLead.affiliateId, affiliateId)),
     );
   return true;
+};
+
+export const replaceLeadServices = async (leadId, services = []) => {
+  await db.delete(partnerLeadService).where(eq(partnerLeadService.leadId, leadId));
+  if (services.length) {
+    await db.insert(partnerLeadService).values(
+      services.map((s) => ({
+        id: uuidv7(),
+        leadId,
+        serviceId: s.serviceId,
+        projectValue: Number(s.projectValue ?? 0),
+        isCustomProjectValue: Boolean(s.isCustomProjectValue),
+      })),
+    );
+  }
 };
 
 export const countWonLeadsForVerticalMarket = async (
@@ -1311,12 +1357,8 @@ export const getAllLeads = async ({
       name: partnerLead.name,
       email: partnerLead.email,
       phone: partnerLead.phone,
-      serviceId: partnerLead.serviceId,
-      serviceName: partnerService.name,
       verticalMarketId: partnerLead.verticalMarketId,
       verticalMarketName: partnerLead.verticalMarketName,
-      projectValue: partnerLead.projectValue,
-      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -1328,7 +1370,6 @@ export const getAllLeads = async ({
       partnerEmail: affiliateApplication.email,
     })
     .from(partnerLead)
-    .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
     .leftJoin(
       affiliateApplication,
       eq(partnerLead.affiliateId, affiliateApplication.id),
@@ -1337,6 +1378,8 @@ export const getAllLeads = async ({
     .orderBy(desc(partnerLead.createdAt))
     .limit(Number(limit))
     .offset(offset);
+
+  const servicesByLead = await loadServicesForLeads(data.map((r) => r.id));
 
   const [{ count }] = await db
     .select({ count: sql`COUNT(*)`.mapWith(Number) })
@@ -1348,7 +1391,7 @@ export const getAllLeads = async ({
     .where(where);
 
   return {
-    data,
+    data: data.map((r) => ({ ...r, services: servicesByLead[r.id] ?? [] })),
     pagination: {
       page: Number(page),
       limit: Number(limit),
@@ -1365,12 +1408,8 @@ export const getLeadByIdBackOffice = async (leadId) => {
       name: partnerLead.name,
       email: partnerLead.email,
       phone: partnerLead.phone,
-      serviceId: partnerLead.serviceId,
-      serviceName: partnerService.name,
       verticalMarketId: partnerLead.verticalMarketId,
       verticalMarketName: partnerLead.verticalMarketName,
-      projectValue: partnerLead.projectValue,
-      isCustomProjectValue: partnerLead.isCustomProjectValue,
       status: partnerLead.status,
       nextFollowUpAt: partnerLead.nextFollowUpAt,
       lastContactAt: partnerLead.lastContactAt,
@@ -1383,7 +1422,6 @@ export const getLeadByIdBackOffice = async (leadId) => {
       partnerCountry: affiliateApplication.country,
     })
     .from(partnerLead)
-    .leftJoin(partnerService, eq(partnerLead.serviceId, partnerService.id))
     .leftJoin(
       affiliateApplication,
       eq(partnerLead.affiliateId, affiliateApplication.id),
@@ -1391,7 +1429,9 @@ export const getLeadByIdBackOffice = async (leadId) => {
     .where(eq(partnerLead.id, leadId))
     .limit(1);
 
-  return result[0] || null;
+  if (!result[0]) return null;
+  const servicesByLead = await loadServicesForLeads([leadId]);
+  return { ...result[0], services: servicesByLead[leadId] ?? [] };
 };
 
 export const updateLeadBackOffice = async (leadId, data) => {

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk next *)",
+      "Bash(node node_modules/.bin/next build)"
+    ]
+  }
+}

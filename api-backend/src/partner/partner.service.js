@@ -66,6 +66,7 @@ import {
   getVerticalMarketById,
   getVerticalMarketByName,
   createVerticalMarket,
+  replaceLeadServices,
 } from "./partner.repository.js";
 import {
   findMetasByTarget,
@@ -950,12 +951,9 @@ export const getLeadDetail = async (affiliateId, leadId) => {
 };
 
 export const createNewLead = async (affiliateId, leadData) => {
-  const serviceId = leadData.serviceId ?? leadData.service_id;
-  const requestedProjectValue = leadData.projectValue ?? leadData.project_value;
-  const isCustomProjectValue = parseBooleanInput(
-    leadData.isCustomProjectValue ?? leadData.is_custom_project_value,
-    false,
-  );
+  // Support both legacy single-service (serviceId) and new multi-service (services[])
+  const rawServices = Array.isArray(leadData.services) ? leadData.services : null;
+  const legacyServiceId = leadData.serviceId ?? leadData.service_id;
   const nextFollowUpAt = parseOptionalDate(
     leadData.nextFollowUpAt ?? leadData.next_follow_up_at,
   );
@@ -963,48 +961,60 @@ export const createNewLead = async (affiliateId, leadData) => {
   const now = new Date();
 
   // Validate required fields
-  if (!leadData.name || !leadData.email || !leadData.phone || !serviceId) {
-    throw new Error("Missing required fields: name, email, phone, serviceId");
+  if (!leadData.name || !leadData.email || !leadData.phone) {
+    throw new Error("Missing required fields: name, email, phone");
   }
 
-  // Validate service exists
-  const service = await getPartnerServiceById(serviceId);
-  if (!service) {
-    throw new Error("Invalid service ID");
-  }
-
-  const baseProjectValue = Number(service.projectValue || 0);
-  const projectValue = isCustomProjectValue
-    ? Number(requestedProjectValue || 0)
-    : baseProjectValue;
-
-  if (!Number.isFinite(projectValue) || projectValue < baseProjectValue) {
-    throw new Error(
-      `Project value must be at least ${baseProjectValue.toLocaleString("en-US")}.`,
+  // Resolve & validate services
+  let resolvedServices;
+  if (rawServices && rawServices.length > 0) {
+    resolvedServices = await Promise.all(
+      rawServices.map(async (s) => {
+        const service = await getPartnerServiceById(s.serviceId);
+        if (!service) throw new Error(`Invalid service ID: ${s.serviceId}`);
+        const base = Number(service.projectValue || 0);
+        const isCustom = parseBooleanInput(s.isCustomProjectValue, false);
+        const pv = isCustom ? Number(s.projectValue || 0) : base;
+        if (!Number.isFinite(pv) || pv < base) {
+          throw new Error(
+            `Project value for "${service.name}" must be at least ${base.toLocaleString("en-US")}.`,
+          );
+        }
+        return { serviceId: s.serviceId, projectValue: pv, isCustomProjectValue: isCustom };
+      }),
     );
+  } else if (legacyServiceId) {
+    const service = await getPartnerServiceById(legacyServiceId);
+    if (!service) throw new Error("Invalid service ID");
+    const isCustom = parseBooleanInput(leadData.isCustomProjectValue ?? leadData.is_custom_project_value, false);
+    const base = Number(service.projectValue || 0);
+    const pv = isCustom ? Number(leadData.projectValue ?? leadData.project_value ?? 0) : base;
+    if (!Number.isFinite(pv) || pv < base) {
+      throw new Error(`Project value must be at least ${base.toLocaleString("en-US")}.`);
+    }
+    resolvedServices = [{ serviceId: legacyServiceId, projectValue: pv, isCustomProjectValue: isCustom }];
+  } else {
+    throw new Error("At least one service is required");
   }
 
   const verticalMarket = await resolveLeadVerticalMarket(leadData);
-
-  // Create lead
   const normalizedStatus = await assertLeadStatusCanBeSelected(
     leadData.status || await getDefaultSelectableLeadStatus(),
   );
+
   const data = {
     id: uuidv7(),
     affiliateId,
     name: leadData.name,
     email: leadData.email,
     phone: leadData.phone,
-    serviceId: serviceId,
     verticalMarketId: verticalMarket.verticalMarketId,
     verticalMarketName: verticalMarket.verticalMarketName,
-    projectValue: projectValue || 0,
-    isCustomProjectValue,
     status: normalizedStatus,
     nextFollowUpAt,
     lastContactAt: now,
     lastStatusChangedAt: now,
+    services: resolvedServices,
   };
 
   await createLead(data);
@@ -1026,47 +1036,69 @@ export const createNewLead = async (affiliateId, leadData) => {
     toStatus: data.status,
     note: "Lead created",
     metadata: stringifyMetadata({
-      serviceId: data.serviceId,
+      services: resolvedServices,
       verticalMarketId: data.verticalMarketId,
       verticalMarketName: data.verticalMarketName,
-      projectValue: data.projectValue,
-      isCustomProjectValue: data.isCustomProjectValue,
       nextFollowUpAt: data.nextFollowUpAt,
     }),
   });
-  await ensureCommissionForClosedWonLead(data);
-  return data;
+  const leadForCommission = { ...data, services: resolvedServices };
+  await ensureCommissionForClosedWonLead(leadForCommission);
+  return { ...data, services: resolvedServices };
 };
 
 export const updateExistingLead = async (affiliateId, leadId, leadData) => {
-  // Check if lead exists and belongs to affiliate
   const existingLead = await getLeadById(leadId, affiliateId);
   if (!existingLead) {
     throw new Error("Lead not found or you don't have permission to update it");
   }
 
-  const serviceId = leadData.serviceId ?? leadData.service_id;
-  const projectValue = leadData.projectValue ?? leadData.project_value;
-  const isCustomProjectValue =
-    leadData.isCustomProjectValue ?? leadData.is_custom_project_value;
   const nextFollowUpAt = parseOptionalDate(
     leadData.nextFollowUpAt ?? leadData.next_follow_up_at,
   );
 
-  // Validate service if provided
-  if (serviceId) {
-    const service = await getPartnerServiceById(serviceId);
-    if (!service) {
-      throw new Error("Invalid service ID");
+  // Resolve & validate new services if provided
+  let resolvedServices = null;
+  const rawServices = Array.isArray(leadData.services) ? leadData.services : null;
+  const legacyServiceId = leadData.serviceId ?? leadData.service_id;
+
+  if (rawServices !== null) {
+    if (rawServices.length === 0) throw new Error("At least one service is required");
+    resolvedServices = await Promise.all(
+      rawServices.map(async (s) => {
+        const service = await getPartnerServiceById(s.serviceId);
+        if (!service) throw new Error(`Invalid service ID: ${s.serviceId}`);
+        const base = Number(service.projectValue || 0);
+        const isCustom = parseBooleanInput(s.isCustomProjectValue, false);
+        const pv = isCustom ? Number(s.projectValue || 0) : base;
+        if (!Number.isFinite(pv) || pv < base) {
+          throw new Error(
+            `Project value for "${service.name}" must be at least ${base.toLocaleString("en-US")}.`,
+          );
+        }
+        return { serviceId: s.serviceId, projectValue: pv, isCustomProjectValue: isCustom };
+      }),
+    );
+  } else if (legacyServiceId !== undefined) {
+    // Legacy single-service path
+    const service = await getPartnerServiceById(legacyServiceId);
+    if (!service) throw new Error("Invalid service ID");
+    const base = Number(service.projectValue || 0);
+    const isCustom = parseBooleanInput(leadData.isCustomProjectValue ?? leadData.is_custom_project_value, false);
+    const pv = isCustom
+      ? Number(leadData.projectValue ?? leadData.project_value ?? 0)
+      : base;
+    if (!Number.isFinite(pv) || pv < base) {
+      throw new Error(`Project value must be at least ${base.toLocaleString("en-US")}.`);
     }
+    resolvedServices = [{ serviceId: legacyServiceId, projectValue: pv, isCustomProjectValue: isCustom }];
   }
 
-  // Update lead
+  // Build lead-level update payload
   const updateData = {};
   if (leadData.name !== undefined) updateData.name = leadData.name;
   if (leadData.email !== undefined) updateData.email = leadData.email;
   if (leadData.phone !== undefined) updateData.phone = leadData.phone;
-  if (serviceId !== undefined) updateData.serviceId = serviceId;
   if (
     leadData.verticalMarketId !== undefined ||
     leadData.vertical_market_id !== undefined ||
@@ -1077,21 +1109,6 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
   ) {
     Object.assign(updateData, await resolveLeadVerticalMarket(leadData));
   }
-  if (isCustomProjectValue !== undefined) {
-    updateData.isCustomProjectValue = parseBooleanInput(isCustomProjectValue, false);
-  }
-  if (projectValue !== undefined) {
-    const nextServiceId = serviceId ?? existingLead.serviceId;
-    const service = await getPartnerServiceById(nextServiceId);
-    const baseProjectValue = Number(service?.projectValue || 0);
-    const nextProjectValue = Number(projectValue || 0);
-    if (!Number.isFinite(nextProjectValue) || nextProjectValue < baseProjectValue) {
-      throw new Error(
-        `Project value must be at least ${baseProjectValue.toLocaleString("en-US")}.`,
-      );
-    }
-    updateData.projectValue = nextProjectValue;
-  }
   if (leadData.status !== undefined) {
     const requestedStatus = normalizeLeadStatus(leadData.status);
     const currentStatus = normalizeLeadStatus(existingLead.status);
@@ -1101,42 +1118,30 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
         : await assertLeadStatusCanBeSelected(requestedStatus);
   }
   if (nextFollowUpAt !== undefined) updateData.nextFollowUpAt = nextFollowUpAt;
-  if (
+
+  const touchedFields =
     leadData.name !== undefined ||
     leadData.email !== undefined ||
     leadData.phone !== undefined ||
-    serviceId !== undefined ||
-    projectValue !== undefined ||
-    isCustomProjectValue !== undefined ||
+    resolvedServices !== null ||
     updateData.verticalMarketId !== undefined ||
-    nextFollowUpAt !== undefined
-  ) {
-    updateData.lastContactAt = new Date();
-  }
-  if (
-    leadData.status !== undefined &&
-    updateData.status !== existingLead.status
-  ) {
+    nextFollowUpAt !== undefined;
+
+  if (touchedFields) updateData.lastContactAt = new Date();
+  if (leadData.status !== undefined && updateData.status !== existingLead.status) {
     updateData.lastStatusChangedAt = new Date();
   }
 
-  const success = await updateLead(leadId, affiliateId, updateData);
-  if (!success) {
-    throw new Error("Failed to update lead");
+  await updateLead(leadId, affiliateId, updateData);
+
+  if (resolvedServices !== null) {
+    await replaceLeadServices(leadId, resolvedServices);
   }
 
   const noteParts = [];
-  if (serviceId !== undefined && serviceId !== existingLead.serviceId)
-    noteParts.push("Service updated");
-  if (
-    projectValue !== undefined &&
-    Number(projectValue) !== Number(existingLead.projectValue)
-  )
-    noteParts.push("Project value updated");
+  if (resolvedServices !== null) noteParts.push("Services updated");
   if (nextFollowUpAt !== undefined)
-    noteParts.push(
-      nextFollowUpAt ? "Follow-up schedule updated" : "Follow-up cleared",
-    );
+    noteParts.push(nextFollowUpAt ? "Follow-up schedule updated" : "Follow-up cleared");
 
   await createLeadActivity({
     id: uuidv7(),
@@ -1156,8 +1161,7 @@ export const updateExistingLead = async (affiliateId, leadId, leadData) => {
     note: noteParts.join(". ") || "Lead record updated",
     metadata: stringifyMetadata({
       nextFollowUpAt: updateData.nextFollowUpAt,
-      projectValue: updateData.projectValue,
-      isCustomProjectValue: updateData.isCustomProjectValue,
+      services: resolvedServices,
       verticalMarketId: updateData.verticalMarketId,
       verticalMarketName: updateData.verticalMarketName,
     }),

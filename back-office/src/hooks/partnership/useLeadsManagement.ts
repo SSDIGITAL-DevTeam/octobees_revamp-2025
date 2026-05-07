@@ -66,9 +66,11 @@ export const useLeadsManagement = () => {
         id: item.id,
         leadName: item.name,
         partnerName: item.partnerName,
-        serviceType: item.serviceName,
+        serviceType: Array.isArray(item.services) && item.services.length > 0
+          ? item.services.map((s) => s.serviceName).join(", ")
+          : (item.serviceName ?? "-"),
         status: item.status as LeadStatus,
-        remark: item.remark,
+        remark: item.remark ?? "",
         actionLabel: item.status as LeadStatus, // dipakai di dropdown & badge
       }))
 
