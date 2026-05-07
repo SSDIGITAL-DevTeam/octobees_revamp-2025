@@ -73,7 +73,7 @@ const create = async (req, res) => {
         ) {
             return res.status(400).json({ error: "Required fields are missing" });
         }
-        await createLead({ name, email, phone, business, companyName, from, referralCode });
+        await createLead({ name, email, phone, business: business || '', companyName: companyName || '', from, referralCode });
 
         if (pdfPath?.trim() && blogTitle?.trim()) {
             const absolutePdfPath = path.join(__dirname, "../../upload", pdfPath);
@@ -82,7 +82,14 @@ const create = async (req, res) => {
                 name,
                 pdfFilePath: absolutePdfPath,
                 blogTitle,
-            }).catch((err) => logger.error(`PDF email error: ${err.message}`));
+            }).catch((err) => logger.error({
+                code: err.code,
+                command: err.command,
+                response: err.response,
+                responseCode: err.responseCode,
+                pdfPath: absolutePdfPath,
+                to: email,
+            }, `PDF email failed: ${err.message}`));
         }
 
         res.status(201).json({ message: "Lead created successfully" });

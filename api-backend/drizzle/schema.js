@@ -64,6 +64,16 @@ export const lead = mysqlTable('lead', {
   isAgree: boolean('is_agree').default(true), //setelah migrate akan di ubah menjadi not null
 });
 
+export const insightLead = mysqlTable('insight_lead', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }).notNull(),
+  from: varchar('from', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Legacy order route still imports this schema export during API boot.
 // Keep the table mapping available so old order endpoints do not break startup.
 export const order = mysqlTable('order', {

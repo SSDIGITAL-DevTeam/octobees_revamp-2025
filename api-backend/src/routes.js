@@ -27,6 +27,7 @@ import exam from "./assessment/exam.controller.js";
 import trainingContent from "./assessment/training-content.controller.js";
 import { runBatchScreening } from "./assessment/exam.controller.js";
 import lead from "./lead/_lead.route.js";
+import insightLead from "./insight-lead/_insight-lead.route.js";
 import clientOnboarding from "./client-onboarding/_client-onboarding.route.js";
 import videosOnboarding from "./videos-onboarding/_videos-onboarding.route.js";
 
@@ -73,6 +74,7 @@ router.use("/v1/assessment", assessment);
 router.use("/v1/assessment", assessmentSeeder);
 router.use("/v1/exam", exam);
 router.use("/v1/lead", lead.endUser);
+router.use("/v1/insight-lead", insightLead.endUser);
 router.use("/v1/client-onboarding", clientOnboarding.endUser);
 router.use("/v1/videos-onboarding", videosOnboarding);
 
@@ -96,6 +98,7 @@ router.use("/v1/back-office", (req, res, next) => {
   backOfficeRouter.use("/assessment", assessment);
   backOfficeRouter.use("/training", trainingContent);
   backOfficeRouter.use("/lead", lead.backOffice);
+  backOfficeRouter.use("/insight-lead", insightLead.backOffice);
   backOfficeRouter.use("/client-onboarding", clientOnboarding.backOffice);
   backOfficeRouter.use("/videos-onboarding", videosOnboarding);
   backOfficeRouter(req, res, next);

@@ -44,7 +44,7 @@ export default function DownloadPdfModal({ slug, blogTitle, pdfPath }: Props) {
 
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post("/lead", {
+      const response = await axiosInstance.post("/insight-lead", {
         name: form.name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),

@@ -45,11 +45,10 @@ export default function InsightLeadsPage() {
         const params: Record<string, any> = {
           limit: 10,
           page,
-          fromPrefix: "insight/",
           orderBy: `${sort.key}:${sort.direction ? "desc" : "asc"}`,
         };
         if (searchQuery.trim()) params.search = searchQuery;
-        const response = await axiosInstance.get("/lead", { params });
+        const response = await axiosInstance.get("/back-office/insight-lead", { params });
         setLeads(response.data);
       } catch {
         failedToast("Failed to fetch insight leads");

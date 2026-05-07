@@ -22,6 +22,9 @@ export const transporter = nodemailer.createTransport({
   port: smtpPort,
   secure: smtpSecure,
   auth: transporterAuth,
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 const defaultFromName = process.env.SMTP_FROM_NAME || "OCTOBEES Team";

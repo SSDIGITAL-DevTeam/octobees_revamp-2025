@@ -49,7 +49,12 @@ const streams = [
     stream: {
       write: (data) => {
         const parsed = JSON.parse(data);
-        errorDestination.write(customFormat(parsed));
+        const { msg, level, time, pid, hostname, ...extra } = parsed;
+        const date = new Date(time).toISOString().replace("T", " ").replace("Z", "");
+        const extraStr = Object.keys(extra).length
+          ? "\n  " + JSON.stringify(extra, null, 2).replace(/\n/g, "\n  ")
+          : "";
+        errorDestination.write(`[${date}] ERROR: ${msg}${extraStr}\n`);
       },
     },
   },
