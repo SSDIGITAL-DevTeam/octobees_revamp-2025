@@ -5,11 +5,17 @@ import {
     getLeadById,
     updateLead,
 } from "./lead.service.js";
+import { sendInsightPdfEmail } from "./lead.mailer.js";
 import logger from "../../utils/logger.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const getall = async (req, res) => {
     try {
-        let { page = 1, limit = 10, orderBy, search, createdAt } = req.query;
+        let { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix } = req.query;
         page = Math.max(parseInt(page) || 1, 1);
         limit = Math.max(parseInt(limit) || 10, 1);
 
@@ -29,6 +35,7 @@ const getall = async (req, res) => {
             search,
             orderBy: orderByParams,
             createdAt,
+            fromPrefix,
         };
 
         const data = await getAllLeads(filters);
@@ -52,9 +59,8 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let { name, email, phone, business, companyName, from, referralCode } = req.body;
+        let { name, email, phone, business, companyName, from, referralCode, pdfPath, blogTitle } = req.body;
 
-        // If email is not provided, generate a dummy one since it's required in DB
         if (!email?.trim()) {
             email = `no-email-${Date.now()}@example.com`;
         }
@@ -68,6 +74,16 @@ const create = async (req, res) => {
             return res.status(400).json({ error: "Required fields are missing" });
         }
         await createLead({ name, email, phone, business, companyName, from, referralCode });
+
+        if (pdfPath?.trim() && blogTitle?.trim()) {
+            const absolutePdfPath = path.join(__dirname, "../../upload", pdfPath);
+            sendInsightPdfEmail({
+                to: email,
+                name,
+                pdfFilePath: absolutePdfPath,
+                blogTitle,
+            }).catch((err) => logger.error(`PDF email error: ${err.message}`));
+        }
 
         res.status(201).json({ message: "Lead created successfully" });
     } catch (error) {

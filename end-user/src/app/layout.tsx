@@ -27,7 +27,7 @@ const sora = Sora({
 
 export async function generateMetadata() {
   const meta = pageMetadata.home;
-  return buildMetadata({
+  const metadata = await buildMetadata({
     title: meta.title,
     description: meta.description,
     keywords: meta.keywords,
@@ -37,6 +37,13 @@ export async function generateMetadata() {
     twitterOverride: meta.twitter,
     cmsPath: "home",
   });
+
+  return {
+    ...metadata,
+    icons: {
+      icon: "/assets/webp/logo-octobees.webp",
+    },
+  };
 }
 
 export default function RootLayout({

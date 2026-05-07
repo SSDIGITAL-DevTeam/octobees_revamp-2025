@@ -11,11 +11,15 @@ import logger from "../../utils/logger.js";
 
 export const getAllLeads = async (filters) => {
     try {
-        const { page = 1, limit = 10, orderBy, search, createdAt } = filters;
+        const { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix } = filters;
 
         const skip = (page - 1) * limit;
 
         const whereConditions = [];
+
+        if (fromPrefix) {
+            whereConditions.push(like(lead.from, `${fromPrefix}%`));
+        }
 
         if (search) {
             const keyword = `%${search.toLowerCase()}%`;

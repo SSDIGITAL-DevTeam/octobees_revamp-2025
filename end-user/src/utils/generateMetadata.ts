@@ -242,6 +242,9 @@ export async function generateMetadata({
     description: resolvedDescription,
     keywords: resolvedKeywords,
     robots,
+    icons: {
+      icon: "/assets/webp/logo-octobees.webp",
+    },
     alternates: {
       canonical,
       languages: {

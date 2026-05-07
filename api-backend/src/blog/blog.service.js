@@ -262,15 +262,15 @@ export const deleteBlogById = async (id) => {
       throw new Error("Blog with that ID not found");
     }
     const imagePath = _blog.image ? path.join(__dirname, "../../upload", _blog.image) : null;
+    const pdfPath = _blog.pdf ? path.join(__dirname, "../../upload", _blog.pdf) : null;
 
     await db.transaction(async (tx) => {
       await tx.delete(blog).where(eq(blog.id, id));
       await deleteBlogMetas(id, tx);
     });
 
-    if (imagePath && fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    if (imagePath && fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    if (pdfPath && fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -283,10 +283,14 @@ export const updateBlog = async (id, payload) => {
       throw new Error("Blog not found");
     }
 
-    const { image, favorite } = payload;
+    const { image, pdf, favorite } = payload;
     let oldImagePath = null;
+    let oldPdfPath = null;
     if (image) {
       oldImagePath = path.join(__dirname, "../../upload", _blog.image);
+    }
+    if (pdf && _blog.pdf) {
+      oldPdfPath = path.join(__dirname, "../../upload", _blog.pdf);
     }
 
     let newFavorite = favorite;
@@ -331,9 +335,8 @@ export const updateBlog = async (id, payload) => {
       }
     });
 
-    if (oldImagePath && fs.existsSync(oldImagePath)) {
-      fs.unlinkSync(oldImagePath);
-    }
+    if (oldImagePath && fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
+    if (oldPdfPath && fs.existsSync(oldPdfPath)) fs.unlinkSync(oldPdfPath);
   } catch (error) {
     throw new Error(error.message);
   }

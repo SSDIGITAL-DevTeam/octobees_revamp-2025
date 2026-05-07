@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { Blog } from "@/constants/payload";
 import ImageInsightContent from "@/assets/insights/webp/image-insights-subscription-content.webp";
 import FormSubscription from "./_components/FormSubscription";
+import DownloadPdfModal from "./_components/DownloadPdfModal";
 import { notFound } from "next/navigation";
 import { getInsightByCategory, getInsightBySlug } from "@/services/insight.service";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
@@ -213,6 +214,17 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
               </div>
             </div>
             <InsightContent content={blog.content} className="!leading-[150%] text-gray-700 body-parser space-y-3 md:space-y-4" />
+            
+            {blog.pdf && (
+              <div className="flex justify-center w-full mt-4">
+                <DownloadPdfModal
+                  slug={params.slug}
+                  blogTitle={blog.title}
+                  pdfPath={blog.pdf}
+                />
+              </div>
+            )}
+
             <RelatedServices categorySlug={blog.category.slug} />
             <div className="flex flex-col md:flex-row justify-center items-center gap-x-16 rounded-3xl bg-red-50/90 shadow-sm p-8">
               <Image

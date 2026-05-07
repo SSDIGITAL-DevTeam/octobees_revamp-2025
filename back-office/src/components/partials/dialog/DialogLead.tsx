@@ -32,35 +32,35 @@ export default function DialogLead({ children, lead, refetch }: Props) {
     },
     {
       name: "Company Name",
-      value: lead?.companyName || "-",
+      value: lead?.companyName,
     },
     {
       name: "Company Website",
-      value: lead?.companyWebsite || "-",
+      value: lead?.companyWebsite,
     },
     {
       name: "Business Industry",
-      value: lead?.business || "-",
+      value: lead?.business,
     },
     {
       name: "Message",
-      value: lead?.message || "-",
+      value: lead?.message,
     },
     {
       name: "From Page",
-      value: lead?.from || "-",
+      value: lead?.from,
     },
     {
       name: "Referral Code",
-      value: lead?.referralCode || "-",
+      value: lead?.referralCode,
     },
     {
       name: "Created At",
       value: lead?.createdAt
         ? format(new Date(lead.createdAt), "dd MMMM yyyy HH:mm")
-        : "-",
+        : null,
     },
-  ];
+  ].filter((item) => item.value !== null && item.value !== undefined && item.value !== "" && item.value !== "-");
 
   return (
     <Dialog>

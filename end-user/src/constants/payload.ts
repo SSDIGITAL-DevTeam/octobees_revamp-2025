@@ -83,6 +83,7 @@ export type Blog = {
   slug: string;
   status: string;
   favorite: boolean;
+  pdf?: string | null;
   categoryId: string;
   createdAt: Date;
   updatedAt: Date;

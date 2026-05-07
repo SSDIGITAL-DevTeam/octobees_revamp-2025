@@ -22,29 +22,23 @@ import Loading from "../wrapper/Loading";
 
 const dataSchema = z.object({
     title: z.string().nonempty("Title is required"),
-    // image: z
-    //     .any()
-    //     .refine(
-    //         (file) => {
-    //             if (!file) return true;
-    //             if (typeof file === "string") return true;
-    //             if (file instanceof File) return true;
-    //             return false;
-    //         },
-    //         { message: "Image must be a file" }
-    //     )
-    //     .optional(),
     image: z.preprocess(
         (val) => {
-            if (typeof val === "string") return val; // image lama (sudah ada)
-            return val instanceof File ? val : undefined; // file baru
+            if (typeof val === "string") return val;
+            return val instanceof File ? val : undefined;
         },
         z.union([
             z.string(),
             z.instanceof(File, { message: "Image is required" }),
         ])
     ),
-
+    pdf: z.preprocess(
+        (val) => {
+            if (typeof val === "string") return val;
+            return val instanceof File ? val : undefined;
+        },
+        z.union([z.string(), z.instanceof(File)]).optional()
+    ),
     content: z.string().nonempty("Content is required"),
     status: z.string(),
     favorite: z.boolean(),
@@ -79,6 +73,8 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
     const [imageFile, setImageFile] = React.useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = React.useState<string>("");
     const previewObjectUrlRef = useRef<string | null>(null);
+    const [pdfFile, setPdfFile] = React.useState<File | null>(null);
+    const [existingPdfName, setExistingPdfName] = React.useState<string>("");
     const [seo, setSeo] = React.useState<{ title: string; keyword: string; description: string }>({
         title: "",
         keyword: "",
@@ -96,8 +92,10 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 status: blog.status,
                 favorite: blog.favorite,
                 categoryId: blog.categoryId || "",
+                pdf: blog.pdf ?? undefined,
             });
             setPreviewUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/${blog.image}`);
+            if (blog.pdf) setExistingPdfName(blog.pdf.split("/").pop() || blog.pdf);
             const findMetaContent = (value: string) =>
                 blog?.metas?.find((meta: any) => meta.value === value)?.content || "";
             setSeo({
@@ -228,6 +226,9 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
             if (imageFile) {
                 formData.append("image", imageFile);
             }
+            if (pdfFile) {
+                formData.append("pdf", pdfFile);
+            }
             const metaPayload = buildMetaPayload({
                 title: trimmedTitle,
                 keyword: trimmedKeyword,
@@ -280,6 +281,24 @@ const FormBlog = ({ blog, categories }: FormBlogProps) => {
                 <div className="flex flex-col gap-4 md:gap-8 w-full">
                     <SelectField control={control} label="Add Category" name="categoryId" data={blogCategory} />
                     <ImageField defaultImage={previewUrl} setImageFile={handleImageSelect} control={control} label="Add Cover Image" name="image" />
+                    <div className="flex flex-col gap-2">
+                        <label className="capitalize font-semibold text-base">Attach PDF (optional)</label>
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            className="w-fit h-fit rounded-sm bg-red-700/10 border-red-700 border-[1px] text-sm px-3 py-2"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setPdfFile(file);
+                                    setExistingPdfName(file.name);
+                                }
+                            }}
+                        />
+                        {existingPdfName && (
+                            <p className="text-sm text-gray-500">Current PDF: <span className="text-red-700 font-medium">{existingPdfName}</span></p>
+                        )}
+                    </div>
                     <InputField control={control} label="Add Title" name="title" />
                     <RadioGroupField control={control} name="status" label="Status" data={statusList} />
                     <BlogField control={control} name="content" label="blog Content" />

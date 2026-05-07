@@ -13,6 +13,7 @@
   CircleUserRound,
   CircleDollarSign,
   WalletCards,
+  File,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -31,6 +32,11 @@ const sidebarItems = [
     group: "Blog Management",
     name: "blog",
     data: [
+      {
+        title: "Blog Category",
+        url: "/blog/blog-category",
+        icon: Hash,
+      },
       {
         title: "Blogs",
         url: "/blog/blogs",
@@ -119,6 +125,11 @@ const sidebarItems = [
         title: "Consultation Leads",
         url: "/lead",
         icon: MailCheck,
+      },
+      {
+        title: "Insight Download Leads",
+        url: "/lead/insight-leads",
+        icon: File,
       },
       {
         title: "Client Onboarded",

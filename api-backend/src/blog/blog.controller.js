@@ -101,7 +101,6 @@ const validateSeoEntries = (entries) => {
 const create = async (req, res) => {
   try {
     let { title, content, status, favorite, categoryId, userId, seo } = req.body;
-    // Parse seo if sent as JSON string via multipart
     if (typeof seo === "string") {
       try { seo = JSON.parse(seo); } catch (_) { /* ignore parse error */ }
     }
@@ -109,7 +108,8 @@ const create = async (req, res) => {
     const seoEntries = parseSeoPayload(seo);
     validateSeoEntries(seoEntries);
 
-    if (!req.file || !req.file.filename) {
+    const imageFile = req.files?.image?.[0];
+    if (!imageFile?.filename) {
       return res.status(400).json({ error: "Image is required" });
     }
 
@@ -124,6 +124,8 @@ const create = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    const pdfFile = req.files?.pdf?.[0];
+
     const blogData = {
       title: title.trim(),
       content: content.trim(),
@@ -131,7 +133,8 @@ const create = async (req, res) => {
       favorite: favorite === "true",
       categoryId,
       userId,
-      image: req.file.filename,
+      image: imageFile.filename,
+      pdf: pdfFile ? `pdf/${pdfFile.filename}` : null,
       seo: seoEntries,
     };
 
@@ -166,7 +169,8 @@ const put = async (req, res) => {
     const seoEntries = parseSeoPayload(seo);
     validateSeoEntries(seoEntries);
 
-    if (!req.file || !req.file.filename) {
+    const imageFile = req.files?.image?.[0];
+    if (!imageFile?.filename) {
       return res.status(400).json({ error: "Image is required" });
     }
 
@@ -181,6 +185,7 @@ const put = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
+    const pdfFile = req.files?.pdf?.[0];
     const isFavorite = favorite === "true";
     const payload = {
       title: title.trim(),
@@ -189,9 +194,10 @@ const put = async (req, res) => {
       favorite: isFavorite,
       categoryId,
       userId,
-      image: req.file.filename,
+      image: imageFile.filename,
       seo: seoEntries,
     };
+    if (pdfFile) payload.pdf = `pdf/${pdfFile.filename}`;
     await updateBlog(id, payload);
     res.status(200).json({ message: "Blog edited successfully" });
   } catch (error) {
@@ -219,11 +225,21 @@ const patch = async (req, res) => {
       payload.seo = seoEntries;
     }
 
-    if (req.file) {
-      payload.image = req.file.filename;
+    const imageFile = req.files?.image?.[0];
+    const pdfFile = req.files?.pdf?.[0];
+
+    if (imageFile) {
+      payload.image = imageFile.filename;
     } else {
       delete payload.image;
     }
+
+    if (pdfFile) {
+      payload.pdf = `pdf/${pdfFile.filename}`;
+    } else {
+      delete payload.pdf;
+    }
+
     await updateBlog(id, payload);
 
     res.status(200).json({ message: "Blog edited successfully" });

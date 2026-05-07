@@ -53,6 +53,19 @@ const storageVideo = multer.diskStorage({
 });
 
 // Filter file (opsional, cek hanya gambar)
+const storagePdf = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = "upload/pdf/";
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `pdf-${uniqueSuffix}${ext}`);
+  },
+});
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -130,4 +143,35 @@ export const uploadVideo = multer({
   storage: storageVideo,
   fileFilter: videoFileFilter,
   limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for videos
+});
+
+const blogFileFilter = (req, file, cb) => {
+  if (file.fieldname === "image" && file.mimetype.startsWith("image/")) {
+    cb(null, true);
+  } else if (file.fieldname === "pdf" && file.mimetype === "application/pdf") {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type for field: " + file.fieldname), false);
+  }
+};
+
+export const uploadBlogFiles = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      if (file.fieldname === "pdf") {
+        const uploadPath = "upload/pdf/";
+        fs.mkdirSync(uploadPath, { recursive: true });
+        cb(null, uploadPath);
+      } else {
+        cb(null, "upload/");
+      }
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+    },
+  }),
+  fileFilter: blogFileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
