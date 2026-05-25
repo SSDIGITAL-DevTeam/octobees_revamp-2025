@@ -28,14 +28,21 @@ const ListFooterSocmed = [
   }
 ]
 
+const ListFooterCompany = [
+  { name: 'About Us', link: '/about' },
+  { name: 'Contact Us', link: '/contact-us' },
+  { name: 'Privacy Policy', link: '/privacy-policy' },
+  { name: 'Terms of Service', link: '/terms-of-service' },
+]
+
 export default function Footer(): JSX.Element {
   return (
       <footer className="bg-[#121212] py-16 px-5 space-y-12" id="footer" aria-label="Site Footer">
-        <div className="flex flex-col md:flex-row sm:container items-center justify-between gap-y-14">
-          <div className="flex flex-col gap-y-6 items-center md:items-start w-full">
+        <div className="flex flex-col md:flex-row sm:container items-start justify-between gap-y-14 md:gap-x-10">
+          <div className="flex flex-col gap-y-6 items-center md:items-start w-full md:w-[35%]">
             <LogoFooter />
             <h2 className="sr-only">Footer Octobees</h2>
-            <p className="text-light text-base text-center md:text-left md:w-[30%]">
+            <p className="text-light text-base text-center md:text-left">
               Your personal digital sales assistant & The ultimate sales ecosystem
             </p>
             <nav className="flex gap-x-3 items-center" aria-label="Social media links">
@@ -53,7 +60,21 @@ export default function Footer(): JSX.Element {
               ))}
             </nav>
           </div>
-          <div className="flex flex-col gap-y-5 md:w-[50%] w-[80%]">
+          <div className="flex flex-col gap-y-4 w-full md:w-auto items-center md:items-start">
+            <h3 className="text-light text-base font-semibold">Company</h3>
+            <nav className="flex flex-col gap-y-2 items-center md:items-start" aria-label="Company links">
+              {ListFooterCompany.map((item, index) => (
+                <Link
+                  key={index}
+                  href={item.link}
+                  className="text-light text-sm hover:text-white/80 transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="flex flex-col gap-y-5 md:w-[35%] w-[80%]">
             <h3 className="text-light text-base text-center md:text-left">
               Stay updated! Subscribe to our newsletter for the latest news, insights, and exclusive offers
             </h3>
