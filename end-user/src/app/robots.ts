@@ -13,6 +13,7 @@ const DISALLOW_PATHS = [
   "/draft",
   "/admin",
   "/api/private",
+  "/cdn-cgi/",
 ];
 
 export default function robots(): MetadataRoute.Robots {

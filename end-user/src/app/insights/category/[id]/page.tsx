@@ -1,4 +1,5 @@
 import { notFound} from "next/navigation";
+import axios from "axios";
 import BackArticleButton from "@/components/partials/Button/ButtonBackArticle";
 import { InsightArticle, InsightCategory, InsightNotFound, InsightPagination, InsightSearch } from "@/app/insights/_components";
 import { Blog, BlogCategory, Pagination } from "@/constants/payload";
@@ -32,7 +33,10 @@ export default async function InsightCategoryPage({searchParams, params} : Props
     title = category.name;
     categories = blog_category.data
   } catch (error) {
-    return notFound();
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return notFound();
+    }
+    throw error;
   }
 
   return (

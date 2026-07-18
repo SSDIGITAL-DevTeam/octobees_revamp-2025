@@ -11,6 +11,7 @@ import ImageInsightContent from "@/assets/insights/webp/image-insights-subscript
 import FormSubscription from "./_components/FormSubscription";
 import DownloadPdfModal from "./_components/DownloadPdfModal";
 import { notFound } from "next/navigation";
+import axios from "axios";
 import { getInsightByCategory, getInsightBySlug } from "@/services/insight.service";
 import Breadcrumbs from "@/components/navigation/Breadcrumbs";
 import ArticleSchema from "@/app/seo/schema/ArticleSchema";
@@ -137,7 +138,10 @@ export default async function ArticleDetail({ params }: SlugInsightPageProps) {
     const response = await getInsightByCategory(blog?.categoryId || "", 3);
     relatedBlog = response.data;
   } catch (error) {
-    return notFound();
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return notFound();
+    }
+    throw error;
   }
 
   const siteUrl =
