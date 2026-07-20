@@ -1,6 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import DottedMap from "dotted-map";
+import FAQSchema from "@/app/seo/schema/FAQSchema";
+
+const nodejsFAQ = [
+  {
+    question: "Why use Node.js over PHP or Java?",
+    answer:
+      "Node.js is event-driven and non-blocking, making it superior for handling multiple concurrent connections and real-time applications. It also allows using the same language (JS) on both frontend and backend.",
+  },
+  {
+    question: "Is Node.js scalable?",
+    answer:
+      "Yes, highly. Node.js is designed with scalability in mind, especially when coupled with a microservices architecture and containerization (Docker).",
+  },
+  {
+    question: "How secure is Node.js?",
+    answer:
+      "While no platform is immune to threats, we implement rigorous security best practices including input validation, secure headers, and dependency auditing to ensure your application is secure.",
+  },
+];
 
 export default function NodeJSDevelopment() {
   return (
@@ -441,6 +460,7 @@ export default function NodeJSDevelopment() {
         </section>
 
         <section className="py-12 lg:py-20 px-6 lg:px-10 border-b border-white/10">
+          <FAQSchema items={nodejsFAQ} />
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-24">
               <div className="lg:col-span-1 space-y-6">

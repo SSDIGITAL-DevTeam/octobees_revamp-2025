@@ -43,3 +43,4 @@ service-production.yaml
 cloudbuild-production.yaml
 
 *.zip
+.env*

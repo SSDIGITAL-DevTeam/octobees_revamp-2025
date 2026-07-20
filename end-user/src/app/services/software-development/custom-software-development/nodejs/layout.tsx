@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Node.js Development Services | DPA Singapore",
+  title: "Node.js Development Services | Octobees",
   description:
     "Scalable Node.js development services in Singapore. We build real-time backend solutions, APIs, and microservices using the efficient V8 engine.",
   keywords: [
@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     "Node.js experts",
   ],
   openGraph: {
-    title: "Node.js Development Services | DPA Singapore",
+    title: "Node.js Development Services | Octobees",
     description:
       "Scalable Node.js development services in Singapore. We build real-time backend solutions, APIs, and microservices.",
-    url: "https://digital-pa.com.sg/services/software-development/custom-software-development/nodejs",
+    url: "https://www.octobees.com/services/software-development/custom-software-development/nodejs",
     siteName: "Octobees",
     images: [
       {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Node.js Development Services | DPA Singapore",
+    title: "Node.js Development Services | Octobees",
     description:
       "Scalable Node.js development services in Singapore. We build real-time backend solutions, APIs, and microservices.",
     images: ["/png/hero-nodejs.jpg"],
@@ -39,6 +39,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: "https://www.octobees.com/services/software-development/custom-software-development/nodejs",
   },
 };
 

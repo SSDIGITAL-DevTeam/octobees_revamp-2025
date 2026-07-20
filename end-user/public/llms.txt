@@ -1,0 +1,45 @@
+# Octobees
+
+> Octobees is a digital marketing and technology agency headquartered in Yogyakarta, Indonesia, with a regional partner presence in Singapore. It helps businesses grow through SEO/SEM, content and social media marketing, website and software development, and AI/GEO (Generative Engine Optimization) services.
+
+Octobees serves clients across Indonesia and Singapore. Office: Artech Space Building, 4th Floor, Cambridge, Jl. Sagan Kidul No.14, Terban, Kec. Gondokusuman, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55223, Indonesia. Contact: contact@octobees.com.
+
+## Company
+
+- [About Octobees](https://www.octobees.com/about): Company mission and how Octobees helps businesses grow with tailored digital marketing solutions.
+- [Contact](https://www.octobees.com/contact-us): Get in touch with the Octobees team.
+- [Insights](https://www.octobees.com/insights): Digital marketing trends, guides, and case studies.
+
+## SEO & SEM
+
+- [Search Engine Optimization (SEO)](https://www.octobees.com/services/ads-campaign/search-engine-optimization): Grow organic traffic and improve search rankings with proven SEO strategies.
+- [Search Engine Marketing (SEM)](https://www.octobees.com/services/ads-campaign/search-engine-marketing): Paid ads and SEM strategies to maximize online visibility.
+- [SEO Copywriting](https://www.octobees.com/services/ads-campaign/seo-copywriting): Search-optimized content that engages audiences and ranks on search engines.
+
+## Content Marketing
+
+- [Content Marketing](https://www.octobees.com/services/content-marketing/content-marketing): Strategic content marketing to drive traffic and engagement.
+- [Copywriting](https://www.octobees.com/services/content-marketing/copywriting): Persuasive, brand-focused copywriting services.
+- [Blog & Article Writing](https://www.octobees.com/services/content-marketing/blog-article): Blog content including how-to guides, case studies, and FAQs.
+- [Infographic Content](https://www.octobees.com/services/content-marketing/infographic-content): Turning complex data into engaging visual stories.
+- [Skyscraper Content](https://www.octobees.com/services/content-marketing/skyscraper-content): Comprehensive, high-quality long-form content built to rank.
+- [Social Media Content](https://www.octobees.com/services/content-marketing/social-media-content): Brand-focused content for social platforms.
+
+## Social Media Marketing
+
+- [Social Media Management](https://www.octobees.com/services/social-media-marketing/social-media-management): Strategy, content, and community management across platforms.
+- [Paid Social Ads](https://www.octobees.com/services/social-media-marketing/paid-social-ads): Paid campaign management on Facebook, Instagram, and LinkedIn.
+
+## Website & Software Development
+
+- [Website Design & Development](https://www.octobees.com/services/website-development/website-design-development): Responsive website design and development.
+- [Website Maintenance](https://www.octobees.com/services/website-development/website-maintenance): Ongoing website maintenance, security, and updates.
+- [Custom Software Development](https://www.octobees.com/services/software-development/custom-software-development): Custom software and web application development.
+- [Next.js Development](https://www.octobees.com/services/software-development/custom-software-development/nextjs): Next.js web application development.
+- [Node.js Development](https://www.octobees.com/services/software-development/custom-software-development/nodejs): Node.js backend, API, and microservices development.
+- [JavaScript Development](https://www.octobees.com/services/software-development/custom-software-development/javascript): JavaScript web application development.
+
+## AI Solutions
+
+- [AI Automation](https://www.octobees.com/services/ai-solutions/ai-automation): AI automation services to streamline operations and reduce costs.
+- [Generative Engine Optimization (GEO)](https://www.octobees.com/services/ai-solutions/generative-engine-optimization): Optimizing content so brands get cited and recommended by AI search engines like ChatGPT, Gemini, and Google AI Overviews.

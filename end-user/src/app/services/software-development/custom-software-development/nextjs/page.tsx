@@ -1,6 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import DottedMap from "dotted-map";
+import FAQSchema from "@/app/seo/schema/FAQSchema";
+
+const nextjsFAQ = [
+  {
+    question: "Why choose Next.js over plain React?",
+    answer:
+      "Next.js provides out-of-the-box File-system Routing, Server-Side Rendering (SSR), and Static Site Generation (SSG), which plain React doesn't offer natively. This means better SEO and faster load times.",
+  },
+  {
+    question: "Does Next.js improve SEO?",
+    answer:
+      "Absolutely. By pre-rendering pages on the server, search engines can crawl your site content much more effectively than client-side rendered Single Page Applications.",
+  },
+  {
+    question: "Can I migrate my existing React app to Next.js?",
+    answer:
+      "Yes, migration is common and supported. We can help you move incrementally page-by-page to Next.js without rewriting your entire codebase.",
+  },
+];
 
 export default function NextJSDevelopment() {
   return (
@@ -436,6 +455,7 @@ export default function NextJSDevelopment() {
         </section>
 
         <section className="py-12 lg:py-20 px-6 lg:px-10 border-b border-white/10">
+          <FAQSchema items={nextjsFAQ} />
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-24">
               <div className="lg:col-span-1 space-y-6">

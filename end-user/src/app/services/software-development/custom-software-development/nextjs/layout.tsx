@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next.js Development Services | DPA Singapore",
+  title: "Next.js Development Services | Octobees",
   description:
     "Professional Next.js development services in Singapore. Build high-performance, SEO-friendly web applications with the React Framework for Production.",
   keywords: [
@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     "Next.js experts",
   ],
   openGraph: {
-    title: "Next.js Development Services | DPA Singapore",
+    title: "Next.js Development Services | Octobees",
     description:
       "Professional Next.js development services in Singapore. Build high-performance, SEO-friendly web applications.",
-    url: "https://digital-pa.com.sg/services/software-development/custom-software-development/nextjs",
+    url: "https://www.octobees.com/services/software-development/custom-software-development/nextjs",
     siteName: "Octobees",
     images: [
       {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Next.js Development Services | DPA Singapore",
+    title: "Next.js Development Services | Octobees",
     description:
       "Professional Next.js development services in Singapore. Build high-performance, SEO-friendly web applications.",
     images: ["/png/hero-nextjs.jpg"],
@@ -39,6 +39,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: "https://www.octobees.com/services/software-development/custom-software-development/nextjs",
   },
 };
 

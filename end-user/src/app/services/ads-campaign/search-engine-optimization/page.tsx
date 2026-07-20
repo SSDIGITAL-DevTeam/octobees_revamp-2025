@@ -26,6 +26,7 @@ import FreeSEOWeb from "@/assets/services/webp/free-seo-web-audit.webp"
 import GridSection from "../../_components/GridSection"
 import IconGridSection from "../../_components/IconGridSection"
 import { seoFAQ } from "@/constants/services/faq"
+import FAQSchema from '@/app/seo/schema/FAQSchema'
 
 type SEOServices = {
     title: string;
@@ -151,6 +152,7 @@ export default function SEM() {
             {/* FAQ */}
             <section className="w-full bg-white py-12 lg:py-20">
                 <FAQ value={seoFAQ}/>
+                <FAQSchema items={seoFAQ.map(({ title, desc }) => ({ question: title, answer: desc }))} />
             </section>
             {/* Join */}
             <section className="w-full bg-primary py-12 lg:py-20">

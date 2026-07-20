@@ -44,6 +44,7 @@ import TailoredImage3 from '@/assets/services/webp/wdd/tailored3.webp'
 import GradientSection from '../../_components/GradientSection'
 import CheckBoxIcon from '../../_components/CheckBoxIcon'
 import { webFAQ } from '@/constants/services/faq'
+import FAQSchema from '@/app/seo/schema/FAQSchema'
 
 type List = {
     title: string;
@@ -298,6 +299,7 @@ export default function WebsiteDevelopment(): JSX.Element {
 
             <section className="w-full bg-white py-12 lg:py-20">
                 <FAQ value={webFAQ}/>
+                <FAQSchema items={webFAQ.map(({ title, desc }) => ({ question: title, answer: desc }))} />
             </section>
 
             <section className="w-full bg-primary py-12 lg:py-20">

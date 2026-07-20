@@ -1,5 +1,6 @@
-const metadataBase = new URL('https://digital-pa.com.sg')
-const defaultImage = `${metadataBase}/webp/asset-logo.webp`
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://www.octobees.com"
+const metadataBase = new URL(SITE_URL)
+const defaultImage = `${SITE_URL}/assets/png/asset-logo-opengraph-octobees.png`
 export type MetadataKeys = keyof typeof seoMetadata
 
 export const seoMetadata = {
@@ -20,7 +21,7 @@ export const seoMetadata = {
             title: 'Octobees | Digital Marketing Experts',
             description:
                 'Discover how Octobees helps businesses grow with expert digital marketing solutions tailored for success.',
-            url: `${metadataBase}`,
+            url: `${SITE_URL}`,
             images: [
                 {
                     url: defaultImage,
@@ -31,7 +32,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}`,
+            canonical: `${SITE_URL}`,
         },
     },
 
@@ -50,7 +51,7 @@ export const seoMetadata = {
             title: 'About Octobees | Trusted Marketing Partner',
             description:
                 'Learn about Octobees, our mission, and how we help businesses grow with tailored digital marketing solutions.',
-            url: `${metadataBase}/about-us`,
+            url: `${SITE_URL}/about-us`,
             images: [
                 {
                     url: defaultImage,
@@ -61,7 +62,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/about-us`,
+            canonical: `${SITE_URL}/about-us`,
         },
     },
 
@@ -80,7 +81,7 @@ export const seoMetadata = {
             title: 'Contact Octobees | Reach Our Marketing Experts',
             description:
                 'Reach out to Octobees for expert advice on digital marketing, automation, SEO, and more.',
-            url: `${metadataBase}/contact-us`,
+            url: `${SITE_URL}/contact-us`,
             images: [
                 {
                     url: defaultImage,
@@ -91,7 +92,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/contact-us`,
+            canonical: `${SITE_URL}/contact-us`,
         },
     },
 
@@ -110,7 +111,7 @@ export const seoMetadata = {
             title: 'Insights | Trends & Tips by Octobees',
             description:
                 'Stay updated with the latest digital marketing trends, guides, and case studies curated by our team.',
-            url: `${metadataBase}/insights`,
+            url: `${SITE_URL}/insights`,
             images: [
                 {
                     url: defaultImage,
@@ -121,7 +122,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/insights`,
+            canonical: `${SITE_URL}/insights`,
         },
     },
 
@@ -140,7 +141,7 @@ export const seoMetadata = {
             title: 'SEM Services in Singapore | Octobees',
             description:
                 'Maximize your online visibility with paid ads and expert SEM strategies tailored to your goals.',
-            url: `${metadataBase}/services/ads-campaign/search-engine-marketing`,
+            url: `${SITE_URL}/services/ads-campaign/search-engine-marketing`,
             images: [
                 {
                     url: defaultImage,
@@ -151,7 +152,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/ads-campaign/search-engine-marketing`,
+            canonical: `${SITE_URL}/services/ads-campaign/search-engine-marketing`,
         },
     },
 
@@ -170,7 +171,7 @@ export const seoMetadata = {
             title: 'SEO Services in Singapore | Octobees',
             description:
                 'Grow your organic traffic and improve search rankings with our proven SEO strategies.',
-            url: `${metadataBase}/services/ads-campaign/search-engine-optimization`,
+            url: `${SITE_URL}/services/ads-campaign/search-engine-optimization`,
             images: [
                 {
                     url: defaultImage,
@@ -181,7 +182,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/ads-campaign/search-engine-optimization`,
+            canonical: `${SITE_URL}/services/ads-campaign/search-engine-optimization`,
         },
     },
 
@@ -200,7 +201,7 @@ export const seoMetadata = {
             title: 'SEO Copywriting Services | Octobees',
             description:
                 'We create optimized content that engages your audience and ranks high on search engines.',
-            url: `${metadataBase}/services/ads-campaign/seo-copywriting`,
+            url: `${SITE_URL}/services/ads-campaign/seo-copywriting`,
             images: [
                 {
                     url: defaultImage,
@@ -211,7 +212,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/ads-campaign/seo-copywriting`,
+            canonical: `${SITE_URL}/services/ads-campaign/seo-copywriting`,
         },
     },
 
@@ -230,7 +231,7 @@ export const seoMetadata = {
             title: 'Blog Articles & Resources | Octobees',
             description:
                 'Explore our blog to find expert tips, industry trends, and digital growth strategies.',
-            url: `${metadataBase}/services/content-marketing/blog-article`,
+            url: `${SITE_URL}/services/content-marketing/blog-article`,
             images: [
                 {
                     url: defaultImage,
@@ -241,7 +242,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/blog-article`,
+            canonical: `${SITE_URL}/services/content-marketing/blog-article`,
         },
     },
 
@@ -260,7 +261,7 @@ export const seoMetadata = {
             title: 'Content Marketing Services | Octobees',
             description:
                 'Drive traffic and engagement with strategic content marketing tailored to your business goals.',
-            url: `${metadataBase}/services/content-marketing/content-marketing`,
+            url: `${SITE_URL}/services/content-marketing/content-marketing`,
             images: [
                 {
                     url: defaultImage,
@@ -271,7 +272,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/content-marketing`,
+            canonical: `${SITE_URL}/services/content-marketing/content-marketing`,
         },
     },
 
@@ -290,7 +291,7 @@ export const seoMetadata = {
             title: 'Copywriting Services | Octobees',
             description:
                 'Engage your audience and drive action with persuasive, brand-focused copywriting services.',
-            url: `${metadataBase}/services/content-marketing/copywriting`,
+            url: `${SITE_URL}/services/content-marketing/copywriting`,
             images: [
                 {
                     url: defaultImage,
@@ -301,7 +302,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/copywriting`,
+            canonical: `${SITE_URL}/services/content-marketing/copywriting`,
         },
     },
 
@@ -320,7 +321,7 @@ export const seoMetadata = {
             title: 'Infographic Design Services | Octobees',
             description:
                 'Turn complex data into engaging visual stories with our infographic content services.',
-            url: `${metadataBase}/services/content-marketing/infographic-content`,
+            url: `${SITE_URL}/services/content-marketing/infographic-content`,
             images: [
                 {
                     url: defaultImage,
@@ -331,7 +332,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/infographic-content`,
+            canonical: `${SITE_URL}/services/content-marketing/infographic-content`,
         },
     },
 
@@ -350,7 +351,7 @@ export const seoMetadata = {
             title: 'Skyscraper Content Services | Octobees',
             description:
                 'Dominate your niche with comprehensive, high-quality skyscraper content that ranks.',
-            url: `${metadataBase}/services/content-marketing/skyscraper-content`,
+            url: `${SITE_URL}/services/content-marketing/skyscraper-content`,
             images: [
                 {
                     url: defaultImage,
@@ -361,7 +362,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/skyscraper-content`,
+            canonical: `${SITE_URL}/services/content-marketing/skyscraper-content`,
         },
     },
 
@@ -380,7 +381,7 @@ export const seoMetadata = {
             title: 'Social Media Content Solutions | Octobees',
             description:
                 'We create thumb-stopping, brand-focused content for all your social platforms.',
-            url: `${metadataBase}/services/content-marketing/social-media-content`,
+            url: `${SITE_URL}/services/content-marketing/social-media-content`,
             images: [
                 {
                     url: defaultImage,
@@ -391,7 +392,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/content-marketing/social-media-content`,
+            canonical: `${SITE_URL}/services/content-marketing/social-media-content`,
         },
     },
 
@@ -410,7 +411,7 @@ export const seoMetadata = {
             title: 'Paid Social Ads Management | Octobees',
             description:
                 'Maximize your ROI with strategic paid campaigns on Facebook, Instagram, LinkedIn, and more.',
-            url: `${metadataBase}/services/social-media-marketing/paid-social-ads`,
+            url: `${SITE_URL}/services/social-media-marketing/paid-social-ads`,
             images: [
                 {
                     url: defaultImage,
@@ -421,7 +422,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/social-media-marketing/paid-social-ads`,
+            canonical: `${SITE_URL}/services/social-media-marketing/paid-social-ads`,
         },
     },
 
@@ -440,7 +441,7 @@ export const seoMetadata = {
             title: 'Social Media Management Services | Octobees',
             description:
                 'We handle your strategy, content, and community management across all major platforms.',
-            url: `${metadataBase}/services/social-media-marketing/social-media-management`,
+            url: `${SITE_URL}/services/social-media-marketing/social-media-management`,
             images: [
                 {
                     url: defaultImage,
@@ -451,7 +452,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/social-media-marketing/social-media-management`,
+            canonical: `${SITE_URL}/services/social-media-marketing/social-media-management`,
         },
     },
 
@@ -470,7 +471,7 @@ export const seoMetadata = {
             title: 'Website Design & Development Services | Octobees',
             description:
                 'Create stunning, responsive websites that align with your business goals and drive results.',
-            url: `${metadataBase}/services/website-development/website-design-development`,
+            url: `${SITE_URL}/services/website-development/website-design-development`,
             images: [
                 {
                     url: defaultImage,
@@ -481,7 +482,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/website-development/website-design-development`,
+            canonical: `${SITE_URL}/services/website-development/website-design-development`,
         },
     },
 
@@ -500,7 +501,7 @@ export const seoMetadata = {
             title: 'Website Maintenance Services | Octobees',
             description:
                 'Ensure your site remains fast, secure, and up-to-date with our reliable maintenance services.',
-            url: `${metadataBase}/services/website-development/website-maintenance`,
+            url: `${SITE_URL}/services/website-development/website-maintenance`,
             images: [
                 {
                     url: defaultImage,
@@ -511,13 +512,13 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/website-development/website-maintenance`,
+            canonical: `${SITE_URL}/services/website-development/website-maintenance`,
         },
     },
 
     aiAutomation: {
         metadataBase,
-        title: 'AI Automation Solutions | Your Octobeesrtner in Digital Products',
+        title: 'AI Automation Solutions | Your Trusted Partner in Digital Products',
         description:
             'Discover how Octobees’s AI automation services help businesses in Singapore streamline operations, reduce costs, and enhance efficiency through intelligent automation and digital transformation.',
         keywords: [
@@ -527,10 +528,10 @@ export const seoMetadata = {
             'Automation Tools',
         ],
         openGraph: {
-            title: 'AI Automation Solutions | Your Octobeesrtner in Digital Products',
+            title: 'AI Automation Solutions | Your Trusted Partner in Digital Products',
             description:
                 'Discover how Octobees’s AI automation services help businesses in Singapore streamline operations, reduce costs, and enhance efficiency through intelligent automation and digital transformation.',
-            url: `${metadataBase}/services/ai-solutions/ai-automation`,
+            url: `${SITE_URL}/services/ai-solutions/ai-automation`,
             images: [
                 {
                     url: defaultImage,
@@ -541,7 +542,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/ai-solutions/ai-automation`,
+            canonical: `${SITE_URL}/services/ai-solutions/ai-automation`,
         },
     },
 
@@ -562,7 +563,7 @@ export const seoMetadata = {
             title: 'Generative Engine Optimization (GEO) Services | Octobees',
             description:
                 'Get your brand cited and recommended by AI search engines like ChatGPT, Gemini, and Google AI Overviews. Our GEO services optimize your content for AI-powered visibility.',
-            url: `${metadataBase}/services/ai-solutions/generative-engine-optimization`,
+            url: `${SITE_URL}/services/ai-solutions/generative-engine-optimization`,
             images: [
                 {
                     url: defaultImage,
@@ -573,7 +574,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/services/ai-solutions/generative-engine-optimization`,
+            canonical: `${SITE_URL}/services/ai-solutions/generative-engine-optimization`,
         },
     },
 
@@ -592,7 +593,7 @@ export const seoMetadata = {
             title: 'Thank You for Reaching Out | Octobees',
             description:
                 'We’ve successfully received your inquiry. Our team will get back to you shortly.',
-            url: `${metadataBase}/thanks`,
+            url: `${SITE_URL}/thanks`,
             images: [
                 {
                     url: defaultImage,
@@ -603,7 +604,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/thanks`,
+            canonical: `${SITE_URL}/thanks`,
         },
     },
 
@@ -624,7 +625,7 @@ export const seoMetadata = {
             title: 'DPA Tuition Centre | Singapore Learning Support',
             description:
                 'Explore the comprehensive academic coaching services offered by DPA Tuition Centre, focused on academic success and personal development.',
-            url: `${metadataBase}/tuition-center-knowledge-base`,
+            url: `${SITE_URL}/tuition-center-knowledge-base`,
             images: [
                 {
                     url: defaultImage,
@@ -635,7 +636,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/tuition-center-knowledge-base`,
+            canonical: `${SITE_URL}/tuition-center-knowledge-base`,
         },
     },
 
@@ -656,7 +657,7 @@ export const seoMetadata = {
             title: 'Privacy Policy | Octobees',
             description:
                 'Read how Octobees collects, uses, and protects your personal data in accordance with the PDPA. Your privacy and trust are our top priority.',
-            url: `${metadataBase}/privacy-policy`,
+            url: `${SITE_URL}/privacy-policy`,
             images: [
                 {
                     url: defaultImage,
@@ -667,7 +668,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/privacy-policy`,
+            canonical: `${SITE_URL}/privacy-policy`,
         },
     },
 
@@ -687,7 +688,7 @@ export const seoMetadata = {
             title: 'AI Marketing Automation | Smarter Digital Strategy',
             description:
                 'Explore how Octobees’s AI marketing automation services empower businesses in Singapore to optimize campaigns, boost engagement, and increase ROI through advanced automation and intelligent marketing strategies.',
-            url: `${metadataBase}/dpa-leads-ai-automation`,
+            url: `${SITE_URL}/dpa-leads-ai-automation`,
             images: [
                 {
                     url: defaultImage,
@@ -698,7 +699,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/dpa-leads-ai-automation`,
+            canonical: `${SITE_URL}/dpa-leads-ai-automation`,
         },
     },
 
@@ -718,7 +719,7 @@ export const seoMetadata = {
             title: 'Terms and Conditions | Octobees',
             description:
                 'Discover how Octobees empowers businesses in Singapore with AI-driven marketing automation to refine campaigns, boost engagement, and achieve measurable results through intelligent digital solutions.',
-            url: `${metadataBase}/terms-and-conditions`,
+            url: `${SITE_URL}/terms-and-conditions`,
             images: [
                 {
                     url: defaultImage,
@@ -729,7 +730,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/terms-and-conditions`,
+            canonical: `${SITE_URL}/terms-and-conditions`,
         },
     },
 
@@ -748,7 +749,7 @@ export const seoMetadata = {
             title: 'iSun Chatbot Services | Octobees',
             description:
                 'Chat about your marketing automation needs. Our chatbot is here to help you with your automation needs',
-            url: `${metadataBase}/isun-chatbot-ai-testing`,
+            url: `${SITE_URL}/isun-chatbot-ai-testing`,
             images: [
                 {
                     url: defaultImage,
@@ -759,7 +760,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/isun-chatbot-ai-testing`,
+            canonical: `${SITE_URL}/isun-chatbot-ai-testing`,
         },
     },
 
@@ -778,7 +779,7 @@ export const seoMetadata = {
             title: 'DPA Chatbot Services | Octobees',
             description:
                 'Chat about your marketing automation needs. Our chatbot is here to help you with your automation needs',
-            url: `${metadataBase}/demo-dpa-tuition-agency`,
+            url: `${SITE_URL}/demo-dpa-tuition-agency`,
             images: [
                 {
                     url: defaultImage,
@@ -789,7 +790,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}/demo-dpa-tuition-agency`,
+            canonical: `${SITE_URL}/demo-dpa-tuition-agency`,
         },
     },
 
@@ -811,7 +812,7 @@ export const seoMetadata = {
             title: 'Site Under Maintenance | Octobees',
             description:
                 'We are currently performing scheduled maintenance to improve your experience. We will be back shortly.',
-            url: `${metadataBase}`,
+            url: `${SITE_URL}`,
             images: [
                 {
                     url: defaultImage,
@@ -822,7 +823,7 @@ export const seoMetadata = {
             ],
         },
         alternates: {
-            canonical: `${metadataBase}`,
+            canonical: `${SITE_URL}`,
         },
     },
 }

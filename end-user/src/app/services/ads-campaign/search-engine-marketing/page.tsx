@@ -28,6 +28,7 @@ import Database from '@/assets/services/svg/database.svg'
 import Graph from '@/assets/services/svg/graph.svg'
 import GridSection from "../../_components/GridSection"
 import { semFAQ } from "@/constants/services/faq"
+import FAQSchema from '@/app/seo/schema/FAQSchema'
 
 type SemCampaign = {
     icons: string;
@@ -168,6 +169,7 @@ export default function SEM() {
             </section> */}
             <section className="w-full bg-white py-12 lg:py-20">
                 <FAQ value={semFAQ}/>
+                <FAQSchema items={semFAQ.map(({ title, desc }) => ({ question: title, answer: desc }))} />
             </section>
             <section className="w-full bg-primary py-12 lg:py-20">
                 <FormJoin />

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "JavaScript Development Services | DPA Singapore",
+  title: "JavaScript Development Services | Octobees",
   description:
     "Expert JavaScript development services in Singapore. We build high-performance web applications, single-page apps, and enterprise solutions using modern JavaScript frameworks.",
   keywords: [
@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     "JavaScript experts",
   ],
   openGraph: {
-    title: "JavaScript Development Services | DPA Singapore",
+    title: "JavaScript Development Services | Octobees",
     description:
       "Expert JavaScript development services in Singapore. We build high-performance web applications using modern frameworks.",
-    url: "https://digital-pa.com.sg/services/software-development/custom-software-development/javascript",
+    url: "https://www.octobees.com/services/software-development/custom-software-development/javascript",
     siteName: "Octobees",
     images: [
       {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JavaScript Development Services | DPA Singapore",
+    title: "JavaScript Development Services | Octobees",
     description:
       "Expert JavaScript development services in Singapore. We build high-performance web applications using modern frameworks.",
     images: ["/png/hero-javascript.jpg"],
@@ -39,6 +39,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: "https://www.octobees.com/services/software-development/custom-software-development/javascript",
   },
 };
 

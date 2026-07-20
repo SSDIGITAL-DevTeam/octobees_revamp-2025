@@ -1,6 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import DottedMap from "dotted-map";
+import FAQSchema from "@/app/seo/schema/FAQSchema";
+
+const javascriptFAQ = [
+  {
+    question: "What are the advantages of developing web apps with Javascript?",
+    answer:
+      "Javascript allows for faster development, rich user interfaces, and can be used for both frontend and backend (Node.js), unifying the development stack.",
+  },
+  {
+    question: "How can Javascript development benefit my existing system?",
+    answer:
+      "It can improve interactivity, performance, and allow for gradual modernization of legacy systems through micro-frontends or API layers.",
+  },
+  {
+    question: "What is the future of Javascript?",
+    answer:
+      "Javascript continues to evolve with TypeScript, new frameworks, and better tooling, remaining the dominant language for web and increasingly mobile/desktop apps.",
+  },
+  {
+    question: "How much does it cost to hire Javascript developers?",
+    answer:
+      "Costs vary based on seniority and location. We offer flexible engagement models tailored to your budget and project requirements.",
+  },
+];
 
 export default function JavascriptDevelopment() {
   return (
@@ -458,6 +482,7 @@ export default function JavascriptDevelopment() {
         </section>
 
         <section className="py-12 lg:py-20 px-6 lg:px-10 border-b border-white/10">
+          <FAQSchema items={javascriptFAQ} />
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-24">
               <div className="lg:col-span-1 space-y-6">
