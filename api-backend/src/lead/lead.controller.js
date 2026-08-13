@@ -9,6 +9,7 @@ import { sendInsightPdfEmail } from "./lead.mailer.js";
 import logger from "../../utils/logger.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import voucherService from "../voucher/voucher.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,7 +60,7 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let { name, email, phone, business, companyName, from, referralCode, pdfPath, blogTitle } = req.body;
+        let { name, email, phone, business, companyName, from, referralCode, pdfPath, blogTitle, message, voucherCode } = req.body;
 
         if (!email?.trim()) {
             email = `no-email-${Date.now()}@example.com`;
@@ -73,7 +74,11 @@ const create = async (req, res) => {
         ) {
             return res.status(400).json({ error: "Required fields are missing" });
         }
-        await createLead({ name, email, phone, business: business || '', companyName: companyName || '', from, referralCode });
+        await createLead({ name, email, phone, business: business || '', companyName: companyName || '', from, referralCode, message: message || '', voucherCode: voucherCode || null });
+
+        if (voucherCode) {
+            await voucherService.incrementVoucherUsage(voucherCode);
+        }
 
         if (pdfPath?.trim() && blogTitle?.trim()) {
             const absolutePdfPath = path.join(__dirname, "../../upload", pdfPath);

@@ -77,6 +77,7 @@ const TableLead: React.FC<TableProps> = ({
     { key: "Company", value: "companyName" },
     { key: "From Page", value: "from" },
     { key: "Referral Code", value: "referralCode" },
+    { key: "Voucher", value: "voucherCode" },
     { key: "Created At", value: "createdAt" },
     { key: "Action", value: "action" },
   ];
@@ -113,6 +114,18 @@ const TableLead: React.FC<TableProps> = ({
             <TableCell className="p-2">{lead.companyName || "-"}</TableCell>
             <TableCell className="p-2">{lead.from || "-"}</TableCell>
             <TableCell className="p-2">{lead.referralCode || "-"}</TableCell>
+            <TableCell className="p-2">
+              {lead.voucherCode ? (
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium text-red-800 bg-red-100 px-2 py-0.5 rounded text-xs w-fit">{lead.voucherCode}</span>
+                  {lead.voucher && (
+                    <span className="text-xs text-gray-500 capitalize">{lead.voucher.type}</span>
+                  )}
+                </div>
+              ) : (
+                "-"
+              )}
+            </TableCell>
             <TableCell className="p-2">
               {format(new Date(lead.createdAt), "dd MMMM yyyy HH:mm")}
             </TableCell>

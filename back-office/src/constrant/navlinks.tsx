@@ -1,4 +1,4 @@
-﻿import {
+import {
   Briefcase,
   ChartPie,
   NotebookPen,
@@ -57,6 +57,11 @@ const sidebarItems = [
         title: "Services Package",
         url: "/services/packages",
         icon: Archive,
+      },
+      {
+        title: "Voucher / Promo Code",
+        url: "/services/vouchers",
+        icon: Ticket,
       },
     ],
   },

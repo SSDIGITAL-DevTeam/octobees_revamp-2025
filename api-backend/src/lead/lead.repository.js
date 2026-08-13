@@ -10,6 +10,9 @@ export const findAllLeads = async (skip, limit, where, orderBy) => {
             orderBy,
             limit,
             offset: skip,
+            with: {
+                voucher: true,
+            },
         });
 
         const totalQuery = db.select({ count: count() }).from(lead);

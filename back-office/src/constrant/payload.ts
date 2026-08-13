@@ -180,6 +180,12 @@ export type Lead = {
   message?: string | null;
   from?: string | null;
   referralCode?: string | null;
+  voucherCode?: string | null;
+  voucher?: {
+    code: string;
+    type: string;
+    value: number;
+  } | null;
   createdAt: string;
   updatedAt: string;
 };

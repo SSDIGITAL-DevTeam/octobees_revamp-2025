@@ -1,10 +1,11 @@
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
 import { date, mysqlTable, varchar, mysqlEnum, json, timestamp, boolean, text, int, datetime, double } from 'drizzle-orm/mysql-core';
 import { v4 as uuidv4 } from 'uuid';
 
 // Enums
 export const userStatusEnum = mysqlEnum('user_status', ['Draft', 'Active', 'NonActive']);
 export const blogStatusEnum = mysqlEnum('blog_status', ['Published', 'Archived', 'Draft']);
+export const voucherTypeEnum = mysqlEnum('voucher_type', ['fixed', 'percentage']);
 
 export const user = mysqlTable('user', {
   id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
@@ -62,6 +63,26 @@ export const lead = mysqlTable('lead', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   isAgree: boolean('is_agree').default(true), //setelah migrate akan di ubah menjadi not null
+  voucherCode: varchar('voucher_code', { length: 50 }),
+});
+
+export const leadRelations = relations(lead, ({ one }) => ({
+  voucher: one(voucher, {
+    fields: [lead.voucherCode],
+    references: [voucher.code],
+  }),
+}));
+
+export const voucher = mysqlTable('voucher', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
+  code: varchar('code', { length: 50 }).notNull().unique(),
+  type: voucherTypeEnum.notNull(),
+  value: double('value').notNull(),
+  maxUsage: int('max_usage'),
+  currentUsage: int('current_usage').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const insightLead = mysqlTable('insight_lead', {
