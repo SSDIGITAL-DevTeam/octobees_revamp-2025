@@ -13,12 +13,12 @@ import { failToast, successToast } from "@/config/toastConfig";
 import { usePathname, useRouter } from "next/navigation";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import FieldCheckbox from "@/components/partials/Field/FieldCheckbox";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
