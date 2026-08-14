@@ -1,12 +1,12 @@
 "use client";
 
-import { JSX } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import Icon from "@/assets/thanks/Icon.png"
+import Icon from "@/assets/thanks/Icon.png";
 
-export default function SectionThanks() {
+function SectionThanksContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     
@@ -41,8 +41,16 @@ export default function SectionThanks() {
                         </div>
                     )}
                 </div>
-                <Button className=" w-full py-3 rounded-3xl text-base md:text-lg font-semibold bg-primary text-white max-w-64 mx-auto" onClick={() => router.push("/")}>Continue</Button>
+                <Button className="w-full py-3 rounded-3xl text-base md:text-lg font-semibold bg-primary text-white max-w-64 mx-auto" onClick={() => router.push("/")}>Continue</Button>
             </section>
         </main>
-    )
+    );
+}
+
+export default function SectionThanks() {
+    return (
+        <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">Loading...</div>}>
+            <SectionThanksContent />
+        </Suspense>
+    );
 }
