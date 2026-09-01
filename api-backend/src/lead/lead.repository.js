@@ -5,15 +5,22 @@ import logger from "../../utils/logger.js";
 
 export const findAllLeads = async (skip, limit, where, orderBy) => {
     try {
-        const datas = await db.query.lead.findMany({
+        const queryOptions = {
             where,
             orderBy,
-            limit,
-            offset: skip,
             with: {
                 voucher: true,
             },
-        });
+        };
+
+        if (limit !== undefined && limit !== null) {
+            queryOptions.limit = limit;
+            if (skip !== undefined && skip !== null) {
+                queryOptions.offset = skip;
+            }
+        }
+
+        const datas = await db.query.lead.findMany(queryOptions);
 
         const totalQuery = db.select({ count: count() }).from(lead);
         if (where) totalQuery.where(where);

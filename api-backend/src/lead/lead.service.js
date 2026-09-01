@@ -11,11 +11,20 @@ import logger from "../../utils/logger.js";
 
 export const getAllLeads = async (filters) => {
     try {
-        const { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix } = filters;
+        const { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix, status } = filters;
 
-        const skip = (page - 1) * limit;
+        let skip = undefined;
+        let parsedLimit = undefined;
+        if (limit !== "all") {
+            parsedLimit = Math.max(parseInt(limit) || 10, 1);
+            skip = (Math.max(parseInt(page) || 1, 1) - 1) * parsedLimit;
+        }
 
         const whereConditions = [];
+
+        if (status) {
+            whereConditions.push(eq(lead.status, status));
+        }
 
         if (fromPrefix) {
             whereConditions.push(like(lead.from, `${fromPrefix}%`));
@@ -44,9 +53,9 @@ export const getAllLeads = async (filters) => {
             return direction === "desc" ? desc(lead[field]) : asc(lead[field]);
         });
 
-        const { datas, total } = await findAllLeads(skip, limit, where, order);
+        const { datas, total } = await findAllLeads(skip, parsedLimit, where, order);
 
-        const totalPages = Math.ceil(total / limit);
+        const totalPages = parsedLimit ? Math.ceil(total / parsedLimit) : 1;
         return {
             data: datas,
             pagination: {

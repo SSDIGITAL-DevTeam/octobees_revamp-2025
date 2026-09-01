@@ -50,6 +50,8 @@ export const blog = mysqlTable('blog', {
 });
 
 
+export const leadStatusEnum = mysqlEnum('status', ['new', 'contacted', 'in_progress', 'won', 'lost']);
+
 export const lead = mysqlTable('lead', {
   id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv4()),
   name: varchar('name', { length: 255 }).notNull(),
@@ -60,6 +62,7 @@ export const lead = mysqlTable('lead', {
   companyName: varchar('company_name', { length: 255 }).notNull(),
   companyWebsite: varchar('company_website', { length: 255 }),
   from: varchar('from', { length: 50 }).notNull(),
+  status: mysqlEnum('status', ['new', 'contacted', 'in_progress', 'won', 'lost']).notNull().default('new'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   isAgree: boolean('is_agree').default(true), //setelah migrate akan di ubah menjadi not null

@@ -16,9 +16,11 @@ const __dirname = path.dirname(__filename);
 
 const getall = async (req, res) => {
     try {
-        let { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix } = req.query;
+        let { page = 1, limit = 10, orderBy, search, createdAt, fromPrefix, status } = req.query;
         page = Math.max(parseInt(page) || 1, 1);
-        limit = Math.max(parseInt(limit) || 10, 1);
+        if (limit !== "all") {
+            limit = Math.max(parseInt(limit) || 10, 1);
+        }
 
         let orderByParams = [];
         if (orderBy) {
@@ -37,6 +39,7 @@ const getall = async (req, res) => {
             orderBy: orderByParams,
             createdAt,
             fromPrefix,
+            status,
         };
 
         const data = await getAllLeads(filters);
@@ -60,7 +63,7 @@ const getid = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let { name, email, phone, business, companyName, from, referralCode, pdfPath, blogTitle, message, voucherCode } = req.body;
+        let { name, email, phone, business, companyName, from, referralCode, pdfPath, blogTitle, message, voucherCode, status } = req.body;
 
         if (!email?.trim()) {
             email = `no-email-${Date.now()}@example.com`;
@@ -74,7 +77,7 @@ const create = async (req, res) => {
         ) {
             return res.status(400).json({ error: "Required fields are missing" });
         }
-        await createLead({ name, email, phone, business: business || '', companyName: companyName || '', from, referralCode, message: message || '', voucherCode: voucherCode || null });
+        await createLead({ name, email, phone, business: business || '', companyName: companyName || '', from, referralCode, message: message || '', voucherCode: voucherCode || null, status: status || 'new' });
 
         if (voucherCode) {
             await voucherService.incrementVoucherUsage(voucherCode);
