@@ -167,6 +167,8 @@ export type Subscription = {
   insight?: string | null;
   createdAt: string;
   updatedAt: string;
+};
+
 export type LeadStatus = "new" | "contacted" | "in_progress" | "won" | "lost";
 
 export type Lead = {

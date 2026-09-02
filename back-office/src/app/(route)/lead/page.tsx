@@ -27,7 +27,7 @@ import { failedToast } from "@/utils/toast";
 import { Lead, LeadStatus, Pagination } from "@/constrant/payload";
 import TableLead from "@/components/partials/table/TableLead";
 import CreateLeadModal from "@/components/partials/modal/CreateLeadModal";
-import { ToastContainer, type ToastMessage } from "@/components/ui/Toast";
+import { ToastContainer, type ToastMessage } from "@/components/ui/toast";
 
 type ViewMode = "pipeline" | "table";
 
