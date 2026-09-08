@@ -24,7 +24,8 @@ router.post("/", async (req, res) => {
       }
     );
 
-    const resetLink = `${process.env.BASE_URL}/auth/reset-password?token=${token}`;
+    const frontendBase = process.env.BACK_OFFICE_URL || process.env.BASE_URL;
+    const resetLink = `${frontendBase}/auth/reset-password?token=${token}`;
 
     await sendResetEmail(user.email, resetLink);
 
