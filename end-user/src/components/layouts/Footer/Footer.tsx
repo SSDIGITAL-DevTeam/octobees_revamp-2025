@@ -82,7 +82,7 @@ export default function Footer(): JSX.Element {
           </div>
         </div>
         <p className="w-full mx-auto text-xs lg:text-sm text-light text-center">
-          Copyright &copy; 2023 - {new Date().getFullYear()} Octobees. All rights reserved
+          Copyright &copy; 2024 - {new Date().getFullYear()} Octobees. All rights reserved
         </p>
       </footer>
   );
